@@ -242,6 +242,51 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);-
 .sb.green{background:var(--green-bg);color:var(--green-text);border-color:#BBF7D0}
 .sb.red{background:var(--red-bg);color:var(--red-text);border-color:#FCA5A5}
 
+/* ── Albero parti ── */
+.albero-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.albero-cat-hd{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--bg);cursor:pointer;user-select:none;border-bottom:1px solid var(--border-light)}
+.albero-cat-hd:hover{background:#F0E8DF}
+.albero-cat-label{font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:700;color:var(--text-1);flex:1;text-transform:uppercase;letter-spacing:.04em}
+.albero-cat-count{font-size:11px;color:var(--text-3);background:var(--border);padding:2px 8px;border-radius:10px;font-weight:600}
+.albero-cat-forn-chips{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.albero-cat-arrow{width:15px;height:15px;color:var(--text-3);transition:transform var(--t);flex-shrink:0}
+.albero-cat-hd.open .albero-cat-arrow{transform:rotate(90deg)}
+.albero-cat-body{display:none}
+.albero-cat-body.open{display:block}
+.albero-lav{border-bottom:1px solid var(--border-light)}
+.albero-lav:last-child{border-bottom:none}
+.albero-lav-hd{display:flex;align-items:center;gap:10px;padding:9px 16px 9px 38px;cursor:pointer;transition:background var(--t)}
+.albero-lav-hd:hover{background:#FDFAF7}
+.albero-lav-name{font-size:13px;font-weight:600;color:var(--text-2);flex:1}
+.albero-lav-forn{font-size:11.5px;padding:2px 9px;border-radius:12px;border:1px solid var(--border);color:var(--text-3);background:var(--bg)}
+.albero-lav-forn.assigned{background:var(--green-bg);color:var(--green-text);border-color:#BBF7D0;font-weight:600}
+.albero-lav-n{font-size:11px;color:var(--text-3);white-space:nowrap}
+.albero-lav-arrow{width:13px;height:13px;color:var(--text-3);transition:transform var(--t);flex-shrink:0}
+.albero-lav-hd.open .albero-lav-arrow{transform:rotate(90deg)}
+.albero-parts{display:none;background:#FDFAF7;border-top:1px solid var(--border-light)}
+.albero-parts.open{display:block}
+.apt{width:100%;border-collapse:collapse;font-size:12px}
+.apt th{text-align:left;padding:6px 12px 6px 54px;color:var(--text-3);font-weight:600;font-size:10.5px;background:var(--border-light);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
+.apt td{padding:6px 12px 6px 54px;border-bottom:1px solid var(--border-light);color:var(--text-2);vertical-align:middle}
+.apt tr:last-child td{border-bottom:none}
+.apt tr:hover td{background:#F5F0EB}
+.pcode{font-family:monospace;color:var(--text-1);font-size:11.5px;font-weight:600}
+.ptags{display:flex;gap:3px;flex-wrap:wrap}
+.ptag{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--border);color:var(--text-2)}
+.ptag.pdf{background:#FEE2E2;color:#991B1B}
+.ptag.dxf{background:#DBEAFE;color:#1E40AF}
+.ptag.dwg{background:#D1FAE5;color:#065F46}
+.albero-forn-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 16px;background:var(--gold-bg);border-top:1px solid #F5D78A}
+.albero-forn-bar-label{font-size:11.5px;font-weight:600;color:var(--gold-text)}
+.forn-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text-1);text-decoration:none}
+.forn-chip:hover{background:var(--gold-bg);border-color:var(--gold)}
+.forn-chip svg{width:12px;height:12px;color:var(--text-3)}
+.import-mode{display:flex;gap:8px;margin-bottom:16px}
+.imode-btn{flex:1;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--surface);text-align:center;transition:all var(--t)}
+.imode-btn:hover{border-color:var(--gold);color:var(--gold-dark)}
+.imode-btn.active{border-color:var(--gold);background:var(--gold-bg);color:var(--gold-dark)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 /* ── Bottom nav ── */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav);background:#2C1506;border-top:1px solid rgba(255,255,255,.08);z-index:100}
 .bottom-nav-inner{display:flex;height:100%;align-items:center;justify-content:space-around;max-width:480px;margin:0 auto}
@@ -413,6 +458,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);-
     </div>
     <div class="modal-bd">
       <div class="fg">
+        <div class="import-mode">
+          <button class="imode-btn" id="imodeBom" onclick="setImportMode('bom')">BOM2Excel</button>
+          <button class="imode-btn active" id="imodeExcel" onclick="setImportMode('excel')">Distinta Excel</button>
+        </div>
+        <div class="fhint" id="imodeHint" style="margin-top:-8px;margin-bottom:12px">Legge la distinta generale Excel dalla cartella e abbina automaticamente i disegni in COSTRUTTIVI TOTALI/DISEGNI/</div>
+      </div>
+      <div class="fg">
         <label class="fl">Codice commessa *</label>
         <input class="fi" id="nCodice" placeholder="Es: IB05.2025">
         <div class="ferr" id="nCodiceErr">Campo obbligatorio</div>
@@ -430,7 +482,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);-
         <label class="fl">Percorso cartella BOM2Excel *</label>
         <input class="fi" id="nCartella" placeholder="\\SERVER01\lavoro\Ufficio Tecnico\...">
         <div class="ferr" id="nCartellaErr">Campo obbligatorio</div>
-        <div class="fhint">Percorso UNC della cartella creata dalla macro BOM2Excel (deve contenere le sottocartelle COMMERCIALI TOTALI e/o COSTRUTTIVI TOTALI)</div>
+        <div class="fhint" id="nCartellaHint">Percorso UNC della cartella commessa. Distinta Excel: deve contenere un .xlsx con la distinta generale + COSTRUTTIVI TOTALI/DISEGNI/</div>
       </div>
       <div class="fg">
         <label class="fl">Note</label>
@@ -511,6 +563,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);-
   </div>
 </div>
 
+<!-- MODAL: Assegna branch fornitore -->
+<div class="modal-ov" id="modalAssegna" onclick="closeOv(event,'modalAssegna')">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-ico purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div><div class="modal-title" id="assegnaTit">Assegna fornitore</div><div class="modal-sub" id="assegnaSub"></div></div>
+      <button class="modal-x" onclick="closeModal('modalAssegna')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-bd">
+      <input type="hidden" id="assegnaCat">
+      <input type="hidden" id="assegnaLav">
+      <div class="fg">
+        <label class="fl">Fornitore</label>
+        <select class="fi" id="assegnaFornitore"><option value="">— Seleziona —</option></select>
+      </div>
+      <div class="fhint" id="assegnaInfo" style="margin-top:-8px"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-danger btn-sm" id="btnRilasciaAssegna" onclick="rilasciaBranch()">Rilascia</button>
+      <div class="modal-ft-right">
+        <button class="btn btn-secondary" onclick="closeModal('modalAssegna')">Annulla</button>
+        <button class="btn btn-primary" id="btnSalvaAssegna" onclick="salvaAssegna()">Assegna</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -527,6 +606,8 @@ function configBackend(){
 
 /* ── State ── */
 let commesse = [], fornitori = [], currentProgetto = null, currentDistinta = null, currentStatoSmista = null;
+let currentAlbero = null;
+let importMode = 'excel'; // 'bom' | 'excel'
 
 /* ── Init ── */
 async function init(){
@@ -643,9 +724,13 @@ function projCard(c){
 /* ── PROGETTO DETAIL ── */
 async function openProgettoDetail(id){
   try {
-    const r = await fetch(API + '/api/commesse/' + id);
-    if(!r.ok) throw new Error('Progetto non trovato');
-    currentProgetto = await r.json();
+    const [rProg, rAlbero] = await Promise.all([
+      fetch(API + '/api/commesse/' + id),
+      fetch(API + '/api/commesse/' + id + '/albero').catch(() => null)
+    ]);
+    if(!rProg.ok) throw new Error('Progetto non trovato');
+    currentProgetto = await rProg.json();
+    currentAlbero = (rAlbero && rAlbero.ok) ? await rAlbero.json() : null;
     renderProgettoDetail();
   } catch(e) {
     toast(e.message || 'Errore caricamento progetto', true);
@@ -690,7 +775,10 @@ function renderProgettoDetail(){
   let html = '';
   if(comm.length)  html += sectionHtml('commerciale', 'Commerciali', comm);
   if(costr.length) html += sectionHtml('costruttiva', 'Costruttivi', costr);
-  if(!html) html = errHtml('Nessuna distinta importata', 'La cartella BOM2Excel non ha prodotto distinte riconoscibili. Verifica le sottocartelle COMMERCIALI TOTALI e COSTRUTTIVI TOTALI.');
+  if(currentAlbero && currentAlbero.categorie && currentAlbero.categorie.length){
+    html += renderAlberoHtml(currentAlbero);
+  }
+  if(!html) html = errHtml('Nessuna distinta importata', 'Importa la cartella tramite "Distinta Excel" per vedere l\'albero delle parti.');
   document.getElementById('progSections').innerHTML = html;
 }
 
@@ -854,6 +942,152 @@ async function rilasciaDistinta(){
   } catch { toast('Errore rilascio', true); }
 }
 
+/* ── ALBERO PARTI ── */
+function renderAlberoHtml(albero){
+  // Raccoglie i fornitori assegnati per la barra in fondo
+  const fornAssegnati = new Set();
+  albero.categorie.forEach(cat => cat.lavorazioni.forEach(lav => {
+    if(lav.fornitore_id) fornAssegnati.add(lav.fornitore_id);
+  }));
+
+  const catBlocks = albero.categorie.map(cat => {
+    const catKey = 'ac_' + btoa(cat.categoria).replace(/[^a-z0-9]/gi,'');
+    const lavHtml = cat.lavorazioni.map(lav => {
+      const lavKey = 'al_' + btoa(cat.categoria + '|' + lav.lav_meccanica).replace(/[^a-z0-9]/gi,'');
+      const forn = lav.fornitore_id ? fornitori.find(f => f.id === lav.fornitore_id) : null;
+      const fornLabel = forn ? esc(forn.nome) : (lav.fornitore_nome_excel ? esc('Excel: ' + lav.fornitore_nome_excel) : '— non assegnato');
+      const fornCls = forn ? 'assigned' : '';
+      const partsHtml = lav.parti.map(p => {
+        const files = parseJson(p.files);
+        const exts = [...new Set(files.map(f => f.split('.').pop().toLowerCase()))];
+        const tags = exts.map(e => `<span class="ptag ${e}">${e.toUpperCase()}</span>`).join('');
+        return `<tr>
+          <td><span class="pcode">${esc(p.numero_parte)}</span></td>
+          <td>${esc(p.denominazione)}</td>
+          <td style="text-align:center">${esc(p.quantita)}</td>
+          <td>${esc(p.materiale)}</td>
+          <td><div class="ptags">${tags || '<span style="color:var(--text-3);font-size:11px">nessuno</span>'}</div></td>
+        </tr>`;
+      }).join('');
+      return `
+        <div class="albero-lav">
+          <div class="albero-lav-hd" onclick="toggleAlberoLav('${lavKey}',event)">
+            <svg class="albero-lav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="albero-lav-name">${esc(lav.lav_meccanica || '(nessuna lavorazione)')}</span>
+            <span class="albero-lav-n">${lav.n_parti} parti · ${lav.n_files} file</span>
+            <span class="albero-lav-forn ${fornCls}">${fornLabel}</span>
+            <button class="btn btn-secondary btn-sm" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();openAssegnaBranch('${esc(cat.categoria)}','${esc(lav.lav_meccanica)}',${lav.fornitore_id||0},${lav.n_parti})">
+              ${forn ? 'Cambia' : 'Assegna'}
+            </button>
+          </div>
+          <div class="albero-parts" id="${lavKey}">
+            <table class="apt">
+              <thead><tr><th>Codice</th><th>Denominazione</th><th>Q.tà</th><th>Materiale</th><th>File</th></tr></thead>
+              <tbody>${partsHtml}</tbody>
+            </table>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="albero-section">
+        <div class="albero-cat-hd" id="hd_${catKey}" onclick="toggleAlberoCat('${catKey}')">
+          <svg class="albero-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="albero-cat-label">${esc(cat.categoria)}</span>
+          <span class="albero-cat-count">${cat.n_parti} parti</span>
+        </div>
+        <div class="albero-cat-body" id="${catKey}">${lavHtml}</div>
+      </div>`;
+  }).join('');
+
+  // Barra fornitori assegnati con link download distinta
+  let fornBar = '';
+  if(fornAssegnati.size){
+    const chips = [...fornAssegnati].map(fid => {
+      const f = fornitori.find(x => x.id === fid);
+      if(!f) return '';
+      return `<a class="forn-chip" href="${API}/api/commesse/${albero.commessa_id}/distinta/${fid}" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        ${esc(f.nome)}
+      </a>`;
+    }).join('');
+    fornBar = `<div class="albero-forn-bar"><span class="albero-forn-bar-label">Scarica distinta fornitore:</span>${chips}</div>`;
+  }
+  return catBlocks + fornBar;
+}
+
+function toggleAlberoCat(key){
+  const hd = document.getElementById('hd_' + key);
+  const body = document.getElementById(key);
+  if(!hd||!body) return;
+  const isOpen = body.classList.toggle('open');
+  hd.classList.toggle('open', isOpen);
+}
+
+function toggleAlberoLav(key, e){
+  if(e && e.target.tagName === 'BUTTON') return;
+  const hd = e && e.currentTarget;
+  const body = document.getElementById(key);
+  if(!body) return;
+  const isOpen = body.classList.toggle('open');
+  if(hd) hd.classList.toggle('open', isOpen);
+}
+
+function openAssegnaBranch(cat, lav, currentFid, nParti){
+  document.getElementById('assegnaCat').value = cat;
+  document.getElementById('assegnaLav').value = lav;
+  document.getElementById('assegnaTit').textContent = lav || cat;
+  document.getElementById('assegnaSub').textContent = `${cat} · ${nParti} parti`;
+  document.getElementById('assegnaInfo').textContent = `Assegnerà il fornitore a tutte le ${nParti} parti in questo gruppo.`;
+  document.getElementById('btnRilasciaAssegna').style.display = currentFid ? 'inline-flex' : 'none';
+  const sel = document.getElementById('assegnaFornitore');
+  sel.innerHTML = '<option value="">— Seleziona fornitore —</option>';
+  const terzisti = fornitori.filter(f => f.attivo && f.tipo === 'terzista');
+  const comm = fornitori.filter(f => f.attivo && f.tipo === 'commerciale');
+  const altri = fornitori.filter(f => f.attivo && !terzisti.includes(f) && !comm.includes(f));
+  if(terzisti.length){ const og = document.createElement('optgroup'); og.label = 'Terzisti'; terzisti.forEach(f => og.appendChild(new Option(f.nome, f.id))); sel.appendChild(og); }
+  if(comm.length){ const og = document.createElement('optgroup'); og.label = 'Commerciali'; comm.forEach(f => og.appendChild(new Option(f.nome, f.id))); sel.appendChild(og); }
+  if(altri.length){ const og = document.createElement('optgroup'); og.label = 'Altri'; altri.forEach(f => og.appendChild(new Option(f.nome, f.id))); sel.appendChild(og); }
+  sel.value = currentFid || '';
+  openModal('modalAssegna');
+}
+
+async function salvaAssegna(){
+  if(!currentProgetto) return;
+  const fid = parseInt(document.getElementById('assegnaFornitore').value);
+  if(!fid){ toast('Seleziona un fornitore', true); return; }
+  const cat = document.getElementById('assegnaCat').value;
+  const lav = document.getElementById('assegnaLav').value;
+  const btn = document.getElementById('btnSalvaAssegna'); btn.disabled = true;
+  try {
+    const r = await fetch(`${API}/api/commesse/${currentProgetto.id}/assegna-branch`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({fornitore_id: fid, categoria: cat || null, lav_meccanica: lav || null})
+    });
+    if(!r.ok) throw new Error((await r.json()).detail || 'Errore');
+    const res = await r.json();
+    closeModal('modalAssegna');
+    toast(`${res.aggiornate} parti assegnate a ${res.fornitore}`, 'ok');
+    await openProgettoDetail(currentProgetto.id);
+  } catch(e) { toast(e.message || 'Errore assegnazione', true); }
+  finally { btn.disabled = false; }
+}
+
+async function rilasciaBranch(){
+  // Assegna fornitore_id=null a tutte le parti del branch non è supportato via assegna-branch
+  // (che richiede un fid). Per ora non implementato — mostriamo messaggio.
+  toast('Per rilasciare: assegna un altro fornitore o edita le parti singolarmente.');
+}
+
+/* ── IMPORT MODE ── */
+function setImportMode(mode){
+  importMode = mode;
+  document.getElementById('imodeBom').classList.toggle('active', mode === 'bom');
+  document.getElementById('imodeExcel').classList.toggle('active', mode === 'excel');
+  document.getElementById('imodeHint').textContent = mode === 'excel'
+    ? 'Legge la distinta generale Excel dalla cartella e abbina automaticamente i disegni in COSTRUTTIVI TOTALI/DISEGNI/'
+    : 'Importa le distinte già generate da BOM2Excel (richiede sottocartelle COMMERCIALI TOTALI e/o COSTRUTTIVI TOTALI)';
+}
+
 /* ── NUOVO PROGETTO ── */
 function openNuovoProgetto(){
   ['nCodice','nNome','nCliente','nNote'].forEach(id => { document.getElementById(id).value = ''; });
@@ -876,7 +1110,8 @@ async function creaProgetto(){
   const btn = document.getElementById('btnCrea'); btn.disabled = true;
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Importazione...';
   try {
-    const r = await fetch(API + '/api/commesse/importa', {
+    const endpoint = importMode === 'excel' ? '/api/commesse/importa-excel' : '/api/commesse/importa';
+    const r = await fetch(API + endpoint, {
       method: 'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         codice, nome,
@@ -887,13 +1122,17 @@ async function creaProgetto(){
     });
     if(!r.ok){
       const e = await r.json();
-      throw new Error(e.detail || 'Errore importazione');
+      throw new Error((e.detail && typeof e.detail === 'string') ? e.detail : (Array.isArray(e.detail) ? e.detail.map(x=>x.msg).join('; ') : 'Errore importazione'));
     }
     const c = await r.json();
     closeModal('modalNuovo');
-    toast(`Progetto creato — ${c.distinte.length} distinte importate`, 'ok');
+    const nParti = importMode === 'excel'
+      ? (c.categorie ? c.categorie.reduce((s,cat)=>s+cat.n_parti,0) : '?')
+      : (c.distinte ? c.distinte.length : '?');
+    toast(`Progetto creato — ${nParti} ${importMode === 'excel' ? 'parti' : 'distinte'} importate`, 'ok');
     await loadProgetti();
-    showView('progetto', c.id);
+    const cId = importMode === 'excel' ? c.commessa_id : c.id;
+    showView('progetto', cId);
   } catch(e) {
     toast(e.message || 'Errore creazione progetto', true);
   } finally {
@@ -1014,7 +1253,7 @@ function openModal(id){ document.getElementById(id).classList.add('open'); docum
 function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
 function closeOv(e, id){ if(e.target.id === id) closeModal(id); }
 document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') ['modalNuovo','modalSmista','modalEditProg'].forEach(closeModal);
+  if(e.key === 'Escape') ['modalNuovo','modalSmista','modalEditProg','modalAssegna'].forEach(closeModal);
 });
 
 /* ── Sidebar mobile ── */
