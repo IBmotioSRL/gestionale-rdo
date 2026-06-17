@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestionale RDO — IB Motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sidebar-bg:#0D1526;--sidebar-hover:rgba(255,255,255,0.07);--sidebar-active:rgba(255,255,255,0.12);
+  --sidebar-text:#8B98B8;--sidebar-text-active:#FFFFFF;--sidebar-border:rgba(255,255,255,0.06);
+  --bg:#F4F6FB;--surface:#FFFFFF;--border:#E8ECF4;--border-light:#F0F3FA;
+  --text-1:#0D1526;--text-2:#4A5568;--text-3:#8B98B8;
+  --accent:#2563EB;--accent-bg:#EBF0FF;--accent-hover:#1D4ED8;
+  --green:#16A34A;--green-bg:#DCFCE7;--green-text:#15803D;
+  --amber:#D97706;--amber-bg:#FEF3C7;--amber-text:#92400E;
+  --red:#DC2626;--red-bg:#FEE2E2;--red-text:#991B1B;
+  --blue:#2563EB;--blue-bg:#DBEAFE;--blue-text:#1E40AF;
+  --shadow-sm:0 1px 3px rgba(13,21,38,.06),0 1px 2px rgba(13,21,38,.04);
+  --shadow-md:0 4px 12px rgba(13,21,38,.08),0 2px 4px rgba(13,21,38,.04);
+  --shadow-lg:0 16px 40px rgba(13,21,38,.12),0 4px 12px rgba(13,21,38,.06);
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;--sidebar-w:240px;
+  --transition:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);display:flex;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+.sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;height:100vh;z-index:10}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid var(--sidebar-border)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:18px;height:18px;color:white}
+.logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#FFF;letter-spacing:.02em}
+.logo-sub{font-size:10px;color:var(--sidebar-text);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sidebar-text);padding:12px 8px 6px;opacity:.6}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--transition),color var(--transition);color:var(--sidebar-text);font-size:13.5px;font-weight:500;user-select:none;text-decoration:none}
+.nav-item:hover{background:var(--sidebar-hover);color:#FFF}
+.nav-item.active{background:var(--sidebar-active);color:var(--sidebar-text-active)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:white;font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center}
+.sidebar-footer{padding:12px;border-top:1px solid var(--sidebar-border);display:flex;flex-direction:column;gap:4px}
+.api-status{display:flex;align-items:center;gap:8px;padding:8px;font-size:11.5px;color:var(--sidebar-text)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--text-3);flex-shrink:0}
+.api-status.ok .api-dot{background:var(--green)}
+.api-status.err .api-dot{background:var(--red)}
+.settings-btn{display:flex;align-items:center;gap:6px;padding:6px 8px;font-size:11px;color:var(--sidebar-text);cursor:pointer;border-radius:6px;border:none;background:transparent;font-family:'DM Sans',sans-serif;width:100%;text-align:left}
+.settings-btn:hover{background:var(--sidebar-hover);color:#FFF}
+.settings-btn svg{width:13px;height:13px;flex-shrink:0}
+.settings-url{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+.topbar-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;flex:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:all var(--transition);border:none;outline:none;white-space:nowrap}
+.btn svg{width:15px;height:15px}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.btn-secondary{background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border-light)}
+.btn-ghost{background:transparent;color:var(--text-2)}
+.btn-ghost:hover{background:var(--bg)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.content{flex:1;overflow-y:auto;padding:28px}
+.view{display:none;animation:fsIn .28s cubic-bezier(.4,0,.2,1)}
+.view.active{display:block}
+@keyframes fsIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.card-pad{padding:24px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);padding:20px 22px;position:relative;overflow:hidden}
+.stat-label{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.stat-val{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;line-height:1;margin-bottom:8px}
+.stat-sub{font-size:12px;color:var(--text-3)}
+.stat-icon{position:absolute;right:18px;top:18px;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.stat-icon svg{width:18px;height:18px}
+.stat-icon.blue{background:var(--blue-bg);color:var(--blue)}
+.stat-icon.amber{background:var(--amber-bg);color:var(--amber)}
+.stat-icon.green{background:var(--green-bg);color:var(--green)}
+.stat-icon.purple{background:#F3E8FF;color:#7C3AED}
+.accent-bar{position:absolute;bottom:0;left:0;right:0;height:3px}
+.accent-bar.blue{background:linear-gradient(90deg,#2563EB,#60A5FA)}
+.accent-bar.amber{background:linear-gradient(90deg,#D97706,#FCD34D)}
+.accent-bar.green{background:linear-gradient(90deg,#16A34A,#4ADE80)}
+.accent-bar.purple{background:linear-gradient(90deg,#7C3AED,#C084FC)}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sh-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.sh-sub{font-size:12px;color:var(--text-3);margin-top:2px}
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:start}
+.kcol{display:flex;flex-direction:column;gap:12px}
+.kcol-line{height:3px;border-radius:3px;margin-bottom:12px}
+.kcol-line.blue{background:linear-gradient(90deg,#2563EB,#93C5FD)}
+.kcol-line.amber{background:linear-gradient(90deg,#D97706,#FCD34D)}
+.kcol-line.green{background:linear-gradient(90deg,#16A34A,#86EFAC)}
+.kcol-head{display:flex;align-items:center;gap:8px;padding:0 4px;margin-bottom:4px}
+.kcol-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2)}
+.kcol-n{font-size:11px;font-weight:600;color:var(--text-3);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:1px 7px}
+.kcard{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);padding:16px 18px;cursor:pointer;transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition)}
+.kcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:#D0D9EE}
+.kcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.kcard-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.3}
+.kcard-id{font-size:10px;color:var(--text-3);background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:2px 6px;white-space:nowrap;font-family:monospace;flex-shrink:0}
+.kcard-meta{font-size:12px;color:var(--text-3);margin-bottom:12px}
+.kcard-foot{display:flex;align-items:center;justify-content:space-between;padding-top:11px;border-top:1px solid var(--border-light)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge.blue{background:var(--blue-bg);color:var(--blue-text)}
+.badge.amber{background:var(--amber-bg);color:var(--amber-text)}
+.badge.green{background:var(--green-bg);color:var(--green-text)}
+.badge.red{background:var(--red-bg);color:var(--red-text)}
+.badge.gray{background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
+.det-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+.det-sec{margin-bottom:20px}
+.det-sec:last-child{margin-bottom:0}
+.smist-tbl{width:100%;border-collapse:collapse}
+.smist-tbl th{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg)}
+.smist-tbl td{padding:12px 16px;border-bottom:1px solid var(--border-light);font-size:13px;vertical-align:middle}
+.smist-tbl tr:last-child td{border-bottom:none}
+.smist-tbl tr:hover td{background:var(--bg)}
+.smist-tbl td:first-child{font-weight:500}
+.smist-sel{border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--text-1);background:var(--surface);cursor:pointer;outline:none;min-width:170px}
+.smist-sel:focus{border-color:var(--accent)}
+.fmt-checks{display:flex;gap:8px;align-items:center}
+.fmt-check{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2);cursor:pointer}
+.fmt-check input{cursor:pointer;accent-color:var(--accent)}
+.panel-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:16px}
+.panel-card:last-child{margin-bottom:0}
+.panel-hd{padding:14px 18px;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2);background:var(--bg)}
+.panel-bd{padding:16px 18px}
+.irow{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.irow:last-child{margin-bottom:0}
+.ilabel{font-size:11.5px;color:var(--text-3);font-weight:500;min-width:80px;flex-shrink:0;padding-top:1px}
+.ival{font-size:13px;font-weight:500;flex:1}
+.prog-wrap{background:var(--bg);border-radius:20px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),#60A5FA);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.empty-st{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;color:var(--text-3)}
+.empty-ico{width:56px;height:56px;background:var(--bg);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;border:1px solid var(--border)}
+.empty-ico svg{width:24px;height:24px}
+.empty-tit{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+.empty-desc{font-size:13px;max-width:320px}
+.modal-ov{position:fixed;inset:0;background:rgba(13,21,38,.5);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-ov.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;animation:mIn .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-hd{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.modal-ico{width:38px;height:38px;background:var(--accent-bg);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0}
+.modal-ico svg{width:18px;height:18px}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.modal-sub{font-size:12.5px;color:var(--text-3);margin-top:2px}
+.modal-x{margin-left:auto;width:32px;height:32px;border-radius:var(--radius-sm);border:none;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-2);flex-shrink:0}
+.modal-x:hover{background:var(--border)}
+.modal-x svg{width:15px;height:15px}
+.modal-bd{padding:22px 24px;overflow-y:auto;flex:1}
+.modal-ft{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.fg{margin-bottom:18px}
+.fg:last-child{margin-bottom:0}
+.fl{display:block;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:7px}
+.fi{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text-1);background:var(--surface);outline:none}
+.fi:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.fi.err{border-color:var(--red)!important}
+.ferr{font-size:11.5px;color:var(--red-text);margin-top:5px}
+.info-ban{background:var(--blue-bg);border:1px solid #BFDBFE;border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}
+.info-ban svg{width:16px;height:16px;color:var(--blue);margin-top:1px;flex-shrink:0}
+.info-ban span{font-size:12.5px;color:var(--blue-text);line-height:1.5}
+.toast{position:fixed;bottom:24px;right:24px;z-index:200;background:var(--text-1);color:white;padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:all .25s ease;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{background:var(--red)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:repeat(2,1fr)}.det-layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+      <div><div class="logo-name">IB Motion</div><div class="logo-sub">Gestionale RDO</div></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Principale</div>
+    <div class="nav-item active" id="navDash" onclick="showView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" id="navRdo" onclick="showView('rdo',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      RDO Attive <span class="nav-badge" id="navBadge">0</span>
+    </div>
+    <div class="nav-label">Archivio</div>
+    <a class="nav-item" href="fornitori.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Fornitori
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="api-status" id="apiSt"><div class="api-dot"></div><span id="apiTxt">Connessione...</span></div>
+    <button class="settings-btn" onclick="configBackend()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 005.6 15a1.65 1.65 0 00-1.51-1H4a2 2 0 010-4h.09A1.65 1.65 0 005.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span class="settings-url" id="settingsUrl">Configura backend</span>
+    </button>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div class="topbar-title" id="pageTitle">Dashboard</div>
+    <button class="btn btn-secondary" onclick="openImport()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Importa RDO
+    </button>
+  </header>
+  <div class="content">
+    <div class="view active" id="view-dashboard">
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="card">
+        <div class="card-pad" style="padding-bottom:0">
+          <div class="sh">
+            <div><div class="sh-title">RDO Attive</div><div class="sh-sub">Tutte le richieste d'offerta in corso</div></div>
+            <button class="btn btn-ghost" style="font-size:12.5px" onclick="showView('rdo',document.getElementById('navRdo'))">Vedi tutte →</button>
+          </div>
+        </div>
+        <div id="dashList" style="padding-bottom:8px"></div>
+      </div>
+    </div>
+
+    <div class="view" id="view-rdo"><div id="kanbanWrap"></div></div>
+    <div class="view" id="view-detail"><div id="detailWrap"></div></div>
+  </div>
+</main>
+
+<!-- Modal import -->
+<div class="modal-ov" id="importModal" onclick="closeOv(event,'importModal')">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <div><div class="modal-title">Importa output BOM2Excel</div><div class="modal-sub">Legge la cartella generata dalla macro SolidWorks</div></div>
+      <button class="modal-x" onclick="closeModal('importModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label class="fl">Percorso cartella commessa *</label>
+        <input class="fi" id="iPerc" placeholder="\\SERVER01\lavoro\Ufficio Tecnico\...\NOME COMMESSA">
+        <div class="ferr" id="iPercErr" style="display:none"></div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:6px">Percorso leggibile dal PC dove gira il backend. Deve contenere COMMERCIALI TOTALI / COSTRUTTIVI TOTALI.</div>
+      </div>
+      <div class="fg"><label class="fl">Codice commessa *</label><input class="fi" id="iCod" placeholder="Es: IB05.2025.09"><div class="ferr" id="iCodErr" style="display:none">Campo obbligatorio</div></div>
+      <div class="fg"><label class="fl">Nome commessa *</label><input class="fi" id="iNome" placeholder="Es: CARRI IB MOTION — Fibbi"><div class="ferr" id="iNomeErr" style="display:none">Campo obbligatorio</div></div>
+      <div class="fg"><label class="fl">Cliente</label><input class="fi" id="iCliente" placeholder="Es: Fibbi S.r.l."></div>
+      <div class="info-ban"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Il sistema analizza la cartella e crea automaticamente le voci da smistare. Le voci con disegno nei commerciali restano non assegnate per assegnazione manuale.</span></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('importModal')">Annulla</button>
+      <button class="btn btn-primary" id="btnImp" onclick="doImport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Importa e Analizza
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const DEFAULT = 'http://127.0.0.1:8123';
+const API = localStorage.getItem('rdo_api_base') || DEFAULT;
+
+function configBackend() {
+  const v = prompt('Indirizzo del backend (locale o tunnel pubblico):', API);
+  if (v === null) return;
+  const u = v.trim().replace(/\/$/, '');
+  if (u) { localStorage.setItem('rdo_api_base', u); location.reload(); }
+}
+
+let rdos=[], comms=[], fors=[], curId=null;
+
+async function init() {
+  document.getElementById('settingsUrl').textContent = API.replace(/^https?:\/\//,'');
+  const el=document.getElementById('apiSt'), tx=document.getElementById('apiTxt');
+  try {
+    const r=await fetch(API+'/api/health'); if(!r.ok) throw 0;
+    el.classList.add('ok'); el.classList.remove('err'); tx.textContent='Backend connesso';
+  } catch { el.classList.add('err'); el.classList.remove('ok'); tx.textContent='Non raggiungibile'; }
+  await reload();
+}
+
+async function reload() {
+  try {
+    const [rR,rC,rF]=await Promise.all([fetch(API+'/api/rdo'),fetch(API+'/api/rdo/commesse/lista'),fetch(API+'/api/fornitori')]);
+    rdos=await rR.json(); comms=await rC.json(); fors=await rF.json();
+    renderDash(); renderKanban();
+    if(curId) renderDetail(curId);
+  } catch(e) {
+    document.getElementById('statGrid').innerHTML='';
+    document.getElementById('dashList').innerHTML=emptyHtml('Backend non raggiungibile',`Verifica che FastAPI sia attivo su ${API}. Clicca "Configura backend" in basso a sinistra per cambiare indirizzo.`);
+  }
+}
+
+const comm=(r)=>comms.find(c=>c.id===r.commessa_id)||{nome:'—',codice:'—',cliente:''};
+const forn=(id)=>fors.find(f=>f.id===id);
+const SL={da_smistare:{l:'Da smistare',c:'gray'},da_inviare:{l:'Da inviare',c:'blue'},inviata_da_confermare:{l:'In attesa',c:'amber'},confermata:{l:'Confermata',c:'green'},respinta:{l:'Respinta',c:'red'}};
+const sl=(s)=>SL[s]||{l:s,c:'gray'};
+function rdoStato(r){
+  const ss=r.distinte.map(d=>d.stato);
+  if(!ss.length||ss.some(s=>s==='da_smistare')) return 'da_smistare';
+  if(ss.every(s=>s==='confermata')) return 'confermata';
+  if(ss.some(s=>s==='inviata_da_confermare')) return 'inviata_da_confermare';
+  if(ss.some(s=>s==='da_inviare')) return 'da_inviare';
+  return 'confermata';
+}
+
+function renderDash(){
+  const all=rdos.flatMap(r=>r.distinte);
+  const dI=all.filter(d=>d.stato==='da_inviare').length;
+  const iA=all.filter(d=>d.stato==='inviata_da_confermare').length;
+  const co=all.filter(d=>d.stato==='confermata').length;
+  document.getElementById('statGrid').innerHTML=
+    sc('RDO Totali',rdos.length,comms.length+' commesse','blue',icoDoc())+
+    sc('Da Inviare',dI,'Voci pronte','amber',icoSend())+
+    sc('In Attesa',iA,'Risposta pendente','purple',icoClock())+
+    sc('Confermate',co,'Voci confermate','green',icoOk());
+  document.getElementById('navBadge').textContent=rdos.length;
+  const dl=document.getElementById('dashList');
+  dl.innerHTML=rdos.length?rdos.slice(0,6).map(r=>kcard(r,'margin:0 20px 12px')).join(''):emptyHtml('Nessuna RDO','Usa "Importa RDO" in alto per leggere una cartella BOM2Excel.');
+}
+
+function sc(label,val,sub,col,ico){
+  return`<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-val">${val}</div><div class="stat-sub">${sub}</div><div class="stat-icon ${col}">${ico}</div><div class="accent-bar ${col}"></div></div>`;
+}
+const icoDoc=()=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+const icoSend=()=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+const icoClock=()=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const icoOk=()=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function emptyHtml(t,d){
+  return`<div class="empty-st"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-tit">${t}</div><div class="empty-desc">${d}</div></div>`;
+}
+
+function kcard(r,extra=''){
+  const c=comm(r),s=sl(rdoStato(r)),n=r.distinte.length,nf=new Set(r.distinte.map(d=>d.fornitore_id).filter(Boolean)).size;
+  return`<div class="kcard" style="${extra}" onclick="openDetail(${r.id})"><div class="kcard-top"><div class="kcard-title">${esc(c.nome)}</div><div class="kcard-id">${esc(c.codice)}</div></div><div class="kcard-meta">${n} distinte · ${nf} fornitori</div><div class="kcard-foot"><span class="badge ${s.c}">${s.l}</span></div></div>`;
+}
+
+function renderKanban(){
+  const cols={da_smistare:[],da_inviare:[],inviata_da_confermare:[],confermata:[]};
+  rdos.forEach(r=>{const k=rdoStato(r);if(cols[k])cols[k].push(r);});
+  const defs=[{k:'da_smistare',t:'Da Smistare',c:'amber'},{k:'da_inviare',t:'Da Inviare',c:'blue'},{k:'inviata_da_confermare',t:'In Attesa',c:'amber'},{k:'confermata',t:'Confermate',c:'green'}];
+  const wrap=document.getElementById('kanbanWrap');
+  if(!rdos.length){wrap.innerHTML=emptyHtml('Nessuna RDO','Usa "Importa RDO" per iniziare.');return;}
+  wrap.innerHTML=`<div class="kanban">${defs.map(d=>`<div class="kcol"><div class="kcol-line ${d.c}"></div><div class="kcol-head"><span class="kcol-title">${d.t}</span><span class="kcol-n">${cols[d.k].length}</span></div>${cols[d.k].length?cols[d.k].map(r=>kcard(r)).join(''):'<div style="font-size:12px;color:var(--text-3);padding:4px 4px">Nessuna</div>'}</div>`).join('')}</div>`;
+}
+
+function openDetail(id){curId=id;renderDetail(id);showView('detail',null);}
+
+function renderDetail(id){
+  const r=rdos.find(x=>x.id===id);if(!r)return;
+  const c=comm(r),com=r.distinte.filter(d=>d.categoria==='commerciale'),cos=r.distinte.filter(d=>d.categoria==='costruttiva');
+  const tot=r.distinte.length,ass=r.distinte.filter(d=>d.fornitore_id).length,pct=tot?Math.round(ass/tot*100):0;
+  document.getElementById('detailWrap').innerHTML=`
+    <div style="margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-ghost" style="padding:6px 10px" onclick="showView('rdo',document.getElementById('navRdo'))">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Indietro
+      </button>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800">${esc(c.nome)}</div>
+      <span class="badge ${sl(rdoStato(r)).c}">${sl(rdoStato(r)).l}</span>
+    </div>
+    <div class="det-layout">
+      <div>
+        ${secDist('Distinte Commerciali',com,false)}
+        ${secDist('Distinte Costruttive',cos,true)}
+      </div>
+      <div>
+        <div class="panel-card"><div class="panel-hd">Dettagli commessa</div><div class="panel-bd">
+          <div class="irow"><div class="ilabel">Codice</div><div class="ival" style="font-family:monospace;font-size:12.5px">${esc(c.codice)}</div></div>
+          <div class="irow"><div class="ilabel">Cliente</div><div class="ival">${esc(c.cliente||'—')}</div></div>
+          <div class="irow"><div class="ilabel">Importata</div><div class="ival">${new Date(r.creata_at).toLocaleString('it-IT')}</div></div>
+          <div class="irow"><div class="ilabel">Distinte</div><div class="ival">${tot} tot. (${com.length} comm. + ${cos.length} costr.)</div></div>
+        </div></div>
+        <div class="panel-card"><div class="panel-hd">Avanzamento</div><div class="panel-bd">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:var(--text-2);font-weight:500">Smistamento</span><span style="font-size:12px;font-weight:700">${pct}%</span></div>
+          <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div style="margin-top:12px"><span class="badge green">${ass}/${tot} assegnate</span></div>
+        </div></div>
+        <div class="info-ban" style="margin-bottom:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Invio email in attesa dei permessi amministratore (richiesti a Besafe). Lo smistamento funziona già; l'invio si attiva appena i permessi sono concessi.</span></div>
+      </div>
+    </div>`;
+}
+
+function secDist(titolo,items,isTerz){
+  if(!items.length)return'';
+  const tipo=isTerz?'terzista':null;
+  return`<div class="card det-sec">
+    <div class="card-pad" style="padding-bottom:0"><div class="sh"><div><div class="sh-title">${titolo}</div><div class="sh-sub">${items.length} voci</div></div><span class="badge blue">${items.length}</span></div></div>
+    <table class="smist-tbl"><thead><tr><th>Voce</th><th>Fornitore</th><th>Formati</th><th>Stato</th></tr></thead>
+    <tbody>${items.map(it=>rowDist(it,tipo)).join('')}</tbody></table></div>`;
+}
+
+function rowDist(it,tipo){
+  const ff=tipo?fors.filter(f=>f.attivo&&f.tipo===tipo):fors.filter(f=>f.attivo);
+  const opts='<option value="">— Seleziona —</option>'+ff.map(f=>`<option value="${f.id}"${f.id===it.fornitore_id?' selected':''}>${esc(f.nome)}</option>`).join('');
+  const fmts=it.formati_richiesti.split(',').map(s=>s.trim());
+  const stati=['da_smistare','da_inviare','inviata_da_confermare','confermata','respinta'];
+  return`<tr>
+    <td>${esc(it.nome)}</td>
+    <td><select class="smist-sel" onchange="assegna(${it.id},this.value)">${opts}</select></td>
+    <td><div class="fmt-checks">${['PDF','DWG','DXF'].map(f=>`<label class="fmt-check"><input type="checkbox"${fmts.includes(f)?' checked':''} onchange="toggleFmt(${it.id},'${f}',this.checked)"> ${f}</label>`).join('')}</div></td>
+    <td><select class="smist-sel" style="min-width:130px" onchange="cambiaStato(${it.id},this.value)">${stati.map(s=>`<option value="${s}"${s===it.stato?' selected':''}>${sl(s).l}</option>`).join('')}</select></td>
+  </tr>`;
+}
+
+async function assegna(id,fid){
+  if(!fid)return;
+  try{const r=await fetch(`${API}/api/rdo/distinte/${id}/assegna`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:parseInt(fid)})});if(!r.ok)throw 0;toast('Fornitore assegnato');await reload();}catch{toast('Errore assegnazione',true);}
+}
+async function toggleFmt(id,fmt,on){
+  const it=rdos.flatMap(r=>r.distinte).find(d=>d.id===id);if(!it)return;
+  let ff=it.formati_richiesti.split(',').map(s=>s.trim()).filter(Boolean);
+  if(on&&!ff.includes(fmt))ff.push(fmt);else if(!on)ff=ff.filter(f=>f!==fmt);
+  try{await fetch(`${API}/api/rdo/distinte/${id}/assegna`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:it.fornitore_id,formati_richiesti:ff.join(',')||'PDF'})});await reload();}catch{toast('Errore formati',true);}
+}
+async function cambiaStato(id,stato){
+  try{const r=await fetch(`${API}/api/rdo/distinte/${id}/stato`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stato})});if(!r.ok)throw 0;toast('Stato aggiornato');await reload();}catch{toast('Errore stato',true);}
+}
+
+function openImport(){
+  ['iPerc','iCod','iNome','iCliente'].forEach(x=>{document.getElementById(x).value='';document.getElementById(x).classList.remove('err');});
+  ['iPercErr','iCodErr','iNomeErr'].forEach(x=>document.getElementById(x).style.display='none');
+  openModal('importModal');
+}
+async function doImport(){
+  const perc=document.getElementById('iPerc').value.trim(),cod=document.getElementById('iCod').value.trim(),nome=document.getElementById('iNome').value.trim(),cli=document.getElementById('iCliente').value.trim();
+  let ok=true;
+  [['iPerc',perc,'iPercErr'],['iCod',cod,'iCodErr'],['iNome',nome,'iNomeErr']].forEach(([fid,val,eid])=>{
+    const el=document.getElementById(fid),er=document.getElementById(eid);
+    if(!val){el.classList.add('err');er.textContent='Campo obbligatorio';er.style.display='block';ok=false;}
+    else{el.classList.remove('err');er.style.display='none';}
+  });
+  if(!ok)return;
+  const btn=document.getElementById('btnImp');btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/api/rdo/importa`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({percorso_cartella:perc,codice:cod,nome,cliente:cli})});
+    if(!r.ok){const b=await r.json().catch(()=>({}));const er=document.getElementById('iPercErr');er.textContent=b.detail||'Cartella non trovata o struttura non valida';er.style.display='block';document.getElementById('iPerc').classList.add('err');return;}
+    const rdo=await r.json();closeModal('importModal');toast('Commessa importata');await reload();openDetail(rdo.id);
+  }catch{toast('Errore importazione',true);}finally{btn.disabled=false;}
+}
+
+const VIEWS={dashboard:{el:'view-dashboard',t:'Dashboard'},rdo:{el:'view-rdo',t:'RDO Attive'},'detail':{el:'view-detail',t:'Dettaglio RDO'}};
+function showView(name,navEl){
+  Object.values(VIEWS).forEach(v=>document.getElementById(v.el).classList.remove('active'));
+  document.getElementById(VIEWS[name].el).classList.add('active');
+  document.getElementById('pageTitle').textContent=VIEWS[name].t;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  document.querySelector('.content').scrollTop=0;
+}
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+function closeOv(e,id){if(e.target.id===id)closeModal(id);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-ov.open').forEach(m=>closeModal(m.id));});
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+let _tt;function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('err',!!err);t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+init();
+</script>
+</body>
+</html>
