@@ -300,6 +300,16 @@ textarea.fld{resize:vertical;min-height:60px}
 .fmt-row{display:flex;gap:16px;flex-wrap:wrap}
 .fmt-c{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--t2);cursor:pointer}
 .fmt-c input{accent-color:var(--go)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;border:1px solid var(--bd2);border-radius:var(--rs);padding:6px;background:var(--surf);min-height:38px;align-items:center;position:relative;cursor:text}
+.chips:focus-within{border-color:var(--go);box-shadow:0 0 0 2px rgba(245,168,35,.18)}
+.chip-x{display:inline-flex;align-items:center;gap:5px;background:rgba(245,168,35,.12);color:var(--go-d);border:1px solid rgba(245,168,35,.25);border-radius:14px;padding:2px 4px 2px 9px;font-size:11.5px;font-weight:600}
+.chip-x.bad{background:rgba(255,59,48,.1);color:#C00;border-color:rgba(255,59,48,.25)}
+.chip-x button{border:none;background:transparent;cursor:pointer;color:inherit;font-size:13px;line-height:1;padding:0 3px}
+.chips input{border:none;outline:none;flex:1;min-width:90px;font-family:inherit;font-size:13px;background:transparent;color:var(--t1);padding:3px}
+.chip-sugg{position:absolute;top:100%;left:0;right:0;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);box-shadow:var(--shl);z-index:10;max-height:180px;overflow-y:auto;margin-top:3px;display:none}
+.chip-sugg.open{display:block}
+.chip-sugg div{padding:6px 10px;font-size:12px;cursor:pointer}
+.chip-sugg div:hover,.chip-sugg div.act{background:rgba(245,168,35,.1);color:var(--go-d)}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);z-index:500;background:var(--t1);color:#fff;padding:11px 18px;border-radius:var(--rs);font-size:12.5px;box-shadow:var(--shl);opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
@@ -474,9 +484,11 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mbd">
       <input type="hidden" id="fId">
       <div class="fg"><label class="fl">Nome azienda *</label><input class="fld" id="fNome" placeholder="Es: Blickle Italia"><div class="ferr" id="fNomeErr">Campo obbligatorio</div></div>
-      <div class="fg"><label class="fl">Email *</label><input class="fld" id="fEmail" type="email" placeholder="ordini@fornitore.it"><div class="ferr" id="fEmailErr">Email non valida</div></div>
+      <div class="fg"><label class="fl">Destinatario (To) *</label><div class="chips" id="chips_to" onclick="document.getElementById('chipin_to').focus()"></div><div class="ferr" id="fToErr">Serve almeno un indirizzo valido</div></div>
+      <div class="fg"><label class="fl">CC</label><div class="chips" id="chips_cc" onclick="document.getElementById('chipin_cc').focus()"></div></div>
+      <div class="fg"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
       <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
-      <div class="fg"><label class="fl">Specializzazioni / Lavorazioni</label><input class="fld" id="fLav" placeholder="Es: Taglio laser, Piega, Carpenteria"><div class="fhint">Separa con virgola.</div></div>
+      <div class="fg"><label class="fl">Specializzazioni / Lavorazioni</label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Scegli dalle proprietà delle distinte o digita un valore nuovo (Invio o virgola).</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label></div>
@@ -500,7 +512,8 @@ const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new
 const RDO_OPEN={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadFornitori()]);await loadCommesse();go('dash');}
+async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni()]);await loadCommesse();go('dash');}
+async function loadLavorazioni(){try{const r=await fetch(API+'/api/proprieta-distinte');if(r.ok)LAVORAZIONI=(await r.json()).valori||[];}catch{}}
 async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
 async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(r.ok)fornitori=await r.json();}catch{}}
 async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r.ok)throw 0;commesse=await r.json();
@@ -797,10 +810,14 @@ function renderForn(){
   document.getElementById('fornSub').textContent=fornitori.filter(f=>f.attivo).length+' fornitori attivi';
   const g=document.getElementById('fgrid');
   if(!fornitori.length){g.innerHTML=emptyHtml('Nessun fornitore','Aggiungi i fornitori e terzisti alla rubrica.','openForn()','Aggiungi fornitore');return;}
-  g.innerHTML=fornitori.map(f=>`<div class="fcard" style="${f.attivo?'':'opacity:.55'}">
+  g.innerHTML=fornitori.map(f=>{
+    const tos=(f.emails_to&&f.emails_to.length)?f.emails_to:(f.email?[f.email]:[]);
+    const extra=Math.max(0,tos.length-1)+((f.emails_cc||[]).length)+((f.emails_ccn||[]).length);
+    const mailLine=tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>';
+    return `<div class="fcard" style="${f.attivo?'':'opacity:.55'}">
     <div class="fch"><div class="fcav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span></div></div>
-    <div class="fcc"><span>✉ <a href="mailto:${esc(f.email)}">${esc(f.email)}</a></span>${f.lavorazioni?`<span class="fmuted">🔧 ${esc(f.lavorazioni)}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
-    <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`).join('');
+    <div class="fcc">${mailLine}${f.lavorazioni?`<span class="fmuted">🔧 ${esc(f.lavorazioni)}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
+    <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`;}).join('');
 }
 
 /* ── NUOVO/MODIFICA PROGETTO ── */
@@ -849,23 +866,28 @@ function openForn(id){
   document.getElementById('mFornTit').textContent=ed?'Modifica fornitore':'Nuovo fornitore';
   document.getElementById('fId').value=ed?ed.id:'';
   document.getElementById('fNome').value=ed?ed.nome:'';
-  document.getElementById('fEmail').value=ed?ed.email:'';
   document.getElementById('fTipo').value=ed?ed.tipo:'commerciale';
-  document.getElementById('fLav').value=ed?(ed.lavorazioni||''):'';
   document.getElementById('fNote').value=ed?(ed.note||''):'';
   const fmts=(ed?ed.formati_preferiti:'PDF').split(',').map(x=>x.trim());
   document.getElementById('fPdf').checked=fmts.includes('PDF');document.getElementById('fDwg').checked=fmts.includes('DWG');document.getElementById('fDxf').checked=fmts.includes('DXF');document.getElementById('fStep').checked=fmts.includes('STEP');
   document.getElementById('fAttivoGrp').style.display=ed?'block':'none';document.getElementById('fAttivo').checked=ed?ed.attivo:true;
   document.getElementById('fDel').style.display=ed?'inline-flex':'none';
-  clearErr(['fNomeErr','fEmailErr'],['fNome','fEmail']);mOpen('mForn');
+  chipInit('to',ed?(ed.emails_to||[]):[], {validate:isEmail});
+  chipInit('cc',ed?(ed.emails_cc||[]):[], {validate:isEmail});
+  chipInit('ccn',ed?(ed.emails_ccn||[]):[], {validate:isEmail});
+  chipInit('lav',(ed&&ed.lavorazioni)?ed.lavorazioni.split(',').map(x=>x.trim()).filter(Boolean):[], {suggest:LAVORAZIONI});
+  clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
 async function salvaForn(){
-  clearErr(['fNomeErr','fEmailErr'],['fNome','fEmail']);
-  const nome=document.getElementById('fNome').value.trim(),email=document.getElementById('fEmail').value.trim();
-  let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('fEmailErr','fEmail');ok=false;}if(!ok)return;
+  clearErr(['fNomeErr','fToErr'],['fNome']);
+  const nome=document.getElementById('fNome').value.trim();
+  // conferma eventuale testo non ancora trasformato in chip
+  ['to','cc','ccn','lav'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
+  const to=chipVals('to').filter(isEmail), cc=chipVals('cc').filter(isEmail), ccn=chipVals('ccn').filter(isEmail);
+  let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!to.length){showErr('fToErr');ok=false;}if(!ok)return;
   const fmts=[];if(document.getElementById('fPdf').checked)fmts.push('PDF');if(document.getElementById('fDwg').checked)fmts.push('DWG');if(document.getElementById('fDxf').checked)fmts.push('DXF');if(document.getElementById('fStep').checked)fmts.push('STEP');
   const id=document.getElementById('fId').value;
-  const payload={nome,email,tipo:document.getElementById('fTipo').value,lavorazioni:document.getElementById('fLav').value.trim(),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim()};
+  const payload={nome,tipo:document.getElementById('fTipo').value,lavorazioni:chipVals('lav').join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn};
   if(id)payload.attivo=document.getElementById('fAttivo').checked;
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
@@ -876,6 +898,27 @@ async function eliminaForn(){
   const id=document.getElementById('fId').value;if(!id)return;if(!confirm('Disattivare questo fornitore?'))return;
   try{const r=await fetch(API+'/api/fornitori/'+id,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;mClose('mForn');toast('Fornitore disattivato','ok');await loadFornitori();renderForn();}catch{toast('Errore',true);}
 }
+
+/* ── CHIP INPUT ── */
+const CHIPS={}; // key -> {vals:[], validate:fn|null, suggest:[]|null}
+let LAVORAZIONI=[]; // suggerimenti da /api/proprieta-distinte
+function chipInit(key,vals,opt){CHIPS[key]={vals:[...(vals||[])],validate:(opt&&opt.validate)||null,suggest:(opt&&opt.suggest)||null};chipRender(key);}
+function chipVals(key){return CHIPS[key]?CHIPS[key].vals:[];}
+function chipRender(key){
+  const wrap=document.getElementById('chips_'+key);if(!wrap)return;const st=CHIPS[key];
+  const chipsHtml=st.vals.map((v,i)=>{const bad=st.validate&&!st.validate(v);return `<span class="chip-x${bad?' bad':''}">${esc(v)}<button type="button" onclick="chipDel('${key}',${i})">×</button></span>`;}).join('');
+  wrap.innerHTML=chipsHtml+`<input type="text" id="chipin_${key}" placeholder="${st.vals.length?'':'aggiungi…'}" oninput="chipSuggest('${key}')" onkeydown="chipKey(event,'${key}')" onblur="setTimeout(()=>chipBlur('${key}'),150)"><div class="chip-sugg" id="chipsugg_${key}"></div>`;
+}
+function chipAdd(key,val){val=(val||'').trim();if(!val)return;const st=CHIPS[key];if(!st.vals.some(x=>x.toLowerCase()===val.toLowerCase()))st.vals.push(val);chipRender(key);const inp=document.getElementById('chipin_'+key);if(inp)inp.focus();}
+function chipDel(key,i){CHIPS[key].vals.splice(i,1);chipRender(key);}
+function chipKey(e,key){if(e.key==='Enter'||e.key===','){e.preventDefault();const inp=document.getElementById('chipin_'+key);chipAdd(key,inp.value);inp.value='';chipSuggest(key);}else if(e.key==='Backspace'&&!e.target.value){chipDel(key,CHIPS[key].vals.length-1);}}
+function chipBlur(key){const inp=document.getElementById('chipin_'+key);if(inp&&inp.value.trim()){chipAdd(key,inp.value);inp.value='';}chipCloseSugg(key);}
+function chipSuggest(key){const st=CHIPS[key];const box=document.getElementById('chipsugg_'+key);if(!st.suggest||!box)return;const inp=document.getElementById('chipin_'+key);const q=(inp.value||'').toLowerCase();
+  const opts=st.suggest.filter(o=>o.toLowerCase().includes(q)&&!st.vals.some(v=>v.toLowerCase()===o.toLowerCase())).slice(0,12);
+  if(!opts.length){chipCloseSugg(key);return;}
+  box.innerHTML=opts.map(o=>`<div onmousedown="event.preventDefault();chipAdd('${key}','${jsq(o)}');document.getElementById('chipin_${key}').value='';chipCloseSugg('${key}')">${esc(o)}</div>`).join('');box.classList.add('open');}
+function chipCloseSugg(key){const box=document.getElementById('chipsugg_'+key);if(box)box.classList.remove('open');}
+function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 
 /* ── UTILS ── */
 function esc(s){const d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
