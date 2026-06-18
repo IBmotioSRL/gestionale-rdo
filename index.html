@@ -2,1273 +2,901 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#2C1506">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="RDO IB Motion">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-512.png">
-<title>Gestionale RDO — IB Motion</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<title>Gestionale RDO · IB Motion</title>
 <style>
-:root{
-  --sidebar-bg:#2C1506;--sidebar-w:240px;
-  --gold:#F5A823;--gold-dark:#D48A0F;--gold-bg:#FEF3DC;--gold-text:#7A4A00;
-  --bg:#F8F4EF;--surface:#FFFFFF;--border:#EAE0D6;--border-light:#F3EDE6;
-  --text-1:#1C0F07;--text-2:#5C3D2E;--text-3:#9C7B6A;
-  --green:#16A34A;--green-bg:#DCFCE7;--green-text:#15803D;
-  --red:#DC2626;--red-bg:#FEE2E2;--red-text:#991B1B;
-  --blue-bg:#DBEAFE;--blue-text:#1E40AF;
-  --amber-bg:#FEF3C7;--amber-text:#92400E;
-  --purple-bg:#F3E8FF;--purple-text:#6B21A8;
-  --shadow-sm:0 1px 3px rgba(44,21,6,.07);
-  --shadow-md:0 4px 14px rgba(44,21,6,.10),0 2px 4px rgba(44,21,6,.05);
-  --shadow-lg:0 16px 40px rgba(44,21,6,.14),0 4px 12px rgba(44,21,6,.07);
-  --radius:12px;--radius-sm:8px;--radius-lg:16px;
-  --t:.22s cubic-bezier(.4,0,.2,1);
-  --bottom-nav:60px;
-}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;display:flex;height:100vh;overflow:hidden}
+:root{
+  --br:#2C1506;--go:#F5A823;--go-d:#D48A0F;--bg:#F8F4EF;
+  --blue:#007AFF;--green:#34C759;--orange:#FF9500;--teal:#5AC8FA;--red:#FF3B30;--purple:#5856D6;
+  --surf:#FFFFFF;--bd:rgba(0,0,0,.07);--bd2:rgba(0,0,0,.12);
+  --t1:#1C0F07;--t2:#7A6050;--t3:#B8A090;
+  --sh:0 1px 4px rgba(44,21,6,.06),0 1px 2px rgba(44,21,6,.03);
+  --shd:0 6px 20px rgba(44,21,6,.09),0 2px 6px rgba(44,21,6,.05);
+  --shl:0 16px 44px rgba(44,21,6,.16),0 4px 12px rgba(44,21,6,.08);
+  --r:12px;--rs:8px;--rx:6px;
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;font-size:13px}
 
-/* ── Sidebar ── */
-.sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;z-index:100;transition:transform var(--t)}
-.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
-.sidebar-logo img{height:36px;object-fit:contain}
-.sidebar-nav{padding:10px;flex:1;display:flex;flex-direction:column;gap:2px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);color:#C4A882;cursor:pointer;font-size:13.5px;font-weight:500;transition:background var(--t),color var(--t);text-decoration:none;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif}
-.nav-item svg{width:17px;height:17px;flex-shrink:0}
-.nav-item:hover{background:rgba(255,255,255,.07);color:#E8D5B5}
-.nav-item.active{background:rgba(245,168,35,.18);color:var(--gold);font-weight:600}
-.nav-divider{height:1px;background:rgba(255,255,255,.07);margin:6px 0}
-.sidebar-footer{padding:12px 14px;border-top:1px solid rgba(255,255,255,.08)}
-.api-pill{display:flex;align-items:center;gap:6px;font-size:11px;color:#8A6E58;padding:6px 9px;border-radius:6px;background:rgba(0,0,0,.2);cursor:pointer;width:100%;border:none;font-family:'DM Sans',sans-serif;transition:background var(--t)}
-.api-pill:hover{background:rgba(0,0,0,.35)}
-.api-dot{width:6px;height:6px;border-radius:50%;background:#8A6E58;flex-shrink:0}
+.app{display:grid;grid-template-columns:210px 1fr;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sb{background:#FBF7F2;border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.sb-brand{padding:16px 14px 12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.sb-logo{height:32px;object-fit:contain;max-width:140px;display:block}
+.sb-prod{font-size:9.5px;font-weight:700;color:var(--t3);letter-spacing:.06em;margin-top:6px;text-transform:uppercase}
+.sb-nav{padding:8px 6px;flex:1;overflow-y:auto}
+.sb-sec{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;padding:6px 10px 4px}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rx);font-size:12.5px;font-weight:500;color:var(--t2);cursor:pointer;transition:background .12s,color .12s;margin-bottom:1px;user-select:none}
+.ni:hover{background:rgba(44,21,6,.05);color:var(--t1)}
+.ni.on{background:rgba(245,168,35,.13);color:var(--go-d);font-weight:700}
+.ni svg{width:15px;height:15px;flex-shrink:0}
+.sb-foot{padding:10px 12px;border-top:1px solid var(--bd);flex-shrink:0}
+.api-pill{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2);padding:6px 9px;border-radius:6px;background:rgba(44,21,6,.04);cursor:pointer;width:100%;border:none;font-family:inherit;transition:background .12s}
+.api-pill:hover{background:rgba(44,21,6,.08)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0}
 .api-pill.ok .api-dot{background:var(--green)}
 .api-pill.err .api-dot{background:var(--red)}
-.api-pill.ok span{color:#A8C8A0}
-.api-pill.err span{color:#F0A0A0}
+.sb-user{display:flex;align-items:center;gap:8px;margin-top:8px}
+.av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#2C1506,#7A3E18);display:flex;align-items:center;justify-content:center;color:#F5A823;font-size:9px;font-weight:800;flex-shrink:0}
 
-/* ── Main layout ── */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 22px;flex-shrink:0;box-shadow:var(--shadow-sm)}
-.hamburger{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:none;background:transparent;cursor:pointer;color:var(--text-2);border-radius:var(--radius-sm)}
-.hamburger:hover{background:var(--border-light)}
-.hamburger svg{width:20px;height:20px}
-.topbar-logo{display:none}
-.topbar-logo img{height:30px}
-.topbar-title{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--text-1);flex:1}
-.content{flex:1;overflow-y:auto;padding:22px}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;overflow:hidden;min-height:0;background:var(--bg)}
+.view{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.view.on{display:flex}
+.vscroll{flex:1;overflow-y:auto;padding:14px 20px 60px;min-height:0}
+.vscroll::-webkit-scrollbar,.tscroll::-webkit-scrollbar,.clist::-webkit-scrollbar{width:5px}
+.vscroll::-webkit-scrollbar-thumb,.tscroll::-webkit-scrollbar-thumb,.clist::-webkit-scrollbar-thumb{background:rgba(44,21,6,.1);border-radius:4px}
+.vtop{padding:14px 20px 12px;flex-shrink:0;border-bottom:1px solid var(--bd);background:var(--surf)}
+.vtop-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.h1{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.h1 em{font-style:normal;color:var(--go-d)}
+.vsub{font-size:11.5px;color:var(--t2);margin-top:2px}
+.bc{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t3);margin-bottom:5px}
+.bc a{color:var(--t2);font-weight:500;cursor:pointer;text-decoration:none}
+.bc a:hover{color:var(--go-d)}
+.bc svg{width:9px;height:9px}
 
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;transition:all var(--t);border:none;white-space:nowrap}
-.btn svg{width:15px;height:15px;flex-shrink:0}
-.btn-primary{background:var(--gold);color:#1C0F07}
-.btn-primary:hover{background:var(--gold-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,168,35,.35)}
-.btn-secondary{background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
-.btn-secondary:hover{background:var(--border-light)}
-.btn-ghost{background:transparent;color:var(--text-2);padding:6px 10px;font-size:12.5px}
-.btn-ghost:hover{background:var(--border-light)}
-.btn-danger{background:var(--red-bg);color:var(--red-text)}
-.btn-danger:hover{background:#FECACA}
-.btn-sm{padding:5px 11px;font-size:12px}
-.btn:disabled{opacity:.5;cursor:default;transform:none}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;border-radius:var(--rs);padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s;border:1px solid transparent;white-space:nowrap}
+.btn svg{width:12px;height:12px;flex-shrink:0}
+.btn-ghost{background:transparent;border-color:var(--bd2);color:var(--t2)}
+.btn-ghost:hover{background:rgba(44,21,6,.04);color:var(--t1)}
+.btn-go{background:linear-gradient(135deg,var(--go),var(--go-d));color:var(--br);box-shadow:0 2px 7px rgba(245,168,35,.25)}
+.btn-go:hover{filter:brightness(1.05)}
+.btn-danger{background:rgba(255,59,48,.1);color:#C00;border-color:rgba(255,59,48,.2)}
+.btn-danger:hover{background:rgba(255,59,48,.18)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn-sm{padding:4px 9px;font-size:11px}
 
-/* ── Page header ── */
-.page-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
-.page-hd h1{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:var(--text-1)}
-.page-hd p{font-size:13px;color:var(--text-3);margin-top:3px}
-.page-hd-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px;margin-top:18px;display:flex;align-items:center;gap:7px}
+.sl:first-child{margin-top:0}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.card{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:16px}
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.co{background:rgba(255,149,0,.1);color:#C07000}.cb{background:rgba(0,122,255,.09);color:#0055C8}
+.cg{background:rgba(52,199,89,.1);color:#1A7A2E}.ct2{background:rgba(90,200,250,.12);color:#0077A0}
+.cgr{background:rgba(120,100,80,.08);color:var(--t2)}
 
-/* ── Stats row ── */
-.stats-row{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
-.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:120px;box-shadow:var(--shadow-sm)}
-.stat-n{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:800;color:var(--text-1);line-height:1}
-.stat-l{font-size:11.5px;color:var(--text-3);margin-top:4px;font-weight:500}
-.stat-box.gold .stat-n{color:var(--gold-dark)}
-.stat-box.green .stat-n{color:var(--green)}
-.stat-box.blue .stat-n{color:var(--blue-text)}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 24px;color:var(--t3)}
+.empty svg{width:42px;height:42px;margin-bottom:14px;color:var(--t3)}
+.empty .et{font-size:14px;font-weight:700;color:var(--t2);margin-bottom:6px}
+.empty .ed{font-size:12px;max-width:340px;line-height:1.6;margin-bottom:16px}
 
-/* ── Project cards ── */
-.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:transform var(--t),box-shadow var(--t),border-color var(--t);position:relative;overflow:hidden}
-.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);opacity:0;transition:opacity var(--t)}
-.proj-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:#D4C5B8}
-.proj-card:hover::before{opacity:1}
-.proj-codice{font-family:'Montserrat',sans-serif;font-size:10.5px;font-weight:700;color:var(--gold-dark);letter-spacing:.08em;text-transform:uppercase;background:var(--gold-bg);display:inline-block;padding:3px 8px;border-radius:5px;margin-bottom:7px}
-.proj-nome{font-family:'Montserrat',sans-serif;font-size:14.5px;font-weight:700;color:var(--text-1);margin-bottom:5px;line-height:1.3}
-.proj-meta{font-size:12px;color:var(--text-3);margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap}
-.proj-meta span{display:flex;align-items:center;gap:4px}
-.proj-meta svg{width:12px;height:12px}
-.proj-progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.proj-progress-label{font-size:11.5px;color:var(--text-2);font-weight:600}
-.proj-progress-pct{font-size:11.5px;color:var(--text-3)}
-.prog-bar-bg{height:5px;background:var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
-.prog-bar-fill{height:100%;border-radius:10px;background:var(--gold);transition:width .5s ease}
-.prog-bar-fill.done{background:var(--green)}
-.proj-foot{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border-light)}
-.proj-chips{display:flex;gap:5px;flex-wrap:wrap}
-.chip{font-size:10.5px;padding:2px 8px;border-radius:5px;background:var(--bg);color:var(--text-2);border:1px solid var(--border);font-weight:500}
+/* ── DASHBOARD ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:8px}
+.m{background:var(--surf);border-radius:var(--r);padding:14px;border:1px solid var(--bd);box-shadow:var(--sh)}
+.mico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:9px}
+.mico svg{width:14px;height:14px}
+.mn{font-size:34px;font-weight:800;line-height:1;letter-spacing:-2px;margin-bottom:3px}
+.ml{font-size:12px;font-weight:600;color:var(--t1)}
+.ms{font-size:10.5px;color:var(--t2);margin-top:1px}
+.mo .mico{background:rgba(255,149,0,.1);color:var(--orange)}.mo .mn{color:var(--orange)}
+.mb .mico{background:rgba(0,122,255,.1);color:var(--blue)}.mb .mn{color:var(--blue)}
+.mt .mico{background:rgba(90,200,250,.13);color:var(--teal)}.mt .mn{color:var(--teal)}
+.mg .mico{background:rgba(52,199,89,.1);color:var(--green)}.mg .mn{color:var(--green)}
+.dash-2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.forn-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.fav{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.fi2{flex:1;min-width:0}.fn2{font-size:11.5px;font-weight:600;color:var(--t1)}.fs2{font-size:9.5px;color:var(--t2)}
+.fnn{font-size:13px;font-weight:700;color:var(--t1);min-width:16px;text-align:right}
 
-/* ── Empty state ── */
-.empty-st{display:flex;flex-direction:column;align-items:center;text-align:center;padding:72px 24px}
-.empty-ico{width:64px;height:64px;background:var(--gold-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;border:1px solid #F5D78A}
-.empty-ico svg{width:28px;height:28px;color:var(--gold-dark)}
-.empty-tit{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;color:var(--text-2);margin-bottom:7px}
-.empty-desc{font-size:13px;color:var(--text-3);max-width:340px;line-height:1.6;margin-bottom:20px}
+/* ── PROGETTI GRID ── */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:9px}
+.pcard{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);cursor:pointer;transition:transform .15s,box-shadow .15s;overflow:hidden}
+.pcard:hover{transform:translateY(-2px);box-shadow:var(--shd)}
+.pctop{height:3px;background:var(--go)}
+.pcb{padding:13px}
+.pchd{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.pccod{font-size:9px;font-weight:800;color:var(--go-d);text-transform:uppercase;letter-spacing:.05em;background:rgba(245,168,35,.1);padding:2px 7px;border-radius:4px}
+.pcdate{font-size:9px;color:var(--t3)}
+.pcname{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px;line-height:1.3}
+.pccli{font-size:10.5px;color:var(--t2);margin-bottom:9px}
+.pcbb{height:4px;background:rgba(44,21,6,.07);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.pcbf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--go),var(--go-d))}
+.pcbf.done{background:var(--green)}
+.pcstats{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
+.pcstat{font-size:10px;color:var(--t2)}.pcstat strong{font-weight:700;color:var(--t1)}
 
-/* ── Progetto detail ── */
-.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-3);margin-bottom:18px;flex-wrap:wrap}
-.breadcrumb a{color:var(--text-3);text-decoration:none;cursor:pointer;display:flex;align-items:center}
-.breadcrumb a:hover{color:var(--gold-dark)}
-.breadcrumb svg{width:12px;height:12px}
-.prog-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
-.prog-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.prog-codice-big{font-family:'Montserrat',sans-serif;font-size:10.5px;font-weight:700;color:var(--gold-dark);letter-spacing:.08em;background:var(--gold-bg);padding:3px 9px;border-radius:5px;display:inline-block;margin-bottom:7px}
-.prog-nome-big{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;color:var(--text-1);margin-bottom:7px}
-.prog-info-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px}
-.prog-info-item{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-3)}
-.prog-info-item svg{width:13px;height:13px}
-.prog-info-item strong{color:var(--text-2)}
-.prog-path{font-size:11px;color:var(--text-3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);font-family:monospace;word-break:break-all}
-.prog-note{margin-top:10px;font-size:12.5px;color:var(--text-2);padding:8px 12px;background:var(--gold-bg);border-radius:var(--radius-sm);border-left:3px solid var(--gold)}
-.prog-stats-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.pstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 15px;flex:1;min-width:90px;text-align:center;box-shadow:var(--shadow-sm)}
-.pstat-n{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:var(--text-1)}
-.pstat-l{font-size:10.5px;color:var(--text-3);margin-top:2px;font-weight:500}
-.pstat.gold .pstat-n{color:var(--gold-dark)}
-.pstat.blue .pstat-n{color:var(--blue-text)}
-.pstat.green .pstat-n{color:var(--green)}
+/* ── PROGETTO DETAIL ── */
+.view-ws{overflow:hidden}
+.wsh{padding:10px 18px;background:var(--surf);border-bottom:1px solid var(--bd);flex-shrink:0}
+.wpr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wcod{font-size:9px;font-weight:800;color:var(--go-d);letter-spacing:.05em;text-transform:uppercase;background:rgba(245,168,35,.1);padding:2px 7px;border-radius:4px}
+.wtit{font-size:15px;font-weight:800;color:var(--t1);letter-spacing:-.2px}
+.wcli{font-size:11px;color:var(--t2)}
+.wact{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap}
+.wpath{font-size:10px;color:var(--t3);margin-top:6px;font-family:monospace;word-break:break-all}
+.wprog{display:flex;align-items:center;gap:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);flex-wrap:wrap}
+.wpill{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--t2)}
+.wpill b{font-weight:700;color:var(--t1)}
+.wdot{width:7px;height:7px;border-radius:50%}
+.wbar{flex:1;height:5px;background:rgba(44,21,6,.07);border-radius:4px;overflow:hidden;max-width:200px}
+.wbarf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--go),var(--go-d))}
+.ws{display:grid;grid-template-columns:1fr 280px;overflow:hidden;flex:1;min-height:0}
 
-/* ── Distinte ── */
-.distinte-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
-.ds-header{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--border-light);background:var(--bg)}
-.ds-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.ds-ico.comm{background:var(--gold-bg);color:var(--gold-dark)}
-.ds-ico.costr{background:var(--purple-bg);color:#7C3AED}
-.ds-ico svg{width:16px;height:16px}
-.ds-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--text-1);flex:1}
-.ds-count{font-size:12px;color:var(--text-3);background:var(--bg);border:1px solid var(--border);padding:2px 9px;border-radius:10px;font-weight:600}
-.distinta-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border-light);transition:background var(--t)}
-.distinta-row:last-child{border-bottom:none}
-.distinta-row:hover{background:#FDFAF7}
-.dr-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800}
-.dr-icon.comm{background:var(--gold-bg);color:var(--gold-dark)}
-.dr-icon.costr{background:var(--purple-bg);color:#7C3AED}
-.dr-body{flex:1;min-width:0}
-.dr-nome{font-size:13.5px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dr-sub{font-size:11.5px;color:var(--text-3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
-.dr-sub span{display:flex;align-items:center;gap:3px}
-.dr-sub svg{width:11px;height:11px}
-.dr-fornitore{font-size:12px;color:var(--text-2);min-width:110px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
-.dr-stato{min-width:110px;text-align:center}
-.dr-btn{flex-shrink:0}
+.treep{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--bd);background:var(--surf);min-height:0}
+.tph{padding:8px 13px;border-bottom:1px solid var(--bd);flex-shrink:0;display:flex;align-items:center;gap:8px;background:var(--bg)}
+.tpt{font-size:11px;font-weight:800;color:var(--t1);flex:1}
+.tpt span{font-size:9px;font-weight:500;color:var(--t3);margin-left:4px}
+.tck{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--t2);cursor:pointer}
+.tck input{accent-color:var(--go)}
+.tscroll{overflow-y:auto;flex:1;min-height:0}
+.tr-cat{display:flex;align-items:center;gap:7px;padding:8px 13px 8px 10px;background:rgba(248,244,239,.95);border-bottom:1px solid var(--bd);cursor:pointer;user-select:none;position:sticky;top:0;z-index:2}
+.tr-cat:hover{background:rgba(245,168,35,.06)}
+.tr-arrow{font-size:10px;color:var(--t3);width:12px;flex-shrink:0}
+.tr-cat-label{font-size:11px;font-weight:800;color:var(--t1);letter-spacing:.02em;text-transform:uppercase;flex:1}
+.tr-cnt{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:12px;background:rgba(44,21,6,.06);color:var(--t2);white-space:nowrap}
+.tr-cnt.done{background:rgba(52,199,89,.1);color:#1A7A2E}
+.tr-assign-all{font-size:9px;font-weight:700;color:var(--go-d);padding:2px 7px;border-radius:4px;background:rgba(245,168,35,.09);border:1px solid rgba(245,168,35,.2);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.tr-assign-all:hover{background:rgba(245,168,35,.18)}
+.tr-lav{display:flex;align-items:center;gap:7px;padding:6px 13px 6px 26px;border-bottom:1px solid rgba(0,0,0,.03);cursor:pointer;user-select:none}
+.tr-lav:hover{background:rgba(245,168,35,.04)}
+.tr-lav-label{font-size:11px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-lav-bar{width:48px;height:3px;border-radius:3px;background:rgba(44,21,6,.07);overflow:hidden;flex-shrink:0}
+.tr-lav-barf{height:100%;border-radius:3px}
+.tr-part{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 36px;border-bottom:1px solid rgba(0,0,0,.03);cursor:pointer}
+.tr-part:hover{background:rgba(245,168,35,.04)}
+.tr-part.sel{background:rgba(245,168,35,.09);border-left:3px solid var(--go);padding-left:33px}
+.tr-part input[type=checkbox]{accent-color:var(--go);flex-shrink:0;cursor:pointer}
+.tr-pcod{font-size:9px;font-weight:800;color:var(--go-d);font-family:monospace;min-width:64px;white-space:nowrap}
+.tr-pdesc{font-size:11px;font-weight:600;color:var(--t1);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-pqty{font-size:9.5px;font-weight:700;color:var(--t3);min-width:26px;text-align:right}
+.tr-pfiles{display:flex;gap:2px;flex-shrink:0}
+.ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
+.ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
+.ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.ac-set{background:rgba(245,168,35,.1);color:var(--go-d);border:1px solid rgba(245,168,35,.2)}
+.ac-set:hover{background:rgba(245,168,35,.18)}
+.ac-empty{background:rgba(142,130,120,.06);color:var(--t3);border:1px solid var(--bd)}
+.ac-empty:hover{background:rgba(245,168,35,.07);color:var(--go-d)}
+.sc{display:inline-flex;align-items:center;font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;flex-shrink:0}
+.s_da_inviare{background:rgba(0,122,255,.08);color:#0055C8}
+.s_inviata_da_confermare{background:rgba(90,200,250,.12);color:#0077A0}
+.s_confermata{background:rgba(52,199,89,.1);color:#1A7A2E}
+.s_respinta{background:rgba(255,59,48,.08);color:#C00}
 
-/* ── Badges ── */
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;cursor:default}
-.badge.gray{background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
-.badge.gold{background:var(--gold-bg);color:var(--gold-text)}
-.badge.blue{background:var(--blue-bg);color:var(--blue-text)}
-.badge.green{background:var(--green-bg);color:var(--green-text)}
-.badge.red{background:var(--red-bg);color:var(--red-text)}
-.badge.amber{background:var(--amber-bg);color:var(--amber-text)}
-.badge.purple{background:var(--purple-bg);color:var(--purple-text)}
+/* ── CALDERONE ── */
+.calp{display:flex;flex-direction:column;background:var(--bg);overflow:hidden;min-height:0}
+.calh{padding:9px 12px 0;flex-shrink:0}
+.calht{font-size:11px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.calht svg{width:12px;height:12px;color:var(--go-d)}
+.calhint{font-size:9.5px;color:var(--go-d);background:rgba(245,168,35,.09);border:1px solid rgba(245,168,35,.2);border-radius:5px;padding:4px 8px;margin-bottom:6px;line-height:1.35}
+.csearch{position:relative;margin-bottom:6px}
+.csearch input{width:100%;padding:6px 8px 6px 26px;background:var(--surf);border:1px solid var(--bd);border-radius:var(--rx);font-size:11px;color:var(--t1);font-family:inherit;outline:none}
+.csearch input:focus{border-color:rgba(245,168,35,.4)}
+.csearch svg{position:absolute;left:7px;top:50%;transform:translateY(-50%);width:11px;height:11px;color:var(--t3)}
+.ctabs{padding:0 12px;border-bottom:1px solid var(--bd);flex-shrink:0;display:flex;gap:1px;flex-wrap:wrap}
+.ctab{padding:4px 8px;border-radius:5px;font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;white-space:nowrap;margin-bottom:4px;user-select:none}
+.ctab:hover{background:rgba(44,21,6,.04)}
+.ctab.on{background:var(--surf);color:var(--t1);border:1px solid var(--bd)}
+.ctc{font-size:8.5px;font-weight:700;color:var(--t3);margin-left:2px}
+.clist{overflow-y:auto;flex:1;min-height:0}
+.cgrp{padding:7px 12px 2px;font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.cgrp.sep{margin-top:3px;padding-top:7px;border-top:1px solid var(--bd)}
+.fi-f{display:flex;align-items:center;gap:7px;padding:5px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.025)}
+.fi-f:hover{background:rgba(245,168,35,.05)}
+.fi-f.hi{background:rgba(245,168,35,.09);border-left:3px solid var(--go);padding-left:9px}
+.fi-f.dim{opacity:.32}
+.fic{width:24px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:800;flex-shrink:0;color:#fff}
+.fxlsx{background:linear-gradient(135deg,#1D6F42,#107C41)}.fpdf{background:linear-gradient(135deg,#E02020,#C00)}
+.fdxf{background:linear-gradient(135deg,#1E40AF,#102a80)}.fdwg{background:linear-gradient(135deg,#107C41,#0a5a30)}
+.fstep,.fstp{background:linear-gradient(135deg,#0078D4,#005A9E)}.fmisc{background:linear-gradient(135deg,#8E8E93,#636366)}
+.fcsv{background:linear-gradient(135deg,#1D6F42,#107C41)}
+.finfo{flex:1;min-width:0}
+.fname{font-size:10.5px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fmeta{font-size:8.5px;color:var(--t3);margin-top:1px}
+.fbadge{font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.fbbom{background:rgba(245,168,35,.12);color:var(--go-d)}.fbdraw{background:rgba(0,122,255,.08);color:#0055C8}
+.fbds{background:rgba(88,86,214,.08);color:#4B49B0}.fbmisc{background:rgba(120,100,80,.08);color:var(--t2)}
 
-/* ── Kanban ── */
-.kanban-scroll{overflow-x:auto;padding-bottom:12px}
-.kanban-wrap{display:flex;gap:14px;min-width:max-content}
-.k-col{width:230px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;max-height:calc(100vh - 190px);display:flex;flex-direction:column}
-.k-col-hd{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);flex-shrink:0}
-.k-col-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
-.k-col-n{font-size:11px;font-weight:700;color:var(--text-3);background:var(--border);padding:2px 7px;border-radius:10px}
-.k-col-body{overflow-y:auto;flex:1;padding:6px}
-.k-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;cursor:pointer;transition:transform var(--t),box-shadow var(--t);margin-bottom:6px}
-.k-card:last-child{margin-bottom:0}
-.k-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-md)}
-.k-nome{font-size:12.5px;font-weight:600;color:var(--text-1);margin-bottom:5px}
-.k-commessa{font-size:10.5px;color:var(--gold-dark);font-weight:700;background:var(--gold-bg);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:5px}
-.k-fornitore{font-size:11.5px;color:var(--text-3)}
+/* ── RDO VIEW ── */
+.rdo-grid{display:flex;flex-direction:column;gap:10px}
+.rdo-proj{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);overflow:hidden}
+.rdo-ph{display:flex;align-items:center;gap:9px;padding:11px 14px;cursor:pointer;user-select:none}
+.rdo-ph:hover{background:rgba(245,168,35,.04)}
+.rdo-pcod{font-size:9px;font-weight:800;color:var(--go-d);text-transform:uppercase;letter-spacing:.05em;background:rgba(245,168,35,.1);padding:2px 7px;border-radius:4px;flex-shrink:0}
+.rdo-pname{font-size:12.5px;font-weight:700;color:var(--t1);flex:1}
+.rdo-narrow{font-size:12px;color:var(--t3);transition:transform .2s}.rdo-narrow.open{transform:rotate(90deg)}
+.rdo-warn{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:12px;background:rgba(255,59,48,.08);color:#C00;white-space:nowrap}
+.rdo-ok{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:12px;background:rgba(52,199,89,.1);color:#1A7A2E;white-space:nowrap}
+.rdo-body{border-top:1px solid var(--bd);display:none}.rdo-body.open{display:block}
+.rdo-fb{padding:10px 14px;border-bottom:1px solid var(--bd)}.rdo-fb:last-child{border-bottom:none}
+.rdo-fh{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.rdo-favico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.rdo-fname{font-size:11.5px;font-weight:700;color:var(--t1);flex:1}
+.rdo-ftype{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px}
+.rdo-items{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.rdo-item{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:var(--bg);border:1px solid var(--bd);color:var(--t2)}
+.rdo-item.sent{color:#0077A0;background:rgba(90,200,250,.09);border-color:rgba(90,200,250,.25)}
+.rdo-item.conf{color:#1A7A2E;background:rgba(52,199,89,.09);border-color:rgba(52,199,89,.25)}
+.rdo-item.unassigned{color:#C00;background:rgba(255,59,48,.07);border-color:rgba(255,59,48,.2)}
+.rdo-fbtn{display:flex;gap:5px;flex-wrap:wrap}
+.rdo-unass{padding:10px 14px;background:rgba(255,59,48,.04)}
+.rdo-ut{font-size:10px;font-weight:700;color:#C00;margin-bottom:5px}
 
-/* ── Modals ── */
-.modal-ov{position:fixed;inset:0;background:rgba(28,15,7,.55);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-ov.open{display:flex;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:520px;max-height:92vh;display:flex;flex-direction:column;animation:mIn .25s cubic-bezier(.34,1.4,.64,1)}
-@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:none}}
-.modal.wide{max-width:600px}
-.modal-hd{padding:19px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
-.modal-ico{width:38px;height:38px;background:var(--gold-bg);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--gold-dark);flex-shrink:0}
-.modal-ico svg{width:18px;height:18px}
-.modal-ico.purple{background:var(--purple-bg);color:#7C3AED}
-.modal-title{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--text-1)}
-.modal-sub{font-size:12px;color:var(--text-3);margin-top:2px}
-.modal-x{margin-left:auto;width:32px;height:32px;border-radius:var(--radius-sm);border:none;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-2);transition:background var(--t);flex-shrink:0}
-.modal-x:hover{background:var(--border)}
-.modal-x svg{width:14px;height:14px}
-.modal-bd{padding:20px 22px;overflow-y:auto;flex:1}
-.modal-ft{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0}
-.modal-ft-right{margin-left:auto;display:flex;gap:8px}
-.fg{margin-bottom:16px}
-.fg:last-child{margin-bottom:0}
-.fl{display:block;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:6px}
-.fi{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text-1);background:var(--surface);outline:none;transition:border-color var(--t)}
-.fi:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,168,35,.2)}
-.fi::placeholder{color:var(--text-3)}
-.fi.err{border-color:var(--red)!important}
-.fta{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text-1);background:var(--surface);outline:none;resize:vertical;min-height:72px;transition:border-color var(--t)}
-.fta:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,168,35,.2)}
-.fta::placeholder{color:var(--text-3)}
-.ferr{font-size:11.5px;color:var(--red-text);margin-top:5px;display:none}
-.fhint{font-size:11.5px;color:var(--text-3);margin-top:5px;line-height:1.5}
-.fmt-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:5px}
-.fmt-check{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2);cursor:pointer}
-.fmt-check input{cursor:pointer;accent-color:var(--gold)}
-.file-list{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;max-height:110px;overflow-y:auto;margin-top:6px}
-.file-item{font-size:11.5px;color:var(--text-2);padding:4px 0;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border-light)}
-.file-item:last-child{border-bottom:none}
-.file-item svg{width:12px;height:12px;color:var(--text-3);flex-shrink:0}
-.file-type{color:var(--text-3);margin-left:auto;font-size:10px;font-weight:600;background:var(--border);padding:1px 5px;border-radius:3px}
-.stato-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
-.sb{padding:5px 13px;border-radius:var(--radius-sm);font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid transparent;font-family:'DM Sans',sans-serif;transition:all var(--t);opacity:.7}
-.sb:hover{opacity:1;transform:translateY(-1px)}
-.sb.active{opacity:1;box-shadow:0 0 0 2px rgba(245,168,35,.5)}
-.sb.gray{background:var(--bg);color:var(--text-2);border-color:var(--border)}
-.sb.gold{background:var(--gold-bg);color:var(--gold-text);border-color:#F5D78A}
-.sb.blue{background:var(--blue-bg);color:var(--blue-text);border-color:#BFDBFE}
-.sb.green{background:var(--green-bg);color:var(--green-text);border-color:#BBF7D0}
-.sb.red{background:var(--red-bg);color:var(--red-text);border-color:#FCA5A5}
+/* ── FORNITORI ── */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:9px}
+.fcard{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:14px;transition:transform .15s,box-shadow .15s}
+.fcard:hover{transform:translateY(-2px);box-shadow:var(--shd)}
+.fch{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.fcav{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.fcname{font-size:12.5px;font-weight:700;color:var(--t1)}
+.fctipo{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;margin-top:2px;display:inline-block}
+.fcc{font-size:10.5px;color:var(--t2);background:var(--bg);border:1px solid var(--bd);border-radius:var(--rx);padding:8px 10px;margin-bottom:9px;display:flex;flex-direction:column;gap:3px;line-height:1.4}
+.fcc a{color:var(--go-d);text-decoration:none;font-weight:600}
+.fcard-act{display:flex;gap:5px}
+.fmuted{color:var(--t3)}
 
-/* ── Albero parti ── */
-.albero-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
-.albero-cat-hd{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--bg);cursor:pointer;user-select:none;border-bottom:1px solid var(--border-light)}
-.albero-cat-hd:hover{background:#F0E8DF}
-.albero-cat-label{font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:700;color:var(--text-1);flex:1;text-transform:uppercase;letter-spacing:.04em}
-.albero-cat-count{font-size:11px;color:var(--text-3);background:var(--border);padding:2px 8px;border-radius:10px;font-weight:600}
-.albero-cat-forn-chips{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-.albero-cat-arrow{width:15px;height:15px;color:var(--text-3);transition:transform var(--t);flex-shrink:0}
-.albero-cat-hd.open .albero-cat-arrow{transform:rotate(90deg)}
-.albero-cat-body{display:none}
-.albero-cat-body.open{display:block}
-.albero-lav{border-bottom:1px solid var(--border-light)}
-.albero-lav:last-child{border-bottom:none}
-.albero-lav-hd{display:flex;align-items:center;gap:10px;padding:9px 16px 9px 38px;cursor:pointer;transition:background var(--t)}
-.albero-lav-hd:hover{background:#FDFAF7}
-.albero-lav-name{font-size:13px;font-weight:600;color:var(--text-2);flex:1}
-.albero-lav-forn{font-size:11.5px;padding:2px 9px;border-radius:12px;border:1px solid var(--border);color:var(--text-3);background:var(--bg)}
-.albero-lav-forn.assigned{background:var(--green-bg);color:var(--green-text);border-color:#BBF7D0;font-weight:600}
-.albero-lav-n{font-size:11px;color:var(--text-3);white-space:nowrap}
-.albero-lav-arrow{width:13px;height:13px;color:var(--text-3);transition:transform var(--t);flex-shrink:0}
-.albero-lav-hd.open .albero-lav-arrow{transform:rotate(90deg)}
-.albero-parts{display:none;background:#FDFAF7;border-top:1px solid var(--border-light)}
-.albero-parts.open{display:block}
-.apt{width:100%;border-collapse:collapse;font-size:12px}
-.apt th{text-align:left;padding:6px 12px 6px 54px;color:var(--text-3);font-weight:600;font-size:10.5px;background:var(--border-light);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
-.apt td{padding:6px 12px 6px 54px;border-bottom:1px solid var(--border-light);color:var(--text-2);vertical-align:middle}
-.apt tr:last-child td{border-bottom:none}
-.apt tr:hover td{background:#F5F0EB}
-.pcode{font-family:monospace;color:var(--text-1);font-size:11.5px;font-weight:600}
-.ptags{display:flex;gap:3px;flex-wrap:wrap}
-.ptag{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--border);color:var(--text-2)}
-.ptag.pdf{background:#FEE2E2;color:#991B1B}
-.ptag.dxf{background:#DBEAFE;color:#1E40AF}
-.ptag.dwg{background:#D1FAE5;color:#065F46}
-.albero-forn-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 16px;background:var(--gold-bg);border-top:1px solid #F5D78A}
-.albero-forn-bar-label{font-size:11.5px;font-weight:600;color:var(--gold-text)}
-.forn-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text-1);text-decoration:none}
-.forn-chip:hover{background:var(--gold-bg);border-color:var(--gold)}
-.forn-chip svg{width:12px;height:12px;color:var(--text-3)}
-.import-mode{display:flex;gap:8px;margin-bottom:16px}
-.imode-btn{flex:1;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--surface);text-align:center;transition:all var(--t)}
-.imode-btn:hover{border-color:var(--gold);color:var(--gold-dark)}
-.imode-btn.active{border-color:var(--gold);background:var(--gold-bg);color:var(--gold-dark)}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── FAB ── */
+.fab{position:fixed;bottom:14px;left:calc(50% + 105px);transform:translateX(-50%);background:var(--br);border-radius:10px;padding:7px 12px;display:none;align-items:center;gap:8px;box-shadow:0 6px 24px rgba(44,21,6,.3);z-index:100}
+.fab-info{font-size:11px;color:rgba(255,255,255,.55)}
+.fab-info strong{color:rgba(255,255,255,.95);font-weight:700}
+.fsep{width:1px;height:14px;background:rgba(255,255,255,.12)}
+.fbtn{display:flex;align-items:center;gap:4px;padding:6px 11px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border:none}
+.fbtn svg{width:11px;height:11px}
+.fbgo{background:var(--go);color:var(--br)}.fbgo:hover{filter:brightness(1.05)}
+.fbgh{background:rgba(255,255,255,.1);color:#fff}.fbgh:hover{background:rgba(255,255,255,.18)}
 
-/* ── Bottom nav ── */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav);background:#2C1506;border-top:1px solid rgba(255,255,255,.08);z-index:100}
-.bottom-nav-inner{display:flex;height:100%;align-items:center;justify-content:space-around;max-width:480px;margin:0 auto}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;color:#C4A882;cursor:pointer;text-decoration:none;border:none;background:transparent;font-family:'DM Sans',sans-serif;border-radius:var(--radius-sm)}
-.bnav-item svg{width:20px;height:20px}
-.bnav-item span{font-size:10px;font-weight:600;letter-spacing:.03em}
-.bnav-item.active{color:var(--gold)}
-.sidebar-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+/* ── DROPDOWN ── */
+.add{position:fixed;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);box-shadow:var(--shl);z-index:300;min-width:200px;max-height:320px;overflow-y:auto;padding:4px;display:none}
+.add-hd{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;padding:6px 8px 3px}
+.add-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rx);cursor:pointer}
+.add-item:hover{background:rgba(245,168,35,.08)}
+.ddav{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0}
+.ddn{font-size:11px;font-weight:600;color:var(--t1)}.ddt{font-size:9px;color:var(--t3)}
+.add-clear{color:#C00!important}.add-clear .ddav{background:rgba(255,59,48,.12);color:#C00}
 
-/* ── Toast ── */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(8px);z-index:300;background:var(--text-1);color:white;padding:11px 18px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transition:all .25s ease;pointer-events:none;white-space:nowrap}
+/* ── MODAL ── */
+.mov{position:fixed;inset:0;background:rgba(28,15,7,.5);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
+.mov.open{display:flex}
+.modal{background:var(--surf);border-radius:14px;box-shadow:var(--shl);width:100%;max-width:480px;max-height:92vh;display:flex;flex-direction:column;animation:mIn .2s cubic-bezier(.34,1.4,.64,1)}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.mhd{padding:16px 18px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.mico2{width:34px;height:34px;background:rgba(245,168,35,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--go-d);flex-shrink:0}
+.mico2 svg{width:17px;height:17px}
+.mtit{font-size:14px;font-weight:800;color:var(--t1)}.msub{font-size:11px;color:var(--t2);margin-top:1px}
+.mx{margin-left:auto;width:30px;height:30px;border-radius:var(--rx);border:none;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.mx:hover{background:var(--bd)}.mx svg{width:13px;height:13px}
+.mbd{padding:16px 18px;overflow-y:auto}
+.mft{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;align-items:center;flex-shrink:0}
+.mft-r{margin-left:auto;display:flex;gap:7px}
+.fg{margin-bottom:14px}.fg:last-child{margin-bottom:0}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px}
+.fld{width:100%;border:1px solid var(--bd2);border-radius:var(--rs);padding:8px 11px;font-family:inherit;font-size:13px;color:var(--t1);background:var(--surf);outline:none}
+.fld:focus{border-color:var(--go);box-shadow:0 0 0 2px rgba(245,168,35,.18)}
+.fld.err{border-color:var(--red)}
+textarea.fld{resize:vertical;min-height:60px}
+.ferr{font-size:11px;color:#C00;margin-top:4px;display:none}
+.fhint{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.5}
+.imode{display:flex;gap:8px;margin-bottom:6px}
+.imode-b{flex:1;padding:8px;border:2px solid var(--bd2);border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;color:var(--t2);background:var(--surf);text-align:center}
+.imode-b.on{border-color:var(--go);background:rgba(245,168,35,.1);color:var(--go-d)}
+.fmt-row{display:flex;gap:16px;flex-wrap:wrap}
+.fmt-c{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--t2);cursor:pointer}
+.fmt-c input{accent-color:var(--go)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);z-index:500;background:var(--t1);color:#fff;padding:11px 18px;border-radius:var(--rs);font-size:12.5px;box-shadow:var(--shl);opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.err{background:var(--red)}
-.toast.ok{background:var(--green)}
+.toast.err{background:var(--red)}.toast.ok{background:var(--green)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite}
 
-/* ── Responsive ── */
-@media(max-width:900px){
-  .sidebar{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .sidebar-ov.open{display:block}
-  .hamburger{display:flex}
-  .topbar-logo{display:block}
-  .content{padding:16px;padding-bottom:calc(var(--bottom-nav)+16px)}
-  .bottom-nav{display:flex}
-  .modal{max-width:100%;border-radius:var(--radius-lg) var(--radius-lg) 0 0;position:fixed;bottom:0;left:0;right:0;max-height:90vh;animation:mInM .25s ease}
-  @keyframes mInM{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .modal-ov{align-items:flex-end;padding:0}
-  .kanban-scroll{padding-bottom:calc(var(--bottom-nav)+12px)}
-  .toast{bottom:calc(var(--bottom-nav)+12px)}
-  .dr-fornitore,.dr-stato{display:none}
+@media(max-width:820px){
+  .app{grid-template-columns:1fr}
+  .sb{position:fixed;top:0;bottom:0;left:0;width:210px;z-index:350;transform:translateX(-100%);transition:transform .2s}
+  .sb.open{transform:none}
+  .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:340}
+  .sb-ov.open{display:block}
+  .hb{display:flex!important}
+  .ws{grid-template-columns:1fr}
+  .calp{display:none}
+  .metrics{grid-template-columns:1fr 1fr}
+  .dash-2{grid-template-columns:1fr}
+  .fab{left:50%}
 }
-@media(max-width:500px){
-  .stats-row{grid-template-columns:1fr 1fr;display:grid}
-  .proj-grid{grid-template-columns:1fr}
-  .prog-stats-bar{gap:6px}
-}
+.hb{display:none;align-items:center;justify-content:center;width:34px;height:34px;border:none;background:transparent;cursor:pointer;color:var(--t2);border-radius:var(--rx);margin-right:4px}
+.hb:hover{background:rgba(44,21,6,.05)}.hb svg{width:20px;height:20px}
 </style>
 </head>
 <body>
+<div class="sb-ov" id="sbOv" onclick="closeSb()"></div>
+<div class="app">
 
-<div class="sidebar-ov" id="sidebarOv" onclick="closeSidebar()"></div>
-
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <img src="logo-full.png" alt="IB Motion" style="height:38px;object-fit:contain">
+<!-- ══ SIDEBAR ══ -->
+<aside class="sb" id="sb">
+  <div class="sb-brand">
+    <img class="sb-logo" src="logo-full.png" alt="IB Motion" onerror="this.style.display='none'">
+    <div class="sb-prod">Gestionale RDO</div>
   </div>
-  <nav class="sidebar-nav">
-    <button class="nav-item active" id="navProgetti" onclick="showView('progetti')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-      Progetti
-    </button>
-    <button class="nav-item" id="navKanban" onclick="showView('kanban')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-      Kanban RDO
-    </button>
-    <div class="nav-divider"></div>
-    <a class="nav-item" href="fornitori.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Fornitori
-    </a>
+  <nav class="sb-nav">
+    <div class="sb-sec">Principale</div>
+    <div class="ni on" data-v="dash" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
+    <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
+    <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>RDO</div>
+    <div class="ni" data-v="forn" onclick="go('forn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Fornitori</div>
   </nav>
-  <div class="sidebar-footer">
-    <button class="api-pill" id="apiPill" onclick="configBackend()">
-      <div class="api-dot"></div>
-      <span id="apiTxt">Connessione...</span>
-    </button>
+  <div class="sb-foot">
+    <button class="api-pill" id="apiPill" onclick="configBackend()"><div class="api-dot"></div><span id="apiTxt">Connessione…</span></button>
+    <div class="sb-user"><div class="av">EG</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">Elia Gatti</div><div style="font-size:9.5px;color:var(--t2)">Ufficio Acquisti</div></div></div>
   </div>
 </aside>
 
-<!-- Main -->
-<div class="main">
-  <header class="topbar">
-    <button class="hamburger" onclick="openSidebar()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
-    <div class="topbar-logo"><img src="icon-512.png" alt="IB Motion" style="height:30px;object-fit:contain"></div>
-    <div class="topbar-title" id="topbarTitle">Gestionale RDO</div>
-    <div id="topbarActions">
-      <button class="btn btn-primary btn-sm" onclick="openNuovoProgetto()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nuovo progetto
-      </button>
-    </div>
-  </header>
+<main class="main">
 
-  <div class="content" id="content">
-
-    <!-- VIEW: Progetti -->
-    <div id="view-progetti">
-      <div class="page-hd">
-        <div><h1>Progetti RDO</h1><p>Gestione richieste d'offerta per commessa</p></div>
-        <div class="page-hd-right">
-          <button class="btn btn-secondary btn-sm" onclick="loadProgetti()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-          </button>
-          <button class="btn btn-primary" onclick="openNuovoProgetto()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Nuovo progetto
-          </button>
-        </div>
+  <!-- ════ DASHBOARD ════ -->
+  <div id="v-dash" class="view on">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1">Gestionale <em>RDO</em></div><div class="vsub" id="dashSub">Panoramica</div></div></div>
+      <button class="btn btn-go" onclick="openNuovo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuovo progetto</button>
+    </div></div>
+    <div class="vscroll">
+      <div class="sl">Stato globale</div>
+      <div class="metrics" id="dashMetrics"></div>
+      <div class="dash-2" style="margin-top:8px">
+        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Carico per fornitore</div><div id="dashForn"></div></div>
+        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Progetti</div><div id="dashProj"></div></div>
       </div>
-      <div class="stats-row" id="progettiStats" style="display:none">
-        <div class="stat-box"><div class="stat-n" id="stN">0</div><div class="stat-l">Progetti</div></div>
-        <div class="stat-box gold"><div class="stat-n" id="stDs">0</div><div class="stat-l">Da smistare</div></div>
-        <div class="stat-box blue"><div class="stat-n" id="stInv">0</div><div class="stat-l">In attesa risposta</div></div>
-        <div class="stat-box green"><div class="stat-n" id="stConf">0</div><div class="stat-l">Confermate</div></div>
-      </div>
-      <div id="progettiGrid"></div>
     </div>
-
-    <!-- VIEW: Progetto detail -->
-    <div id="view-progetto" style="display:none">
-      <div class="breadcrumb">
-        <a onclick="showView('progetti')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </a>
-        <a onclick="showView('progetti')">Progetti</a>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        <span id="breadNome" style="color:var(--text-2)"></span>
-      </div>
-      <div id="progHeader"></div>
-      <div class="prog-stats-bar" id="progStatsBar"></div>
-      <div id="progSections"></div>
-    </div>
-
-    <!-- VIEW: Kanban -->
-    <div id="view-kanban" style="display:none">
-      <div class="page-hd">
-        <div><h1>Kanban RDO</h1><p>Panoramica globale di tutte le distinte</p></div>
-        <div class="page-hd-right">
-          <button class="btn btn-secondary btn-sm" onclick="loadKanban()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-            Aggiorna
-          </button>
-        </div>
-      </div>
-      <div class="kanban-scroll"><div class="kanban-wrap" id="kanbanWrap"></div></div>
-    </div>
-
   </div>
+
+  <!-- ════ PROGETTI ════ -->
+  <div id="v-proj" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Progetti</div><div class="vsub">Clicca un progetto per aprirlo</div></div></div>
+      <button class="btn btn-go" onclick="openNuovo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuovo</button>
+    </div></div>
+    <div class="vscroll"><div id="projGrid"></div></div>
+  </div>
+
+  <!-- ════ PROGETTO DETAIL ════ -->
+  <div id="v-pdet" class="view view-ws">
+    <div class="wsh">
+      <div class="bc"><a onclick="go('proj')">Progetti</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><span id="bcproj">—</span></div>
+      <div class="wpr">
+        <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span>
+        <div class="wact">
+          <button class="btn btn-ghost btn-sm" onclick="openModifica()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifica</button>
+          <button class="btn btn-ghost btn-sm" onclick="riscansiona()" id="btnRiscan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Riscansiona</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminaProgetto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Elimina</button>
+          <button class="btn btn-go btn-sm" onclick="inviaSelezionate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Invia sel.</button>
+        </div>
+      </div>
+      <div class="wpath" id="wpath"></div>
+      <div class="wprog" id="wprog"></div>
+    </div>
+    <div class="ws">
+      <div class="treep">
+        <div class="tph"><div class="tpt">Struttura progetto <span id="tstats"></span></div>
+          <label class="tck"><input type="checkbox" id="chkall" onchange="toggleAll(this.checked)"> Tutti</label></div>
+        <div class="tscroll" id="tscroll"></div>
+      </div>
+      <div class="calp">
+        <div class="calh">
+          <div class="calht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Calderone <span style="font-size:9px;color:var(--t3);font-weight:600" id="ctot"></span></div>
+          <div class="calhint" id="calhint">Clicca un pezzo per evidenziare i suoi file</div>
+          <div class="csearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cerca file…" oninput="S.sq=this.value.toLowerCase();renderCal()"></div>
+        </div>
+        <div class="ctabs" id="ctabs"></div>
+        <div class="clist" id="clist"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ RDO ════ -->
+  <div id="v-rdo" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub">Vista per fornitore</div></div></div>
+    </div></div>
+    <div class="vscroll"><div class="rdo-grid" id="rdogrid"></div></div>
+  </div>
+
+  <!-- ════ FORNITORI ════ -->
+  <div id="v-forn" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Fornitori</div><div class="vsub" id="fornSub"></div></div></div>
+      <button class="btn btn-go" onclick="openForn()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi</button>
+    </div></div>
+    <div class="vscroll"><div class="fgrid" id="fgrid"></div></div>
+  </div>
+
+</main>
 </div>
 
-<!-- Bottom nav -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="bnav-item active" id="bnavProgetti" onclick="showView('progetti')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-      <span>Progetti</span>
-    </button>
-    <button class="bnav-item" id="bnavKanban" onclick="showView('kanban')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-      <span>Kanban</span>
-    </button>
-    <a class="bnav-item" href="fornitori.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      <span>Fornitori</span>
-    </a>
-  </div>
-</nav>
+<!-- FAB -->
+<div class="fab" id="fab">
+  <div class="fab-info"><strong id="fabn">0</strong> pezzi selezionati</div>
+  <div class="fsep"></div>
+  <button class="fbtn fbgh" onclick="showDDBulk(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Assegna fornitore</button>
+  <button class="fbtn fbgo" onclick="inviaSelezionate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Invia RDO (<span id="fabn2">0</span>)</button>
+</div>
 
-<!-- MODAL: Nuovo Progetto -->
-<div class="modal-ov" id="modalNuovo" onclick="closeOv(event,'modalNuovo')">
+<div class="add" id="add"></div>
+
+<!-- MODAL: Nuovo / Modifica progetto -->
+<div class="mov" id="mProg" onclick="ovClose(event,'mProg')">
   <div class="modal">
-    <div class="modal-hd">
-      <div class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
-      <div><div class="modal-title">Nuovo progetto RDO</div><div class="modal-sub">Importa la cartella generata da BOM2Excel</div></div>
-      <button class="modal-x" onclick="closeModal('modalNuovo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+      <div><div class="mtit" id="mProgTit">Nuovo progetto</div><div class="msub" id="mProgSub">Indica la cartella con la distinta base Excel</div></div>
+      <button class="mx" onclick="mClose('mProg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="modal-bd">
-      <div class="fg">
-        <div class="import-mode">
-          <button class="imode-btn" id="imodeBom" onclick="setImportMode('bom')">BOM2Excel</button>
-          <button class="imode-btn active" id="imodeExcel" onclick="setImportMode('excel')">Distinta Excel</button>
-        </div>
-        <div class="fhint" id="imodeHint" style="margin-top:-8px;margin-bottom:12px">Legge la distinta generale Excel dalla cartella e abbina automaticamente i disegni in COSTRUTTIVI TOTALI/DISEGNI/</div>
-      </div>
-      <div class="fg">
-        <label class="fl">Codice commessa *</label>
-        <input class="fi" id="nCodice" placeholder="Es: IB05.2025">
-        <div class="ferr" id="nCodiceErr">Campo obbligatorio</div>
-      </div>
-      <div class="fg">
-        <label class="fl">Nome progetto *</label>
-        <input class="fi" id="nNome" placeholder="Es: Macchina assemblaggio rotori">
-        <div class="ferr" id="nNomeErr">Campo obbligatorio</div>
-      </div>
-      <div class="fg">
-        <label class="fl">Cliente</label>
-        <input class="fi" id="nCliente" placeholder="Es: ABC Srl">
-      </div>
-      <div class="fg">
-        <label class="fl">Percorso cartella BOM2Excel *</label>
-        <input class="fi" id="nCartella" placeholder="\\SERVER01\lavoro\Ufficio Tecnico\...">
-        <div class="ferr" id="nCartellaErr">Campo obbligatorio</div>
-        <div class="fhint" id="nCartellaHint">Percorso UNC della cartella commessa. Distinta Excel: deve contenere un .xlsx con la distinta generale + COSTRUTTIVI TOTALI/DISEGNI/</div>
-      </div>
-      <div class="fg">
-        <label class="fl">Note</label>
-        <textarea class="fta" id="nNote" placeholder="Priorità, scadenze, note fornitore..."></textarea>
-      </div>
+    <div class="mbd">
+      <input type="hidden" id="pId">
+      <div class="fg"><label class="fl">Codice commessa *</label><input class="fld" id="pCodice" placeholder="Es: IB05.2025"><div class="ferr" id="pCodiceErr">Campo obbligatorio</div></div>
+      <div class="fg"><label class="fl">Nome progetto *</label><input class="fld" id="pNome" placeholder="Es: Carro LEM"><div class="ferr" id="pNomeErr">Campo obbligatorio</div></div>
+      <div class="fg"><label class="fl">Cliente</label><input class="fld" id="pCliente" placeholder="Es: Fibbi"></div>
+      <div class="fg"><label class="fl">Percorso cartella (distinta base) *</label><input class="fld" id="pCartella" placeholder="\\SERVER01\lavoro\…\NOME COMMESSA"><div class="ferr" id="pCartellaErr">Campo obbligatorio</div><div class="fhint">Cartella della commessa. Comanda la distinta generale Excel (.xlsx) al suo interno; i disegni/datasheet nelle sottocartelle finiscono nel Calderone.</div></div>
+      <div class="fg"><label class="fl">Note</label><textarea class="fld" id="pNote" placeholder="Priorità, scadenze…"></textarea></div>
     </div>
-    <div class="modal-ft">
-      <div class="modal-ft-right">
-        <button class="btn btn-secondary" onclick="closeModal('modalNuovo')">Annulla</button>
-        <button class="btn btn-primary" id="btnCrea" onclick="creaProgetto()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          Crea e importa
-        </button>
-      </div>
-    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mProg')">Annulla</button><button class="btn btn-go" id="pBtn" onclick="salvaProgetto()">Crea e importa</button></div></div>
   </div>
 </div>
 
-<!-- MODAL: Smistamento -->
-<div class="modal-ov" id="modalSmista" onclick="closeOv(event,'modalSmista')">
-  <div class="modal wide">
-    <div class="modal-hd">
-      <div class="modal-ico" id="smistaIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <div><div class="modal-title" id="smistaTit">Smista distinta</div><div class="modal-sub" id="smistaSub"></div></div>
-      <button class="modal-x" onclick="closeModal('modalSmista')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-bd">
-      <div id="smistaFiles"></div>
-      <div class="fg" style="margin-top:14px">
-        <label class="fl">Fornitore</label>
-        <select class="fi" id="smistaFornitore"><option value="">— Nessuno assegnato —</option></select>
-      </div>
-      <div class="fg">
-        <label class="fl">Formati da richiedere</label>
-        <div class="fmt-row">
-          <label class="fmt-check"><input type="checkbox" id="sfPdf" checked> PDF</label>
-          <label class="fmt-check"><input type="checkbox" id="sfDwg"> DWG</label>
-          <label class="fmt-check"><input type="checkbox" id="sfDxf"> DXF</label>
-          <label class="fmt-check"><input type="checkbox" id="sfStep"> STEP</label>
-        </div>
-      </div>
-      <div class="fg">
-        <label class="fl">Stato</label>
-        <div class="stato-btns" id="statoBtns"></div>
-      </div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-danger btn-sm" id="btnRilascia" style="display:none" onclick="rilasciaDistinta()">Rilascia</button>
-      <div class="modal-ft-right">
-        <button class="btn btn-secondary" onclick="closeModal('modalSmista')">Annulla</button>
-        <button class="btn btn-primary" id="btnSalvaSmista" onclick="salvaSmista()">Salva</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Modifica progetto -->
-<div class="modal-ov" id="modalEditProg" onclick="closeOv(event,'modalEditProg')">
+<!-- MODAL: Fornitore -->
+<div class="mov" id="mForn" onclick="ovClose(event,'mForn')">
   <div class="modal">
-    <div class="modal-hd">
-      <div class="modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-      <div><div class="modal-title">Modifica progetto</div></div>
-      <button class="modal-x" onclick="closeModal('modalEditProg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div><div class="mtit" id="mFornTit">Nuovo fornitore</div></div>
+      <button class="mx" onclick="mClose('mForn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="modal-bd">
-      <input type="hidden" id="editId">
-      <div class="fg"><label class="fl">Codice commessa</label><input class="fi" id="editCodice"></div>
-      <div class="fg"><label class="fl">Nome progetto</label><input class="fi" id="editNome"></div>
-      <div class="fg"><label class="fl">Cliente</label><input class="fi" id="editCliente"></div>
-      <div class="fg"><label class="fl">Note</label><textarea class="fta" id="editNote"></textarea></div>
+    <div class="mbd">
+      <input type="hidden" id="fId">
+      <div class="fg"><label class="fl">Nome azienda *</label><input class="fld" id="fNome" placeholder="Es: Blickle Italia"><div class="ferr" id="fNomeErr">Campo obbligatorio</div></div>
+      <div class="fg"><label class="fl">Email *</label><input class="fld" id="fEmail" type="email" placeholder="ordini@fornitore.it"><div class="ferr" id="fEmailErr">Email non valida</div></div>
+      <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
+      <div class="fg"><label class="fl">Specializzazioni / Lavorazioni</label><input class="fld" id="fLav" placeholder="Es: Taglio laser, Piega, Carpenteria"><div class="fhint">Separa con virgola.</div></div>
+      <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
+      <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
+      <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label></div>
     </div>
-    <div class="modal-ft">
-      <div class="modal-ft-right">
-        <button class="btn btn-secondary" onclick="closeModal('modalEditProg')">Annulla</button>
-        <button class="btn btn-primary" id="btnSalvaEdit" onclick="salvaEdit()">Salva modifiche</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Assegna branch fornitore -->
-<div class="modal-ov" id="modalAssegna" onclick="closeOv(event,'modalAssegna')">
-  <div class="modal">
-    <div class="modal-hd">
-      <div class="modal-ico purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-      <div><div class="modal-title" id="assegnaTit">Assegna fornitore</div><div class="modal-sub" id="assegnaSub"></div></div>
-      <button class="modal-x" onclick="closeModal('modalAssegna')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-bd">
-      <input type="hidden" id="assegnaCat">
-      <input type="hidden" id="assegnaLav">
-      <div class="fg">
-        <label class="fl">Fornitore</label>
-        <select class="fi" id="assegnaFornitore"><option value="">— Seleziona —</option></select>
-      </div>
-      <div class="fhint" id="assegnaInfo" style="margin-top:-8px"></div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-danger btn-sm" id="btnRilasciaAssegna" onclick="rilasciaBranch()">Rilascia</button>
-      <div class="modal-ft-right">
-        <button class="btn btn-secondary" onclick="closeModal('modalAssegna')">Annulla</button>
-        <button class="btn btn-primary" id="btnSalvaAssegna" onclick="salvaAssegna()">Assegna</button>
-      </div>
-    </div>
+    <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/gestionale-rdo/sw.js').catch(()=>{});}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
-/* ── Config ── */
+/* ── CONFIG ── */
 let API = localStorage.getItem('rdo_api_base') || 'http://127.0.0.1:8123';
-function configBackend(){
-  const v = prompt('Indirizzo backend:', API);
-  if(v === null) return;
-  const u = v.trim().replace(/\/$/, '');
-  if(u){ localStorage.setItem('rdo_api_base', u); location.reload(); }
+function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)return;const u=v.trim().replace(/\/$/,'');if(u){localStorage.setItem('rdo_api_base',u);location.reload();}}
+
+/* ── STATE ── */
+let commesse=[], fornitori=[];
+const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{}};
+const RDO_OPEN={};
+
+/* ── INIT ── */
+async function init(){await Promise.all([checkHealth(),loadFornitori()]);await loadCommesse();go('dash');}
+async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
+async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(r.ok)fornitori=await r.json();}catch{}}
+async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r.ok)throw 0;commesse=await r.json();
+  // carica parti di ogni commessa (per stats dashboard/progetti/RDO)
+  await Promise.all(commesse.map(async c=>{try{const rp=await fetch(API+'/api/commesse/'+c.id+'/parti');c._parti=rp.ok?await rp.json():[];}catch{c._parti=[];}}));
+}catch{commesse=[];}}
+
+/* ── NAV ── */
+function go(v,pid){
+  closeDD();closeSb();
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.ni[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===v||(v==='pdet'&&x.dataset.v==='proj')));
+  S.v=v;
+  if(v==='pdet'){openProgetto(pid);return;}
+  hideFAB();
+  document.getElementById('v-'+v).classList.add('on');
+  if(v==='dash')renderDash();
+  if(v==='proj')renderProjGrid();
+  if(v==='rdo')renderRDO();
+  if(v==='forn')renderForn();
 }
 
-/* ── State ── */
-let commesse = [], fornitori = [], currentProgetto = null, currentDistinta = null, currentStatoSmista = null;
-let currentAlbero = null;
-let importMode = 'excel'; // 'bom' | 'excel'
-
-/* ── Init ── */
-async function init(){
-  await Promise.all([checkHealth(), loadFornitori()]);
-  await loadProgetti();
+/* ── helpers stato/parti ── */
+function flatParti(c){return c._parti||[];}
+function statoBucket(p){
+  if(!p.fornitore_id||p.stato==='respinta')return 'daSmistare';
+  if(p.stato==='da_inviare')return 'daInviare';
+  if(p.stato==='inviata_da_confermare')return 'inAttesa';
+  if(p.stato==='confermata')return 'confermata';
+  return 'daInviare';
 }
+function projStats(c){const s={tot:0,daSmistare:0,daInviare:0,inAttesa:0,confermata:0};flatParti(c).forEach(p=>{s.tot++;s[statoBucket(p)]++;});return s;}
 
-async function checkHealth(){
-  const p = document.getElementById('apiPill'), t = document.getElementById('apiTxt');
-  try {
-    const r = await fetch(API + '/api/health');
-    if(!r.ok) throw 0;
-    p.classList.add('ok'); p.classList.remove('err');
-    t.textContent = 'Backend connesso';
-  } catch {
-    p.classList.add('err'); p.classList.remove('ok');
-    t.textContent = 'Non raggiungibile';
-  }
+/* ── DASHBOARD ── */
+function renderDash(){
+  const tot={daSmistare:0,daInviare:0,inAttesa:0,confermata:0,tot:0};
+  commesse.forEach(c=>{const s=projStats(c);['daSmistare','daInviare','inAttesa','confermata','tot'].forEach(k=>tot[k]+=s[k]);});
+  document.getElementById('dashSub').textContent=`${commesse.length} progetti · ${tot.tot} pezzi`;
+  document.getElementById('dashMetrics').innerHTML=`
+    ${metric('mo','clock',tot.daSmistare,'Da smistare','Senza fornitore')}
+    ${metric('mb','send',tot.daInviare,'Da inviare','Fornitore assegnato')}
+    ${metric('mt','phone',tot.inAttesa,'In attesa','RDO inviate')}
+    ${metric('mg','check',tot.confermata,'Confermate',tot.tot?Math.round(tot.confermata/tot.tot*100)+'% del totale':'')}`;
+  // carico per fornitore
+  const byF={};
+  commesse.forEach(c=>flatParti(c).forEach(p=>{if(p.fornitore_id){byF[p.fornitore_id]=(byF[p.fornitore_id]||0)+1;}}));
+  const rows=Object.entries(byF).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([fid,n])=>{
+    const f=fornitori.find(x=>x.id==fid);if(!f)return '';
+    return `<div class="forn-row"><div class="fav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div class="fi2"><div class="fn2">${esc(f.nome)}</div><div class="fs2">${f.tipo}</div></div><div class="fnn">${n}</div></div>`;
+  }).join('');
+  document.getElementById('dashForn').innerHTML=rows||'<div class="fmuted" style="font-size:11px">Nessuna parte assegnata</div>';
+  document.getElementById('dashProj').innerHTML=commesse.map(c=>{const s=projStats(c);const pct=s.tot?Math.round((s.tot-s.daSmistare)/s.tot*100):0;
+    return `<div class="forn-row" style="cursor:pointer" onclick="go('pdet',${c.id})"><div class="fi2"><div class="fn2">${esc(c.codice)} · ${esc(c.nome)}</div><div class="pcbb" style="margin-top:4px"><div class="pcbf${pct===100?' done':''}" style="width:${pct}%"></div></div></div><div class="fnn">${pct}%</div></div>`;
+  }).join('')||'<div class="fmuted" style="font-size:11px">Nessun progetto</div>';
 }
+function metric(cls,ico,n,l,s){const I={clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',phone:'<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.12 1.22 2 2 0 012.11 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.11 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/>',check:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'}[ico];
+  return `<div class="m ${cls}"><div class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I}</svg></div><div class="mn">${n}</div><div class="ml">${l}</div><div class="ms">${s}</div></div>`;}
 
-async function loadFornitori(){
-  try { const r = await fetch(API + '/api/fornitori'); if(!r.ok) throw 0; fornitori = await r.json(); } catch {}
-}
-
-/* ── Views ── */
-const VIEWS = {
-  progetti: { navId: 'navProgetti', bnavId: 'bnavProgetti', title: 'Gestionale RDO' },
-  progetto: { navId: 'navProgetti', bnavId: 'bnavProgetti', title: 'Dettaglio Progetto' },
-  kanban:   { navId: 'navKanban',   bnavId: 'bnavKanban',   title: 'Kanban RDO' },
-};
-
-function showView(name, extraArg){
-  ['progetti','progetto','kanban'].forEach(v => {
-    document.getElementById('view-' + v).style.display = (v === name) ? '' : 'none';
-  });
-  const v = VIEWS[name] || VIEWS.progetti;
-  document.getElementById('topbarTitle').textContent = v.title;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.bnav-item').forEach(el => el.classList.remove('active'));
-  const ni = document.getElementById(v.navId); if(ni) ni.classList.add('active');
-  const bi = document.getElementById(v.bnavId); if(bi) bi.classList.add('active');
-  closeSidebar();
-  if(name === 'kanban') loadKanban();
-  if(name === 'progetto' && extraArg) openProgettoDetail(extraArg);
-}
-
-/* ── PROGETTI ── */
-async function loadProgetti(){
-  try {
-    const r = await fetch(API + '/api/commesse');
-    if(!r.ok) throw 0;
-    commesse = await r.json();
-    renderProgetti();
-  } catch {
-    document.getElementById('progettiGrid').innerHTML = errHtml('Backend non raggiungibile', 'Verifica che FastAPI sia attivo su ' + API);
-  }
-}
-
-function renderProgetti(){
-  const grid = document.getElementById('progettiGrid');
-  const statsDiv = document.getElementById('progettiStats');
-  if(!commesse.length){
-    statsDiv.style.display = 'none';
-    grid.innerHTML = `<div class="empty-st">
-      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
-      <div class="empty-tit">Nessun progetto</div>
-      <div class="empty-desc">Crea il primo progetto importando la cartella generata dalla macro BOM2Excel di SolidWorks.</div>
-      <button class="btn btn-primary" onclick="openNuovoProgetto()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nuovo progetto
-      </button></div>`;
-    return;
-  }
-  statsDiv.style.display = 'flex';
-  let totDs = 0, totInv = 0, totConf = 0;
-  commesse.forEach(c => {
-    totDs += (c.n_distinte_tot - c.n_assegnate);
-    totInv += c.n_inviate;
-    totConf += c.n_confermate;
-  });
-  document.getElementById('stN').textContent = commesse.length;
-  document.getElementById('stDs').textContent = totDs;
-  document.getElementById('stInv').textContent = totInv;
-  document.getElementById('stConf').textContent = totConf;
-  grid.innerHTML = `<div class="proj-grid">${commesse.map(projCard).join('')}</div>`;
-}
-
-function projCard(c){
-  const pct = c.n_distinte_tot ? Math.round(c.n_assegnate / c.n_distinte_tot * 100) : 0;
-  const done = pct === 100 && c.n_distinte_tot > 0;
-  const dt = new Date(c.importata_at).toLocaleDateString('it-IT', {day:'2-digit', month:'short', year:'numeric'});
-  return `<div class="proj-card" onclick="showView('progetto',${c.id})">
-    <div class="proj-codice">${esc(c.codice)}</div>
-    <div class="proj-nome">${esc(c.nome)}</div>
-    <div class="proj-meta">
-      ${c.cliente ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${esc(c.cliente)}</span>` : ''}
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dt}</span>
-    </div>
-    <div class="proj-progress-row">
-      <span class="proj-progress-label">${c.n_assegnate}/${c.n_distinte_tot} assegnate</span>
-      <span class="proj-progress-pct">${pct}%</span>
-    </div>
-    <div class="prog-bar-bg"><div class="prog-bar-fill${done ? ' done' : ''}" style="width:${pct}%"></div></div>
-    <div class="proj-foot">
-      <div class="proj-chips">
-        <span class="chip">${c.n_inviate} inviate</span>
-        <span class="chip">${c.n_confermate} conf.</span>
-      </div>
-      <span class="badge ${done ? 'green' : c.n_assegnate > 0 ? 'gold' : 'gray'}">${done ? 'Completo' : c.n_assegnate > 0 ? 'In corso' : 'Da smistare'}</span>
-    </div>
-  </div>`;
+/* ── PROGETTI GRID ── */
+function renderProjGrid(){
+  const g=document.getElementById('projGrid');
+  if(!commesse.length){g.innerHTML=emptyHtml('Nessun progetto','Crea il primo progetto indicando la cartella con la distinta base Excel.','openNuovo()','Nuovo progetto');return;}
+  g.innerHTML='<div class="pgrid">'+commesse.map(c=>{const s=projStats(c);const pct=s.tot?Math.round((s.tot-s.daSmistare)/s.tot*100):0;const dt=fmtDate(c.importata_at);
+    const stChip=s.tot===0?'<span class="chip cgr">vuoto</span>':pct===100?'<span class="chip cg">Completo</span>':s.daSmistare<s.tot?'<span class="chip co">In corso</span>':'<span class="chip cgr">Da smistare</span>';
+    return `<div class="pcard" onclick="go('pdet',${c.id})"><div class="pctop"></div><div class="pcb">
+      <div class="pchd"><span class="pccod">${esc(c.codice)}</span><span class="pcdate">${dt}</span></div>
+      <div class="pcname">${esc(c.nome)}</div><div class="pccli">${esc(c.cliente||'—')}</div>
+      <div class="pcbb"><div class="pcbf${pct===100?' done':''}" style="width:${pct}%"></div></div>
+      <div class="pcstats"><span class="pcstat"><strong>${s.tot-s.daSmistare}</strong>/${s.tot} smistati</span>${stChip}</div>
+    </div></div>`;}).join('')+'</div>';
 }
 
 /* ── PROGETTO DETAIL ── */
-async function openProgettoDetail(id){
-  try {
-    const [rProg, rAlbero] = await Promise.all([
-      fetch(API + '/api/commesse/' + id),
-      fetch(API + '/api/commesse/' + id + '/albero').catch(() => null)
-    ]);
-    if(!rProg.ok) throw new Error('Progetto non trovato');
-    currentProgetto = await rProg.json();
-    currentAlbero = (rAlbero && rAlbero.ok) ? await rAlbero.json() : null;
-    renderProgettoDetail();
-  } catch(e) {
-    toast(e.message || 'Errore caricamento progetto', true);
-  }
+async function openProgetto(pid){
+  if(pid!=null)S.projId=pid;
+  S.sel=null;S.rows.clear();S.tab='tutti';S.sq='';S.openCat={};S.openLav={};
+  document.getElementById('v-pdet').classList.add('on');
+  const c=commesse.find(x=>x.id===S.projId);
+  document.getElementById('bcproj').textContent=c?c.codice:'—';
+  document.getElementById('wcod').textContent=c?c.codice:'—';
+  document.getElementById('wtit').textContent=c?c.nome:'—';
+  document.getElementById('wcli').textContent=c&&c.cliente?'· '+c.cliente:'';
+  document.getElementById('wpath').textContent=c?'📁 '+c.percorso_cartella:'';
+  document.getElementById('tscroll').innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:var(--t3)">Caricamento…</div>';
+  document.getElementById('clist').innerHTML='';document.getElementById('ctabs').innerHTML='';
+  try{
+    const [ra,rc]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/files')]);
+    S.albero=ra.ok?await ra.json():null;
+    S.cal=rc.ok?await rc.json():{files:[]};
+  }catch{S.albero=null;S.cal={files:[]};}
+  // apri tutte le categorie di default
+  if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
+  renderProgress();renderTree();renderCalTabs();renderCal();updateFAB();
+}
+function allParti(){return S.albero?S.albero.categorie.flatMap(c=>c.lavorazioni.flatMap(l=>l.parti)):[];}
+
+function renderProgress(){
+  const all=allParti();const tot=all.length;
+  const c={daSmistare:0,daInviare:0,inAttesa:0,confermata:0};all.forEach(p=>c[statoBucket(p)]++);
+  document.getElementById('tstats').textContent='· '+tot+' pezzi';
+  const pct=tot?Math.round((tot-c.daSmistare)/tot*100):0;
+  document.getElementById('wprog').innerHTML=`
+    <div class="wpill"><div class="wdot" style="background:var(--orange)"></div><b>${c.daSmistare}</b> da assegnare</div>
+    <div class="wpill"><div class="wdot" style="background:var(--blue)"></div><b>${c.daInviare}</b> da inviare</div>
+    <div class="wpill"><div class="wdot" style="background:var(--teal)"></div><b>${c.inAttesa}</b> inviati</div>
+    <div class="wpill"><div class="wdot" style="background:var(--green)"></div><b>${c.confermata}</b> confermati</div>
+    <div class="wbar" style="margin-left:auto"><div class="wbarf" style="width:${pct}%"></div></div><span style="font-size:10px;font-weight:700;color:var(--t2)">${pct}%</span>`;
 }
 
-function renderProgettoDetail(){
-  const c = currentProgetto;
-  document.getElementById('breadNome').textContent = c.codice + ' — ' + c.nome;
-
-  const dt = new Date(c.importata_at).toLocaleDateString('it-IT', {day:'2-digit', month:'long', year:'numeric'});
-  document.getElementById('progHeader').innerHTML = `
-    <div class="prog-header">
-      <div class="prog-header-top">
-        <div style="flex:1;min-width:0">
-          <div class="prog-codice-big">${esc(c.codice)}</div>
-          <div class="prog-nome-big">${esc(c.nome)}</div>
-          <div class="prog-info-row">
-            ${c.cliente ? `<div class="prog-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><strong>${esc(c.cliente)}</strong></div>` : ''}
-            <div class="prog-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Importato <strong>${dt}</strong></div>
-          </div>
-          ${c.note ? `<div class="prog-note">${esc(c.note)}</div>` : ''}
-        </div>
-        <div style="display:flex;gap:8px;flex-shrink:0">
-          <button class="btn btn-secondary btn-sm" onclick="openEditProgetto()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Modifica
-          </button>
-        </div>
-      </div>
-      <div class="prog-path">📁 ${esc(c.percorso_cartella)}</div>
-    </div>`;
-
-  document.getElementById('progStatsBar').innerHTML = `
-    <div class="pstat"><div class="pstat-n">${c.n_distinte_tot}</div><div class="pstat-l">Totale</div></div>
-    <div class="pstat ${c.n_assegnate > 0 ? 'gold' : ''}"><div class="pstat-n">${c.n_assegnate}</div><div class="pstat-l">Assegnate</div></div>
-    <div class="pstat ${c.n_inviate > 0 ? 'blue' : ''}"><div class="pstat-n">${c.n_inviate}</div><div class="pstat-l">Inviate</div></div>
-    <div class="pstat ${c.n_confermate > 0 ? 'green' : ''}"><div class="pstat-n">${c.n_confermate}</div><div class="pstat-l">Confermate</div></div>`;
-
-  const comm = c.distinte.filter(d => d.categoria === 'commerciale');
-  const costr = c.distinte.filter(d => d.categoria === 'costruttiva');
-  let html = '';
-  if(comm.length)  html += sectionHtml('commerciale', 'Commerciali', comm);
-  if(costr.length) html += sectionHtml('costruttiva', 'Costruttivi', costr);
-  if(currentAlbero && currentAlbero.categorie && currentAlbero.categorie.length){
-    html += renderAlberoHtml(currentAlbero);
-  }
-  if(!html) html = errHtml('Nessuna distinta importata', 'Importa la cartella tramite "Distinta Excel" per vedere l\'albero delle parti.');
-  document.getElementById('progSections').innerHTML = html;
-}
-
-function sectionHtml(cat, label, items){
-  const isCom = cat === 'commerciale';
-  const cls = isCom ? 'comm' : 'costr';
-  const iconPath = isCom
-    ? '<path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>'
-    : '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>';
-  const rows = items.map(d => {
-    const forn = fornitori.find(f => f.id === d.fornitore_id);
-    const disegni = parseJson(d.percorsi_disegni);
-    const meta = [];
-    if(d.percorso_distinta_pdf || d.percorso_distinta_xlsx)
-      meta.push(`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>DIBA ${[d.percorso_distinta_pdf?'PDF':'',d.percorso_distinta_xlsx?'XLS':''].filter(Boolean).join('+')} </span>`);
-    if(disegni.length)
-      meta.push(`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>${disegni.length} disegn${disegni.length===1?'o':'i'}</span>`);
-    const sv = statoVal(d.stato);
-    return `<div class="distinta-row" onclick="openSmista(${d.id})">
-      <div class="dr-icon ${cls}">${ini(d.nome)}</div>
-      <div class="dr-body">
-        <div class="dr-nome">${esc(d.nome)}</div>
-        <div class="dr-sub">${meta.join('')}${d.formati_richiesti?`<span style="color:var(--gold-dark);font-weight:600">${esc(d.formati_richiesti)}</span>`:''}</div>
-      </div>
-      <div class="dr-fornitore">${forn ? esc(forn.nome) : '<span style="color:var(--text-3)">—</span>'}</div>
-      <div class="dr-stato"><span class="badge ${sv.cls}">${sv.label}</span></div>
-      <div class="dr-btn">
-        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openSmista(${d.id})">${d.fornitore_id ? 'Modifica' : 'Assegna'}</button>
-      </div>
-    </div>`;
-  }).join('');
-  return `<div class="distinte-section">
-    <div class="ds-header">
-      <div class="ds-ico ${cls}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg></div>
-      <div class="ds-title">${label}</div>
-      <span class="ds-count">${items.length}</span>
-    </div>
-    ${rows}
-  </div>`;
-}
-
-/* ── SMISTAMENTO ── */
-function openSmista(id){
-  if(!currentProgetto) return;
-  currentDistinta = currentProgetto.distinte.find(d => d.id === id);
-  if(!currentDistinta) return;
-  const d = currentDistinta;
-  const isCom = d.categoria === 'commerciale';
-
-  document.getElementById('smistaIco').className = 'modal-ico' + (isCom ? '' : ' purple');
-  document.getElementById('smistaTit').textContent = d.fornitore_id ? 'Modifica smistamento' : 'Assegna fornitore';
-  document.getElementById('smistaSub').textContent = d.nome + ' — ' + (isCom ? 'Commerciale' : 'Costruttivo');
-
-  // File info
-  const disegni = parseJson(d.percorsi_disegni);
-  let fHtml = '';
-  const files = [];
-  if(d.percorso_distinta_pdf) files.push({p: d.percorso_distinta_pdf, t: 'DIBA PDF'});
-  if(d.percorso_distinta_xlsx) files.push({p: d.percorso_distinta_xlsx, t: 'DIBA Excel'});
-  disegni.slice(0, 6).forEach(p => files.push({p, t: 'Disegno'}));
-  if(files.length){
-    fHtml = `<div><div class="fl">File inclusi</div><div class="file-list">${files.map(f => fileRow(f.p, f.t)).join('')}${disegni.length > 6 ? `<div style="font-size:11px;color:var(--text-3);padding:4px 0">... e altri ${disegni.length - 6} disegni</div>` : ''}</div></div>`;
-  }
-  document.getElementById('smistaFiles').innerHTML = fHtml;
-
-  // Fornitore dropdown
-  const sel = document.getElementById('smistaFornitore');
-  sel.innerHTML = '<option value="">— Nessuno —</option>';
-  const pref = isCom ? fornitori.filter(f => f.attivo && f.tipo === 'commerciale') : fornitori.filter(f => f.attivo && f.tipo === 'terzista');
-  const altri = fornitori.filter(f => f.attivo && !pref.includes(f));
-  if(pref.length){
-    const og = document.createElement('optgroup');
-    og.label = isCom ? 'Fornitori commerciali' : 'Terzisti';
-    pref.forEach(f => og.appendChild(new Option(f.nome, f.id)));
-    sel.appendChild(og);
-  }
-  if(altri.length){
-    const og2 = document.createElement('optgroup');
-    og2.label = 'Altri';
-    altri.forEach(f => og2.appendChild(new Option(f.nome, f.id)));
-    sel.appendChild(og2);
-  }
-  sel.value = d.fornitore_id || '';
-
-  // Formati
-  const fmts = (d.formati_richiesti || 'PDF').split(',').map(x => x.trim());
-  document.getElementById('sfPdf').checked = fmts.includes('PDF');
-  document.getElementById('sfDwg').checked = fmts.includes('DWG');
-  document.getElementById('sfDxf').checked = fmts.includes('DXF');
-  document.getElementById('sfStep').checked = fmts.includes('STEP');
-
-  // Stato
-  currentStatoSmista = d.stato;
-  const stati = [
-    {k:'da_smistare', l:'Da smistare', c:'gray'},
-    {k:'da_inviare', l:'Da inviare', c:'gold'},
-    {k:'inviata_da_confermare', l:'Inviata', c:'blue'},
-    {k:'confermata', l:'Confermata', c:'green'},
-    {k:'respinta', l:'Respinta', c:'red'},
-  ];
-  document.getElementById('statoBtns').innerHTML = stati.map(s =>
-    `<button class="sb ${s.c}${d.stato === s.k ? ' active' : ''}" onclick="setStatoSmista('${s.k}',this)">${s.l}</button>`
-  ).join('');
-
-  document.getElementById('btnRilascia').style.display = d.fornitore_id ? 'inline-flex' : 'none';
-  openModal('modalSmista');
-}
-
-function setStatoSmista(stato, btn){
-  currentStatoSmista = stato;
-  document.querySelectorAll('#statoBtns .sb').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-async function salvaSmista(){
-  const d = currentDistinta;
-  if(!d) return;
-  const btn = document.getElementById('btnSalvaSmista'); btn.disabled = true;
-  const fId = parseInt(document.getElementById('smistaFornitore').value) || null;
-  const fmts = ['sfPdf','sfDwg','sfDxf','sfStep']
-    .filter(id => document.getElementById(id).checked)
-    .map(id => id.slice(2).toUpperCase()).join(',') || 'PDF';
-  try {
-    if(fId && (fId !== d.fornitore_id || fmts !== d.formati_richiesti)){
-      const r = await fetch(`${API}/api/rdo/distinte/${d.id}/assegna`, {
-        method:'PATCH', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({fornitore_id: fId, formati_richiesti: fmts})
+function renderTree(){
+  if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
+  let html='';
+  S.albero.categorie.forEach(cat=>{
+    const catOpen=S.openCat[cat.categoria]!==false;
+    const allP=cat.lavorazioni.flatMap(l=>l.parti);
+    const done=allP.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
+    html+=`<div class="tr-cat" onclick="toggleCat('${jsq(cat.categoria)}')">
+      <span class="tr-arrow">${catOpen?'▾':'▸'}</span>
+      <span class="tr-cat-label">${esc(cat.categoria||'(senza categoria)')}</span>
+      <span class="tr-cnt ${done===allP.length&&allP.length?'done':''}">${done}/${allP.length}</span>
+      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'CAT',cat:'${jsq(cat.categoria)}'})">Assegna tutti</span></div>`;
+    if(catOpen){
+      cat.lavorazioni.forEach(lav=>{
+        const lk=cat.categoria+'||'+lav.lav_meccanica;
+        const lavOpen=S.openLav[lk]!==false;
+        const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
+        const col=lavColor(lav.lav_meccanica);
+        html+=`<div class="tr-lav" onclick="toggleLav('${jsq(lk)}')">
+          <span class="tr-arrow">${lavOpen?'▾':'▸'}</span>
+          <span class="tr-lav-label" style="color:${col}">${esc(lav.lav_meccanica||'(senza lavorazione)')}</span>
+          <div class="tr-lav-bar"><div class="tr-lav-barf" style="width:${lav.parti.length?Math.round(ld/lav.parti.length*100):0}%;background:${col}"></div></div>
+          <span class="tr-cnt" style="font-size:9px">${ld}/${lav.parti.length}</span>
+          <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'LAV',cat:'${jsq(cat.categoria)}',lav:'${jsq(lav.lav_meccanica)}'})">Tutti</span></div>`;
+        if(lavOpen){
+          lav.parti.forEach(p=>{
+            const sel=S.sel===p.numero_parte;const chk=S.rows.has(p.id);
+            const forn=p.fornitore_id?fornitori.find(f=>f.id===p.fornitore_id):null;
+            const fc=forn?`<span class="ac ac-set" title="${esc(forn.nome)}" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">${esc(forn.nome.split(' ')[0])}</span>`
+                          :`<span class="ac ac-empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
+            const tags=fileTags(p.files);
+            const stc=(p.stato&&p.stato!=='da_smistare')?`<span class="sc s_${p.stato}">${statoLbl(p.stato)}</span>`:'';
+            html+=`<div class="tr-part${sel?' sel':''}" onclick="selPart('${jsq(p.numero_parte)}')">
+              <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
+              <span class="tr-pcod">${esc(p.numero_parte)}</span>
+              <span class="tr-pdesc" title="${esc(p.denominazione)}">${esc(p.denominazione||'—')}</span>
+              <span class="tr-pqty">×${esc(p.quantita)}</span>
+              <div class="tr-pfiles">${tags}</div>${fc}${stc}</div>`;
+          });
+        }
       });
-      if(!r.ok) throw new Error('Errore assegnazione fornitore');
     }
-    if(currentStatoSmista && currentStatoSmista !== d.stato){
-      const r2 = await fetch(`${API}/api/rdo/distinte/${d.id}/stato`, {
-        method:'PATCH', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({stato: currentStatoSmista})
-      });
-      if(!r2.ok) throw new Error('Errore aggiornamento stato');
-    }
-    closeModal('modalSmista');
-    toast('Distinta aggiornata', 'ok');
-    await openProgettoDetail(currentProgetto.id);
-    await loadProgetti();
-  } catch(e) {
-    toast(e.message || 'Errore salvataggio', true);
-  } finally {
-    btn.disabled = false;
-  }
+  });
+  document.getElementById('tscroll').innerHTML=html;
+}
+function toggleCat(k){S.openCat[k]=!(S.openCat[k]!==false);renderTree();}
+function toggleLav(k){S.openLav[k]=!(S.openLav[k]!==false);renderTree();}
+
+function selPart(cod){
+  S.sel=S.sel===cod?null:cod;
+  const h=document.getElementById('calhint');
+  if(S.sel){const p=allParti().find(x=>x.numero_parte===cod);h.innerHTML=`<b>${esc(cod)}</b> · ${esc(p?p.denominazione:'')}`;S.tab='rel';}
+  else{h.textContent='Clicca un pezzo per evidenziare i suoi file';S.tab='tutti';}
+  renderTree();renderCalTabs();renderCal();
 }
 
-async function rilasciaDistinta(){
-  const d = currentDistinta;
-  if(!d || !confirm('Rilasciare la distinta? Il fornitore verrà rimosso e tornerà in stato "Da smistare".')) return;
-  try {
-    await fetch(`${API}/api/rdo/distinte/${d.id}/stato`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({stato: 'da_smistare'})
+/* ── CALDERONE ── */
+function calFiles(){return S.cal&&S.cal.files?S.cal.files:[];}
+function renderCalTabs(){
+  const F=calFiles();const relN=S.sel?F.filter(f=>f.rel.includes(S.sel)).length:0;
+  const hasMisc=F.some(f=>f.categoria==='misc');
+  const tabs=[{id:'tutti',l:'Tutti',n:F.length},{id:'rel',l:'Relativi',n:relN},{id:'bom',l:'Distinte',n:F.filter(f=>f.categoria==='bom').length},{id:'draw',l:'Disegni',n:F.filter(f=>f.categoria==='draw').length},{id:'ds',l:'Datasheet',n:F.filter(f=>f.categoria==='ds').length}];
+  if(hasMisc)tabs.push({id:'misc',l:'Altri',n:F.filter(f=>f.categoria==='misc').length});
+  document.getElementById('ctabs').innerHTML=tabs.map(t=>`<div class="ctab${S.tab===t.id?' on':''}" onclick="S.tab='${t.id}';renderCalTabs();renderCal()">${t.l}<span class="ctc">${t.n}</span></div>`).join('');
+  document.getElementById('ctot').textContent='· '+F.length+' file';
+}
+function renderCal(){
+  const F=calFiles();let f=[...F];
+  if(S.tab==='rel')f=S.sel?F.filter(x=>x.rel.includes(S.sel)):[];
+  else if(['bom','draw','ds','misc'].includes(S.tab))f=F.filter(x=>x.categoria===S.tab);
+  if(S.sq)f=f.filter(x=>x.nome.toLowerCase().includes(S.sq));
+  const c=document.getElementById('clist');
+  if(!f.length){c.innerHTML='<div style="padding:16px;font-size:11px;color:var(--t3);text-align:center">Nessun file</div>';return;}
+  if(S.tab==='tutti'&&S.sel){
+    const rel=f.filter(x=>x.rel.includes(S.sel)),oth=f.filter(x=>!x.rel.includes(S.sel));
+    c.innerHTML=(rel.length?`<div class="cgrp">Collegati a ${esc(S.sel)}</div>`+rel.map(x=>fileItem(x,'hi')).join(''):'')+(oth.length?`<div class="cgrp sep">Altri</div>`+oth.map(x=>fileItem(x,'dim')).join(''):'');
+  } else c.innerHTML=`<div class="cgrp">${f.length} file</div>`+f.map(x=>fileItem(x,'')).join('');
+}
+function fileItem(x,cls){const bcat={bom:'fbbom',draw:'fbdraw',ds:'fbds',misc:'fbmisc'}[x.categoria];const blbl={bom:'Dist.',draw:'Dis.',ds:'DS',misc:'Altro'}[x.categoria];
+  return `<div class="fi-f ${cls}" onclick="apriFile('${jsq(x.percorso)}')"><div class="fic f${x.tipo}">${x.tipo.toUpperCase()}</div><div class="finfo"><div class="fname">${esc(x.nome)}</div><div class="fmeta">${x.size_kb} KB</div></div><span class="fbadge ${bcat}">${blbl}</span></div>`;}
+function apriFile(path){window.open(API+'/api/commesse/'+S.projId+'/file?path='+encodeURIComponent(path),'_blank');}
+
+/* ── SELEZIONE + FAB ── */
+function toggleRow(id,on){on?S.rows.add(id):S.rows.delete(id);updateFAB();}
+function toggleAll(on){allParti().forEach(p=>on?S.rows.add(p.id):S.rows.delete(p.id));renderTree();updateFAB();}
+function updateFAB(){const n=S.rows.size,fab=document.getElementById('fab');fab.style.display=(n>0&&S.v==='pdet')?'flex':'none';document.getElementById('fabn').textContent=n;document.getElementById('fabn2').textContent=n;}
+function hideFAB(){S.rows.clear();document.getElementById('fab').style.display='none';const ck=document.getElementById('chkall');if(ck)ck.checked=false;}
+
+/* ── DROPDOWN ASSEGNA ── */
+let ddTarget=null;
+function ddHtml(includeClear){
+  const terz=fornitori.filter(f=>f.attivo&&f.tipo==='terzista');
+  const comm=fornitori.filter(f=>f.attivo&&f.tipo==='commerciale');
+  let h='';
+  if(includeClear)h+=`<div class="add-item add-clear" onclick="doAssign(null)"><div class="ddav">✕</div><div><div class="ddn">Rilascia</div><div class="ddt">rimuovi fornitore</div></div></div>`;
+  if(terz.length){h+='<div class="add-hd">Terzisti</div>'+terz.map(ddItem).join('');}
+  if(comm.length){h+='<div class="add-hd">Commerciali</div>'+comm.map(ddItem).join('');}
+  if(!terz.length&&!comm.length)h+='<div class="add-hd">Nessun fornitore — aggiungine in Fornitori</div>';
+  return h;
+}
+function ddItem(f){return `<div class="add-item" onclick="doAssign(${f.id})"><div class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="ddn">${esc(f.nome)}</div><div class="ddt">${f.tipo}</div></div></div>`;}
+function showDD(evt,target){evt.stopPropagation();ddTarget=target;const d=document.getElementById('add');d.innerHTML=ddHtml(target.t==='P');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-210);let top=r.bottom+4;if(top+300>window.innerHeight)top=Math.max(8,r.top-304);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block`;}
+function showDDBulk(evt){if(!S.rows.size)return;evt.stopPropagation();ddTarget={t:'BULK'};const d=document.getElementById('add');d.innerHTML=ddHtml(true);const r=evt.currentTarget.getBoundingClientRect();d.style.cssText=`top:${Math.max(8,r.top-304)}px;left:${Math.max(8,r.left)}px;display:block`;}
+function closeDD(){const d=document.getElementById('add');if(d)d.style.display='none';}
+document.addEventListener('click',e=>{if(!e.target.closest('#add')&&!e.target.closest('.ac')&&!e.target.closest('.tr-assign-all')&&!e.target.closest('.fbgh'))closeDD();});
+
+async function doAssign(fid){
+  const t=ddTarget;closeDD();if(!t)return;
+  try{
+    if(t.t==='P'){
+      const body=fid?{fornitore_id:fid,stato:'da_inviare'}:{fornitore_id:null,stato:'da_smistare'};
+      const r=await fetch(API+'/api/parti/'+t.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok)throw 0;
+    } else if(t.t==='CAT'||t.t==='LAV'){
+      if(!fid){toast('Per rilasciare un gruppo usa i singoli pezzi o riassegna',true);return;}
+      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,lav_meccanica:t.t==='LAV'?(t.lav||''):null})});
+      if(!r.ok)throw 0;
+    } else if(t.t==='BULK'){
+      const ids=[...S.rows];
+      const body=fid?{fornitore_id:fid,stato:'da_inviare'}:{fornitore_id:null,stato:'da_smistare'};
+      await Promise.all(ids.map(id=>fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})));
+      S.rows.clear();
+    }
+    toast(fid?'Fornitore assegnato':'Rilasciato','ok');
+    await refreshDetail();
+  }catch{toast('Errore assegnazione',true);}
+}
+
+/* ── INVIO ── */
+async function inviaSelezionate(){
+  let ids=[...S.rows];
+  const all=allParti();
+  if(!ids.length){toast('Seleziona dei pezzi (o spunta «Tutti»)');return;}
+  const sel=all.filter(p=>ids.includes(p.id));
+  const noForn=sel.filter(p=>!p.fornitore_id);
+  if(noForn.length){toast(`${noForn.length} pezzi senza fornitore: assegna prima`,true);return;}
+  const okIds=sel.map(p=>p.id);
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/parti/stato',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:okIds,stato:'inviata_da_confermare'})});if(!r.ok)throw 0;const j=await r.json();
+    toast(`RDO segnata inviata per ${j.aggiornate} pezzi`,'ok');hideFAB();await refreshDetail();
+  }catch{toast('Errore invio',true);}
+}
+
+async function refreshDetail(){
+  try{const [ra,rc,rp]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/files'),fetch(API+'/api/commesse/'+S.projId+'/parti')]);
+    if(ra.ok)S.albero=await ra.json();if(rc.ok)S.cal=await rc.json();
+    const c=commesse.find(x=>x.id===S.projId);if(c&&rp.ok)c._parti=await rp.json();
+  }catch{}
+  renderProgress();renderTree();renderCalTabs();renderCal();updateFAB();
+}
+
+/* ── RDO VIEW ── */
+function renderRDO(){
+  const el=document.getElementById('rdogrid');
+  const active=commesse.filter(c=>flatParti(c).length);
+  if(!active.length){el.innerHTML=emptyHtml('Nessuna RDO','Importa un progetto e assegna i fornitori per generare le RDO.','go(\'proj\')','Vai ai progetti');return;}
+  el.innerHTML=active.map(c=>{
+    const parti=flatParti(c);const unass=parti.filter(p=>!p.fornitore_id);
+    const byF={};parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
+    const open=RDO_OPEN[c.id];
+    const warn=unass.length?`<span class="rdo-warn">⚠ ${unass.length} non assegnati</span>`:`<span class="rdo-ok">✓ tutti assegnati</span>`;
+    let body='';
+    Object.entries(byF).forEach(([fid,ps])=>{const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
+      body+=`<div class="rdo-fb"><div class="rdo-fh"><div class="rdo-favico" style="background:${avc(f.nome)}">${ini(f.nome)}</div><span class="rdo-fname">${esc(f.nome)}</span><span class="rdo-ftype" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span><span style="font-size:9.5px;color:var(--t3)">${ps.length} pezzi</span></div>
+        <div class="rdo-items">${ps.map(p=>`<span class="rdo-item ${p.stato==='inviata_da_confermare'?'sent':p.stato==='confermata'?'conf':''}" title="${esc(p.denominazione)}">${esc(p.numero_parte)}</span>`).join('')}</div>
+        <div class="rdo-fbtn"><a class="btn btn-ghost btn-sm" href="${API}/api/commesse/${c.id}/distinta/${fid}" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Scarica distinta</a>
+        <button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid})">Segna inviata</button></div></div>`;
     });
-    closeModal('modalSmista');
-    toast('Distinta rilasciata');
-    await openProgettoDetail(currentProgetto.id);
-    await loadProgetti();
-  } catch { toast('Errore rilascio', true); }
-}
-
-/* ── ALBERO PARTI ── */
-function renderAlberoHtml(albero){
-  // Raccoglie i fornitori assegnati per la barra in fondo
-  const fornAssegnati = new Set();
-  albero.categorie.forEach(cat => cat.lavorazioni.forEach(lav => {
-    if(lav.fornitore_id) fornAssegnati.add(lav.fornitore_id);
-  }));
-
-  const catBlocks = albero.categorie.map(cat => {
-    const catKey = 'ac_' + btoa(cat.categoria).replace(/[^a-z0-9]/gi,'');
-    const lavHtml = cat.lavorazioni.map(lav => {
-      const lavKey = 'al_' + btoa(cat.categoria + '|' + lav.lav_meccanica).replace(/[^a-z0-9]/gi,'');
-      const forn = lav.fornitore_id ? fornitori.find(f => f.id === lav.fornitore_id) : null;
-      const fornLabel = forn ? esc(forn.nome) : (lav.fornitore_nome_excel ? esc('Excel: ' + lav.fornitore_nome_excel) : '— non assegnato');
-      const fornCls = forn ? 'assigned' : '';
-      const partsHtml = lav.parti.map(p => {
-        const files = parseJson(p.files);
-        const exts = [...new Set(files.map(f => f.split('.').pop().toLowerCase()))];
-        const tags = exts.map(e => `<span class="ptag ${e}">${e.toUpperCase()}</span>`).join('');
-        return `<tr>
-          <td><span class="pcode">${esc(p.numero_parte)}</span></td>
-          <td>${esc(p.denominazione)}</td>
-          <td style="text-align:center">${esc(p.quantita)}</td>
-          <td>${esc(p.materiale)}</td>
-          <td><div class="ptags">${tags || '<span style="color:var(--text-3);font-size:11px">nessuno</span>'}</div></td>
-        </tr>`;
-      }).join('');
-      return `
-        <div class="albero-lav">
-          <div class="albero-lav-hd" onclick="toggleAlberoLav('${lavKey}',event)">
-            <svg class="albero-lav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            <span class="albero-lav-name">${esc(lav.lav_meccanica || '(nessuna lavorazione)')}</span>
-            <span class="albero-lav-n">${lav.n_parti} parti · ${lav.n_files} file</span>
-            <span class="albero-lav-forn ${fornCls}">${fornLabel}</span>
-            <button class="btn btn-secondary btn-sm" style="padding:3px 9px;font-size:11px" onclick="event.stopPropagation();openAssegnaBranch('${esc(cat.categoria)}','${esc(lav.lav_meccanica)}',${lav.fornitore_id||0},${lav.n_parti})">
-              ${forn ? 'Cambia' : 'Assegna'}
-            </button>
-          </div>
-          <div class="albero-parts" id="${lavKey}">
-            <table class="apt">
-              <thead><tr><th>Codice</th><th>Denominazione</th><th>Q.tà</th><th>Materiale</th><th>File</th></tr></thead>
-              <tbody>${partsHtml}</tbody>
-            </table>
-          </div>
-        </div>`;
-    }).join('');
-    return `
-      <div class="albero-section">
-        <div class="albero-cat-hd" id="hd_${catKey}" onclick="toggleAlberoCat('${catKey}')">
-          <svg class="albero-cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          <span class="albero-cat-label">${esc(cat.categoria)}</span>
-          <span class="albero-cat-count">${cat.n_parti} parti</span>
-        </div>
-        <div class="albero-cat-body" id="${catKey}">${lavHtml}</div>
-      </div>`;
+    if(unass.length)body+=`<div class="rdo-unass"><div class="rdo-ut">⚠ ${unass.length} pezzi senza fornitore</div><div class="rdo-items">${unass.slice(0,40).map(p=>`<span class="rdo-item unassigned">${esc(p.numero_parte)}</span>`).join('')}${unass.length>40?`<span class="rdo-item">+${unass.length-40}</span>`:''}</div><button class="btn btn-ghost btn-sm" style="margin-top:5px" onclick="go('pdet',${c.id})">Vai al progetto</button></div>`;
+    return `<div class="rdo-proj"><div class="rdo-ph" onclick="toggleRDO(${c.id})"><span class="rdo-pcod">${esc(c.codice)}</span><span class="rdo-pname">${esc(c.nome)}</span>${warn}<span class="rdo-narrow${open?' open':''}">▶</span></div><div class="rdo-body${open?' open':''}">${body}</div></div>`;
   }).join('');
-
-  // Barra fornitori assegnati con link download distinta
-  let fornBar = '';
-  if(fornAssegnati.size){
-    const chips = [...fornAssegnati].map(fid => {
-      const f = fornitori.find(x => x.id === fid);
-      if(!f) return '';
-      return `<a class="forn-chip" href="${API}/api/commesse/${albero.commessa_id}/distinta/${fid}" target="_blank">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        ${esc(f.nome)}
-      </a>`;
-    }).join('');
-    fornBar = `<div class="albero-forn-bar"><span class="albero-forn-bar-label">Scarica distinta fornitore:</span>${chips}</div>`;
-  }
-  return catBlocks + fornBar;
+}
+function toggleRDO(id){RDO_OPEN[id]=!RDO_OPEN[id];renderRDO();}
+async function rdoSend(cid,fid){
+  const parti=flatParti(commesse.find(c=>c.id===cid)).filter(p=>p.fornitore_id==fid&&p.stato!=='confermata');
+  if(!parti.length){toast('Nessun pezzo da inviare');return;}
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/parti/stato',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:parti.map(p=>p.id),stato:'inviata_da_confermare'})});if(!r.ok)throw 0;
+    toast('RDO segnata inviata (invio email: prossima fase)','ok');
+    const rp=await fetch(API+'/api/commesse/'+cid+'/parti');if(rp.ok)commesse.find(c=>c.id===cid)._parti=await rp.json();
+    renderRDO();
+  }catch{toast('Errore',true);}
 }
 
-function toggleAlberoCat(key){
-  const hd = document.getElementById('hd_' + key);
-  const body = document.getElementById(key);
-  if(!hd||!body) return;
-  const isOpen = body.classList.toggle('open');
-  hd.classList.toggle('open', isOpen);
+/* ── FORNITORI ── */
+function renderForn(){
+  document.getElementById('fornSub').textContent=fornitori.filter(f=>f.attivo).length+' fornitori attivi';
+  const g=document.getElementById('fgrid');
+  if(!fornitori.length){g.innerHTML=emptyHtml('Nessun fornitore','Aggiungi i fornitori e terzisti alla rubrica.','openForn()','Aggiungi fornitore');return;}
+  g.innerHTML=fornitori.map(f=>`<div class="fcard" style="${f.attivo?'':'opacity:.55'}">
+    <div class="fch"><div class="fcav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span></div></div>
+    <div class="fcc"><span>✉ <a href="mailto:${esc(f.email)}">${esc(f.email)}</a></span>${f.lavorazioni?`<span class="fmuted">🔧 ${esc(f.lavorazioni)}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
+    <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`).join('');
 }
 
-function toggleAlberoLav(key, e){
-  if(e && e.target.tagName === 'BUTTON') return;
-  const hd = e && e.currentTarget;
-  const body = document.getElementById(key);
-  if(!body) return;
-  const isOpen = body.classList.toggle('open');
-  if(hd) hd.classList.toggle('open', isOpen);
-}
-
-function openAssegnaBranch(cat, lav, currentFid, nParti){
-  document.getElementById('assegnaCat').value = cat;
-  document.getElementById('assegnaLav').value = lav;
-  document.getElementById('assegnaTit').textContent = lav || cat;
-  document.getElementById('assegnaSub').textContent = `${cat} · ${nParti} parti`;
-  document.getElementById('assegnaInfo').textContent = `Assegnerà il fornitore a tutte le ${nParti} parti in questo gruppo.`;
-  document.getElementById('btnRilasciaAssegna').style.display = currentFid ? 'inline-flex' : 'none';
-  const sel = document.getElementById('assegnaFornitore');
-  sel.innerHTML = '<option value="">— Seleziona fornitore —</option>';
-  const terzisti = fornitori.filter(f => f.attivo && f.tipo === 'terzista');
-  const comm = fornitori.filter(f => f.attivo && f.tipo === 'commerciale');
-  const altri = fornitori.filter(f => f.attivo && !terzisti.includes(f) && !comm.includes(f));
-  if(terzisti.length){ const og = document.createElement('optgroup'); og.label = 'Terzisti'; terzisti.forEach(f => og.appendChild(new Option(f.nome, f.id))); sel.appendChild(og); }
-  if(comm.length){ const og = document.createElement('optgroup'); og.label = 'Commerciali'; comm.forEach(f => og.appendChild(new Option(f.nome, f.id))); sel.appendChild(og); }
-  if(altri.length){ const og = document.createElement('optgroup'); og.label = 'Altri'; altri.forEach(f => og.appendChild(new Option(f.nome, f.id))); sel.appendChild(og); }
-  sel.value = currentFid || '';
-  openModal('modalAssegna');
-}
-
-async function salvaAssegna(){
-  if(!currentProgetto) return;
-  const fid = parseInt(document.getElementById('assegnaFornitore').value);
-  if(!fid){ toast('Seleziona un fornitore', true); return; }
-  const cat = document.getElementById('assegnaCat').value;
-  const lav = document.getElementById('assegnaLav').value;
-  const btn = document.getElementById('btnSalvaAssegna'); btn.disabled = true;
-  try {
-    const r = await fetch(`${API}/api/commesse/${currentProgetto.id}/assegna-branch`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({fornitore_id: fid, categoria: cat || null, lav_meccanica: lav || null})
-    });
-    if(!r.ok) throw new Error((await r.json()).detail || 'Errore');
-    const res = await r.json();
-    closeModal('modalAssegna');
-    toast(`${res.aggiornate} parti assegnate a ${res.fornitore}`, 'ok');
-    await openProgettoDetail(currentProgetto.id);
-  } catch(e) { toast(e.message || 'Errore assegnazione', true); }
-  finally { btn.disabled = false; }
-}
-
-async function rilasciaBranch(){
-  // Assegna fornitore_id=null a tutte le parti del branch non è supportato via assegna-branch
-  // (che richiede un fid). Per ora non implementato — mostriamo messaggio.
-  toast('Per rilasciare: assegna un altro fornitore o edita le parti singolarmente.');
-}
-
-/* ── IMPORT MODE ── */
-function setImportMode(mode){
-  importMode = mode;
-  document.getElementById('imodeBom').classList.toggle('active', mode === 'bom');
-  document.getElementById('imodeExcel').classList.toggle('active', mode === 'excel');
-  document.getElementById('imodeHint').textContent = mode === 'excel'
-    ? 'Legge la distinta generale Excel dalla cartella e abbina automaticamente i disegni in COSTRUTTIVI TOTALI/DISEGNI/'
-    : 'Importa le distinte già generate da BOM2Excel (richiede sottocartelle COMMERCIALI TOTALI e/o COSTRUTTIVI TOTALI)';
-}
-
-/* ── NUOVO PROGETTO ── */
-function openNuovoProgetto(){
-  ['nCodice','nNome','nCliente','nNote'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('nCartella').value = '';
-  clearErrs(['nCodiceErr','nNomeErr','nCartellaErr']);
-  openModal('modalNuovo');
-  setTimeout(() => document.getElementById('nCodice').focus(), 100);
-}
-
-async function creaProgetto(){
-  clearErrs(['nCodiceErr','nNomeErr','nCartellaErr']);
-  const codice = document.getElementById('nCodice').value.trim();
-  const nome = document.getElementById('nNome').value.trim();
-  const cartella = document.getElementById('nCartella').value.trim();
-  let ok = true;
-  if(!codice){ showErr('nCodiceErr', 'nCodice'); ok = false; }
-  if(!nome){ showErr('nNomeErr', 'nNome'); ok = false; }
-  if(!cartella){ showErr('nCartellaErr', 'nCartella'); ok = false; }
-  if(!ok) return;
-  const btn = document.getElementById('btnCrea'); btn.disabled = true;
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Importazione...';
-  try {
-    const endpoint = importMode === 'excel' ? '/api/commesse/importa-excel' : '/api/commesse/importa';
-    const r = await fetch(API + endpoint, {
-      method: 'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        codice, nome,
-        cliente: document.getElementById('nCliente').value.trim(),
-        percorso_cartella: cartella,
-        note: document.getElementById('nNote').value.trim()
-      })
-    });
-    if(!r.ok){
-      const e = await r.json();
-      throw new Error((e.detail && typeof e.detail === 'string') ? e.detail : (Array.isArray(e.detail) ? e.detail.map(x=>x.msg).join('; ') : 'Errore importazione'));
+/* ── NUOVO/MODIFICA PROGETTO ── */
+function openNuovo(){document.getElementById('mProgTit').textContent='Nuovo progetto';document.getElementById('mProgSub').textContent='Indica la cartella con la distinta base Excel';document.getElementById('pBtn').textContent='Crea e importa';
+  ['pId','pCodice','pNome','pCliente','pCartella','pNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pCartella').disabled=false;clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');setTimeout(()=>document.getElementById('pCodice').focus(),80);}
+function openModifica(){const c=commesse.find(x=>x.id===S.projId);if(!c)return;
+  document.getElementById('mProgTit').textContent='Modifica progetto';document.getElementById('mProgSub').textContent='Aggiorna dati e percorso. Cambiando percorso poi usa Riscansiona.';document.getElementById('pBtn').textContent='Salva modifiche';
+  document.getElementById('pId').value=c.id;document.getElementById('pCodice').value=c.codice;document.getElementById('pNome').value=c.nome;document.getElementById('pCliente').value=c.cliente||'';document.getElementById('pCartella').value=c.percorso_cartella;document.getElementById('pNote').value=c.note||'';
+  clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');}
+async function salvaProgetto(){
+  clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);
+  const id=document.getElementById('pId').value;
+  const codice=document.getElementById('pCodice').value.trim(),nome=document.getElementById('pNome').value.trim(),cartella=document.getElementById('pCartella').value.trim();
+  let ok=true;if(!codice){showErr('pCodiceErr','pCodice');ok=false;}if(!nome){showErr('pNomeErr','pNome');ok=false;}if(!cartella){showErr('pCartellaErr','pCartella');ok=false;}if(!ok)return;
+  const btn=document.getElementById('pBtn');btn.disabled=true;const old=btn.textContent;btn.textContent='Attendi…';
+  try{
+    if(id){
+      const r=await fetch(API+'/api/commesse/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),note:document.getElementById('pNote').value.trim(),percorso_cartella:cartella})});
+      if(!r.ok)throw 0;mClose('mProg');toast('Progetto aggiornato','ok');await loadCommesse();await openProgetto(parseInt(id));
+    } else {
+      const r=await fetch(API+'/api/commesse/importa-excel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),percorso_cartella:cartella,note:document.getElementById('pNote').value.trim()})});
+      if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore import');}
+      const c=await r.json();mClose('mProg');const np=c.categorie?c.categorie.reduce((s,x)=>s+x.n_parti,0):'?';toast('Progetto creato — '+np+' parti',(np?'ok':true));
+      await loadCommesse();go('pdet',c.commessa_id);
     }
-    const c = await r.json();
-    closeModal('modalNuovo');
-    const nParti = importMode === 'excel'
-      ? (c.categorie ? c.categorie.reduce((s,cat)=>s+cat.n_parti,0) : '?')
-      : (c.distinte ? c.distinte.length : '?');
-    toast(`Progetto creato — ${nParti} ${importMode === 'excel' ? 'parti' : 'distinte'} importate`, 'ok');
-    await loadProgetti();
-    const cId = importMode === 'excel' ? c.commessa_id : c.id;
-    showView('progetto', cId);
-  } catch(e) {
-    toast(e.message || 'Errore creazione progetto', true);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> Crea e importa';
-  }
+  }catch(e){toast(e.message||'Errore',true);}finally{btn.disabled=false;btn.textContent=old;}
+}
+async function riscansiona(){
+  if(!S.projId)return;const btn=document.getElementById('btnRiscan');btn.disabled=true;
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/riscansiona',{method:'POST'});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+    toast('Riscansione completata','ok');await loadCommesse();await refreshDetail();
+  }catch(e){toast(e.message||'Errore riscansione',true);}finally{btn.disabled=false;}
+}
+async function eliminaProgetto(){
+  const c=commesse.find(x=>x.id===S.projId);if(!c)return;
+  if(!confirm(`Eliminare il progetto «${c.codice} — ${c.nome}»?\nVengono rimosse parti e assegnazioni dal gestionale (i file su disco NON vengono toccati).`))return;
+  try{const r=await fetch(API+'/api/commesse/'+S.projId,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;
+    toast('Progetto eliminato','ok');await loadCommesse();go('proj');
+  }catch{toast('Errore eliminazione',true);}
 }
 
-/* ── MODIFICA PROGETTO ── */
-function openEditProgetto(){
-  const c = currentProgetto;
-  if(!c) return;
-  document.getElementById('editId').value = c.id;
-  document.getElementById('editCodice').value = c.codice;
-  document.getElementById('editNome').value = c.nome;
-  document.getElementById('editCliente').value = c.cliente || '';
-  document.getElementById('editNote').value = c.note || '';
-  openModal('modalEditProg');
+/* ── FORNITORE CRUD ── */
+function openForn(id){
+  const ed=id?fornitori.find(f=>f.id===id):null;
+  document.getElementById('mFornTit').textContent=ed?'Modifica fornitore':'Nuovo fornitore';
+  document.getElementById('fId').value=ed?ed.id:'';
+  document.getElementById('fNome').value=ed?ed.nome:'';
+  document.getElementById('fEmail').value=ed?ed.email:'';
+  document.getElementById('fTipo').value=ed?ed.tipo:'commerciale';
+  document.getElementById('fLav').value=ed?(ed.lavorazioni||''):'';
+  document.getElementById('fNote').value=ed?(ed.note||''):'';
+  const fmts=(ed?ed.formati_preferiti:'PDF').split(',').map(x=>x.trim());
+  document.getElementById('fPdf').checked=fmts.includes('PDF');document.getElementById('fDwg').checked=fmts.includes('DWG');document.getElementById('fDxf').checked=fmts.includes('DXF');document.getElementById('fStep').checked=fmts.includes('STEP');
+  document.getElementById('fAttivoGrp').style.display=ed?'block':'none';document.getElementById('fAttivo').checked=ed?ed.attivo:true;
+  document.getElementById('fDel').style.display=ed?'inline-flex':'none';
+  clearErr(['fNomeErr','fEmailErr'],['fNome','fEmail']);mOpen('mForn');
+}
+async function salvaForn(){
+  clearErr(['fNomeErr','fEmailErr'],['fNome','fEmail']);
+  const nome=document.getElementById('fNome').value.trim(),email=document.getElementById('fEmail').value.trim();
+  let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('fEmailErr','fEmail');ok=false;}if(!ok)return;
+  const fmts=[];if(document.getElementById('fPdf').checked)fmts.push('PDF');if(document.getElementById('fDwg').checked)fmts.push('DWG');if(document.getElementById('fDxf').checked)fmts.push('DXF');if(document.getElementById('fStep').checked)fmts.push('STEP');
+  const id=document.getElementById('fId').value;
+  const payload={nome,email,tipo:document.getElementById('fTipo').value,lavorazioni:document.getElementById('fLav').value.trim(),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim()};
+  if(id)payload.attivo=document.getElementById('fAttivo').checked;
+  const btn=document.getElementById('fBtn');btn.disabled=true;
+  try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
+    mClose('mForn');toast(id?'Fornitore aggiornato':'Fornitore aggiunto','ok');await loadFornitori();renderForn();
+  }catch{toast('Errore salvataggio',true);}finally{btn.disabled=false;}
+}
+async function eliminaForn(){
+  const id=document.getElementById('fId').value;if(!id)return;if(!confirm('Disattivare questo fornitore?'))return;
+  try{const r=await fetch(API+'/api/fornitori/'+id,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;mClose('mForn');toast('Fornitore disattivato','ok');await loadFornitori();renderForn();}catch{toast('Errore',true);}
 }
 
-async function salvaEdit(){
-  const id = document.getElementById('editId').value;
-  const btn = document.getElementById('btnSalvaEdit'); btn.disabled = true;
-  try {
-    const r = await fetch(`${API}/api/commesse/${id}`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        codice: document.getElementById('editCodice').value.trim(),
-        nome:   document.getElementById('editNome').value.trim(),
-        cliente:document.getElementById('editCliente').value.trim(),
-        note:   document.getElementById('editNote').value.trim(),
-      })
-    });
-    if(!r.ok) throw 0;
-    closeModal('modalEditProg');
-    toast('Progetto aggiornato', 'ok');
-    await openProgettoDetail(parseInt(id));
-    await loadProgetti();
-  } catch { toast('Errore salvataggio', true); }
-  finally { btn.disabled = false; }
-}
-
-/* ── KANBAN ── */
-const STATI_KANBAN = [
-  {k:'da_smistare', l:'Da smistare', cls:'gray'},
-  {k:'da_inviare', l:'Da inviare', cls:'amber'},
-  {k:'inviata_da_confermare', l:'In attesa', cls:'blue'},
-  {k:'confermata', l:'Confermata', cls:'green'},
-  {k:'respinta', l:'Respinta', cls:'red'},
-];
-
-async function loadKanban(){
-  const w = document.getElementById('kanbanWrap');
-  w.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:20px">Caricamento...</div>';
-  try {
-    const r = await fetch(API + '/api/rdo');
-    if(!r.ok) throw 0;
-    const rdos = await r.json();
-    const all = rdos.flatMap(rdo => rdo.distinte.map(d => ({
-      ...d, _commessa: commesse.find(c => c.id === rdo.commessa_id)
-    })));
-    w.innerHTML = STATI_KANBAN.map(s => {
-      const items = all.filter(d => d.stato === s.k);
-      const cards = items.length
-        ? items.map(d => {
-            const f = fornitori.find(x => x.id === d.fornitore_id);
-            const cId = d._commessa?.id || 0;
-            return `<div class="k-card" onclick="gotoKanbanDistinta(${d.id},${cId})">
-              <div class="k-commessa">${esc(d._commessa?.codice || '—')}</div>
-              <div class="k-nome">${esc(d.nome)}</div>
-              <div class="k-fornitore">${f ? esc(f.nome) : '—'}</div>
-            </div>`;
-          }).join('')
-        : `<div style="text-align:center;color:var(--text-3);font-size:12px;padding:24px 12px">Nessuna</div>`;
-      return `<div class="k-col">
-        <div class="k-col-hd"><span class="k-col-title">${s.l}</span><span class="k-col-n badge ${s.cls}" style="cursor:default">${items.length}</span></div>
-        <div class="k-col-body">${cards}</div>
-      </div>`;
-    }).join('');
-  } catch {
-    w.innerHTML = errHtml('Errore caricamento', 'Impossibile caricare le RDO dal backend');
-  }
-}
-
-async function gotoKanbanDistinta(distintaId, commessaId){
-  if(!commessaId) return;
-  showView('progetto', commessaId);
-  setTimeout(() => openSmista(distintaId), 400);
-}
-
-/* ── Utils ── */
-function statoVal(s){
-  const m = {
-    da_smistare:           {cls:'gray',  label:'Da smistare'},
-    da_inviare:            {cls:'gold',  label:'Da inviare'},
-    inviata_da_confermare: {cls:'blue',  label:'Inviata'},
-    confermata:            {cls:'green', label:'Confermata'},
-    respinta:              {cls:'red',   label:'Respinta'},
-  };
-  return m[s] || {cls:'gray', label:s};
-}
-function ini(n){ return (n||'').trim().split(/\s+/).slice(0,2).map(w => w[0]||'').join('').toUpperCase() || '?'; }
-function parseJson(s){ try { return JSON.parse(s) || []; } catch { return []; } }
-function esc(s){ const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
-function fileRow(p, tipo){
-  const nm = p.split(/[/\\]/).pop();
-  const ext = nm.split('.').pop().toUpperCase();
-  return `<div class="file-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${esc(nm)}<span class="file-type">${ext}</span></div>`;
-}
-function errHtml(t, d){
-  return `<div class="empty-st"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-tit">${t}</div><div class="empty-desc">${d}</div></div>`;
-}
-function clearErrs(ids){ ids.forEach(id => { document.getElementById(id).style.display = 'none'; }); }
-function showErr(errId, inputId){ document.getElementById(errId).style.display = 'block'; if(inputId) document.getElementById(inputId).classList.add('err'); }
-
-/* ── Modals ── */
-function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
-function closeOv(e, id){ if(e.target.id === id) closeModal(id); }
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') ['modalNuovo','modalSmista','modalEditProg','modalAssegna'].forEach(closeModal);
-});
-
-/* ── Sidebar mobile ── */
-function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOv').classList.add('open'); }
-function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOv').classList.remove('open'); }
-
-/* ── Toast ── */
-let _tt;
-function toast(msg, type){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type === 'ok' ? ' ok' : type === true ? ' err' : '');
-  clearTimeout(_tt);
-  _tt = setTimeout(() => t.classList.remove('show'), 3200);
-}
+/* ── UTILS ── */
+function esc(s){const d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+function jsq(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function ini(n){return (n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
+function fmtDate(s){try{return new Date(s).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}catch{return '';}}
+function statoLbl(s){return {da_inviare:'da inviare',inviata_da_confermare:'inviato',confermata:'confermato',respinta:'respinto'}[s]||s;}
+function fileTags(filesJson){let arr=[];try{arr=JSON.parse(filesJson)||[];}catch{}const exts=[...new Set(arr.map(p=>(p.split('.').pop()||'').toLowerCase()))].filter(Boolean);
+  return exts.map(e=>`<span class="ftag ftag-${e}">${e.toUpperCase()}</span>`).join('');}
+function lavColor(l){if(!l)return '#8E8E93';let h=0;for(let i=0;i<l.length;i++)h=l.charCodeAt(i)+((h<<5)-h);const pal=['#FF9500','#007AFF','#5AC8FA','#34C759','#5856D6','#D48A0F','#FF2D55','#0077A0'];return pal[Math.abs(h)%pal.length];}
+function avc(n){let h=0;for(let i=0;i<(n||'').length;i++)h=n.charCodeAt(i)+((h<<5)-h);const pal=['#2C1506,#7A3E18','#FF9500,#C07000','#34C759,#1A7A2E','#5AC8FA,#007AFF','#5856D6,#4040B0','#FF2D55,#C7003A'];return 'linear-gradient(135deg,'+pal[Math.abs(h)%pal.length]+')';}
+function emptyHtml(t,d,act,lbl){return `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><div class="et">${t}</div><div class="ed">${d}</div>${act?`<button class="btn btn-go" onclick="${act}">${lbl}</button>`:''}</div>`;}
+function clearErr(errs,inputs){errs.forEach(e=>document.getElementById(e).style.display='none');(inputs||[]).forEach(i=>document.getElementById(i).classList.remove('err'));}
+function showErr(e,i){document.getElementById(e).style.display='block';if(i)document.getElementById(i).classList.add('err');}
+function mOpen(id){document.getElementById(id).classList.add('open');}
+function mClose(id){document.getElementById(id).classList.remove('open');}
+function ovClose(e,id){if(e.target.id===id)mClose(id);}
+function openSb(){document.getElementById('sb').classList.add('open');document.getElementById('sbOv').classList.add('open');}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('sbOv').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();}});
+let _tt;function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='ok'?' ok':type===true?' err':'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3400);}
 
 init();
 </script>
