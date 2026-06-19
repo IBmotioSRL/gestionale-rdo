@@ -302,6 +302,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 textarea.fld{resize:vertical;min-height:60px}
 .ferr{font-size:11px;color:#C00;margin-top:4px;display:none}
 .fhint{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.5}
+.voc-sec{margin-bottom:16px}
+.voc-h{font-size:12px;font-weight:800;color:var(--t1);margin-bottom:7px}
+.voc-add{display:flex;gap:6px;margin-bottom:8px}
+.voc-add input{flex:1;border:1px solid var(--bd2);border-radius:var(--rs);padding:6px 9px;font-family:inherit;font-size:12px;outline:none}
+.voc-add input:focus{border-color:var(--go)}
+.voc-list{display:flex;flex-wrap:wrap;gap:5px}
+.voc-item{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.04);border:1px solid var(--bd);border-radius:13px;padding:3px 5px 3px 10px;font-size:11.5px;font-weight:600;color:var(--t1)}
+.voc-item button{border:none;background:rgba(0,0,0,.08);color:var(--t2);width:17px;height:17px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0}
+.voc-item button:hover{background:var(--go);color:var(--br)}
 .imode{display:flex;gap:8px;margin-bottom:6px}
 .imode-b{flex:1;padding:8px;border:2px solid var(--bd2);border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;color:var(--t2);background:var(--surf);text-align:center}
 .imode-b.on{border-color:var(--go);background:rgba(245,168,35,.1);color:var(--go-d)}
@@ -448,7 +457,10 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <div><div class="h1" style="font-size:15px">Fornitori</div><div class="vsub" id="fornSub"></div></div></div>
-      <button class="btn btn-go" onclick="openForn()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="openVoc()" title="Gestisci le voci di lavorazioni, tipi, categorie e fornitori"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Vocabolario</button>
+        <button class="btn btn-go" onclick="openForn()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi</button>
+      </div>
     </div></div>
     <div class="vscroll"><div class="fgrid" id="fgrid"></div></div>
   </div>
@@ -500,15 +512,26 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">Destinatario (To) *</label><div class="chips" id="chips_to" onclick="document.getElementById('chipin_to').focus()"></div><div class="ferr" id="fToErr">Serve almeno un indirizzo valido</div></div>
       <div class="fg"><label class="fl">CC</label><div class="chips" id="chips_cc" onclick="document.getElementById('chipin_cc').focus()"></div></div>
       <div class="fg"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
-      <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
-      <div class="fg"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ auto-assegna i costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni viene assegnato a questo fornitore.</div></div>
-      <div class="fg"><label class="fl">Tipi (commerciali) <span class="fmuted" style="font-weight:600">→ auto-assegna i commerciali</span></label><div class="chips" id="chips_tip" onclick="document.getElementById('chipin_tip').focus()"></div><div class="fhint">Lascia vuoto se è un terzista che non fornisce commerciali.</div></div>
-      <div class="fg"><label class="fl">Categorie <span class="fmuted" style="font-weight:600">(solo contesto, non usate nel match)</span></label><div class="chips" id="chips_cat" onclick="document.getElementById('chipin_cat').focus()"></div></div>
+      <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo" onchange="fornTipoToggle()"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
+      <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
+      <div class="fg" id="fgTip"><label class="fl">Tipi <span class="fmuted" style="font-weight:600">opzionale — match secondario</span></label><div class="chips" id="chips_tip" onclick="document.getElementById('chipin_tip').focus()"></div><div class="fhint">Il match primario dei commerciali è il nome fornitore. I Tipi valgono per i commerciali senza FORNITORE riconosciuto.</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label></div>
     </div>
     <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mVoc" onclick="ovClose(event,'mVoc')">
+  <div class="modal">
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      <div><div class="mtit">Vocabolario proprietà</div><div class="vsub" style="font-size:11px">Voci accumulate dalle distinte. Rinomina (✎) normalizza ovunque, Elimina (×) le nasconde per sempre.</div></div>
+      <button class="mx" onclick="mClose('mVoc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd" id="vocBody"></div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-go" onclick="mClose('mVoc')">Chiudi</button></div></div>
   </div>
 </div>
 
@@ -528,7 +551,7 @@ const RDO_OPEN={};
 
 /* ── INIT ── */
 async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni()]);await loadCommesse();go('dash');}
-async function loadLavorazioni(){try{const r=await fetch(API+'/api/proprieta-distinte');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];LAVORAZIONI=d.valori||[];}}catch{}}
+async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}}
 async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
 async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(r.ok)fornitori=await r.json();}catch{}}
 async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r.ok)throw 0;commesse=await r.json();
@@ -898,6 +921,12 @@ async function eliminaProgetto(){
 }
 
 /* ── FORNITORE CRUD ── */
+function fornTipoToggle(){
+  const t=document.getElementById('fTipo').value;
+  const lav=document.getElementById('fgLav'),tip=document.getElementById('fgTip');
+  if(lav)lav.style.display=(t==='terzista')?'block':'none';
+  if(tip)tip.style.display=(t==='commerciale')?'block':'none';
+}
 function openForn(id){
   const ed=id?fornitori.find(f=>f.id===id):null;
   document.getElementById('mFornTit').textContent=ed?'Modifica fornitore':'Nuovo fornitore';
@@ -914,19 +943,22 @@ function openForn(id){
   chipInit('ccn',ed?(ed.emails_ccn||[]):[], {validate:isEmail});
   chipInit('lav',(ed&&ed.tag_lavorazioni)?ed.tag_lavorazioni:[], {suggest:PROP.lavorazioni});
   chipInit('tip',(ed&&ed.tag_tipi)?ed.tag_tipi:[], {suggest:PROP.tipi});
-  chipInit('cat',(ed&&ed.tag_categorie)?ed.tag_categorie:[], {suggest:PROP.categorie});
+  fornTipoToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
 async function salvaForn(){
   clearErr(['fNomeErr','fToErr'],['fNome']);
   const nome=document.getElementById('fNome').value.trim();
   // conferma eventuale testo non ancora trasformato in chip
-  ['to','cc','ccn','lav','tip','cat'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
+  ['to','cc','ccn','lav','tip'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
   const to=chipVals('to').filter(isEmail), cc=chipVals('cc').filter(isEmail), ccn=chipVals('ccn').filter(isEmail);
   let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!to.length){showErr('fToErr');ok=false;}if(!ok)return;
   const fmts=[];if(document.getElementById('fPdf').checked)fmts.push('PDF');if(document.getElementById('fDwg').checked)fmts.push('DWG');if(document.getElementById('fDxf').checked)fmts.push('DXF');if(document.getElementById('fStep').checked)fmts.push('STEP');
   const id=document.getElementById('fId').value;
-  const payload={nome,tipo:document.getElementById('fTipo').value,lavorazioni:chipVals('lav').join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:chipVals('lav'),tag_tipi:chipVals('tip'),tag_categorie:chipVals('cat')};
+  const tipo=document.getElementById('fTipo').value;
+  const tagLav=tipo==='terzista'?chipVals('lav'):[];
+  const tagTip=tipo==='commerciale'?chipVals('tip'):[];
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_tipi:tagTip,tag_categorie:[]};
   if(id)payload.attivo=document.getElementById('fAttivo').checked;
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
@@ -938,10 +970,25 @@ async function eliminaForn(){
   try{const r=await fetch(API+'/api/fornitori/'+id,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;mClose('mForn');toast('Fornitore disattivato','ok');await loadFornitori();renderForn();}catch{toast('Errore',true);}
 }
 
+/* ── VOCABOLARIO ── */
+let VOC={};
+const VOC_DIMS=[['lavorazioni','⚙️ Lavorazioni meccaniche'],['tipi','📦 Tipi'],['categorie','🏷️ Categorie'],['fornitori','🏢 Fornitori (da colonna Excel)']];
+async function openVoc(){await loadVoc();mOpen('mVoc');}
+async function loadVoc(){try{const r=await fetch(API+'/api/vocabolario');VOC=r.ok?await r.json():{};}catch{VOC={};}renderVoc();}
+function renderVoc(){
+  document.getElementById('vocBody').innerHTML=VOC_DIMS.map(([k,lbl])=>`
+    <div class="voc-sec"><div class="voc-h">${lbl} <span class="fmuted">(${(VOC[k]||[]).length})</span></div>
+    <div class="voc-add"><input id="vocadd_${k}" placeholder="Aggiungi voce…" onkeydown="if(event.key==='Enter')vocAdd('${k}')"><button class="btn btn-ghost btn-sm" onclick="vocAdd('${k}')">+ Aggiungi</button></div>
+    <div class="voc-list">${(VOC[k]||[]).map(v=>`<span class="voc-item">${esc(v)}<button title="Rinomina" onclick="vocRen('${k}','${jsq(v)}')">✎</button><button title="Elimina" onclick="vocDel('${k}','${jsq(v)}')">×</button></span>`).join('')||'<span class="fmuted" style="font-size:11px">vuoto</span>'}</div></div>`).join('');
+}
+async function vocAdd(k){const el=document.getElementById('vocadd_'+k);const v=el.value.trim();if(!v)return;try{await fetch(API+'/api/vocabolario/'+k,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({voce:v})});el.value='';await loadVoc();await loadLavorazioni();toast('Voce aggiunta','ok');}catch{toast('Errore',true);}}
+async function vocDel(k,v){if(!confirm('Eliminare «'+v+'»? Non rientrerà ai prossimi import.'))return;try{await fetch(API+'/api/vocabolario/'+k+'?voce='+encodeURIComponent(v),{method:'DELETE'});await loadVoc();await loadLavorazioni();if(S.projId)refreshDetail();toast('Voce eliminata','ok');}catch{toast('Errore',true);}}
+async function vocRen(k,v){const n=prompt('Nuovo nome per «'+v+'»:\n(verrà corretto anche nelle distinte e nei tag fornitore)',v);if(n===null)return;const nn=n.trim();if(!nn||nn===v)return;try{await fetch(API+'/api/vocabolario/'+k,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({vecchio:v,nuovo:nn})});await loadVoc();await loadLavorazioni();await loadFornitori();if(S.projId)refreshDetail();toast('Rinominato e propagato','ok');}catch{toast('Errore',true);}}
+
 /* ── CHIP INPUT ── */
 const CHIPS={}; // key -> {vals:[], validate:fn|null, suggest:[]|null}
 let LAVORAZIONI=[]; // suggerimenti legacy (unione) da /api/proprieta-distinte
-let PROP={categorie:[],lavorazioni:[],tipi:[]}; // suggerimenti per dimensione
+let PROP={categorie:[],lavorazioni:[],tipi:[],fornitori:[]}; // suggerimenti dal vocabolario
 function chipInit(key,vals,opt){CHIPS[key]={vals:[...(vals||[])],validate:(opt&&opt.validate)||null,suggest:(opt&&opt.suggest)||null};chipRender(key);}
 function chipVals(key){return CHIPS[key]?CHIPS[key].vals:[];}
 function chipRender(key){
