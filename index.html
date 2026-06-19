@@ -514,7 +514,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
       <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo" onchange="fornTipoToggle()"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
       <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
-      <div class="fg" id="fgTip"><label class="fl">Tipi <span class="fmuted" style="font-weight:600">opzionale — match secondario</span></label><div class="chips" id="chips_tip" onclick="document.getElementById('chipin_tip').focus()"></div><div class="fhint">Il match primario dei commerciali è il nome fornitore. I Tipi valgono per i commerciali senza FORNITORE riconosciuto.</div></div>
+      <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label></div>
@@ -876,7 +876,7 @@ function renderForn(){
     const mailLine=tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>';
     return `<div class="fcard" style="${f.attivo?'':'opacity:.55'}">
     <div class="fch"><div class="fcav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span></div></div>
-    <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_tipi&&f.tag_tipi.length)?`<span class="fmuted">📦 ${esc(f.tag_tipi.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
+    <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
     <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`;}).join('');
 }
 
@@ -923,9 +923,9 @@ async function eliminaProgetto(){
 /* ── FORNITORE CRUD ── */
 function fornTipoToggle(){
   const t=document.getElementById('fTipo').value;
-  const lav=document.getElementById('fgLav'),tip=document.getElementById('fgTip');
+  const lav=document.getElementById('fgLav'),forn=document.getElementById('fgForn');
   if(lav)lav.style.display=(t==='terzista')?'block':'none';
-  if(tip)tip.style.display=(t==='commerciale')?'block':'none';
+  if(forn)forn.style.display=(t==='commerciale')?'block':'none';
 }
 function openForn(id){
   const ed=id?fornitori.find(f=>f.id===id):null;
@@ -942,7 +942,7 @@ function openForn(id){
   chipInit('cc',ed?(ed.emails_cc||[]):[], {validate:isEmail});
   chipInit('ccn',ed?(ed.emails_ccn||[]):[], {validate:isEmail});
   chipInit('lav',(ed&&ed.tag_lavorazioni)?ed.tag_lavorazioni:[], {suggest:PROP.lavorazioni});
-  chipInit('tip',(ed&&ed.tag_tipi)?ed.tag_tipi:[], {suggest:PROP.tipi});
+  chipInit('fnm',(ed&&ed.tag_fornitori)?ed.tag_fornitori:[], {suggest:PROP.fornitori});
   fornTipoToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
@@ -950,15 +950,15 @@ async function salvaForn(){
   clearErr(['fNomeErr','fToErr'],['fNome']);
   const nome=document.getElementById('fNome').value.trim();
   // conferma eventuale testo non ancora trasformato in chip
-  ['to','cc','ccn','lav','tip'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
+  ['to','cc','ccn','lav','fnm'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
   const to=chipVals('to').filter(isEmail), cc=chipVals('cc').filter(isEmail), ccn=chipVals('ccn').filter(isEmail);
   let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!to.length){showErr('fToErr');ok=false;}if(!ok)return;
   const fmts=[];if(document.getElementById('fPdf').checked)fmts.push('PDF');if(document.getElementById('fDwg').checked)fmts.push('DWG');if(document.getElementById('fDxf').checked)fmts.push('DXF');if(document.getElementById('fStep').checked)fmts.push('STEP');
   const id=document.getElementById('fId').value;
   const tipo=document.getElementById('fTipo').value;
   const tagLav=tipo==='terzista'?chipVals('lav'):[];
-  const tagTip=tipo==='commerciale'?chipVals('tip'):[];
-  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_tipi:tagTip,tag_categorie:[]};
+  const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:[],tag_categorie:[]};
   if(id)payload.attivo=document.getElementById('fAttivo').checked;
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
