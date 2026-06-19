@@ -311,6 +311,19 @@ textarea.fld{resize:vertical;min-height:60px}
 .voc-item{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.04);border:1px solid var(--bd);border-radius:13px;padding:3px 5px 3px 10px;font-size:11.5px;font-weight:600;color:var(--t1)}
 .voc-item button{border:none;background:rgba(0,0,0,.08);color:var(--t2);width:17px;height:17px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0}
 .voc-item button:hover{background:var(--go);color:var(--br)}
+.pref-row{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid rgba(0,0,0,.04);font-size:12.5px;cursor:pointer}
+.pref-row input{width:16px;height:16px;accent-color:var(--go)}
+.pref-row .ddav{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:800}
+.bar-bg{height:6px;border-radius:4px;background:rgba(0,0,0,.06);overflow:hidden;margin-top:4px}
+.bar-fl{height:100%;border-radius:4px}
+.stat-line{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.stat-l{font-size:12px;font-weight:600;min-width:120px}
+.stat-line .bar-bg{flex:1;margin-top:0}
+.stat-n{font-size:12px;font-weight:800;min-width:28px;text-align:right}
+.resp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.resp-c{background:rgba(0,0,0,.03);border-radius:var(--rs);padding:12px 8px;text-align:center}
+.resp-n{font-size:18px;font-weight:800;color:var(--t3)}
+.resp-l{font-size:10.5px;color:var(--t2);margin-top:3px}
 .imode{display:flex;gap:8px;margin-bottom:6px}
 .imode-b{flex:1;padding:8px;border:2px solid var(--bd2);border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;color:var(--t2);background:var(--surf);text-align:center}
 .imode-b.on{border-color:var(--go);background:rgba(245,168,35,.1);color:var(--go-d)}
@@ -388,8 +401,13 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="sl">Stato globale</div>
       <div class="metrics" id="dashMetrics"></div>
       <div class="dash-2" style="margin-top:8px">
-        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Carico per fornitore</div><div id="dashForn"></div></div>
+        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Carico per fornitore <span class="fmuted" style="font-weight:600">· pezzi assegnati</span></div><div id="dashForn"></div></div>
         <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Progetti</div><div id="dashProj"></div></div>
+      </div>
+      <div class="sl" style="margin-top:14px">Statistiche fornitori</div>
+      <div class="dash-2" style="margin-top:8px">
+        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Composizione rubrica</div><div id="dashComp"></div></div>
+        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Tempi di risposta RDO</div><div id="dashResp"></div></div>
       </div>
     </div>
   </div>
@@ -412,6 +430,7 @@ textarea.fld{resize:vertical;min-height:60px}
         <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span>
         <div class="wact">
           <button class="btn btn-ghost btn-sm" onclick="openModifica()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifica</button>
+          <button class="btn btn-ghost btn-sm" onclick="openPref()" id="btnPref"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Fornitori progetto</button>
           <button class="btn btn-ghost btn-sm" onclick="riscansiona()" id="btnRiscan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Riscansiona</button>
           <button class="btn btn-danger btn-sm" onclick="eliminaProgetto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Elimina</button>
           <button class="btn btn-go btn-sm" onclick="inviaSelezionate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Invia sel.</button>
@@ -513,11 +532,12 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">CC</label><div class="chips" id="chips_cc" onclick="document.getElementById('chipin_cc').focus()"></div></div>
       <div class="fg"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
       <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo" onchange="fornTipoToggle()"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
-      <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
+      <div class="fg" id="fgCat"><label class="fl">Categorie <span class="fmuted" style="font-weight:600">→ filtro: a quali categorie lavora</span></label><div class="chips" id="chips_cat" onclick="document.getElementById('chipin_cat').focus()"></div><div class="fhint">Filtro iniziale: la lavorazione vale solo per queste categorie (es. FRESATURA solo su PLASTICA). Vuoto = nessun filtro di categoria.</div></div>
+      <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni (nelle categorie sopra) viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
       <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
-      <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label></div>
+      <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
     </div>
     <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
   </div>
@@ -532,6 +552,18 @@ textarea.fld{resize:vertical;min-height:60px}
     </div>
     <div class="mbd" id="vocBody"></div>
     <div class="mft"><div class="mft-r"><button class="btn btn-go" onclick="mClose('mVoc')">Chiudi</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mPref" onclick="ovClose(event,'mPref')">
+  <div class="modal">
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div><div class="mtit">Fornitori del progetto</div><div class="vsub" style="font-size:11px">Solo i fornitori selezionati vengono usati per l'auto-assegnazione di questa commessa.</div></div>
+      <button class="mx" onclick="mClose('mPref')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd" id="prefBody"></div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mPref')">Annulla</button><button class="btn btn-go" onclick="savePref()">Salva</button></div></div>
   </div>
 </div>
 
@@ -598,14 +630,41 @@ function renderDash(){
   // carico per fornitore
   const byF={};
   commesse.forEach(c=>flatParti(c).forEach(p=>{if(p.fornitore_id){byF[p.fornitore_id]=(byF[p.fornitore_id]||0)+1;}}));
-  const rows=Object.entries(byF).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([fid,n])=>{
+  const top=Object.entries(byF).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxN=top.length?top[0][1]:1;
+  const rows=top.map(([fid,n])=>{
     const f=fornitori.find(x=>x.id==fid);if(!f)return '';
-    return `<div class="forn-row"><div class="fav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div class="fi2"><div class="fn2">${esc(f.nome)}</div><div class="fs2">${f.tipo}</div></div><div class="fnn">${n}</div></div>`;
+    const w=Math.round(n/maxN*100);
+    return `<div class="forn-row"><div class="fav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div class="fi2"><div class="fn2">${esc(f.nome)}</div><div class="bar-bg"><div class="bar-fl" style="width:${w}%;background:${f.tipo==='terzista'?'#5856D6':'var(--go)'}"></div></div></div><div class="fnn">${n}</div></div>`;
   }).join('');
   document.getElementById('dashForn').innerHTML=rows||'<div class="fmuted" style="font-size:11px">Nessuna parte assegnata</div>';
+  renderDashStats(byF);
   document.getElementById('dashProj').innerHTML=commesse.map(c=>{const s=projStats(c);const pct=s.tot?Math.round((s.tot-s.daSmistare)/s.tot*100):0;
     return `<div class="forn-row" style="cursor:pointer" onclick="go('pdet',${c.id})"><div class="fi2"><div class="fn2">${esc(c.codice)} · ${esc(c.nome)}</div><div class="pcbb" style="margin-top:4px"><div class="pcbf${pct===100?' done':''}" style="width:${pct}%"></div></div></div><div class="fnn">${pct}%</div></div>`;
   }).join('')||'<div class="fmuted" style="font-size:11px">Nessun progetto</div>';
+}
+function renderDashStats(byF){
+  // composizione rubrica
+  const att=fornitori.filter(f=>f.attivo&&!f.blacklist);
+  const terz=att.filter(f=>f.tipo==='terzista').length, comm=att.filter(f=>f.tipo==='commerciale').length;
+  const black=fornitori.filter(f=>f.blacklist).length, inatt=fornitori.filter(f=>!f.attivo&&!f.blacklist).length;
+  const usati=Object.keys(byF).length;
+  const barLine=(lbl,n,den,col)=>`<div class="stat-line"><span class="stat-l">${lbl}</span><div class="bar-bg"><div class="bar-fl" style="width:${den?Math.round(n/den*100):0}%;background:${col}"></div></div><span class="stat-n">${n}</span></div>`;
+  const totAtt=Math.max(1,terz+comm);
+  document.getElementById('dashComp').innerHTML=
+    barLine('Terzisti',terz,totAtt,'#5856D6')+
+    barLine('Commerciali',comm,totAtt,'var(--go)')+
+    barLine('Usati (con pezzi)',usati,Math.max(1,att.length),'var(--green)')+
+    `<div class="stat-line" style="margin-top:8px;border-top:1px solid var(--bd);padding-top:8px"><span class="stat-l" style="color:var(--red)">🚫 Lista nera</span><span class="stat-n" style="margin-left:auto;color:var(--red)">${black}</span></div>`+
+    `<div class="stat-line"><span class="stat-l fmuted">Disattivati</span><span class="stat-n fmuted" style="margin-left:auto">${inatt}</span></div>`;
+  // tempi di risposta — predisposto, dati quando l'invio email è attivo
+  document.getElementById('dashResp').innerHTML=
+    `<div class="resp-grid">
+       <div class="resp-c"><div class="resp-n">n/d</div><div class="resp-l">Tempo medio</div></div>
+       <div class="resp-c"><div class="resp-n">n/d</div><div class="resp-l">Più veloce</div></div>
+       <div class="resp-c"><div class="resp-n">n/d</div><div class="resp-l">Più lento</div></div>
+     </div>
+     <div class="fmuted" style="font-size:11px;margin-top:10px;line-height:1.5">⏳ Si popolano quando l'invio email reale sarà attivo (in attesa dell'admin-consent Microsoft): misurano il tempo tra RDO inviata e risposta del fornitore.</div>`;
 }
 function metric(cls,ico,n,l,s){const I={clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',phone:'<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.12 1.22 2 2 0 012.11 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.11 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/>',check:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'}[ico];
   return `<div class="m ${cls}"><div class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I}</svg></div><div class="mn">${n}</div><div class="ml">${l}</div><div class="ms">${s}</div></div>`;}
@@ -720,10 +779,38 @@ function treeAll(open){
   renderTree();
 }
 async function autoAssegna(){
-  if(!S.projId)return;const btn=document.getElementById('btnAuto');if(btn)btn.disabled=true;
+  if(!S.projId)return;
+  // opt-in: serve almeno un fornitore preferito per il progetto
+  let pref=[];try{const rp=await fetch(API+'/api/commesse/'+S.projId+'/fornitori-preferiti');if(rp.ok)pref=(await rp.json()).ids||[];}catch{}
+  if(!pref.length){toast('Scegli prima i fornitori del progetto',true);openPref();return;}
+  const btn=document.getElementById('btnAuto');if(btn)btn.disabled=true;
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/auto-assegna',{method:'POST'});if(!r.ok)throw 0;
     toast('Auto-assegnazione completata','ok');await refreshDetail();
   }catch{toast('Errore auto-assegnazione',true);}finally{if(btn)btn.disabled=false;}
+}
+
+/* ── FORNITORI PREFERITI PER COMMESSA ── */
+let PREF=new Set();
+async function openPref(){
+  if(!S.projId)return;
+  PREF=new Set();
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/fornitori-preferiti');if(r.ok)PREF=new Set((await r.json()).ids||[]);}catch{}
+  renderPref();mOpen('mPref');
+}
+function renderPref(){
+  const att=fornitori.filter(f=>f.attivo&&!f.blacklist);
+  const terz=att.filter(f=>f.tipo==='terzista'),comm=att.filter(f=>f.tipo==='commerciale');
+  const row=f=>`<label class="pref-row"><input type="checkbox" ${PREF.has(f.id)?'checked':''} onchange="prefToggle(${f.id},this.checked)"><span class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</span><span>${esc(f.nome)}</span><span class="fmuted" style="margin-left:auto">${f.tipo}</span></label>`;
+  document.getElementById('prefBody').innerHTML=
+    (att.length?'':'<div class="fmuted">Nessun fornitore attivo. Aggiungine in Fornitori.</div>')+
+    (terz.length?`<div class="voc-h">Terzisti</div>`+terz.map(row).join(''):'')+
+    (comm.length?`<div class="voc-h" style="margin-top:10px">Commerciali</div>`+comm.map(row).join(''):'');
+}
+function prefToggle(id,on){on?PREF.add(id):PREF.delete(id);}
+async function savePref(){
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/fornitori-preferiti',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:[...PREF]})});if(!r.ok)throw 0;
+    mClose('mPref');toast('Fornitori del progetto salvati','ok');
+  }catch{toast('Errore salvataggio',true);}
 }
 async function assegnaCandidato(cat,lav,fid){
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:cat,lav_meccanica:lav})});
@@ -774,8 +861,8 @@ function hideFAB(){S.rows.clear();document.getElementById('fab').style.display='
 /* ── DROPDOWN ASSEGNA ── */
 let ddTarget=null;
 function ddHtml(includeClear){
-  const terz=fornitori.filter(f=>f.attivo&&f.tipo==='terzista');
-  const comm=fornitori.filter(f=>f.attivo&&f.tipo==='commerciale');
+  const terz=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='terzista');
+  const comm=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='commerciale');
   let h='';
   if(includeClear)h+=`<div class="add-item add-clear" onclick="doAssign(null)"><div class="ddav">✕</div><div><div class="ddn">Rilascia</div><div class="ddt">rimuovi fornitore</div></div></div>`;
   if(terz.length){h+='<div class="add-hd">Terzisti</div>'+terz.map(ddItem).join('');}
@@ -874,8 +961,8 @@ function renderForn(){
     const tos=(f.emails_to&&f.emails_to.length)?f.emails_to:(f.email?[f.email]:[]);
     const extra=Math.max(0,tos.length-1)+((f.emails_cc||[]).length)+((f.emails_ccn||[]).length);
     const mailLine=tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>';
-    return `<div class="fcard" style="${f.attivo?'':'opacity:.55'}">
-    <div class="fch"><div class="fcav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span></div></div>
+    return `<div class="fcard" style="${(f.attivo&&!f.blacklist)?'':'opacity:.55'}">
+    <div class="fch"><div class="fcav" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${f.blacklist?'<span class="fctipo" style="background:rgba(255,59,48,.12);color:var(--red)">🚫 lista nera</span>':''}</div></div>
     <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
     <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`;}).join('');
 }
@@ -923,7 +1010,8 @@ async function eliminaProgetto(){
 /* ── FORNITORE CRUD ── */
 function fornTipoToggle(){
   const t=document.getElementById('fTipo').value;
-  const lav=document.getElementById('fgLav'),forn=document.getElementById('fgForn');
+  const cat=document.getElementById('fgCat'),lav=document.getElementById('fgLav'),forn=document.getElementById('fgForn');
+  if(cat)cat.style.display=(t==='terzista')?'block':'none';
   if(lav)lav.style.display=(t==='terzista')?'block':'none';
   if(forn)forn.style.display=(t==='commerciale')?'block':'none';
 }
@@ -941,8 +1029,10 @@ function openForn(id){
   chipInit('to',ed?(ed.emails_to||[]):[], {validate:isEmail});
   chipInit('cc',ed?(ed.emails_cc||[]):[], {validate:isEmail});
   chipInit('ccn',ed?(ed.emails_ccn||[]):[], {validate:isEmail});
+  chipInit('cat',(ed&&ed.tag_categorie)?ed.tag_categorie:[], {suggest:PROP.categorie});
   chipInit('lav',(ed&&ed.tag_lavorazioni)?ed.tag_lavorazioni:[], {suggest:PROP.lavorazioni});
   chipInit('fnm',(ed&&ed.tag_fornitori)?ed.tag_fornitori:[], {suggest:PROP.fornitori});
+  if(document.getElementById('fBlack'))document.getElementById('fBlack').checked=ed?!!ed.blacklist:false;
   fornTipoToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
@@ -950,16 +1040,17 @@ async function salvaForn(){
   clearErr(['fNomeErr','fToErr'],['fNome']);
   const nome=document.getElementById('fNome').value.trim();
   // conferma eventuale testo non ancora trasformato in chip
-  ['to','cc','ccn','lav','fnm'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
+  ['to','cc','ccn','cat','lav','fnm'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
   const to=chipVals('to').filter(isEmail), cc=chipVals('cc').filter(isEmail), ccn=chipVals('ccn').filter(isEmail);
   let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!to.length){showErr('fToErr');ok=false;}if(!ok)return;
   const fmts=[];if(document.getElementById('fPdf').checked)fmts.push('PDF');if(document.getElementById('fDwg').checked)fmts.push('DWG');if(document.getElementById('fDxf').checked)fmts.push('DXF');if(document.getElementById('fStep').checked)fmts.push('STEP');
   const id=document.getElementById('fId').value;
   const tipo=document.getElementById('fTipo').value;
   const tagLav=tipo==='terzista'?chipVals('lav'):[];
+  const tagCat=tipo==='terzista'?chipVals('cat'):[];
   const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
-  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:[],tag_categorie:[]};
-  if(id)payload.attivo=document.getElementById('fAttivo').checked;
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:[],tag_categorie:tagCat};
+  if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
     mClose('mForn');toast(id?'Fornitore aggiornato':'Fornitore aggiunto','ok');await loadFornitori();renderForn();
