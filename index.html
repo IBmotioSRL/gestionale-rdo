@@ -288,6 +288,33 @@ table.ftable tbody tr:hover{background:rgba(245,168,35,.06)}
 .rdo-item.sent{color:#0077A0;background:rgba(90,200,250,.09);border-color:rgba(90,200,250,.25)}
 .rdo-item.conf{color:#1A7A2E;background:rgba(52,199,89,.09);border-color:rgba(52,199,89,.25)}
 .rdo-item.unassigned{color:#C00;background:rgba(255,59,48,.07);border-color:rgba(255,59,48,.2)}
+.rdo-item.cart{color:#9a5b00;background:rgba(245,168,35,.12);border-color:rgba(245,168,35,.3)}
+.badge-online{background:#e7f7ec;color:#1f9d55;border:1px solid #bfe6cd;border-radius:5px;padding:1px 7px;font-size:9px;font-weight:800}
+.btn-shop{border-color:#bfe6cd!important;color:#1f9d55!important;background:#e7f7ec!important}
+.btn-csv{border-color:#cfe0ef!important;color:#3a6ea5!important;background:#f1f7fc!important}
+.rdo-voci{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:7px 0 4px}
+.voce-chip{font-size:10px;font-weight:700;background:#f4eee6;border:1px solid var(--bd);border-radius:12px;padding:2px 9px;color:var(--t2)}
+.voce-chip span{cursor:pointer;color:#b04a2a;font-weight:900;margin-left:3px}
+.voce-add{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;border:1px dashed rgba(181,119,15,.4);border-radius:12px;padding:2px 9px}
+.rdo-tot{display:flex;gap:12px;align-items:center;font-size:10.5px;color:var(--t2);margin:6px 0;flex-wrap:wrap}
+.rdo-tot .rdo-grand{font-weight:800;color:var(--t1)}
+.rdo-px-toggle{margin-left:auto;cursor:pointer;color:var(--go-d);font-weight:700}
+.px-wrap{overflow:auto;margin:4px 0 8px;border:1px solid var(--bd);border-radius:8px}
+.px-table{border-collapse:collapse;width:100%;font-size:10.5px}
+.px-table th{background:var(--surf);text-align:left;padding:5px 8px;font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.px-table td{padding:4px 8px;border-bottom:1px solid rgba(0,0,0,.04);color:var(--t2)}
+.px-table .px-cod{font-family:'Consolas',monospace;color:var(--brown,#5a3a1a);font-weight:700}
+.px-table .px-tot{font-weight:700;color:var(--t1)}
+.px-in{width:80px;padding:3px 6px;border:1px solid var(--bd);border-radius:5px;font-size:11px;font-family:inherit;text-align:right}
+.px-in:focus{outline:none;border-color:var(--go-d)}
+.imp-sum{font-size:11.5px;margin:8px 0;color:var(--t2)}
+.imp-tablew{max-height:300px;overflow:auto;border:1px solid var(--bd);border-radius:8px}
+.imp-table{border-collapse:collapse;width:100%;font-size:10.5px}
+.imp-table th{position:sticky;top:0;background:var(--surf);text-align:left;padding:5px 8px;font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.imp-table td{padding:4px 8px;border-bottom:1px solid rgba(0,0,0,.04);color:var(--t2)}
+.imp-table tr.ok td:last-child{color:#1f9d55;font-weight:700}
+.imp-table tr.amb td:last-child{color:#b5770f;font-weight:700}
+.imp-table tr.no{opacity:.6}.imp-table tr.no td:last-child{color:#b04a2a;font-weight:700}
 .rdo-fbtn{display:flex;gap:5px;flex-wrap:wrap}
 .rdo-unass{padding:10px 14px;background:rgba(255,59,48,.04)}
 .rdo-ut{font-size:10px;font-weight:700;color:#C00;margin-bottom:5px}
@@ -583,6 +610,8 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">CC</label><div class="chips" id="chips_cc" onclick="document.getElementById('chipin_cc').focus()"></div></div>
       <div class="fg"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
       <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo" onchange="fornTipoToggle()"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
+      <div class="fg"><label class="fl">Modalità d'ordine</label><select class="fld" id="fModalita" onchange="fornModalitaToggle()"><option value="rdo">RDO — richiesta d'offerta (email/distinta)</option><option value="online">Shop online — ordine sul sito</option></select></div>
+      <div class="fg" id="fgUrlShop" style="display:none"><label class="fl">URL shop</label><input class="fld" id="fUrlShop" placeholder="https://www.norelem.it"><div class="fhint">Apre lo shop dalla vista RDO. Per i fornitori online niente email: link + CSV + «Segna ordinato».</div></div>
       <div class="fg" id="fgCat"><label class="fl">Categorie <span class="fmuted" style="font-weight:600">→ filtro: a quali categorie lavora</span></label><div class="chips" id="chips_cat" onclick="document.getElementById('chipin_cat').focus()"></div><div class="fhint">Filtro iniziale: la lavorazione vale solo per queste categorie (es. FRESATURA solo su PLASTICA). Vuoto = nessun filtro di categoria.</div></div>
       <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni (nelle categorie sopra) viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
       <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
@@ -591,6 +620,20 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
     </div>
     <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mImport" onclick="ovClose(event,'mImport')">
+  <div class="modal">
+    <div class="mhd"><div><div class="mtit">Importa prezzi / carrello</div><div class="fmuted" id="impSub" style="font-size:11px">CSV · Excel · PDF — abbina per codice articolo</div></div><button class="mx" onclick="mClose('mImport')">✕</button></div>
+    <div class="mbd">
+      <input type="hidden" id="impCid"><input type="hidden" id="impFid">
+      <div class="fg"><label class="fl">File (CSV, Excel o PDF di conferma)</label><input class="fld" type="file" id="impFile" accept=".csv,.txt,.xlsx,.xls,.pdf" onchange="impPreview()"></div>
+      <div id="impResult"></div>
+      <div class="fg" id="impStatoGrp" style="display:none"><label class="fl">Dopo l'import segna i pezzi come</label>
+        <select class="fld" id="impStato"><option value="">— non cambiare stato —</option><option value="in_carrello">In carrello (in lavorazione)</option><option value="inviata_da_confermare">Ordinato</option></select></div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mImport')">Annulla</button><button class="btn btn-go" id="impBtn" onclick="impConferma()" disabled>Salva prezzi</button></div></div>
   </div>
 </div>
 
@@ -631,7 +674,7 @@ function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)re
 let commesse=[], fornitori=[];
 const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
   view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set()};
-const RDO_OPEN={};
+const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
 async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni()]);await loadCommesse();go('dash');}
@@ -1115,25 +1158,137 @@ function renderRDO(){
     const open=RDO_OPEN[c.id];
     const warn=unass.length?`<span class="rdo-warn">⚠ ${unass.length} non assegnati</span>`:`<span class="rdo-ok">✓ tutti assegnati</span>`;
     let body='';
-    Object.entries(byF).forEach(([fid,ps])=>{const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
-      body+=`<div class="rdo-fb"><div class="rdo-fh"><div class="rdo-favico" style="background:${avc(f.nome)}">${ini(f.nome)}</div><span class="rdo-fname">${esc(f.nome)}</span><span class="rdo-ftype" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span><span style="font-size:9.5px;color:var(--t3)">${ps.length} pezzi</span></div>
-        <div class="rdo-items">${ps.map(p=>`<span class="rdo-item ${p.stato==='inviata_da_confermare'?'sent':p.stato==='confermata'?'conf':''}" title="${esc(p.denominazione)}">${esc(p.numero_parte)}</span>`).join('')}</div>
-        <div class="rdo-fbtn"><a class="btn btn-ghost btn-sm" href="${API}/api/commesse/${c.id}/distinta/${fid}" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Scarica distinta</a>
-        <button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid})">Segna inviata</button></div></div>`;
-    });
+    Object.entries(byF).forEach(([fid,ps])=>{body+=rdoFornBlock(c,fid,ps);});
     if(unass.length)body+=`<div class="rdo-unass"><div class="rdo-ut">⚠ ${unass.length} pezzi senza fornitore</div><div class="rdo-items">${unass.slice(0,40).map(p=>`<span class="rdo-item unassigned">${esc(p.numero_parte)}</span>`).join('')}${unass.length>40?`<span class="rdo-item">+${unass.length-40}</span>`:''}</div><button class="btn btn-ghost btn-sm" style="margin-top:5px" onclick="go('pdet',${c.id})">Vai al progetto</button></div>`;
     return `<div class="rdo-proj"><div class="rdo-ph" onclick="toggleRDO(${c.id})"><span class="rdo-pcod">${esc(c.codice)}</span><span class="rdo-pname">${esc(c.nome)}</span>${warn}<span class="rdo-narrow${open?' open':''}">▶</span></div><div class="rdo-body${open?' open':''}">${body}</div></div>`;
   }).join('');
 }
-function toggleRDO(id){RDO_OPEN[id]=!RDO_OPEN[id];renderRDO();}
-async function rdoSend(cid,fid){
+async function toggleRDO(id){
+  RDO_OPEN[id]=!RDO_OPEN[id];
+  if(RDO_OPEN[id])await loadVoci(id);
+  renderRDO();
+}
+function eur(n){return (Number(n)||0).toFixed(2).replace('.',',')+' €';}
+function qnum(q){const n=parseFloat(String(q==null?'':q).replace(',','.'));return isNaN(n)?0:n;}
+
+// ── blocco fornitore nella vista RDO ──
+function rdoFornBlock(c,fid,ps){
+  const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—',modalita_ordine:'rdo',url_shop:''};
+  const online=f.modalita_ordine==='online';
+  const voci=VOCI[c.id+':'+fid]||[];
+  const sub=ps.reduce((s,p)=>s+(p.prezzo||0)*qnum(p.quantita),0);
+  const vsum=voci.reduce((s,v)=>s+(v.importo||0),0);
+  const tot=sub+vsum;
+  const stChip=p=>p.stato==='confermata'?'conf':(p.stato==='inviata_da_confermare'?'sent':(p.stato==='in_carrello'?'cart':''));
+  const items=ps.map(p=>`<span class="rdo-item ${stChip(p)}" title="${esc(p.denominazione)}${p.prezzo!=null?' · '+eur(p.prezzo):''}">${esc(p.numero_parte)}</span>`).join('');
+  const vociHtml=`<div class="rdo-voci">${voci.map(v=>`<span class="voce-chip">${esc(v.descrizione||'—')}: ${eur(v.importo)} <span onclick="delVoce(${c.id},${fid},${v.id})">×</span></span>`).join('')}<span class="voce-add" onclick="addVoce(${c.id},${fid})">+ voce accessoria (spedizione, imballo…)</span></div>`;
+  const pxOpen=RDO_PX[c.id+':'+fid];
+  const totHtml=`<div class="rdo-tot"><span>Pezzi <b>${eur(sub)}</b></span>${vsum?`<span>+ accessori ${eur(vsum)}</span>`:''}<span class="rdo-grand">Totale ${eur(tot)}</span><span class="rdo-px-toggle" onclick="togglePx(${c.id},${fid})">${pxOpen?'▾ nascondi prezzi':'▸ prezzi'}</span></div>`;
+  let pxTable='';
+  if(pxOpen){
+    pxTable=`<div class="px-wrap"><table class="px-table"><thead><tr><th>Codice</th><th>Descrizione</th><th>Q.tà</th><th>Prezzo cad. €</th><th>Totale</th></tr></thead><tbody>`+
+      ps.map(p=>`<tr><td class="px-cod">${esc(p.numero_parte)}</td><td title="${esc(p.denominazione)}">${esc((p.denominazione||'').slice(0,40))}</td><td>${esc(p.quantita)}</td><td><input class="px-in" type="text" inputmode="decimal" value="${p.prezzo!=null?String(p.prezzo).replace('.',','):''}" onchange="setPrezzo(${c.id},${p.id},this.value)" placeholder="—"></td><td class="px-tot">${p.prezzo!=null?eur(p.prezzo*qnum(p.quantita)):'—'}</td></tr>`).join('')+
+      `</tbody></table></div>`;
+  }
+  let btns=`<button class="btn btn-ghost btn-sm" onclick="openImport(${c.id},${fid})">⬇ Importa prezzi</button>`;
+  if(online){
+    if(f.url_shop)btns+=`<a class="btn btn-shop btn-sm" href="${esc(f.url_shop)}" target="_blank">🔗 Apri shop</a>`;
+    btns+=`<a class="btn btn-csv btn-sm" href="${API}/api/commesse/${c.id}/ordine-csv/${fid}" target="_blank">⬇ CSV ordine</a>`;
+    btns+=`<a class="btn btn-ghost btn-sm" href="${API}/api/commesse/${c.id}/distinta/${fid}" target="_blank">⬇ Excel interno</a>`;
+    btns+=`<button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid},'ordinato')">✓ Segna ordinato</button>`;
+  }else{
+    btns+=`<a class="btn btn-ghost btn-sm" href="${API}/api/commesse/${c.id}/distinta/${fid}" target="_blank">⬇ Scarica distinta</a>`;
+    btns+=`<button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid},'inviata')">Segna inviata</button>`;
+  }
+  return `<div class="rdo-fb"><div class="rdo-fh"><div class="rdo-favico" style="background:${avc(f.nome)}">${ini(f.nome)}</div><span class="rdo-fname">${esc(f.nome)}</span><span class="rdo-ftype" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${online?'<span class="badge-online">● shop online</span>':''}<span style="font-size:9.5px;color:var(--t3)">${ps.length} pezzi</span></div><div class="rdo-items">${items}</div>${vociHtml}${totHtml}${pxTable}<div class="rdo-fbtn">${btns}</div></div>`;
+}
+async function loadVoci(cid){
+  const c=commesse.find(x=>x.id===cid);if(!c)return;
+  const fids=[...new Set(flatParti(c).filter(p=>p.fornitore_id).map(p=>p.fornitore_id))];
+  await Promise.all(fids.map(async fid=>{
+    try{const r=await fetch(API+'/api/commesse/'+cid+'/fornitori/'+fid+'/voci');if(r.ok)VOCI[cid+':'+fid]=await r.json();}catch{}
+  }));
+}
+function togglePx(cid,fid){const k=cid+':'+fid;RDO_PX[k]=!RDO_PX[k];renderRDO();}
+async function setPrezzo(cid,pid,val){
+  const v=val.trim();const prezzo=v?qnum(v):null;
+  try{const r=await fetch(API+'/api/parti/'+pid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({prezzo})});if(!r.ok)throw 0;
+    const c=commesse.find(x=>x.id===cid);const p=(c&&c._parti||[]).find(x=>x.id===pid);if(p)p.prezzo=prezzo;
+    renderRDO();
+  }catch{toast('Errore salvataggio prezzo',true);}
+}
+async function addVoce(cid,fid){
+  const d=prompt('Descrizione voce (es. Spedizione, Imballaggio):');if(d===null)return;const ds=d.trim();if(!ds)return;
+  const im=prompt('Importo € (netto IVA):','');if(im===null)return;const importo=qnum(im);
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/fornitori/'+fid+'/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({descrizione:ds,importo})});if(!r.ok)throw 0;
+    await loadVoci(cid);renderRDO();toast('Voce aggiunta','ok');
+  }catch{toast('Errore',true);}
+}
+async function delVoce(cid,fid,vid){
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/fornitori/'+fid+'/voci/'+vid,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;
+    await loadVoci(cid);renderRDO();
+  }catch{toast('Errore',true);}
+}
+async function rdoSend(cid,fid,kind){
   const parti=flatParti(commesse.find(c=>c.id===cid)).filter(p=>p.fornitore_id==fid&&p.stato!=='confermata');
-  if(!parti.length){toast('Nessun pezzo da inviare');return;}
+  if(!parti.length){toast('Nessun pezzo da segnare');return;}
   try{const r=await fetch(API+'/api/commesse/'+cid+'/parti/stato',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:parti.map(p=>p.id),stato:'inviata_da_confermare'})});if(!r.ok)throw 0;
-    toast('RDO segnata inviata (invio email: prossima fase)','ok');
+    toast(kind==='ordinato'?'Segnato ordinato':'RDO segnata inviata','ok');
     const rp=await fetch(API+'/api/commesse/'+cid+'/parti');if(rp.ok)commesse.find(c=>c.id===cid)._parti=await rp.json();
     renderRDO();
   }catch{toast('Errore',true);}
+}
+
+/* ── IMPORT PREZZI ── */
+let IMP_ROWS=[];
+function openImport(cid,fid){
+  document.getElementById('impCid').value=cid;document.getElementById('impFid').value=fid;
+  document.getElementById('impFile').value='';
+  document.getElementById('impResult').innerHTML='';
+  document.getElementById('impStatoGrp').style.display='none';
+  document.getElementById('impBtn').disabled=true;
+  IMP_ROWS=[];
+  const f=fornitori.find(x=>x.id==fid);
+  document.getElementById('impSub').textContent=(f?f.nome+' — ':'')+'abbina per codice articolo';
+  // default stato: online → in carrello
+  document.getElementById('impStato').value=(f&&f.modalita_ordine==='online')?'in_carrello':'';
+  mOpen('mImport');
+}
+async function impPreview(){
+  const cid=document.getElementById('impCid').value,fid=document.getElementById('impFid').value;
+  const file=document.getElementById('impFile').files[0];
+  if(!file)return;
+  document.getElementById('impResult').innerHTML='<div class="fmuted" style="padding:8px">Lettura file…</div>';
+  const fd=new FormData();fd.append('file',file);fd.append('fornitore_id',fid);
+  try{
+    const r=await fetch(API+'/api/commesse/'+cid+'/importa-prezzi/preview',{method:'POST',body:fd});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore lettura');}
+    const d=await r.json();
+    IMP_ROWS=d.righe.filter(x=>x.match==='ok'&&x.prezzo!=null).map(x=>({parte_id:x.parte_id,prezzo:x.prezzo}));
+    const ok=d.righe.filter(x=>x.match==='ok');
+    const row=(x,cls)=>`<tr class="${cls}"><td>${esc(x.numero_parte)}</td><td title="${esc(x.denominazione||'')}">${esc((x.denominazione||'').slice(0,34))}</td><td>${x.prezzo!=null?eur(x.prezzo):'—'}</td><td>${cls}</td></tr>`;
+    let html=`<div class="imp-sum"><b>${ok.length}</b> abbinati · <b>${d.non_abbinate.length}</b> non trovati · ${d.totale_righe} righe nel file</div>`;
+    html+=`<div class="imp-tablew"><table class="imp-table"><thead><tr><th>Codice</th><th>Descrizione</th><th>Prezzo</th><th>Esito</th></tr></thead><tbody>`;
+    html+=d.righe.map(x=>row(x,x.match==='ok'?'ok':'amb')).join('');
+    html+=d.non_abbinate.map(x=>row(x,'no')).join('');
+    html+=`</tbody></table></div>`;
+    if(!IMP_ROWS.length)html+='<div class="fmuted" style="padding:6px">Nessuna riga con prezzo abbinata: controlla che il file abbia codice + prezzo.</div>';
+    document.getElementById('impResult').innerHTML=html;
+    document.getElementById('impStatoGrp').style.display=IMP_ROWS.length?'block':'none';
+    document.getElementById('impBtn').disabled=!IMP_ROWS.length;
+  }catch(e){document.getElementById('impResult').innerHTML='<div style="color:var(--red);padding:8px">'+esc(e.message||'Errore')+'</div>';}
+}
+async function impConferma(){
+  const cid=document.getElementById('impCid').value;
+  if(!IMP_ROWS.length)return;
+  const stato=document.getElementById('impStato').value||null;
+  const btn=document.getElementById('impBtn');btn.disabled=true;
+  try{
+    const r=await fetch(API+'/api/commesse/'+cid+'/importa-prezzi/conferma',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({righe:IMP_ROWS,stato_risultante:stato})});
+    if(!r.ok)throw 0;const j=await r.json();
+    const rp=await fetch(API+'/api/commesse/'+cid+'/parti');if(rp.ok)commesse.find(c=>c.id==cid)._parti=await rp.json();
+    mClose('mImport');toast('Prezzi salvati su '+j.aggiornate+' pezzi','ok');renderRDO();
+  }catch{toast('Errore salvataggio',true);btn.disabled=false;}
 }
 
 /* ── FORNITORI ── */
@@ -1199,12 +1354,19 @@ function fornTipoToggle(){
   if(lav)lav.style.display=(t==='terzista')?'block':'none';
   if(forn)forn.style.display=(t==='commerciale')?'block':'none';
 }
+function fornModalitaToggle(){
+  const m=document.getElementById('fModalita').value;
+  const u=document.getElementById('fgUrlShop');
+  if(u)u.style.display=(m==='online')?'block':'none';
+}
 function openForn(id){
   const ed=id?fornitori.find(f=>f.id===id):null;
   document.getElementById('mFornTit').textContent=ed?'Modifica fornitore':'Nuovo fornitore';
   document.getElementById('fId').value=ed?ed.id:'';
   document.getElementById('fNome').value=ed?ed.nome:'';
   document.getElementById('fTipo').value=ed?ed.tipo:'commerciale';
+  document.getElementById('fModalita').value=ed?(ed.modalita_ordine||'rdo'):'rdo';
+  document.getElementById('fUrlShop').value=ed?(ed.url_shop||''):'';
   document.getElementById('fNote').value=ed?(ed.note||''):'';
   const fmts=(ed?ed.formati_preferiti:'PDF').split(',').map(x=>x.trim());
   document.getElementById('fPdf').checked=fmts.includes('PDF');document.getElementById('fDwg').checked=fmts.includes('DWG');document.getElementById('fDxf').checked=fmts.includes('DXF');document.getElementById('fStep').checked=fmts.includes('STEP');
@@ -1217,7 +1379,7 @@ function openForn(id){
   chipInit('lav',(ed&&ed.tag_lavorazioni)?ed.tag_lavorazioni:[], {suggest:PROP.lavorazioni});
   chipInit('fnm',(ed&&ed.tag_fornitori)?ed.tag_fornitori:[], {suggest:PROP.fornitori});
   if(document.getElementById('fBlack'))document.getElementById('fBlack').checked=ed?!!ed.blacklist:false;
-  fornTipoToggle();
+  fornTipoToggle();fornModalitaToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
 async function salvaForn(){
@@ -1233,7 +1395,7 @@ async function salvaForn(){
   const tagLav=tipo==='terzista'?chipVals('lav'):[];
   const tagCat=tipo==='terzista'?chipVals('cat'):[];
   const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
-  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:[],tag_categorie:tagCat};
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:[],tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim()};
   if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
@@ -1287,7 +1449,7 @@ function esc(s){const d=document.createElement('div');d.textContent=(s==null?'':
 function jsq(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 function ini(n){return (n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
 function fmtDate(s){try{return new Date(s).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}catch{return '';}}
-function statoLbl(s){return {da_inviare:'da inviare',inviata_da_confermare:'inviato',confermata:'confermato',respinta:'respinto'}[s]||s;}
+function statoLbl(s){return {da_inviare:'da inviare',in_carrello:'in carrello',inviata_da_confermare:'inviato',confermata:'confermato',respinta:'respinto'}[s]||s;}
 function fileTags(filesJson){let arr=[];try{arr=JSON.parse(filesJson)||[];}catch{}const exts=[...new Set(arr.map(p=>(p.split('.').pop()||'').toLowerCase()))].filter(Boolean);
   return exts.map(e=>`<span class="ftag ftag-${e}">${e.toUpperCase()}</span>`).join('');}
 function lavColor(l){if(!l)return '#8E8E93';let h=0;for(let i=0;i<l.length;i++)h=l.charCodeAt(i)+((h<<5)-h);const pal=['#FF9500','#007AFF','#5AC8FA','#34C759','#5856D6','#D48A0F','#FF2D55','#0077A0'];return pal[Math.abs(h)%pal.length];}
