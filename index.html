@@ -606,9 +606,9 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mbd">
       <input type="hidden" id="fId">
       <div class="fg"><label class="fl">Nome azienda *</label><input class="fld" id="fNome" placeholder="Es: Blickle Italia"><div class="ferr" id="fNomeErr">Campo obbligatorio</div></div>
-      <div class="fg"><label class="fl">Destinatario (To) *</label><div class="chips" id="chips_to" onclick="document.getElementById('chipin_to').focus()"></div><div class="ferr" id="fToErr">Serve almeno un indirizzo valido</div></div>
-      <div class="fg"><label class="fl">CC</label><div class="chips" id="chips_cc" onclick="document.getElementById('chipin_cc').focus()"></div></div>
-      <div class="fg"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
+      <div class="fg" id="fgTo"><label class="fl">Destinatario (To) *</label><div class="chips" id="chips_to" onclick="document.getElementById('chipin_to').focus()"></div><div class="ferr" id="fToErr">Serve almeno un indirizzo valido</div></div>
+      <div class="fg" id="fgCc"><label class="fl">CC</label><div class="chips" id="chips_cc" onclick="document.getElementById('chipin_cc').focus()"></div></div>
+      <div class="fg" id="fgCcn"><label class="fl">CCN (copia nascosta)</label><div class="chips" id="chips_ccn" onclick="document.getElementById('chipin_ccn').focus()"></div></div>
       <div class="fg"><label class="fl">Tipo *</label><select class="fld" id="fTipo" onchange="fornTipoToggle()"><option value="commerciale">Commerciale (catalogo)</option><option value="terzista">Terzista (conto lavoro)</option></select></div>
       <div class="fg"><label class="fl">Modalità d'ordine</label><select class="fld" id="fModalita" onchange="fornModalitaToggle()"><option value="rdo">RDO — richiesta d'offerta (email/distinta)</option><option value="online">Shop online — ordine sul sito</option></select></div>
       <div class="fg" id="fgUrlShop" style="display:none"><label class="fl">URL shop</label><input class="fld" id="fUrlShop" placeholder="https://www.norelem.it"><div class="fhint">Apre lo shop dalla vista RDO. Per i fornitori online niente email: link + CSV + «Segna ordinato».</div></div>
@@ -1299,7 +1299,10 @@ function renderForn(){
   g.innerHTML=fornitori.map(f=>{
     const tos=(f.emails_to&&f.emails_to.length)?f.emails_to:(f.email?[f.email]:[]);
     const extra=Math.max(0,tos.length-1)+((f.emails_cc||[]).length)+((f.emails_ccn||[]).length);
-    const mailLine=tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>';
+    const online=f.modalita_ordine==='online';
+    const mailLine=online
+      ?`<span class="fmuted">🛒 shop online${f.url_shop?` · <a href="${esc(f.url_shop)}" target="_blank">apri</a>`:''}</span>`
+      :(tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>');
     return `<div class="fcard" style="${(f.attivo&&!f.blacklist)?'':'opacity:.55'}">
     <div class="fch"><div class="fcav" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${f.blacklist?'<span class="fctipo" style="background:rgba(255,59,48,.12);color:var(--red)">🚫 lista nera</span>':''}</div></div>
     <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
@@ -1356,8 +1359,11 @@ function fornTipoToggle(){
 }
 function fornModalitaToggle(){
   const m=document.getElementById('fModalita').value;
+  const online=(m==='online');
   const u=document.getElementById('fgUrlShop');
-  if(u)u.style.display=(m==='online')?'block':'none';
+  if(u)u.style.display=online?'block':'none';
+  // online: niente destinatari né mail → nascondi i campi email
+  ['fgTo','fgCc','fgCcn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=online?'none':'block';});
 }
 function openForn(id){
   const ed=id?fornitori.find(f=>f.id===id):null;
@@ -1387,8 +1393,10 @@ async function salvaForn(){
   const nome=document.getElementById('fNome').value.trim();
   // conferma eventuale testo non ancora trasformato in chip
   ['to','cc','ccn','cat','lav','fnm'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
-  const to=chipVals('to').filter(isEmail), cc=chipVals('cc').filter(isEmail), ccn=chipVals('ccn').filter(isEmail);
-  let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!to.length){showErr('fToErr');ok=false;}if(!ok)return;
+  const online=document.getElementById('fModalita').value==='online';
+  // online: niente destinatari/mail. Per gli altri serve almeno un To valido.
+  const to=online?[]:chipVals('to').filter(isEmail), cc=online?[]:chipVals('cc').filter(isEmail), ccn=online?[]:chipVals('ccn').filter(isEmail);
+  let ok=true;if(!nome){showErr('fNomeErr','fNome');ok=false;}if(!online&&!to.length){showErr('fToErr');ok=false;}if(!ok)return;
   const fmts=[];if(document.getElementById('fPdf').checked)fmts.push('PDF');if(document.getElementById('fDwg').checked)fmts.push('DWG');if(document.getElementById('fDxf').checked)fmts.push('DXF');if(document.getElementById('fStep').checked)fmts.push('STEP');
   const id=document.getElementById('fId').value;
   const tipo=document.getElementById('fTipo').value;
