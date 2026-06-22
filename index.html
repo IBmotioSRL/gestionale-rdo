@@ -847,6 +847,9 @@ function renderTree(){
     if(!catOpen)return;
     if(isComm){ html+=commTree(cat); return; }
     cat.lavorazioni.forEach(lav=>{
+      // lavorazione vuota (es. ASSIEME DI MONTAGGIO): niente livello intermedio "(senza lavorazione)",
+      // i pezzi vanno direttamente sotto la categoria
+      if(!(lav.lav_meccanica||'').trim()){ lav.parti.forEach(p=>{html+=partRow(p);}); return; }
       const lk=cat.categoria+'||'+lav.lav_meccanica;
       const lavOpen=S.openLav[lk]!==false;
       const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
