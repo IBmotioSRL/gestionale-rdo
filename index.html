@@ -190,6 +190,50 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .s_respinta{background:rgba(255,59,48,.08);color:#C00}
 
 /* ── CALDERONE ── */
+/* toggle Albero / Ricerca file */
+.pdet-tabs{display:flex;gap:4px;padding:7px 13px 0;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0}
+.pdet-tab{padding:7px 14px;border-radius:7px 7px 0 0;font-size:11.5px;font-weight:700;color:var(--t2);cursor:pointer;border:1px solid transparent;border-bottom:none;user-select:none;display:flex;align-items:center;gap:6px}
+.pdet-tab:hover{background:rgba(44,21,6,.04)}
+.pdet-tab.on{background:var(--surf);color:var(--t1);border-color:var(--bd)}
+.pdet-tab .ptc{font-size:9px;font-weight:800;color:#fff;background:var(--go-d);border-radius:9px;padding:1px 6px}
+/* albero commerciali: tipo → gruppo fornitore */
+.tr-tipo{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 22px;cursor:pointer;background:rgba(245,168,35,.04)}
+.tr-tipo:hover{background:rgba(245,168,35,.09)}
+.tr-tipo-label{font-weight:700;color:var(--go-d);font-size:11.5px}
+.tr-grp{display:flex;align-items:center;gap:7px;padding:5px 12px 5px 38px;cursor:pointer;border-top:1px solid rgba(0,0,0,.03)}
+.tr-grp:hover{background:rgba(44,21,6,.03)}
+.tr-grp-ico{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:8px;font-weight:800;flex:0 0 auto}
+.tr-grp-name{font-weight:700;font-size:11px}
+.tr-grp-name.none{color:var(--orange,#e08a1e)}
+.badge-blocco{background:#fff3e3;color:#b5701a;border:1px solid #f0d7af;border-radius:4px;padding:0 6px;font-size:9px;font-weight:700}
+.tr-grp .tr-assign-all{margin-left:auto}
+/* vista Ricerca file (tabella) */
+.filep{display:flex;flex-direction:column;background:var(--bg);overflow:hidden;min-height:0;flex:1}
+.file-toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-shrink:0;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
+.file-toolbar .csearch{margin:0;min-width:240px;flex:0 0 280px}
+.fbtn{padding:6px 11px;border:1px solid var(--bd);background:var(--surf);border-radius:7px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px}
+.fbtn:hover{border-color:var(--go-d)}
+.fbtn.act{border-color:var(--go-d);color:var(--go-d);background:rgba(245,168,35,.07)}
+.fchips{display:flex;gap:5px;flex-wrap:wrap}
+.fchip{display:inline-flex;align-items:center;gap:5px;background:rgba(245,168,35,.1);color:var(--go-d);border:1px solid rgba(245,168,35,.3);border-radius:12px;padding:2px 8px;font-size:10.5px;font-weight:700}
+.fchip span{cursor:pointer;font-weight:900}
+.fcount{margin-left:auto;font-size:10.5px;color:var(--t3);font-weight:700}
+.ftable-wrap{overflow:auto;flex:1;min-height:0}
+table.ftable{border-collapse:collapse;width:100%;font-size:11px}
+table.ftable thead th{position:sticky;top:0;background:var(--surf);text-align:left;padding:7px 10px;font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none}
+table.ftable tbody td{padding:5px 10px;border-bottom:1px solid rgba(0,0,0,.04);color:var(--t2);white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+table.ftable tbody tr{cursor:pointer}
+table.ftable tbody tr:hover{background:rgba(245,168,35,.06)}
+.ft-nome{font-weight:700;color:var(--t1)}
+.ft-cat{display:inline-block;border-radius:4px;padding:1px 7px;font-size:9px;font-weight:700}
+.ft-cat.bom{background:#e9f2fb;color:#2c6ca5}.ft-cat.draw{background:#eef7ee;color:#3a8a3a}.ft-cat.ds{background:#f6eefb;color:#7a4ea5}.ft-cat.misc{background:#f0ece6;color:#7a6a5a}
+.ft-forn{font-weight:700;color:var(--t1)}
+.ft-muted{color:var(--t3)}
+.fmenu{position:fixed;z-index:60;background:#fff;border:1px solid var(--bd);border-radius:9px;box-shadow:0 8px 28px rgba(40,21,6,.18);padding:6px;max-height:320px;overflow:auto;min-width:200px;display:none}
+.fmenu label{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;font-size:11px;color:var(--t1);cursor:pointer}
+.fmenu label:hover{background:rgba(44,21,6,.05)}
+.fmenu .fm-act{display:flex;justify-content:space-between;padding:4px 6px;border-top:1px solid var(--bd);margin-top:4px}
+.fmenu .fm-act a{font-size:10px;color:var(--go-d);cursor:pointer;font-weight:700}
 .calp{display:flex;flex-direction:column;background:var(--bg);overflow:hidden;min-height:0}
 .calh{padding:9px 12px 0;flex-shrink:0}
 .calht{font-size:11px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:5px;margin-bottom:6px}
@@ -439,8 +483,12 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="wpath" id="wpath"></div>
       <div class="wprog" id="wprog"></div>
     </div>
-    <div class="ws">
-      <div class="treep">
+    <div class="pdet-tabs">
+      <div class="pdet-tab on" id="tabAlbero" onclick="setView('albero')">Albero parti</div>
+      <div class="pdet-tab" id="tabFile" onclick="setView('file')">Ricerca file <span class="ptc" id="ftot">0</span></div>
+    </div>
+    <div class="ws" style="display:flex;flex-direction:column">
+      <div class="treep" id="viewAlbero" style="flex:1">
         <div class="tph"><div class="tpt">Struttura progetto <span id="tstats"></span></div>
           <div class="tr-toolbar">
             <button class="tbtn" onclick="autoAssegna()" id="btnAuto" title="Riassegna i fornitori in base ai tag">✨ Auto-assegna</button>
@@ -450,17 +498,20 @@ textarea.fld{resize:vertical;min-height:60px}
           </div></div>
         <div class="tscroll" id="tscroll"></div>
       </div>
-      <div class="calp">
-        <div class="calh">
-          <div class="calht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Calderone <span style="font-size:9px;color:var(--t3);font-weight:600" id="ctot"></span></div>
-          <div class="calhint" id="calhint">Clicca un pezzo per evidenziare i suoi file</div>
-          <div class="csearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cerca file…" oninput="S.sq=this.value.toLowerCase();renderCal()"></div>
+      <div class="filep" id="viewFile" style="display:none">
+        <div class="file-toolbar">
+          <div class="csearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cerca in tutte le proprietà…" oninput="S.fq=this.value.toLowerCase();renderFileTable()"></div>
+          <button class="fbtn" id="fbTipo" onclick="fMenu('tipo',event)">Tipo ▾</button>
+          <button class="fbtn" id="fbCat" onclick="fMenu('cat',event)">Categoria ▾</button>
+          <button class="fbtn" id="fbForn" onclick="fMenu('forn',event)">Fornitore ▾</button>
+          <div class="fchips" id="fchips"></div>
+          <span class="fcount" id="fcount"></span>
         </div>
-        <div class="ctabs" id="ctabs"></div>
-        <div class="clist" id="clist"></div>
+        <div class="ftable-wrap" id="ftableWrap"></div>
       </div>
     </div>
   </div>
+  <div class="fmenu" id="fmenu"></div>
 
   <!-- ════ RDO ════ -->
   <div id="v-rdo" class="view">
@@ -578,7 +629,8 @@ function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)re
 
 /* ── STATE ── */
 let commesse=[], fornitori=[];
-const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{}};
+const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
+  view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set()};
 const RDO_OPEN={};
 
 /* ── INIT ── */
@@ -686,7 +738,8 @@ function renderProjGrid(){
 /* ── PROGETTO DETAIL ── */
 async function openProgetto(pid){
   if(pid!=null)S.projId=pid;
-  S.sel=null;S.rows.clear();S.tab='tutti';S.sq='';S.openCat={};S.openLav={};
+  S.sel=null;S.rows.clear();S.tab='tutti';S.sq='';S.openCat={};S.openLav={};S.openTipo={};S.openGrp={};
+  S.view='albero';S.fq='';S.fTipo=new Set();S.fCat=new Set();S.fForn=new Set();
   document.getElementById('v-pdet').classList.add('on');
   const c=commesse.find(x=>x.id===S.projId);
   document.getElementById('bcproj').textContent=c?c.codice:'—';
@@ -695,7 +748,7 @@ async function openProgetto(pid){
   document.getElementById('wcli').textContent=c&&c.cliente?'· '+c.cliente:'';
   document.getElementById('wpath').textContent=c?'📁 '+c.percorso_cartella:'';
   document.getElementById('tscroll').innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:var(--t3)">Caricamento…</div>';
-  document.getElementById('clist').innerHTML='';document.getElementById('ctabs').innerHTML='';
+  setView('albero');
   try{
     const [ra,rc]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/files')]);
     S.albero=ra.ok?await ra.json():null;
@@ -703,9 +756,10 @@ async function openProgetto(pid){
   }catch{S.albero=null;S.cal={files:[]};}
   // apri tutte le categorie di default
   if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
-  renderProgress();renderTree();renderCalTabs();renderCal();updateFAB();
+  renderProgress();renderTree();renderFiltri();renderFileTable();updateFAB();
 }
-function allParti(){return S.albero?S.albero.categorie.flatMap(c=>c.lavorazioni.flatMap(l=>l.parti)):[];}
+function catParti(cat){return cat.kind==='commerciale'?(cat.tipi||[]).flatMap(t=>t.gruppi.flatMap(g=>g.parti)):(cat.lavorazioni||[]).flatMap(l=>l.parti);}
+function allParti(){return S.albero?S.albero.categorie.flatMap(catParti):[];}
 
 function renderProgress(){
   const all=allParti();const tot=all.length;
@@ -720,61 +774,97 @@ function renderProgress(){
     <div class="wbar" style="margin-left:auto"><div class="wbarf" style="width:${pct}%"></div></div><span style="font-size:10px;font-weight:700;color:var(--t2)">${pct}%</span>`;
 }
 
+function partRow(p){
+  const sel=S.sel===p.numero_parte;const chk=S.rows.has(p.id);
+  const forn=p.fornitore_id?fornitori.find(f=>f.id===p.fornitore_id):null;
+  const fc=forn?`<span class="ac ac-set" title="${esc(forn.nome)}" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">${esc(forn.nome.split(' ')[0])}</span>${p.assegnazione_auto?'<span class="badge-auto" title="Assegnato in automatico dai tag del fornitore">auto</span>':''}`
+                :`<span class="ac ac-empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
+  const tags=fileTags(p.files);
+  const stc=(p.stato&&p.stato!=='da_smistare')?`<span class="sc s_${p.stato}">${statoLbl(p.stato)}</span>`:'';
+  return `<div class="tr-part${sel?' sel':''}" onclick="selPart('${jsq(p.numero_parte)}')">
+      <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
+      <span class="tr-pcod">${esc(p.numero_parte)}</span>
+      <span class="tr-pdesc" title="${esc(p.denominazione)}">${esc(p.denominazione||'—')}</span>
+      <span class="tr-pqty">×${esc(p.quantita)}</span>
+      <div class="tr-pfiles">${tags}</div>${fc}${stc}</div>`;
+}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   let html='';
   S.albero.categorie.forEach(cat=>{
     const catOpen=S.openCat[cat.categoria]!==false;
-    const allP=cat.lavorazioni.flatMap(l=>l.parti);
+    const allP=catParti(cat);
     const done=allP.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
+    const isComm=cat.kind==='commerciale';
     html+=`<div class="tr-cat" onclick="toggleCat('${jsq(cat.categoria)}')">
       <span class="tr-arrow">${catOpen?'▾':'▸'}</span>
       <span class="tr-cat-label">${esc(cat.categoria||'(senza categoria)')}</span>
       <span class="tr-cnt ${done===allP.length&&allP.length?'done':''}">${done}/${allP.length}</span>
-      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'CAT',cat:'${jsq(cat.categoria)}'})">Assegna tutti</span></div>`;
-    if(catOpen){
-      cat.lavorazioni.forEach(lav=>{
-        const lk=cat.categoria+'||'+lav.lav_meccanica;
-        const lavOpen=S.openLav[lk]!==false;
-        const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
-        const col=lavColor(lav.lav_meccanica);
-        html+=`<div class="tr-lav" onclick="toggleLav('${jsq(lk)}')">
-          <span class="tr-arrow">${lavOpen?'▾':'▸'}</span>
-          <span class="tr-lav-label" style="color:${col}">${esc(lav.lav_meccanica||'(senza lavorazione)')}</span>
-          <div class="tr-lav-bar"><div class="tr-lav-barf" style="width:${lav.parti.length?Math.round(ld/lav.parti.length*100):0}%;background:${col}"></div></div>
-          <span class="tr-cnt" style="font-size:9px">${ld}/${lav.parti.length}</span>
-          <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'LAV',cat:'${jsq(cat.categoria)}',lav:'${jsq(lav.lav_meccanica)}'})">Tutti</span></div>`;
-        if(lav.fornitore_id===null&&lav.candidati&&lav.candidati.length){
-          html+=`<div class="tr-cand"><b>${lav.candidati.length} fornitori</b> fanno questa lavorazione — scegli: ${lav.candidati.map(c=>`<button class="cand-btn" onclick="event.stopPropagation();assegnaCandidato('${jsq(cat.categoria)}','${jsq(lav.lav_meccanica)}',${c.id})">${esc(c.nome)}</button>`).join('')}</div>`;
-        }
-        if(lavOpen){
-          lav.parti.forEach(p=>{
-            const sel=S.sel===p.numero_parte;const chk=S.rows.has(p.id);
-            const forn=p.fornitore_id?fornitori.find(f=>f.id===p.fornitore_id):null;
-            const fc=forn?`<span class="ac ac-set" title="${esc(forn.nome)}" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">${esc(forn.nome.split(' ')[0])}</span>${p.assegnazione_auto?'<span class="badge-auto" title="Assegnato in automatico dai tag del fornitore">auto</span>':''}`
-                          :`<span class="ac ac-empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
-            const tags=fileTags(p.files);
-            const stc=(p.stato&&p.stato!=='da_smistare')?`<span class="sc s_${p.stato}">${statoLbl(p.stato)}</span>`:'';
-            html+=`<div class="tr-part${sel?' sel':''}" onclick="selPart('${jsq(p.numero_parte)}')">
-              <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
-              <span class="tr-pcod">${esc(p.numero_parte)}</span>
-              <span class="tr-pdesc" title="${esc(p.denominazione)}">${esc(p.denominazione||'—')}</span>
-              <span class="tr-pqty">×${esc(p.quantita)}</span>
-              <div class="tr-pfiles">${tags}</div>${fc}${stc}</div>`;
-          });
-        }
-      });
-    }
+      ${isComm?'':`<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'CAT',cat:'${jsq(cat.categoria)}'})">Assegna tutti</span>`}</div>`;
+    if(!catOpen)return;
+    if(isComm){ html+=commTree(cat); return; }
+    cat.lavorazioni.forEach(lav=>{
+      const lk=cat.categoria+'||'+lav.lav_meccanica;
+      const lavOpen=S.openLav[lk]!==false;
+      const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
+      const col=lavColor(lav.lav_meccanica);
+      html+=`<div class="tr-lav" onclick="toggleLav('${jsq(lk)}')">
+        <span class="tr-arrow">${lavOpen?'▾':'▸'}</span>
+        <span class="tr-lav-label" style="color:${col}">${esc(lav.lav_meccanica||'(senza lavorazione)')}</span>
+        <div class="tr-lav-bar"><div class="tr-lav-barf" style="width:${lav.parti.length?Math.round(ld/lav.parti.length*100):0}%;background:${col}"></div></div>
+        <span class="tr-cnt" style="font-size:9px">${ld}/${lav.parti.length}</span>
+        <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'LAV',cat:'${jsq(cat.categoria)}',lav:'${jsq(lav.lav_meccanica)}'})">Tutti</span></div>`;
+      if(lav.fornitore_id===null&&lav.candidati&&lav.candidati.length){
+        html+=`<div class="tr-cand"><b>${lav.candidati.length} fornitori</b> fanno questa lavorazione — scegli: ${lav.candidati.map(c=>`<button class="cand-btn" onclick="event.stopPropagation();assegnaCandidato('${jsq(cat.categoria)}','${jsq(lav.lav_meccanica)}',${c.id})">${esc(c.nome)}</button>`).join('')}</div>`;
+      }
+      if(lavOpen)lav.parti.forEach(p=>{html+=partRow(p);});
+    });
   });
   document.getElementById('tscroll').innerHTML=html;
 }
+// ── albero commerciali: TIPO → gruppo fornitore → pezzi ──
+function commTree(cat){
+  let html='';
+  (cat.tipi||[]).forEach(t=>{
+    const tk=cat.categoria+'|'+t.tipo;
+    const tOpen=S.openTipo[tk]!==false;
+    const td=t.gruppi.filter(g=>g.fornitore_id).reduce((s,g)=>s+g.n_parti,0);
+    html+=`<div class="tr-tipo" onclick="toggleTipo('${jsq(tk)}')">
+      <span class="tr-arrow">${tOpen?'▾':'▸'}</span>
+      <span class="tr-tipo-label">${esc(t.tipo||'(senza tipo)')}</span>
+      <div class="tr-lav-bar" style="width:90px"><div class="tr-lav-barf" style="width:${t.n_parti?Math.round(td/t.n_parti*100):0}%;background:var(--go-d)"></div></div>
+      <span class="tr-cnt" style="font-size:9px">${td}/${t.n_parti}</span>
+      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}'})">Assegna tutti</span></div>`;
+    if(!tOpen)return;
+    t.gruppi.forEach(g=>{
+      const none=g.fornitore_id===null;
+      const gk=tk+'|'+(g.fornitore_id===null?'_':g.fornitore_id);
+      const gOpen=S.openGrp[gk]===true; // gruppi chiusi di default (il blocco bulloneria può essere grosso)
+      html+=`<div class="tr-grp" onclick="toggleGrp('${jsq(gk)}')">
+        <span class="tr-arrow">${gOpen?'▾':'▸'}</span>
+        <span class="tr-grp-ico" style="background:${none?'#c9952f':avc(g.fornitore_nome)}">${ini(g.fornitore_nome)}</span>
+        <span class="tr-grp-name ${none?'none':''}">${esc(g.fornitore_nome)}</span>
+        ${none?'<span class="badge-blocco">blocco da assegnare</span>':''}
+        <span class="tr-cnt" style="font-size:9px">${g.n_parti} pezzi</span>
+        ${none
+          ? `<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}',solo:true})">Assegna blocco</span>`
+          : `<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}'})">Cambia</span>`}</div>`;
+      if(gOpen)g.parti.forEach(p=>{html+=partRow(p);});
+    });
+  });
+  return html;
+}
 function toggleCat(k){S.openCat[k]=!(S.openCat[k]!==false);renderTree();}
 function toggleLav(k){S.openLav[k]=!(S.openLav[k]!==false);renderTree();}
+function toggleTipo(k){S.openTipo[k]=!(S.openTipo[k]!==false);renderTree();}
+function toggleGrp(k){S.openGrp[k]=!(S.openGrp[k]===true);renderTree();}
 function treeAll(open){
   if(!S.albero)return;
   S.albero.categorie.forEach(cat=>{
     S.openCat[cat.categoria]=open;
-    cat.lavorazioni.forEach(lav=>{S.openLav[cat.categoria+'||'+lav.lav_meccanica]=open;});
+    (cat.lavorazioni||[]).forEach(lav=>{S.openLav[cat.categoria+'||'+lav.lav_meccanica]=open;});
+    (cat.tipi||[]).forEach(t=>{S.openTipo[cat.categoria+'|'+t.tipo]=open;
+      t.gruppi.forEach(g=>{S.openGrp[cat.categoria+'|'+t.tipo+'|'+(g.fornitore_id===null?'_':g.fornitore_id)]=open;});});
   });
   renderTree();
 }
@@ -820,36 +910,116 @@ async function assegnaCandidato(cat,lav,fid){
 
 function selPart(cod){
   S.sel=S.sel===cod?null:cod;
-  const h=document.getElementById('calhint');
-  if(S.sel){const p=allParti().find(x=>x.numero_parte===cod);h.innerHTML=`<b>${esc(cod)}</b> · ${esc(p?p.denominazione:'')}`;S.tab='rel';}
-  else{h.textContent='Clicca un pezzo per evidenziare i suoi file';S.tab='tutti';}
-  renderTree();renderCalTabs();renderCal();
+  renderTree();
 }
 
-/* ── CALDERONE ── */
+/* ── RICERCA FILE (ex Calderone) ── */
+const CAT_LBL={bom:'Distinta',draw:'Disegno',ds:'Datasheet',misc:'Altro'};
+let fSort={col:'nome',dir:1};
 function calFiles(){return S.cal&&S.cal.files?S.cal.files:[];}
-function renderCalTabs(){
-  const F=calFiles();const relN=S.sel?F.filter(f=>f.rel.includes(S.sel)).length:0;
-  const hasMisc=F.some(f=>f.categoria==='misc');
-  const tabs=[{id:'tutti',l:'Tutti',n:F.length},{id:'rel',l:'Relativi',n:relN},{id:'bom',l:'Distinte',n:F.filter(f=>f.categoria==='bom').length},{id:'draw',l:'Disegni',n:F.filter(f=>f.categoria==='draw').length},{id:'ds',l:'Datasheet',n:F.filter(f=>f.categoria==='ds').length}];
-  if(hasMisc)tabs.push({id:'misc',l:'Altri',n:F.filter(f=>f.categoria==='misc').length});
-  document.getElementById('ctabs').innerHTML=tabs.map(t=>`<div class="ctab${S.tab===t.id?' on':''}" onclick="S.tab='${t.id}';renderCalTabs();renderCal()">${t.l}<span class="ctc">${t.n}</span></div>`).join('');
-  document.getElementById('ctot').textContent='· '+F.length+' file';
+// indice numero_parte → dati parte (denominazione, lavorazione/tipo, fornitore) dalla lista parti SEMPRE aggiornata
+function parteIdx(){
+  const idx={};
+  allParti().forEach(p=>{
+    const forn=p.fornitore_id?fornitori.find(f=>f.id===p.fornitore_id):null;
+    idx[p.numero_parte]={den:p.denominazione||'',prop:p.lav_meccanica||p.tipo||'',forn:forn?forn.nome:''};
+  });
+  return idx;
 }
-function renderCal(){
-  const F=calFiles();let f=[...F];
-  if(S.tab==='rel')f=S.sel?F.filter(x=>x.rel.includes(S.sel)):[];
-  else if(['bom','draw','ds','misc'].includes(S.tab))f=F.filter(x=>x.categoria===S.tab);
-  if(S.sq)f=f.filter(x=>x.nome.toLowerCase().includes(S.sq));
-  const c=document.getElementById('clist');
-  if(!f.length){c.innerHTML='<div style="padding:16px;font-size:11px;color:var(--t3);text-align:center">Nessun file</div>';return;}
-  if(S.tab==='tutti'&&S.sel){
-    const rel=f.filter(x=>x.rel.includes(S.sel)),oth=f.filter(x=>!x.rel.includes(S.sel));
-    c.innerHTML=(rel.length?`<div class="cgrp">Collegati a ${esc(S.sel)}</div>`+rel.map(x=>fileItem(x,'hi')).join(''):'')+(oth.length?`<div class="cgrp sep">Altri</div>`+oth.map(x=>fileItem(x,'dim')).join(''):'');
-  } else c.innerHTML=`<div class="cgrp">${f.length} file</div>`+f.map(x=>fileItem(x,'')).join('');
+// arricchisce ogni file con i dati della parte collegata (primo rel)
+function filesEnriched(){
+  const idx=parteIdx();
+  return calFiles().map(x=>{
+    const pi=x.rel&&x.rel.length?idx[x.rel[0]]:null;
+    return {...x,_cod:x.rel&&x.rel.length?x.rel[0]:'',_den:pi?pi.den:'',_forn:pi?pi.forn:'',_catlbl:CAT_LBL[x.categoria]||x.categoria};
+  });
 }
-function fileItem(x,cls){const bcat={bom:'fbbom',draw:'fbdraw',ds:'fbds',misc:'fbmisc'}[x.categoria];const blbl={bom:'Dist.',draw:'Dis.',ds:'DS',misc:'Altro'}[x.categoria];
-  return `<div class="fi-f ${cls}" onclick="apriFile('${jsq(x.percorso)}')"><div class="fic f${x.tipo}">${x.tipo.toUpperCase()}</div><div class="finfo"><div class="fname">${esc(x.nome)}</div><div class="fmeta">${x.size_kb} KB</div></div><span class="fbadge ${bcat}">${blbl}</span></div>`;}
+function setView(v){
+  S.view=v;
+  document.getElementById('viewAlbero').style.display=v==='albero'?'flex':'none';
+  document.getElementById('viewFile').style.display=v==='file'?'flex':'none';
+  document.getElementById('tabAlbero').classList.toggle('on',v==='albero');
+  document.getElementById('tabFile').classList.toggle('on',v==='file');
+  if(v==='file'){renderFiltri();renderFileTable();}
+}
+function distinct(arr){return [...new Set(arr.filter(x=>x!=null&&x!==''))].sort((a,b)=>String(a).localeCompare(String(b)));}
+function renderFiltri(){
+  const F=filesEnriched();
+  document.getElementById('ftot').textContent=F.length;
+  document.getElementById('fbTipo').classList.toggle('act',S.fTipo.size>0);
+  document.getElementById('fbCat').classList.toggle('act',S.fCat.size>0);
+  document.getElementById('fbForn').classList.toggle('act',S.fForn.size>0);
+  // chips dei filtri attivi
+  const chips=[];
+  S.fTipo.forEach(v=>chips.push(['tipo',v,v.toUpperCase()]));
+  S.fCat.forEach(v=>chips.push(['cat',v,CAT_LBL[v]||v]));
+  S.fForn.forEach(v=>chips.push(['forn',v,v||'(senza fornitore)']));
+  document.getElementById('fchips').innerHTML=chips.map(([d,v,l])=>`<span class="fchip">${esc(l)} <span onclick="fToggle('${d}','${jsq(v)}')">×</span></span>`).join('');
+}
+function fMenu(dim,evt){
+  evt.stopPropagation();
+  const F=filesEnriched();
+  let vals,sel,lbl;
+  if(dim==='tipo'){vals=distinct(F.map(x=>x.tipo));sel=S.fTipo;lbl=v=>v.toUpperCase();}
+  else if(dim==='cat'){vals=distinct(F.map(x=>x.categoria));sel=S.fCat;lbl=v=>CAT_LBL[v]||v;}
+  else{vals=distinct(F.map(x=>x._forn));sel=S.fForn;lbl=v=>v||'(senza fornitore)';}
+  const m=document.getElementById('fmenu');
+  m.innerHTML=vals.map(v=>`<label><input type="checkbox" ${sel.has(v)?'checked':''} onchange="fToggle('${dim}','${jsq(v)}')"> ${esc(lbl(v))}</label>`).join('')
+    +`<div class="fm-act"><a onclick="fClear('${dim}')">Pulisci</a><a onclick="closeFMenu()">Chiudi</a></div>`;
+  const r=evt.currentTarget.getBoundingClientRect();
+  let left=Math.min(r.left,window.innerWidth-230);let top=r.bottom+4;
+  m.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block`;
+}
+function fToggle(dim,v){
+  const sel=dim==='tipo'?S.fTipo:dim==='cat'?S.fCat:S.fForn;
+  sel.has(v)?sel.delete(v):sel.add(v);
+  renderFiltri();renderFileTable();
+  if(document.getElementById('fmenu').style.display==='block')fMenuRefresh(dim);
+}
+function fMenuRefresh(dim){/* riapri non serve: il checkbox riflette già lo stato */}
+function fClear(dim){(dim==='tipo'?S.fTipo:dim==='cat'?S.fCat:S.fForn).clear();renderFiltri();renderFileTable();closeFMenu();}
+function closeFMenu(){const m=document.getElementById('fmenu');if(m)m.style.display='none';}
+document.addEventListener('click',e=>{if(!e.target.closest('#fmenu')&&!e.target.closest('.fbtn'))closeFMenu();});
+function fSortBy(col){if(fSort.col===col)fSort.dir*=-1;else{fSort.col=col;fSort.dir=1;}renderFileTable();}
+function renderFileTable(){
+  let F=filesEnriched();
+  if(S.fTipo.size)F=F.filter(x=>S.fTipo.has(x.tipo));
+  if(S.fCat.size)F=F.filter(x=>S.fCat.has(x.categoria));
+  if(S.fForn.size)F=F.filter(x=>S.fForn.has(x._forn));
+  if(S.fq){const q=S.fq;F=F.filter(x=>(
+    x.nome+' '+x.tipo+' '+x._catlbl+' '+x.cartella+' '+x.modificato+' '+(x.rel||[]).join(' ')+' '+x._den+' '+x._forn
+  ).toLowerCase().includes(q));}
+  const c=fSort.col,d=fSort.dir;
+  F.sort((a,b)=>{let va,vb;
+    if(c==='size_kb'){va=a.size_kb;vb=b.size_kb;}
+    else{va=String(a[c]==null?'':a[c]).toLowerCase();vb=String(b[c]==null?'':b[c]).toLowerCase();}
+    return va<vb?-d:va>vb?d:0;});
+  document.getElementById('fcount').textContent=F.length+' file';
+  const arr=x=>fSort.col===x?(fSort.dir>0?' ▲':' ▼'):'';
+  const head=`<thead><tr>
+    <th onclick="fSortBy('nome')">Nome${arr('nome')}</th>
+    <th onclick="fSortBy('tipo')">Tipo${arr('tipo')}</th>
+    <th onclick="fSortBy('categoria')">Categoria${arr('categoria')}</th>
+    <th onclick="fSortBy('_cod')">Codice parte${arr('_cod')}</th>
+    <th onclick="fSortBy('_den')">Parte${arr('_den')}</th>
+    <th onclick="fSortBy('_forn')">Fornitore${arr('_forn')}</th>
+    <th onclick="fSortBy('cartella')">Cartella${arr('cartella')}</th>
+    <th onclick="fSortBy('modificato')">Modificato${arr('modificato')}</th>
+    <th onclick="fSortBy('size_kb')">Dim.${arr('size_kb')}</th></tr></thead>`;
+  if(!F.length){document.getElementById('ftableWrap').innerHTML='<div style="padding:30px;text-align:center;font-size:12px;color:var(--t3)">Nessun file corrisponde ai filtri.</div>';return;}
+  const sz=k=>k>=1024?(k/1024).toFixed(1)+' MB':k+' KB';
+  const body=F.map(x=>`<tr onclick="apriFile('${jsq(x.percorso)}')" title="${esc(x.percorso)}">
+    <td class="ft-nome">${esc(x.nome)}</td>
+    <td>${esc(x.tipo.toUpperCase())}</td>
+    <td><span class="ft-cat ${x.categoria}">${esc(x._catlbl)}</span></td>
+    <td>${x._cod?esc(x._cod):'<span class="ft-muted">—</span>'}</td>
+    <td title="${esc(x._den)}">${x._den?esc(x._den):'<span class="ft-muted">—</span>'}</td>
+    <td>${x._forn?`<span class="ft-forn">${esc(x._forn)}</span>`:'<span class="ft-muted">—</span>'}</td>
+    <td class="ft-muted" title="${esc(x.cartella)}">${esc(x.cartella||'/')}</td>
+    <td class="ft-muted">${esc(x.modificato)}</td>
+    <td class="ft-muted">${sz(x.size_kb)}</td></tr>`).join('');
+  document.getElementById('ftableWrap').innerHTML=`<table class="ftable">${head}<tbody>${body}</tbody></table>`;
+}
 function apriFile(path){window.open(API+'/api/commesse/'+S.projId+'/file?path='+encodeURIComponent(path),'_blank');}
 
 /* ── SELEZIONE + FAB ── */
@@ -887,6 +1057,12 @@ async function doAssign(fid){
       if(!fid){toast('Per rilasciare un gruppo usa i singoli pezzi o riassegna',true);return;}
       const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,lav_meccanica:t.t==='LAV'?(t.lav||''):null})});
       if(!r.ok)throw 0;
+    } else if(t.t==='TIPO'){
+      if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
+      const body={fornitore_id:fid,categoria:t.cat||null,tipo:t.tipo==null?'':t.tipo};
+      if(t.solo)body.solo_non_assegnate=true;
+      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok)throw 0;
     } else if(t.t==='BULK'){
       const ids=[...S.rows];
       const body=fid?{fornitore_id:fid,stato:'da_inviare'}:{fornitore_id:null,stato:'da_smistare'};
@@ -920,11 +1096,12 @@ async function refreshDetail(){
     if(ra.ok)S.albero=await ra.json();
     const c=commesse.find(x=>x.id===S.projId);if(c&&rp.ok)c._parti=await rp.json();
   }catch{}
-  renderProgress();renderTree();renderCalTabs();renderCal();updateFAB();
+  // la colonna Fornitore di "Ricerca file" si ri-deriva dalle parti aggiornate (join client-side)
+  renderProgress();renderTree();renderFiltri();renderFileTable();updateFAB();
 }
 async function refreshFiles(){
   try{const rc=await fetch(API+'/api/commesse/'+S.projId+'/files');if(rc.ok)S.cal=await rc.json();}catch{}
-  renderCalTabs();renderCal();
+  renderFiltri();renderFileTable();
 }
 
 /* ── RDO VIEW ── */
