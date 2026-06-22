@@ -912,12 +912,19 @@ async function inviaSelezionate(){
   }catch{toast('Errore invio',true);}
 }
 
+// refreshDetail NON rifà /files: assegnare un fornitore non cambia i file della
+// cartella, e lo scan SMB costa ~11s. I file si ricaricano solo all'apertura del
+// progetto (openProgetto) e dopo una riscansione (refreshFiles).
 async function refreshDetail(){
-  try{const [ra,rc,rp]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/files'),fetch(API+'/api/commesse/'+S.projId+'/parti')]);
-    if(ra.ok)S.albero=await ra.json();if(rc.ok)S.cal=await rc.json();
+  try{const [ra,rp]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/parti')]);
+    if(ra.ok)S.albero=await ra.json();
     const c=commesse.find(x=>x.id===S.projId);if(c&&rp.ok)c._parti=await rp.json();
   }catch{}
   renderProgress();renderTree();renderCalTabs();renderCal();updateFAB();
+}
+async function refreshFiles(){
+  try{const rc=await fetch(API+'/api/commesse/'+S.projId+'/files');if(rc.ok)S.cal=await rc.json();}catch{}
+  renderCalTabs();renderCal();
 }
 
 /* ── RDO VIEW ── */
@@ -996,7 +1003,7 @@ async function salvaProgetto(){
 async function riscansiona(){
   if(!S.projId)return;const btn=document.getElementById('btnRiscan');btn.disabled=true;
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/riscansiona',{method:'POST'});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
-    toast('Riscansione completata','ok');await loadCommesse();await refreshDetail();
+    toast('Riscansione completata','ok');await loadCommesse();await refreshDetail();await refreshFiles();
   }catch(e){toast(e.message||'Errore riscansione',true);}finally{btn.disabled=false;}
 }
 async function eliminaProgetto(){
