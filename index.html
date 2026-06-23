@@ -149,6 +149,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tscroll{overflow-y:auto;flex:1;min-height:0}
 .tr-cat{display:flex;align-items:center;gap:7px;padding:8px 13px 8px 10px;background:rgba(248,244,239,.95);border-bottom:1px solid var(--bd);cursor:pointer;user-select:none;position:sticky;top:0;z-index:2}
 .tr-cat:hover{background:rgba(245,168,35,.06)}
+.tr-cat.comm{background:linear-gradient(90deg,rgba(245,168,35,.18),rgba(245,168,35,.06));border-left:3px solid var(--go-d)}
+.tr-cat.comm .tr-cat-label{color:var(--go-d)}
+.tr-sep{height:0;border-top:2px dashed rgba(44,21,6,.14);margin:3px 0}
 .tr-arrow{font-size:10px;color:var(--t3);width:12px;flex-shrink:0}
 .tr-cat-label{font-size:11px;font-weight:800;color:var(--t1);letter-spacing:.02em;text-transform:uppercase;flex:1}
 .tr-cnt{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:12px;background:rgba(44,21,6,.06);color:var(--t2);white-space:nowrap}
@@ -835,12 +838,15 @@ function partRow(p){
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   let html='';
+  let prevComm=false;
   S.albero.categorie.forEach(cat=>{
     const catOpen=S.openCat[cat.categoria]!==false;
     const allP=catParti(cat);
     const done=allP.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
     const isComm=cat.kind==='commerciale';
-    html+=`<div class="tr-cat" onclick="toggleCat('${jsq(cat.categoria)}')">
+    if(!isComm&&prevComm)html+='<div class="tr-sep"></div>';
+    prevComm=isComm;
+    html+=`<div class="tr-cat${isComm?' comm':''}" onclick="toggleCat('${jsq(cat.categoria)}')">
       <span class="tr-arrow">${catOpen?'▾':'▸'}</span>
       <span class="tr-cat-label">${esc(cat.categoria||'')}</span>
       <span class="tr-cnt ${done===allP.length&&allP.length?'done':''}">${done}/${allP.length}</span>
