@@ -236,8 +236,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .pd-props{display:grid;grid-template-columns:38% 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:9px;overflow:hidden}
 .pd-props .pk,.pd-props .pv{background:#fff;padding:7px 10px;font-size:11.5px}
 .pd-props .pk{color:var(--t2);font-weight:700;text-transform:capitalize}
-.pd-props .pv{color:var(--t1);font-weight:600;word-break:break-word}
-.pd-props .pv.empty{color:var(--t3);font-weight:500;font-style:italic}
+.pd-props .pv{color:var(--t1);font-weight:600;word-break:break-word;cursor:copy;position:relative}
+.pd-props .pv:hover{background:rgba(245,168,35,.08)}
+.pd-props .pv.empty{color:var(--t3);font-weight:500;font-style:italic;cursor:default}
+.pd-props .pk.key{background:rgba(245,168,35,.1);color:var(--go-d)}
+.pd-props .pv.key{background:rgba(245,168,35,.06);font-weight:800;color:var(--br)}
 .fileitem{display:flex;align-items:center;gap:9px;padding:8px;border:1px solid var(--bd);border-radius:9px;margin-bottom:7px;cursor:pointer}
 .fileitem:hover{border-color:var(--go-d);background:rgba(245,168,35,.04)}
 .fileitem.act{border-color:var(--go-d);background:rgba(245,168,35,.08)}
@@ -249,6 +252,23 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .pd-viewer{height:340px;border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:#525659;margin-top:6px}
 .pd-viewer iframe{width:100%;height:100%;border:0;background:#525659}
 .pd-ext{height:160px;border:1px dashed var(--bd2);border-radius:10px;display:grid;place-items:center;text-align:center;color:var(--t2);font-size:11px;margin-top:6px;padding:14px}
+
+/* ── MODALE PREPARA RDO ── */
+.rdo-banner{background:#fff3e3;border:1px solid #f0d7af;color:#8a5a12;border-radius:9px;padding:9px 12px;font-size:11px;margin-bottom:12px}
+.rdo-alleg{display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto}
+.rdo-alleg label{display:flex;align-items:center;gap:8px;font-size:11.5px;padding:6px 9px;border:1px solid var(--bd);border-radius:8px;cursor:pointer}
+.rdo-alleg label:hover{border-color:var(--go-d);background:rgba(245,168,35,.04)}
+.rdo-alleg input{accent-color:var(--go)}
+.rdo-alleg .akind{margin-left:auto;font-size:8.5px;font-weight:800;padding:1px 6px;border-radius:4px;background:rgba(44,21,6,.06);color:var(--t2);text-transform:uppercase}
+.rdo-alleg .akind.distinta{background:rgba(52,199,89,.14);color:#1A7A2E}
+.rdo-pezzi{display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto}
+.rdo-pezzi .rp{font-size:9.5px;font-weight:700;font-family:ui-monospace,monospace;background:rgba(44,21,6,.05);border:1px solid var(--bd);border-radius:5px;padding:2px 6px;color:var(--br)}
+.rdo-preview{margin-top:12px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.rdo-preview .rp-h{background:#faf6f0;padding:9px 12px;border-bottom:1px solid var(--bd);font-size:11px;color:var(--t2)}
+.rdo-preview .rp-h b{color:var(--t1)}
+.rdo-preview .rp-b{padding:12px;font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--t1)}
+.rdo-preview .rp-a{padding:8px 12px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:5px}
+.rdo-preview .rp-a .ach{font-size:9.5px;font-weight:700;background:rgba(0,122,255,.08);color:#1769c4;border-radius:5px;padding:2px 7px}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -728,6 +748,26 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mRdo" onclick="ovClose(event,'mRdo')">
+  <div class="modal" style="max-width:680px">
+    <div class="mhd"><div class="mico2">✉</div><div><div class="mtit">Prepara RDO</div><div class="msub" id="rdoSub">—</div></div><button class="mx" onclick="mClose('mRdo')">✕</button></div>
+    <div class="mbd">
+      <input type="hidden" id="rdoCid"><input type="hidden" id="rdoFid">
+      <div class="rdo-banner" id="rdoBanner">⚠ Invio reale non ancora attivo (permessi Microsoft mancanti). Per ora la RDO viene <b>segnata come inviata</b>; la mail non parte.</div>
+      <div class="resp-grid" style="grid-template-columns:1fr 1fr">
+        <div class="fg"><label class="fl">A (destinatari)</label><input class="fld" id="rdoTo" placeholder="email1; email2"></div>
+        <div class="fg"><label class="fl">CC</label><input class="fld" id="rdoCc" placeholder="(facoltativo)"></div>
+      </div>
+      <div class="fg"><label class="fl">Oggetto</label><input class="fld" id="rdoOgg"></div>
+      <div class="fg"><label class="fl">Messaggio</label><textarea class="fld" id="rdoCorpo" rows="9" style="resize:vertical;font-family:inherit;line-height:1.45"></textarea></div>
+      <div class="fg"><label class="fl">Allegati <span class="fmuted" id="rdoAllCnt"></span></label><div id="rdoAlleg" class="rdo-alleg"></div></div>
+      <div class="fg"><label class="fl">Pezzi inclusi <span class="fmuted" id="rdoPzCnt"></span></label><div id="rdoPezzi" class="rdo-pezzi"></div></div>
+      <div id="rdoPreview" class="rdo-preview" style="display:none"></div>
+    </div>
+    <div class="mft"><button class="btn btn-ghost btn-sm" onclick="rdoTogglePreview()" id="rdoPrevBtn">👁 Anteprima</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mRdo')">Annulla</button><button class="btn btn-go" id="rdoSendBtn" onclick="rdoMailConfirm()">Segna inviata (simulato)</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mVoc" onclick="ovClose(event,'mVoc')">
   <div class="modal">
     <div class="mhd">
@@ -1079,6 +1119,7 @@ function selPart(cod,pid){
 /* ── FILE: helper su p.files (array JSON di path assoluti) ── */
 function pFiles(p){let a=[];try{a=JSON.parse(p.files)||[];}catch{}return a;}
 function pProps(p){let o={};try{o=JSON.parse(p.proprieta||'{}')||{};}catch{}return o;}
+function copyText(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('Copiato: '+t,'ok'),()=>toast('Copia non riuscita',true));else toast('Copia non supportata',true);}
 function fileExt(path){return (path.split('.').pop()||'').toLowerCase();}
 function firstPdf(p){return pFiles(p).find(x=>fileExt(x)==='pdf')||null;}
 function fileUrl(path){return API+'/api/commesse/'+S.projId+'/file?path='+encodeURIComponent(path);}
@@ -1147,10 +1188,15 @@ function openDraw(pid){
   }
   // proprietà dalla distinta (tutte le colonne dell'Excel, in ordine)
   const props=pProps(p);const pkeys=Object.keys(props);
+  const isComm=(p.categoria||'').toUpperCase().startsWith('COMMERC');
+  const keyCols=(isComm?['FORNITORE','TIPO']:['MATERIALE','LAV. MECCANICA','FORNITORE']).map(x=>x.toUpperCase());
   let ph='';
   if(pkeys.length){
+    // prima le proprietà chiave, poi le altre nell'ordine della distinta
+    const sorted=[...pkeys].sort((a,b)=>(keyCols.includes(a.toUpperCase())?0:1)-(keyCols.includes(b.toUpperCase())?0:1));
     ph=`<div class="pd-dh">Proprietà · distinta</div><div class="pd-props">`+
-       pkeys.map(k=>`<div class="pk">${esc(k.toLowerCase())}</div><div class="pv">${esc(props[k])}</div>`).join('')+
+       sorted.map(k=>{const kk=keyCols.includes(k.toUpperCase())?' key':'';
+         return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" title="Copia" onclick="copyText('${jsq(props[k])}')">${esc(props[k])}</div>`;}).join('')+
        `</div>`;
   }
   document.getElementById('pdBody').innerHTML=
@@ -1487,7 +1533,7 @@ function rdoFornBlock(c,fid,ps){
     btns+=`<button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid},'ordinato')">✓ Segna ordinato</button>`;
   }else{
     btns+=`<a class="btn btn-ghost btn-sm" href="${API}/api/commesse/${c.id}/distinta/${fid}" target="_blank">⬇ Scarica distinta</a>`;
-    btns+=`<button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid},'inviata')">Segna inviata</button>`;
+    btns+=`<button class="btn btn-go btn-sm" onclick="openRdoMail(${c.id},${fid})">✉ Prepara RDO</button>`;
   }
   return `<div class="rdo-fb"><div class="rdo-fh"><div class="rdo-favico" style="background:${avc(f.nome)}">${ini(f.nome)}</div><span class="rdo-fname">${esc(f.nome)}</span><span class="rdo-ftype" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${online?'<span class="badge-online">● shop online</span>':''}<span style="font-size:9.5px;color:var(--t3)">${ps.length} pezzi</span></div><div class="rdo-items">${items}</div>${vociHtml}${totHtml}${pxTable}<div class="rdo-fbtn">${btns}</div></div>`;
 }
@@ -1525,6 +1571,64 @@ async function rdoSend(cid,fid,kind){
     toast(kind==='ordinato'?'Segnato ordinato':'RDO segnata inviata','ok');
     const rp=await fetch(API+'/api/commesse/'+cid+'/parti');if(rp.ok)commesse.find(c=>c.id===cid)._parti=await rp.json();
     renderRDO();
+  }catch{toast('Errore',true);}
+}
+
+/* ── PREPARA RDO (composizione mail; invio reale agganciabile a Graph dopo) ── */
+let RDO_MAIL=null;
+async function openRdoMail(cid,fid){
+  try{
+    const r=await fetch(API+'/api/commesse/'+cid+'/rdo-preview/'+fid);
+    if(!r.ok)throw 0;
+    RDO_MAIL=await r.json();
+  }catch{toast('Errore preparazione RDO',true);return;}
+  const m=RDO_MAIL;
+  document.getElementById('rdoCid').value=cid;
+  document.getElementById('rdoFid').value=fid;
+  document.getElementById('rdoSub').textContent=m.fornitore.nome+' · '+m.parti.length+' pezzi';
+  document.getElementById('rdoTo').value=(m.fornitore.emails_to||[]).join('; ');
+  document.getElementById('rdoCc').value=(m.fornitore.emails_cc||[]).join('; ');
+  document.getElementById('rdoOgg').value=m.oggetto;
+  document.getElementById('rdoCorpo').value=m.corpo;
+  document.getElementById('rdoAllCnt').textContent='('+m.allegati.length+')';
+  document.getElementById('rdoPzCnt').textContent='('+m.parti.length+')';
+  document.getElementById('rdoAlleg').innerHTML=m.allegati.map((a,i)=>
+    `<label><input type="checkbox" ${a.incluso?'checked':''} onchange="RDO_MAIL.allegati[${i}].incluso=this.checked"><span>${esc(a.nome)}</span><span class="akind ${a.kind==='distinta'?'distinta':''}">${a.kind}</span></label>`).join('');
+  document.getElementById('rdoPezzi').innerHTML=m.parti.map(p=>`<span class="rp" title="${esc(p.denominazione||'')}">${esc(p.numero_parte)}</span>`).join('');
+  document.getElementById('rdoPreview').style.display='none';
+  document.getElementById('rdoPrevBtn').textContent='👁 Anteprima';
+  // se in futuro l'invio reale è attivo, cambia il testo del bottone
+  document.getElementById('rdoSendBtn').textContent=m.invio_reale_attivo?'Invia RDO':'Segna inviata (simulato)';
+  document.getElementById('rdoBanner').style.display=m.invio_reale_attivo?'none':'block';
+  mOpen('mRdo');
+}
+function rdoTogglePreview(){
+  const el=document.getElementById('rdoPreview');
+  if(el.style.display!=='none'){el.style.display='none';document.getElementById('rdoPrevBtn').textContent='👁 Anteprima';return;}
+  const to=document.getElementById('rdoTo').value;
+  const cc=document.getElementById('rdoCc').value;
+  const ogg=document.getElementById('rdoOgg').value;
+  const corpo=document.getElementById('rdoCorpo').value;
+  const alleg=(RDO_MAIL.allegati||[]).filter(a=>a.incluso);
+  el.innerHTML=
+    `<div class="rp-h"><b>A:</b> ${esc(to||'—')}${cc?` &nbsp; <b>CC:</b> ${esc(cc)}`:''}<br><b>Oggetto:</b> ${esc(ogg)}</div>`+
+    `<div class="rp-b">${esc(corpo)}</div>`+
+    (alleg.length?`<div class="rp-a">${alleg.map(a=>`<span class="ach">📎 ${esc(a.nome)}</span>`).join('')}</div>`:'');
+  el.style.display='block';
+  document.getElementById('rdoPrevBtn').textContent='✕ Chiudi anteprima';
+}
+async function rdoMailConfirm(){
+  const cid=+document.getElementById('rdoCid').value, fid=+document.getElementById('rdoFid').value;
+  if(!RDO_MAIL)return;
+  const to=document.getElementById('rdoTo').value.trim();
+  if(!to){toast('Indica almeno un destinatario',true);return;}
+  // invio reale non attivo: segna i pezzi come inviati (come rdoSend)
+  const parti=flatParti(commesse.find(c=>c.id===cid)).filter(p=>p.fornitore_id==fid&&p.stato!=='confermata');
+  try{
+    const r=await fetch(API+'/api/commesse/'+cid+'/parti/stato',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:parti.map(p=>p.id),stato:'inviata_da_confermare'})});
+    if(!r.ok)throw 0;
+    const rp=await fetch(API+'/api/commesse/'+cid+'/parti');if(rp.ok)commesse.find(c=>c.id===cid)._parti=await rp.json();
+    mClose('mRdo');toast('RDO segnata inviata ('+parti.length+' pezzi)','ok');renderRDO();
   }catch{toast('Errore',true);}
 }
 
