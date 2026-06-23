@@ -805,7 +805,7 @@ async function openProgetto(pid){
   if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
   renderProgress();renderTree();renderFiltri();renderFileTable();updateFAB();
 }
-function catParti(cat){return cat.kind==='commerciale'?(cat.tipi||[]).flatMap(t=>t.gruppi.flatMap(g=>g.parti)):(cat.lavorazioni||[]).flatMap(l=>l.parti);}
+function catParti(cat){return cat.kind==='commerciale'?[...(cat.gruppi||[]).flatMap(g=>g.parti),...(cat.tipi||[]).flatMap(t=>t.parti)]:(cat.lavorazioni||[]).flatMap(l=>l.parti);}
 function allParti(){return S.albero?S.albero.categorie.flatMap(catParti):[];}
 
 function renderProgress(){
@@ -886,49 +886,47 @@ function renderTree(){
 // ── albero commerciali: TIPO → gruppo fornitore → pezzi ──
 function commTree(cat){
   let html='';
+  // IL FORNITORE COMANDA: prima i gruppi-fornitore (pezzi assegnati), riga = nome fornitore
+  (cat.gruppi||[]).forEach(g=>{
+    const gk=cat.categoria+'|'+g.fornitore_id;
+    const gOpen=S.openGrp[gk]===true; // chiusi di default (i blocchi possono essere grossi)
+    html+=`<div class="tr-grp" onclick="toggleGrp('${jsq(gk)}')">
+      <span class="tr-arrow">${gOpen?'▾':'▸'}</span>
+      <span class="tr-grp-ico" style="background:${avc(g.fornitore_nome)}">${ini(g.fornitore_nome)}</span>
+      <span class="tr-grp-name">${esc(g.fornitore_nome)}</span>
+      <span class="tr-cnt" style="font-size:9px">${g.n_parti} pezzi</span>
+      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'FORN',cat:'${jsq(cat.categoria)}',fid:${g.fornitore_id}})">Cambia</span></div>`;
+    if(gOpen)g.parti.forEach(p=>{html+=partRow(p);});
+  });
+  // pezzi SENZA fornitore: blocchi per TIPO (riga = nome tipo)
   (cat.tipi||[]).forEach(t=>{
     const tk=cat.categoria+'|'+t.tipo;
-    const tOpen=S.openTipo[tk]!==false;
-    const td=t.gruppi.filter(g=>g.fornitore_id).reduce((s,g)=>s+g.n_parti,0);
-    html+=`<div class="tr-tipo" onclick="toggleTipo('${jsq(tk)}')">
+    const tOpen=S.openTipo[tk]===true; // chiusi di default
+    html+=`<div class="tr-grp" onclick="toggleTipo('${jsq(tk)}')">
       <span class="tr-arrow">${tOpen?'▾':'▸'}</span>
-      <span class="tr-tipo-label">${esc(t.tipo||'')}</span>
-      <div class="tr-lav-bar" style="width:90px"><div class="tr-lav-barf" style="width:${t.n_parti?Math.round(td/t.n_parti*100):0}%;background:var(--go-d)"></div></div>
-      <span class="tr-cnt" style="font-size:9px">${td}/${t.n_parti}</span>
-      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}'})">Assegna tutti</span></div>`;
+      <span class="tr-grp-ico" style="background:#c9952f">${ini(t.tipo||'?')}</span>
+      <span class="tr-grp-name none">${esc(t.tipo||'(senza tipo)')}</span>
+      <span class="badge-blocco">blocco da assegnare</span>
+      <span class="tr-cnt" style="font-size:9px">${t.n_parti} pezzi</span>
+      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}',solo:true})">Assegna blocco</span></div>`;
     if(t.candidati&&t.candidati.length){
       html+=`<div class="tr-cand"><b>${t.candidati.length} fornitori</b> coprono questo tipo — scegli: ${t.candidati.map(c=>`<button class="cand-btn" onclick="event.stopPropagation();assegnaTipoCandidato('${jsq(cat.categoria)}','${jsq(t.tipo)}',${c.id})">${esc(c.nome)}</button>`).join('')}</div>`;
     }
-    if(!tOpen)return;
-    t.gruppi.forEach(g=>{
-      const none=g.fornitore_id===null;
-      const gk=tk+'|'+(g.fornitore_id===null?'_':g.fornitore_id);
-      const gOpen=S.openGrp[gk]===true; // gruppi chiusi di default (il blocco bulloneria può essere grosso)
-      html+=`<div class="tr-grp" onclick="toggleGrp('${jsq(gk)}')">
-        <span class="tr-arrow">${gOpen?'▾':'▸'}</span>
-        <span class="tr-grp-ico" style="background:${none?'#c9952f':avc(g.fornitore_nome)}">${ini(g.fornitore_nome)}</span>
-        <span class="tr-grp-name ${none?'none':''}">${esc(g.fornitore_nome)}</span>
-        ${none?'<span class="badge-blocco">blocco da assegnare</span>':''}
-        <span class="tr-cnt" style="font-size:9px">${g.n_parti} pezzi</span>
-        ${none
-          ? `<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}',solo:true})">Assegna blocco</span>`
-          : `<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}'})">Cambia</span>`}</div>`;
-      if(gOpen)g.parti.forEach(p=>{html+=partRow(p);});
-    });
+    if(tOpen)t.parti.forEach(p=>{html+=partRow(p);});
   });
   return html;
 }
 function toggleCat(k){S.openCat[k]=!(S.openCat[k]!==false);renderTree();}
 function toggleLav(k){S.openLav[k]=!(S.openLav[k]!==false);renderTree();}
-function toggleTipo(k){S.openTipo[k]=!(S.openTipo[k]!==false);renderTree();}
+function toggleTipo(k){S.openTipo[k]=!(S.openTipo[k]===true);renderTree();}
 function toggleGrp(k){S.openGrp[k]=!(S.openGrp[k]===true);renderTree();}
 function treeAll(open){
   if(!S.albero)return;
   S.albero.categorie.forEach(cat=>{
     S.openCat[cat.categoria]=open;
     (cat.lavorazioni||[]).forEach(lav=>{S.openLav[cat.categoria+'||'+lav.lav_meccanica]=open;});
-    (cat.tipi||[]).forEach(t=>{S.openTipo[cat.categoria+'|'+t.tipo]=open;
-      t.gruppi.forEach(g=>{S.openGrp[cat.categoria+'|'+t.tipo+'|'+(g.fornitore_id===null?'_':g.fornitore_id)]=open;});});
+    (cat.gruppi||[]).forEach(g=>{S.openGrp[cat.categoria+'|'+g.fornitore_id]=open;});
+    (cat.tipi||[]).forEach(t=>{S.openTipo[cat.categoria+'|'+t.tipo]=open;});
   });
   renderTree();
 }
@@ -1131,6 +1129,10 @@ async function doAssign(fid){
       const body={fornitore_id:fid,categoria:t.cat||null,tipo:t.tipo==null?'':t.tipo};
       if(t.solo)body.solo_non_assegnate=true;
       const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok)throw 0;
+    } else if(t.t==='FORN'){
+      if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
+      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,da_fornitore_id:t.fid})});
       if(!r.ok)throw 0;
     } else if(t.t==='BULK'){
       const ids=[...S.rows];
