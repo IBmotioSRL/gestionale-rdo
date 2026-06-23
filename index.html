@@ -615,6 +615,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fgCat"><label class="fl">Categorie <span class="fmuted" style="font-weight:600">→ filtro: a quali categorie lavora</span></label><div class="chips" id="chips_cat" onclick="document.getElementById('chipin_cat').focus()"></div><div class="fhint">Filtro iniziale: la lavorazione vale solo per queste categorie (es. FRESATURA solo su PLASTICA). Vuoto = nessun filtro di categoria.</div></div>
       <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni (nelle categorie sopra) viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
       <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
+      <div class="fg" id="fgTipi"><label class="fl">Tipi commerciali <span class="fmuted" style="font-weight:600">→ comandano il match dei commerciali</span></label><div class="chips" id="chips_tipi" onclick="document.getElementById('chipin_tipi').focus()"></div><div class="fhint">Ogni commerciale con uno di questi tipi viene assegnato a questo fornitore (se è l'unico che lo copre). Voci dal vocabolario tipi.</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
@@ -841,7 +842,7 @@ function renderTree(){
     const isComm=cat.kind==='commerciale';
     html+=`<div class="tr-cat" onclick="toggleCat('${jsq(cat.categoria)}')">
       <span class="tr-arrow">${catOpen?'▾':'▸'}</span>
-      <span class="tr-cat-label">${esc(cat.categoria||'(senza categoria)')}</span>
+      <span class="tr-cat-label">${esc(cat.categoria||'')}</span>
       <span class="tr-cnt ${done===allP.length&&allP.length?'done':''}">${done}/${allP.length}</span>
       ${isComm?'':`<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'CAT',cat:'${jsq(cat.categoria)}'})">Assegna tutti</span>`}</div>`;
     if(!catOpen)return;
@@ -849,14 +850,22 @@ function renderTree(){
     cat.lavorazioni.forEach(lav=>{
       // lavorazione vuota (es. ASSIEME DI MONTAGGIO): niente livello intermedio "(senza lavorazione)",
       // i pezzi vanno direttamente sotto la categoria
-      if(!(lav.lav_meccanica||'').trim()){ lav.parti.forEach(p=>{html+=partRow(p);}); return; }
+      if(!(lav.lav_meccanica||'').trim()){
+        const byTipo={};
+        lav.parti.forEach(p=>{(byTipo[p.tipo||'']=byTipo[p.tipo||'']||[]).push(p);});
+        Object.keys(byTipo).sort().forEach(tp=>{
+          if(tp)html+=`<div class="tr-tipo" style="cursor:default"><span class="tr-arrow" style="visibility:hidden">▾</span><span class="tr-tipo-label">${esc(tp)}</span></div>`;
+          byTipo[tp].forEach(p=>{html+=partRow(p);});
+        });
+        return;
+      }
       const lk=cat.categoria+'||'+lav.lav_meccanica;
       const lavOpen=S.openLav[lk]!==false;
       const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
       const col=lavColor(lav.lav_meccanica);
       html+=`<div class="tr-lav" onclick="toggleLav('${jsq(lk)}')">
         <span class="tr-arrow">${lavOpen?'▾':'▸'}</span>
-        <span class="tr-lav-label" style="color:${col}">${esc(lav.lav_meccanica||'(senza lavorazione)')}</span>
+        <span class="tr-lav-label" style="color:${col}">${esc(lav.lav_meccanica||'')}</span>
         <div class="tr-lav-bar"><div class="tr-lav-barf" style="width:${lav.parti.length?Math.round(ld/lav.parti.length*100):0}%;background:${col}"></div></div>
         <span class="tr-cnt" style="font-size:9px">${ld}/${lav.parti.length}</span>
         <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'LAV',cat:'${jsq(cat.categoria)}',lav:'${jsq(lav.lav_meccanica)}'})">Tutti</span></div>`;
@@ -877,10 +886,13 @@ function commTree(cat){
     const td=t.gruppi.filter(g=>g.fornitore_id).reduce((s,g)=>s+g.n_parti,0);
     html+=`<div class="tr-tipo" onclick="toggleTipo('${jsq(tk)}')">
       <span class="tr-arrow">${tOpen?'▾':'▸'}</span>
-      <span class="tr-tipo-label">${esc(t.tipo||'(senza tipo)')}</span>
+      <span class="tr-tipo-label">${esc(t.tipo||'')}</span>
       <div class="tr-lav-bar" style="width:90px"><div class="tr-lav-barf" style="width:${t.n_parti?Math.round(td/t.n_parti*100):0}%;background:var(--go-d)"></div></div>
       <span class="tr-cnt" style="font-size:9px">${td}/${t.n_parti}</span>
       <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'TIPO',cat:'${jsq(cat.categoria)}',tipo:'${jsq(t.tipo)}'})">Assegna tutti</span></div>`;
+    if(t.candidati&&t.candidati.length){
+      html+=`<div class="tr-cand"><b>${t.candidati.length} fornitori</b> coprono questo tipo — scegli: ${t.candidati.map(c=>`<button class="cand-btn" onclick="event.stopPropagation();assegnaTipoCandidato('${jsq(cat.categoria)}','${jsq(t.tipo)}',${c.id})">${esc(c.nome)}</button>`).join('')}</div>`;
+    }
     if(!tOpen)return;
     t.gruppi.forEach(g=>{
       const none=g.fornitore_id===null;
@@ -950,6 +962,11 @@ async function savePref(){
 }
 async function assegnaCandidato(cat,lav,fid){
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:cat,lav_meccanica:lav})});
+    if(!r.ok)throw 0;toast('Fornitore assegnato al gruppo','ok');await refreshDetail();
+  }catch{toast('Errore assegnazione',true);}
+}
+async function assegnaTipoCandidato(cat,tipo,fid){
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:cat,tipo:tipo,solo_non_assegnate:true})});
     if(!r.ok)throw 0;toast('Fornitore assegnato al gruppo','ok');await refreshDetail();
   }catch{toast('Errore assegnazione',true);}
 }
@@ -1308,7 +1325,7 @@ function renderForn(){
       :(tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>');
     return `<div class="fcard" style="${(f.attivo&&!f.blacklist)?'':'opacity:.55'}">
     <div class="fch"><div class="fcav" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${f.blacklist?'<span class="fctipo" style="background:rgba(255,59,48,.12);color:var(--red)">🚫 lista nera</span>':''}</div></div>
-    <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
+    <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}${(f.tag_tipi&&f.tag_tipi.length)?`<span class="fmuted">📦 ${esc(f.tag_tipi.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
     <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`;}).join('');
 }
 
@@ -1359,6 +1376,8 @@ function fornTipoToggle(){
   if(cat)cat.style.display=(t==='terzista')?'block':'none';
   if(lav)lav.style.display=(t==='terzista')?'block':'none';
   if(forn)forn.style.display=(t==='commerciale')?'block':'none';
+  const tipi=document.getElementById('fgTipi');
+  if(tipi)tipi.style.display=(t==='commerciale')?'block':'none';
 }
 function fornModalitaToggle(){
   const m=document.getElementById('fModalita').value;
@@ -1387,6 +1406,7 @@ function openForn(id){
   chipInit('cat',(ed&&ed.tag_categorie)?ed.tag_categorie:[], {suggest:PROP.categorie});
   chipInit('lav',(ed&&ed.tag_lavorazioni)?ed.tag_lavorazioni:[], {suggest:PROP.lavorazioni});
   chipInit('fnm',(ed&&ed.tag_fornitori)?ed.tag_fornitori:[], {suggest:PROP.fornitori});
+  chipInit('tipi',(ed&&ed.tag_tipi)?ed.tag_tipi:[], {suggest:PROP.tipi});
   if(document.getElementById('fBlack'))document.getElementById('fBlack').checked=ed?!!ed.blacklist:false;
   fornTipoToggle();fornModalitaToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
@@ -1395,7 +1415,7 @@ async function salvaForn(){
   clearErr(['fNomeErr','fToErr'],['fNome']);
   const nome=document.getElementById('fNome').value.trim();
   // conferma eventuale testo non ancora trasformato in chip
-  ['to','cc','ccn','cat','lav','fnm'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
+  ['to','cc','ccn','cat','lav','fnm','tipi'].forEach(k=>{const inp=document.getElementById('chipin_'+k);if(inp&&inp.value.trim()){chipAdd(k,inp.value);inp.value='';}});
   const online=document.getElementById('fModalita').value==='online';
   // online: niente destinatari/mail. Per gli altri serve almeno un To valido.
   const to=online?[]:chipVals('to').filter(isEmail), cc=online?[]:chipVals('cc').filter(isEmail), ccn=online?[]:chipVals('ccn').filter(isEmail);
@@ -1406,7 +1426,8 @@ async function salvaForn(){
   const tagLav=tipo==='terzista'?chipVals('lav'):[];
   const tagCat=tipo==='terzista'?chipVals('cat'):[];
   const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
-  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:[],tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim()};
+  const tagTipi=tipo==='commerciale'?chipVals('tipi'):[];
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim()};
   if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
