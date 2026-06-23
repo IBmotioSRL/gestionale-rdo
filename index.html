@@ -171,14 +171,78 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tr-lav-label{font-size:11px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tr-lav-bar{width:48px;height:3px;border-radius:3px;background:rgba(44,21,6,.07);overflow:hidden;flex-shrink:0}
 .tr-lav-barf{height:100%;border-radius:3px}
-.tr-part{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 36px;border-bottom:1px solid rgba(0,0,0,.03);cursor:pointer}
-.tr-part:hover{background:rgba(245,168,35,.04)}
-.tr-part.sel{background:rgba(245,168,35,.09);border-left:3px solid var(--go);padding-left:33px}
+.tr-part{display:grid;grid-template-columns:16px 5px 88px 1fr auto auto auto;align-items:center;gap:8px;
+  padding:6px 12px 6px 30px;border-bottom:1px solid rgba(0,0,0,.035);cursor:pointer;position:relative}
+.tr-part:hover{background:rgba(245,168,35,.05)}
+.tr-part.sel{background:rgba(0,122,255,.07)}
+.tr-part.sel::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue)}
 .tr-part input[type=checkbox]{accent-color:var(--go);flex-shrink:0;cursor:pointer}
-.tr-pcod{font-size:9px;font-weight:800;color:var(--go-d);font-family:monospace;min-width:64px;white-space:nowrap}
-.tr-pdesc{font-size:11px;font-weight:600;color:var(--t1);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr-pqty{font-size:9.5px;font-weight:700;color:var(--t3);min-width:26px;text-align:right}
-.tr-pfiles{display:flex;gap:2px;flex-shrink:0}
+/* barra di stato a sx: verde=assegnato, ambra=da assegnare */
+.tr-pst{width:5px;height:22px;border-radius:3px}
+.tr-pst.ok{background:var(--green)}
+.tr-pst.no{background:var(--go)}
+/* CODICE riquadrato monospace */
+.tr-pcod{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:10px;font-weight:800;color:var(--br);
+  background:rgba(44,21,6,.05);border:1px solid var(--bd);border-radius:5px;padding:2px 6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* NOME protagonista */
+.tr-pdesc{font-size:12px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* QUANTITA pill marcato */
+.tr-pqty{font-size:11px;font-weight:800;color:var(--br);background:rgba(245,168,35,.16);border:1px solid rgba(245,168,35,.3);border-radius:20px;padding:2px 9px;white-space:nowrap}
+.tr-pqty small{font-size:8px;font-weight:700;color:var(--go-d)}
+.tr-pfiles{display:flex;gap:3px;flex-shrink:0}
+.ftag{font-size:8px;font-weight:800;padding:2px 5px;border-radius:4px;letter-spacing:.02em}
+.ftag-pdf{background:rgba(255,59,48,.12);color:#c0271e}
+.ftag-dwg{background:rgba(0,122,255,.12);color:#1769c4}
+.ftag-dxf{background:rgba(90,200,250,.18);color:#1c7fa8}
+.ftag-xlsx,.ftag-xls{background:rgba(52,199,89,.14);color:#1A7A2E}
+.ftag-step,.ftag-stp,.ftag-igs{background:rgba(88,86,214,.14);color:#4b49b8}
+
+/* ── ANTEPRIMA HOVER ── */
+#prevcard{position:fixed;z-index:120;display:none;background:#fff;border:1px solid var(--bd2);border-radius:10px;box-shadow:var(--shl);padding:8px;width:236px;pointer-events:none}
+#prevcard .pv-img{width:220px;min-height:60px;border-radius:6px;background:#f3ece2;display:block;border:1px solid var(--bd)}
+#prevcard .pv-ph{width:220px;height:120px;border-radius:6px;display:grid;place-items:center;color:var(--t3);font-size:10px;text-align:center;background:repeating-linear-gradient(45deg,#f3ece2,#f3ece2 10px,#ece2d4 10px,#ece2d4 20px);border:1px solid var(--bd)}
+#prevcard .pv-cap{font-size:10px;color:var(--t2);margin-top:6px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── MENU TASTO DESTRO ── */
+#ctxmenu{position:fixed;z-index:130;display:none;background:#fff;border:1px solid var(--bd2);border-radius:10px;box-shadow:var(--shl);padding:5px;min-width:210px}
+#ctxmenu .mi{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--t1)}
+#ctxmenu .mi:hover{background:rgba(245,168,35,.1);color:var(--go-d)}
+#ctxmenu .mi.danger:hover{background:rgba(255,59,48,.08);color:var(--red)}
+#ctxmenu .mi.dis{opacity:.4;pointer-events:none}
+#ctxmenu .sep{height:1px;background:var(--bd);margin:4px 6px}
+#ctxmenu .mh{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);padding:4px 10px 2px}
+
+/* ── RUBBER BAND ── */
+#rband{position:fixed;z-index:110;display:none;border:1px solid var(--blue);background:rgba(0,122,255,.1);border-radius:3px;pointer-events:none}
+
+/* ── DRAWER DETTAGLIO PARTICOLARE ── */
+#pdraw{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:92vw;background:var(--surf);box-shadow:var(--shl);z-index:140;
+  transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+#pdraw.open{transform:translateX(0)}
+#pdrawOv{position:fixed;inset:0;background:rgba(28,15,7,.18);z-index:139;opacity:0;visibility:hidden;transition:opacity .22s}
+#pdrawOv.open{opacity:1;visibility:visible}
+.pd-hd{padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:10px}
+.pd-hd .pd-name{font-size:15px;font-weight:800;color:var(--br);line-height:1.25}
+.pd-hd .pd-cod{font-family:ui-monospace,monospace;font-size:11px;color:var(--t2);margin-top:3px}
+.pd-hd .mx{margin-left:auto;cursor:pointer;color:var(--t3);background:none;border:none;flex-shrink:0}
+.pd-hd .mx:hover{color:var(--t1)}
+.pd-meta{display:flex;gap:7px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--bd)}
+.pd-tag{font-size:10px;font-weight:700;padding:3px 9px;border-radius:11px;background:rgba(44,21,6,.05);color:var(--t2)}
+.pd-tag.ok{background:rgba(52,199,89,.12);color:#1A7A2E}
+.pd-tag.no{background:rgba(245,168,35,.14);color:var(--go-d)}
+.pd-body{flex:1;overflow-y:auto;padding:12px 16px}
+.pd-dh{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:4px 0 8px}
+.fileitem{display:flex;align-items:center;gap:9px;padding:8px;border:1px solid var(--bd);border-radius:9px;margin-bottom:7px;cursor:pointer}
+.fileitem:hover{border-color:var(--go-d);background:rgba(245,168,35,.04)}
+.fileitem.act{border-color:var(--go-d);background:rgba(245,168,35,.08)}
+.fi-ic{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;font-size:8.5px;font-weight:800;color:#fff;flex:0 0 auto}
+.fi-ic.pdf{background:#c0271e}.fi-ic.dwg{background:#1769c4}.fi-ic.dxf{background:#1c7fa8}.fi-ic.xlsx,.fi-ic.xls{background:#1A7A2E}.fi-ic.oth{background:#8a7a6a}
+.fi-name{font-size:11.5px;font-weight:700;word-break:break-all}
+.fi-sub{font-size:9.5px;color:var(--t3)}
+.fi-act{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);white-space:nowrap}
+.pd-viewer{height:340px;border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:#525659;margin-top:6px}
+.pd-viewer iframe{width:100%;height:100%;border:0;background:#525659}
+.pd-ext{height:160px;border:1px dashed var(--bd2);border-radius:10px;display:grid;place-items:center;text-align:center;color:var(--t2);font-size:11px;margin-top:6px;padding:14px}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -578,6 +642,23 @@ textarea.fld{resize:vertical;min-height:60px}
 
 <div class="add" id="add"></div>
 
+<!-- Anteprima al passaggio del mouse -->
+<div id="prevcard"><div id="previmg"></div><div class="pv-cap" id="prevcap"></div></div>
+<!-- Menu tasto destro -->
+<div id="ctxmenu"></div>
+<!-- Rettangolo di selezione (rubber band) -->
+<div id="rband"></div>
+<!-- Drawer dettaglio particolare -->
+<div id="pdrawOv" onclick="closeDraw()"></div>
+<div id="pdraw">
+  <div class="pd-hd">
+    <div><div class="pd-name" id="pdName">—</div><div class="pd-cod" id="pdCod"></div></div>
+    <button class="mx" onclick="closeDraw()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="pd-meta" id="pdMeta"></div>
+  <div class="pd-body" id="pdBody"></div>
+</div>
+
 <!-- MODAL: Nuovo / Modifica progetto -->
 <div class="mov" id="mProg" onclick="ovClose(event,'mProg')">
   <div class="modal">
@@ -677,7 +758,7 @@ function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)re
 /* ── STATE ── */
 let commesse=[], fornitori=[];
 const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
-  view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set()};
+  view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set(),pmap:{}};
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
@@ -822,21 +903,24 @@ function renderProgress(){
 }
 
 function partRow(p){
-  const sel=S.sel===p.numero_parte;const chk=S.rows.has(p.id);
-  const forn=p.fornitore_id?fornitori.find(f=>f.id===p.fornitore_id):null;
-  const fc=forn?`<span class="ac ac-set" title="${esc(forn.nome)}" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">${esc(forn.nome.split(' ')[0])}</span>${p.assegnazione_auto?'<span class="badge-auto" title="Assegnato in automatico dai tag del fornitore">auto</span>':''}`
+  S.pmap[p.id]=p;
+  const chk=S.rows.has(p.id);const sel=chk||S.sel===p.numero_parte;
+  const assigned=p.fornitore_id!=null;
+  const forn=assigned?fornitori.find(f=>f.id===p.fornitore_id):null;
+  const fc=forn?`<span class="ac ac-set" title="${esc(forn.nome)}${p.assegnazione_auto?' (auto)':''}" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">${esc(forn.nome.split(' ')[0])}${p.assegnazione_auto?' ·auto':''}</span>`
                 :`<span class="ac ac-empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
-  const tags=fileTags(p.files);
-  const stc=(p.stato&&p.stato!=='da_smistare')?`<span class="sc s_${p.stato}">${statoLbl(p.stato)}</span>`:'';
-  return `<div class="tr-part${sel?' sel':''}" onclick="selPart('${jsq(p.numero_parte)}')">
+  return `<div class="tr-part${sel?' sel':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
-      <span class="tr-pcod">${esc(p.numero_parte)}</span>
-      <span class="tr-pdesc" title="${esc(p.denominazione)}">${esc(p.denominazione||'—')}</span>
-      <span class="tr-pqty">×${esc(p.quantita)}</span>
-      <div class="tr-pfiles">${tags}</div>${fc}${stc}</div>`;
+      <span class="tr-pst ${assigned?'ok':'no'}" title="${assigned?'Assegnato':'Da assegnare'}"></span>
+      <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
+      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span>
+      <span class="tr-pqty">${esc(p.quantita)}<small> pz</small></span>
+      <div class="tr-pfiles">${fileTags(p.files)}</div>
+      ${fc}</div>`;
 }
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
+  S.pmap={};
   let html='';
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
@@ -980,10 +1064,163 @@ async function assegnaTipoCandidato(cat,tipo,fid){
   }catch{toast('Errore assegnazione',true);}
 }
 
-function selPart(cod){
-  S.sel=S.sel===cod?null:cod;
+function selPart(cod,pid){
+  S.sel=cod;
   renderTree();
+  if(pid!=null)openDraw(pid);
 }
+
+/* ── FILE: helper su p.files (array JSON di path assoluti) ── */
+function pFiles(p){let a=[];try{a=JSON.parse(p.files)||[];}catch{}return a;}
+function fileExt(path){return (path.split('.').pop()||'').toLowerCase();}
+function firstPdf(p){return pFiles(p).find(x=>fileExt(x)==='pdf')||null;}
+function fileUrl(path){return API+'/api/commesse/'+S.projId+'/file?path='+encodeURIComponent(path);}
+function thumbUrl(path,w){return API+'/api/commesse/'+S.projId+'/thumb?path='+encodeURIComponent(path)+'&w='+(w||440);}
+
+/* ── ANTEPRIMA AL PASSAGGIO DEL MOUSE ── */
+const PREV=document.getElementById('prevcard');
+let prevPid=null;
+function showPrev(pid){
+  const p=S.pmap[pid];if(!p){return;}
+  prevPid=pid;
+  const pdf=firstPdf(p);
+  document.getElementById('prevcap').textContent=p.numero_parte+' · '+(p.denominazione||'');
+  const img=document.getElementById('previmg');
+  if(pdf){img.innerHTML=`<img class="pv-img" src="${thumbUrl(pdf,440)}" alt="" onerror="this.outerHTML='<div class=\\'pv-ph\\'>anteprima non disponibile</div>'">`;}
+  else{img.innerHTML='<div class="pv-ph">nessun PDF collegato</div>';}
+  PREV.style.display='block';
+}
+function hidePrev(){PREV.style.display='none';prevPid=null;}
+function movePrev(e){
+  if(PREV.style.display!=='block')return;
+  let x=e.clientX+16,y=e.clientY+16;
+  const r=PREV.getBoundingClientRect();
+  if(x+r.width>innerWidth)x=e.clientX-r.width-12;
+  if(y+r.height>innerHeight)y=Math.max(8,e.clientY-r.height-12);
+  PREV.style.left=x+'px';PREV.style.top=y+'px';
+}
+(function(){
+  const ts=document.getElementById('tscroll');
+  ts.addEventListener('mouseover',e=>{const row=e.target.closest('.tr-part');if(row){const id=+row.dataset.pid;if(id!==prevPid)showPrev(id);}});
+  ts.addEventListener('mouseout',e=>{const row=e.target.closest('.tr-part');if(row&&!(e.relatedTarget&&e.relatedTarget.closest('.tr-part')))hidePrev();});
+  ts.addEventListener('mousemove',movePrev);
+  ts.addEventListener('scroll',hidePrev);
+})();
+
+/* ── DRAWER DETTAGLIO PARTICOLARE ── */
+function openDraw(pid){
+  const p=S.pmap[pid];if(!p)return;
+  hidePrev();
+  document.getElementById('pdName').textContent=p.denominazione||p.numero_parte;
+  document.getElementById('pdCod').textContent=p.numero_parte+(p.revisione?(' · rev '+p.revisione):'');
+  const assigned=p.fornitore_id!=null;
+  const forn=assigned?fornitori.find(f=>f.id===p.fornitore_id):null;
+  const files=pFiles(p);
+  document.getElementById('pdMeta').innerHTML=
+    `<span class="pd-tag ${assigned?'ok':'no'}">${assigned?('✓ '+esc(forn?forn.nome:'')):'da assegnare'}</span>`+
+    `<span class="pd-tag">×${esc(p.quantita)}</span>`+
+    (p.tipo?`<span class="pd-tag">${esc(p.tipo)}</span>`:'')+
+    (p.lav_meccanica?`<span class="pd-tag">${esc(p.lav_meccanica)}</span>`:'')+
+    `<span class="pd-tag">${files.length} file</span>`;
+  // ordina: PDF prima (visualizzabili), poi gli altri
+  const lbl={pdf:'Disegno / PDF',dwg:'Disegno CAD',dxf:'Profilo taglio',xlsx:'Foglio Excel',xls:'Foglio Excel'};
+  files.sort((a,b)=>(fileExt(a)==='pdf'?0:1)-(fileExt(b)==='pdf'?0:1));
+  let fh='';
+  if(!files.length){fh='<div class="empty" style="padding:24px 8px">Nessun disegno o datasheet collegato a questo codice.</div>';}
+  else{
+    fh=files.map((path,i)=>{
+      const ext=fileExt(path);const name=path.split(/[\\/]/).pop();
+      const icc=['pdf','dwg','dxf','xlsx','xls'].includes(ext)?ext:'oth';
+      const view=ext==='pdf';
+      return `<div class="fileitem${i===0?' act':''}" onclick="openFileView('${jsq(path)}',this)">
+        <span class="fi-ic ${icc}">${ext.toUpperCase()}</span>
+        <span style="min-width:0"><span class="fi-name">${esc(name)}</span><span class="fi-sub">${ext.toUpperCase()}</span></span>
+        <span class="fi-act">${view?'Visualizza':'Apri ↗'}</span></div>`;
+    }).join('');
+  }
+  document.getElementById('pdBody').innerHTML=
+    `<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+  // apri subito il primo PDF se c'è
+  const fp=firstPdf(p);
+  if(fp)renderViewer(fp);
+  document.getElementById('pdrawOv').classList.add('open');
+  document.getElementById('pdraw').classList.add('open');
+}
+function closeDraw(){document.getElementById('pdraw').classList.remove('open');document.getElementById('pdrawOv').classList.remove('open');}
+function openFileView(path,el){
+  document.querySelectorAll('#pdBody .fileitem').forEach(x=>x.classList.remove('act'));if(el)el.classList.add('act');
+  renderViewer(path);
+}
+function renderViewer(path){
+  const slot=document.getElementById('pdViewerSlot');if(!slot)return;
+  const ext=fileExt(path);
+  if(ext==='pdf'){slot.innerHTML=`<div class="pd-viewer"><iframe src="${fileUrl(path)}#toolbar=1"></iframe></div>`;}
+  else{slot.innerHTML=`<div class="pd-ext">Il formato <b>.${ext}</b> non è visualizzabile nel browser.<br><a class="btn btn-go" style="margin-top:8px;display:inline-block" href="${fileUrl(path)}" target="_blank" rel="noopener">Apri / scarica ↗</a></div>`;}
+}
+
+/* ── MENU TASTO DESTRO ── */
+const CTX=document.getElementById('ctxmenu');
+function ctxPart(e,pid){
+  e.preventDefault();
+  const p=S.pmap[pid];if(!p)return;
+  // se il pezzo non è già selezionato, fai una selezione singola "implicita"
+  if(!S.rows.has(pid)){if(S.rows.size<=1)S.rows.clear();S.rows.add(pid);renderTree();updateFAB();}
+  const n=S.rows.size;
+  const target=n>1?(n+' particolari'):p.numero_parte;
+  const files=pFiles(p);const pdf=firstPdf(p);
+  const mi=(label,fn,extra='')=>`<div class="mi ${extra}" onmousedown="event.preventDefault()" onclick="hideCtx();${fn}">${label}</div>`;
+  CTX.innerHTML=
+    `<div class="mh">${esc(target)}</div>`+
+    mi('👤 Assegna a fornitore…',`ctxAssign(${pid})`)+
+    (p.fornitore_id!=null?mi('↩ Rilascia (togli fornitore)',`ctxRelease()`):'')+
+    `<div class="sep"></div>`+
+    mi('📄 Apri dettaglio / disegni',`openDraw(${pid})`,files.length?'':'dis')+
+    (pdf?mi('🖼 Apri PDF in scheda nuova',`window.open('${jsq(fileUrl(pdf))}','_blank')`):'')+
+    mi('📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(p.numero_parte)}');toast&&toast('Codice copiato','ok')`)+
+    `<div class="sep"></div>`+
+    mi('✉ Invia RDO selezionati',`inviaSelezionate()`)+
+    mi('✕ Deseleziona tutto',`S.rows.clear();renderTree();updateFAB()`,'danger');
+  let x=e.clientX,y=e.clientY;
+  CTX.style.display='block';
+  const r=CTX.getBoundingClientRect();
+  if(x+r.width>innerWidth)x-=r.width;if(y+r.height>innerHeight)y=Math.max(8,y-r.height);
+  CTX.style.left=x+'px';CTX.style.top=y+'px';
+}
+function hideCtx(){CTX.style.display='none';}
+function ctxAssign(pid){const r=document.querySelector('.tr-part[data-pid="'+pid+'"]');setTimeout(()=>showDD({stopPropagation(){},currentTarget:r||document.body},{t:'BULK'}),0);}
+function ctxRelease(){const ids=[...S.rows];Promise.all(ids.map(id=>fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:null,stato:'da_smistare'})}))).then(()=>{toast&&toast('Rilasciati','ok');refreshDetail();});}
+document.addEventListener('click',()=>hideCtx());
+document.addEventListener('scroll',()=>hideCtx(),true);
+
+/* ── MULTISELEZIONE A TRASCINAMENTO (rubber band) ── */
+(function(){
+  const ts=document.getElementById('tscroll');const band=document.getElementById('rband');
+  let on=false,sx=0,sy=0,moved=false;
+  ts.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;
+    if(e.target.closest('input,.ac,.tr-assign-all,.grp-act,.cand-btn,button,a'))return;
+    if(e.target.closest('.tr-cat,.tr-grp,.tr-lav,.tr-tipo,.tr-cand'))return; // i rami restano cliccabili
+    on=true;moved=false;sx=e.clientX;sy=e.clientY;
+    band.style.left=sx+'px';band.style.top=sy+'px';band.style.width='0';band.style.height='0';
+    if(!e.shiftKey){S.rows.clear();}
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!on)return;
+    if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>4){moved=true;band.style.display='block';hidePrev();}
+    const x=Math.min(sx,e.clientX),y=Math.min(sy,e.clientY),w=Math.abs(e.clientX-sx),h=Math.abs(e.clientY-sy);
+    band.style.left=x+'px';band.style.top=y+'px';band.style.width=w+'px';band.style.height=h+'px';
+    const bb=band.getBoundingClientRect();
+    document.querySelectorAll('#tscroll .tr-part').forEach(el=>{
+      const rb=el.getBoundingClientRect();
+      if(!(rb.right<bb.left||rb.left>bb.right||rb.bottom<bb.top||rb.top>bb.bottom))S.rows.add(+el.dataset.pid);
+    });
+    document.querySelectorAll('#tscroll .tr-part').forEach(el=>{const id=+el.dataset.pid;el.classList.toggle('sel',S.rows.has(id));const cb=el.querySelector('input');if(cb)cb.checked=S.rows.has(id);});
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!on)return;on=false;band.style.display='none';
+    if(moved){renderTree();updateFAB();}
+  });
+})();
 
 /* ── RICERCA FILE (ex Calderone) ── */
 const CAT_LBL={bom:'Distinta',draw:'Disegno',ds:'Datasheet',misc:'Altro'};
