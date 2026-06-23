@@ -886,16 +886,21 @@ function renderTree(){
 // ── albero commerciali: TIPO → gruppo fornitore → pezzi ──
 function commTree(cat){
   let html='';
-  // IL FORNITORE COMANDA: prima i gruppi-fornitore (pezzi assegnati), riga = nome fornitore
+  // IL FORNITORE COMANDA: prima i gruppi-fornitore, riga = nome fornitore (assegnato o da distinta)
   (cat.gruppi||[]).forEach(g=>{
-    const gk=cat.categoria+'|'+g.fornitore_id;
+    const dadistinta=g.fornitore_id===null; // fornitore scritto in distinta, non ancora tra i preferiti
+    const gk=cat.categoria+'|'+(dadistinta?'n:'+g.fornitore_nome:g.fornitore_id);
     const gOpen=S.openGrp[gk]===true; // chiusi di default (i blocchi possono essere grossi)
+    const dd=dadistinta
+      ? `{t:'FORNNOME',cat:'${jsq(cat.categoria)}',nome:'${jsq(g.fornitore_nome)}'}`
+      : `{t:'FORN',cat:'${jsq(cat.categoria)}',fid:${g.fornitore_id}}`;
     html+=`<div class="tr-grp" onclick="toggleGrp('${jsq(gk)}')">
       <span class="tr-arrow">${gOpen?'▾':'▸'}</span>
       <span class="tr-grp-ico" style="background:${avc(g.fornitore_nome)}">${ini(g.fornitore_nome)}</span>
       <span class="tr-grp-name">${esc(g.fornitore_nome)}</span>
+      ${dadistinta?'<span class="badge-blocco" title="Fornitore da distinta, non ancora tra i preferiti del progetto">da distinta</span>':''}
       <span class="tr-cnt" style="font-size:9px">${g.n_parti} pezzi</span>
-      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'FORN',cat:'${jsq(cat.categoria)}',fid:${g.fornitore_id}})">Cambia</span></div>`;
+      <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,${dd})">${dadistinta?'Assegna':'Cambia'}</span></div>`;
     if(gOpen)g.parti.forEach(p=>{html+=partRow(p);});
   });
   // pezzi SENZA fornitore: blocchi per TIPO (riga = nome tipo)
@@ -925,7 +930,7 @@ function treeAll(open){
   S.albero.categorie.forEach(cat=>{
     S.openCat[cat.categoria]=open;
     (cat.lavorazioni||[]).forEach(lav=>{S.openLav[cat.categoria+'||'+lav.lav_meccanica]=open;});
-    (cat.gruppi||[]).forEach(g=>{S.openGrp[cat.categoria+'|'+g.fornitore_id]=open;});
+    (cat.gruppi||[]).forEach(g=>{S.openGrp[cat.categoria+'|'+(g.fornitore_id===null?'n:'+g.fornitore_nome:g.fornitore_id)]=open;});
     (cat.tipi||[]).forEach(t=>{S.openTipo[cat.categoria+'|'+t.tipo]=open;});
   });
   renderTree();
@@ -1133,6 +1138,10 @@ async function doAssign(fid){
     } else if(t.t==='FORN'){
       if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
       const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,da_fornitore_id:t.fid})});
+      if(!r.ok)throw 0;
+    } else if(t.t==='FORNNOME'){
+      if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
+      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,da_fornitore_nome:t.nome})});
       if(!r.ok)throw 0;
     } else if(t.t==='BULK'){
       const ids=[...S.rows];
