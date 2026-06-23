@@ -1,4 +1,4 @@
-const CACHE = 'rdo-ibmotion-v16';
+const CACHE = 'rdo-ibmotion-v17';
 const PRECACHE = [
   '/gestionale-rdo/',
   '/gestionale-rdo/index.html',
@@ -17,7 +17,19 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   // API calls: network only (never cache)
   if (e.request.url.includes('/api/')) { e.respondWith(fetch(e.request)); return; }
-  // Assets: cache-first
+  // HTML / navigazioni: network-first (così non si resta mai una versione indietro)
+  const isHTML = e.request.mode === 'navigate' || e.request.destination === 'document' || e.request.url.endsWith('.html');
+  if (isHTML) {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      }).catch(() => caches.match(e.request).then(r => r || caches.match('/gestionale-rdo/index.html')))
+    );
+    return;
+  }
+  // Altri asset (png, ecc.): cache-first
   e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
     const clone = res.clone();
     caches.open(CACHE).then(c => c.put(e.request, clone));
