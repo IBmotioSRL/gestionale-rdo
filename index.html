@@ -324,6 +324,14 @@ textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
 .dd-badge.bozza{background:rgba(255,149,0,.14);color:#b5701a}
 .dd-badge.approvata{background:rgba(0,122,255,.12);color:#1769c4}
 .dd-badge.inviata{background:rgba(52,199,89,.14);color:#1A7A2E}
+.dd-logo{height:34px;width:auto;object-fit:contain}
+.dd-alleg{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.dd-alleg .ai{display:flex;align-items:center;gap:9px;padding:7px 9px;border:1px solid var(--bd);border-radius:9px;cursor:pointer;font-size:11.5px;font-weight:600}
+.dd-alleg .ai:hover{border-color:var(--go-d);background:rgba(245,168,35,.04)}
+.dd-alleg .ai .open{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d)}
+.dd-pdf{width:100%;height:380px;border:1px solid var(--bd);border-radius:10px;background:#525659}
+.dd-mailgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.dd-mailgrid .fl{display:block;margin-bottom:3px}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -1779,11 +1787,11 @@ function renderDdEditor(d){
     }).join('');
     return `<tr>${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
   }).join('');
-  const logo=d.brand==='YS'?'<span style="color:#1769c4">YuBe</span><span style="color:#5AC8FA"> solutions</span>':'<span style="color:var(--br)">IB</span><span style="color:var(--go-d)"> motion</span>';
   const st=d.stato, canSend=st==='approvata';
+  const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
   document.getElementById('ddEditor').innerHTML=`
     <div class="dd-hd">
-      <div style="font-weight:900;font-size:18px;letter-spacing:-.5px">${logo}</div>
+      <img class="dd-logo" src="${API}/api/brand-logo/${d.brand}" alt="${d.brand}">
       <div class="meta"><b>${esc(d.fornitore_nome)}</b><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
       <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}" onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}" onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
@@ -1791,10 +1799,20 @@ function renderDdEditor(d){
       <div class="dd-sec">Distinta — ${esc(d.tipo_distinta)} <span class="lnk" onclick="ddRigenera()">⟳ Rigenera dalla distinta</span></div>
       <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
       <div class="dd-sec">Mail RDO <span class="lnk" onclick="openTemplates()">gestisci template</span></div>
+      <div class="dd-mailgrid">
+        <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
+        <div><label class="fl">CC</label><input class="dd-fld" id="ddCc" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
+        <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
+      </div>
       <select class="dd-fld" id="ddTpl" style="margin-bottom:8px" onchange="ddApplyTemplate()"></select>
       <input class="dd-fld" id="ddOgg" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
       <textarea class="dd-fld" id="ddCorpo">${esc(d.corpo||'')}</textarea>
-      <div class="fmuted" style="font-size:10px;margin-top:6px">A: ${esc((d.emails_to||[]).join(', ')||'—')}${(d.emails_cc&&d.emails_cc.length)?' · CC: '+esc(d.emails_cc.join(', ')):''}</div>
+      <div class="dd-sec">Allegati alla mail <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna anteprima</span></div>
+      <div class="dd-alleg">
+        <div class="ai" onclick="ddExport('pdf')"><span class="fi-ic pdf">PDF</span> Distinta RDO + richiesta (PDF) <span class="open">apri ↗</span></div>
+        <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
+      </div>
+      <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
     </div>
     <div class="dd-ft">
       <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
@@ -1818,12 +1836,15 @@ function ddApplyTemplate(){
   document.getElementById('ddOgg').value=fill(t.oggetto);
   document.getElementById('ddCorpo').value=fill(t.corpo);
 }
+function splitEmails(v){return (v||'').split(/[;,]/).map(s=>s.trim()).filter(Boolean);}
 async function ddPersist(){
   const d=DD.data;const tv=document.getElementById('ddTpl').value;
   const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}`,{method:'PUT',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({righe:d.righe,oggetto:document.getElementById('ddOgg').value,corpo:document.getElementById('ddCorpo').value,brand:d.brand,template_id:tv?parseInt(tv):null})});
+    body:JSON.stringify({righe:d.righe,oggetto:document.getElementById('ddOgg').value,corpo:document.getElementById('ddCorpo').value,brand:d.brand,template_id:tv?parseInt(tv):null,
+      emails_to:splitEmails(document.getElementById('ddTo').value),emails_cc:splitEmails(document.getElementById('ddCc').value),emails_ccn:splitEmails(document.getElementById('ddCcn').value)})});
   if(!r.ok)throw 0;DD.data=await r.json();return DD.data;
 }
+async function ddRefreshPreview(){try{await ddPersist();}catch{}const fr=document.getElementById('ddPdf');if(fr)fr.src=API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/export?fmt=pdf&_=`+Date.now();}
 async function ddSave(){try{await ddPersist();await loadDdList();renderDdEditor(DD.data);toast('Distinta salvata','ok');}catch{toast('Errore salvataggio',true);}}
 async function ddRigenera(){if(!confirm('Rigenerare la distinta dai dati originali? Le modifiche manuali verranno perse.'))return;
   try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/rigenera`,{method:'POST'});if(!r.ok)throw 0;DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);toast('Distinta rigenerata','ok');}catch{toast('Errore',true);}}
