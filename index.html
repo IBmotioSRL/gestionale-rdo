@@ -838,9 +838,9 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fgTipi"><label class="fl">Tipi commerciali <span class="fmuted" style="font-weight:600">→ comandano il match dei commerciali</span></label><div class="chips" id="chips_tipi" onclick="document.getElementById('chipin_tipi').focus()"></div><div class="fhint">Ogni commerciale con uno di questi tipi viene assegnato a questo fornitore (se è l'unico che lo copre). Voci dal vocabolario tipi.</div></div>
       <div class="fg"><label class="fl">Template mail predefinito <span class="fmuted" style="font-weight:600">→ usato di default nelle RDO a questo fornitore</span></label><select class="fld" id="fTpl"><option value="">— nessuno (testo standard) —</option></select></div>
       <div class="fg"><label class="fl">Spedizione</label><select class="fld" id="fSped"><option value="0">A nostro carico (la organizziamo noi)</option><option value="1">Inclusa dal fornitore (franco ns. sede)</option></select></div>
-      <div class="fg" id="fgTratt"><label class="fl">Trattamenti termici / superficiali <span class="fmuted" style="font-weight:600">(solo terzisti)</span></label>
-        <label class="fmt-c"><input type="checkbox" id="fFornTratt"> Il fornitore può fornire i trattamenti</label>
-        <label class="fmt-c"><input type="checkbox" id="fTrattNoi"> Trattamenti a nostro carico</label></div>
+      <div class="fg" id="fgTratt"><label class="fl">Trattamenti termici / superficiali</label>
+        <label class="fmt-c"><input type="checkbox" id="fFornTratt"> Il fornitore fornisce i trattamenti</label>
+        <div class="fhint">Se spuntato, nella RDO si specifica che i trattamenti sono a carico del fornitore; altrimenti che li forniamo noi.</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
@@ -2104,7 +2104,6 @@ function openForn(id){
   fillTplSelect(document.getElementById('fTpl'), ed?ed.template_default_id:null);
   document.getElementById('fSped').value=ed&&ed.spedizione_inclusa?'1':'0';
   document.getElementById('fFornTratt').checked=ed?!!ed.fornisce_trattamenti:false;
-  document.getElementById('fTrattNoi').checked=ed?!!ed.trattamenti_a_nostro_carico:false;
   fornTipoToggle();fornModalitaToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
@@ -2126,7 +2125,7 @@ async function salvaForn(){
   const tagTipi=tipo==='commerciale'?chipVals('tipi'):[];
   const tplv=document.getElementById('fTpl').value;
   const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim(),template_default_id:tplv?parseInt(tplv):null,
-    spedizione_inclusa:document.getElementById('fSped').value==='1',fornisce_trattamenti:tipo==='terzista'&&document.getElementById('fFornTratt').checked,trattamenti_a_nostro_carico:tipo==='terzista'&&document.getElementById('fTrattNoi').checked};
+    spedizione_inclusa:document.getElementById('fSped').value==='1',fornisce_trattamenti:tipo==='terzista'&&document.getElementById('fFornTratt').checked};
   if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
