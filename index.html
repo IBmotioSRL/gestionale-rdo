@@ -332,6 +332,26 @@ textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
 .dd-pdf{width:100%;height:380px;border:1px solid var(--bd);border-radius:10px;background:#525659}
 .dd-mailgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .dd-mailgrid .fl{display:block;margin-bottom:3px}
+.panel{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+
+/* ── COSTI ── */
+.cost-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.cost-tile{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px}
+.cost-tile .v{font-size:18px;font-weight:800;color:var(--br)}
+.cost-tile .l{font-size:10px;color:var(--t2);font-weight:600;margin-top:2px}
+.cost-card{margin-bottom:12px}
+.cost-card .ch{padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.cost-card .ch b{font-size:13px}
+.cost-card .ch .tot{margin-left:auto;font-weight:800;color:var(--go-d);font-size:14px}
+.cost-tab{width:100%;border-collapse:collapse;font-size:11.5px}
+.cost-tab th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);padding:6px 14px;border-bottom:1px solid var(--bd)}
+.cost-tab td{padding:6px 14px;border-bottom:1px solid rgba(0,0,0,.04)}
+.cost-tab tr:last-child td{border-bottom:0}
+.cost-tab .num{text-align:center}
+.cost-tab .val{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.cost-av{width:20px;height:20px;border-radius:5px;display:inline-grid;place-items:center;color:#fff;font-size:7.5px;font-weight:800;vertical-align:middle;margin-right:6px}
+.cov{height:5px;border-radius:3px;background:rgba(44,21,6,.08);overflow:hidden;width:80px;display:inline-block;vertical-align:middle}
+.cov i{display:block;height:100%;background:var(--green)}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -607,6 +627,7 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="ni on" data-v="dash" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
     <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
     <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>RDO</div>
+    <div class="ni" data-v="costi" onclick="go('costi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi</div>
     <div class="ni" data-v="forn" onclick="go('forn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Fornitori</div>
   </nav>
   <div class="sb-foot">
@@ -732,6 +753,15 @@ textarea.fld{resize:vertical;min-height:60px}
       </div>
     </div></div>
     <div class="vscroll"><div class="fgrid" id="fgrid"></div></div>
+  </div>
+
+  <!-- ════ COSTI ════ -->
+  <div id="v-costi" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Costi</div><div class="vsub">Riepilogo costi per commessa e fornitore</div></div></div>
+    </div></div>
+    <div class="vscroll"><div id="costiBody" style="padding:14px"></div></div>
   </div>
 
 </main>
@@ -933,6 +963,7 @@ function go(v,pid){
   if(v==='dash')renderDash();
   if(v==='proj')renderProjGrid();
   if(v==='rdo')rdoSub('forn');
+  if(v==='costi')renderCosti();
   if(v==='forn')renderForn();
 }
 
@@ -1734,6 +1765,48 @@ async function rdoMailConfirm(){
     const rp=await fetch(API+'/api/commesse/'+cid+'/parti');if(rp.ok)commesse.find(c=>c.id===cid)._parti=await rp.json();
     mClose('mRdo');toast('RDO segnata inviata ('+parti.length+' pezzi)','ok');renderRDO();
   }catch{toast('Errore',true);}
+}
+
+/* ══ COSTI (vista aggregata globale — v1, in attesa del mockup) ══ */
+async function renderCosti(){
+  const el=document.getElementById('costiBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Calcolo costi…</div>';
+  const datas=await Promise.all(commesse.map(async c=>{
+    let parti=c._parti;
+    if(!parti){try{const r=await fetch(API+'/api/commesse/'+c.id+'/parti');parti=r.ok?await r.json():[];c._parti=parti;}catch{parti=[];}}
+    return {c,parti};
+  }));
+  let gTot=0,gPz=0,gPrz=0;
+  const cards=datas.map(({c,parti})=>{
+    const ass=parti.filter(p=>p.fornitore_id);
+    const byF={};
+    ass.forEach(p=>{const o=byF[p.fornitore_id]||(byF[p.fornitore_id]={n:0,prz:0,tot:0});o.n++;if(p.prezzo!=null){o.prz++;o.tot+=p.prezzo*qnum(p.quantita);}});
+    const tot=Object.values(byF).reduce((s,o)=>s+o.tot,0);
+    const npz=ass.length,nprz=ass.filter(p=>p.prezzo!=null).length;
+    gTot+=tot;gPz+=npz;gPrz+=nprz;
+    const rows=Object.entries(byF).sort((a,b)=>b[1].tot-a[1].tot).map(([fid,o])=>{
+      const f=fornitori.find(x=>x.id==fid);const nm=f?f.nome:'?';
+      const pct=o.n?Math.round(o.prz/o.n*100):0;
+      return `<tr><td><span class="cost-av" style="background:${avc(nm)}">${ini(nm)}</span>${esc(nm)}</td>`+
+        `<td class="num">${o.n}</td>`+
+        `<td class="num"><span class="cov"><i style="width:${pct}%"></i></span> ${o.prz}/${o.n}</td>`+
+        `<td class="val">${o.tot?eur(o.tot):'—'}</td></tr>`;
+    }).join('');
+    return `<div class="panel cost-card">
+      <div class="ch"><b>${esc(c.codice)}</b><span class="fmuted">${esc(c.nome)}</span><span class="tot">${tot?eur(tot):'—'}</span></div>
+      <table class="cost-tab"><thead><tr><th>Fornitore</th><th class="num">Pezzi</th><th class="num">Prezzati</th><th class="val">Totale stimato</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="4" class="fmuted">Nessun pezzo assegnato</td></tr>'}</tbody></table></div>`;
+  });
+  const pct=gPz?Math.round(gPrz/gPz*100):0;
+  el.innerHTML=
+    `<div class="cost-tiles">
+       <div class="cost-tile"><div class="v">${eur(gTot)}</div><div class="l">Totale stimato (pezzi prezzati)</div></div>
+       <div class="cost-tile"><div class="v">${commesse.length}</div><div class="l">Commesse</div></div>
+       <div class="cost-tile"><div class="v">${gPrz}/${gPz}</div><div class="l">Pezzi prezzati / assegnati</div></div>
+       <div class="cost-tile"><div class="v">${pct}%</div><div class="l">Copertura prezzi</div></div>
+     </div>
+     <div class="fmuted" style="font-size:10.5px;margin-bottom:10px">Totali stimati sui soli pezzi con prezzo inserito (netto IVA, esclusi costi accessori). Versione iniziale — si affina sul tuo mockup.</div>`+
+    (cards.join('')||'<div class="fmuted">Nessuna commessa.</div>');
 }
 
 /* ══ DISTINTE & APPROVAZIONE ══ */
