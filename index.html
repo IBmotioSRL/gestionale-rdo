@@ -269,6 +269,61 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .rdo-preview .rp-b{padding:12px;font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--t1)}
 .rdo-preview .rp-a{padding:8px 12px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:5px}
 .rdo-preview .rp-a .ach{font-size:9.5px;font-weight:700;background:rgba(0,122,255,.08);color:#1769c4;border-radius:5px;padding:2px 7px}
+
+/* ── DISTINTE & APPROVAZIONE ── */
+.rdo-subtabs{display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--bd);background:var(--surf)}
+.rdo-subtab{padding:9px 16px;font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent}
+.rdo-subtab.on{color:var(--go-d);border-bottom-color:var(--go-d)}
+.dd-wrap{display:grid;grid-template-columns:300px 1fr;gap:14px;padding:14px;align-items:start}
+.dd-ph{padding:11px 14px;border-bottom:1px solid var(--bd);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.dd-ph .cnt{margin-left:auto;font-size:9.5px;font-weight:700;background:rgba(44,21,6,.06);color:var(--t2);padding:2px 7px;border-radius:11px}
+.dd-list{padding:8px;max-height:calc(100vh - 220px);overflow-y:auto}
+.dd-grp{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);padding:8px 8px 4px}
+.dd-card{display:flex;align-items:center;gap:9px;padding:9px;border:1px solid var(--bd);border-radius:10px;margin-bottom:7px;cursor:pointer}
+.dd-card:hover{border-color:var(--go-d);background:rgba(245,168,35,.04)}
+.dd-card.on{border-color:var(--go-d);background:rgba(245,168,35,.08)}
+.dd-av{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:9px;font-weight:800;flex:0 0 auto}
+.dd-card .nn{font-size:12px;font-weight:700;line-height:1.2}
+.dd-card .ss{font-size:9.5px;color:var(--t3)}
+.dd-brand{font-size:8px;font-weight:800;padding:1px 5px;border-radius:4px}
+.dd-brand.IB{background:rgba(245,168,35,.16);color:var(--go-d)}
+.dd-brand.YS{background:rgba(0,122,255,.12);color:#1769c4}
+.dd-st{font-size:8px;font-weight:800;padding:1px 6px;border-radius:10px;white-space:nowrap}
+.dd-st.bozza{background:rgba(255,149,0,.14);color:#b5701a}
+.dd-st.approvata{background:rgba(0,122,255,.12);color:#1769c4}
+.dd-st.inviata{background:rgba(52,199,89,.14);color:#1A7A2E}
+.dd-empty{padding:50px 24px;text-align:center;color:var(--t3);font-size:12px}
+.dd-hd{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd)}
+.dd-logo{height:30px}
+.dd-hd .meta{font-size:11px;color:var(--t2)}
+.dd-hd .meta b{color:var(--t1);font-size:13px}
+.brand-sel{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px}
+.brand-sel button{font-size:10px;font-weight:700;padding:4px 9px;border:0;border-radius:6px;background:transparent;color:var(--t2);cursor:pointer}
+.brand-sel button.on{background:#fff;color:var(--go-d);box-shadow:var(--sh)}
+.dd-body{padding:12px 16px;max-height:calc(100vh - 300px);overflow-y:auto}
+.dd-sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.dd-sec:first-child{margin-top:2px}
+.dd-sec .lnk{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
+table.dd-tab{width:100%;border-collapse:collapse;font-size:11px}
+table.dd-tab th{background:var(--br);color:#fff;font-weight:700;font-size:9px;text-transform:uppercase;padding:5px 7px;text-align:left}
+table.dd-tab td{border-bottom:1px solid var(--bd);padding:0}
+table.dd-tab tr:nth-child(even) td{background:rgba(248,244,239,.6)}
+table.dd-tab td input{width:100%;border:0;background:transparent;font:inherit;font-size:11px;padding:5px 7px;outline:none;color:var(--t1)}
+table.dd-tab td input:focus{background:rgba(245,168,35,.14);box-shadow:inset 0 0 0 1px var(--go-d)}
+table.dd-tab td.cod input{font-family:ui-monospace,monospace;font-weight:700;color:var(--br)}
+table.dd-tab td.rev input,table.dd-tab td.qta input{text-align:center}
+.rowt{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;margin:0 6px}
+.rowt.com{background:rgba(245,168,35,.14);color:var(--go-d)}
+.rowt.par{background:rgba(88,86,214,.12);color:#4b49b8}
+.rowt.ass{background:rgba(0,122,255,.1);color:#1769c4}
+.dd-fld{width:100%;border:1px solid var(--bd);border-radius:8px;padding:7px 9px;font:inherit;font-size:12px;outline:none}
+.dd-fld:focus{border-color:var(--go-d)}
+textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
+.dd-ft{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--bd);align-items:center}
+.dd-badge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:8px}
+.dd-badge.bozza{background:rgba(255,149,0,.14);color:#b5701a}
+.dd-badge.approvata{background:rgba(0,122,255,.12);color:#1769c4}
+.dd-badge.inviata{background:rgba(52,199,89,.14);color:#1A7A2E}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -637,9 +692,25 @@ textarea.fld{resize:vertical;min-height:60px}
   <div id="v-rdo" class="view">
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div><div class="h1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub">Vista per fornitore</div></div></div>
+      <div><div class="h1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub">Distinte, mail e approvazione</div></div></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="openTemplates()" title="Gestisci i template delle mail RDO">✉ Template mail</button></div>
     </div></div>
-    <div class="vscroll"><div class="rdo-grid" id="rdogrid"></div></div>
+    <div class="rdo-subtabs">
+      <div class="rdo-subtab on" id="rsForn" onclick="rdoSub('forn')">Per fornitore</div>
+      <div class="rdo-subtab" id="rsDist" onclick="rdoSub('dist')">Distinte &amp; approvazione</div>
+    </div>
+    <div class="vscroll">
+      <div id="rdoByForn"><div class="rdo-grid" id="rdogrid"></div></div>
+      <div id="rdoDistView" style="display:none">
+        <div class="dd-wrap">
+          <div class="panel">
+            <div class="dd-ph">Tutte le distinte <span class="cnt" id="ddCnt">0</span></div>
+            <div id="ddList" class="dd-list"></div>
+          </div>
+          <div class="panel" id="ddEditor"><div class="dd-empty">Seleziona una distinta a sinistra per prepararla, approvarla e inviarla.</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ════ FORNITORI ════ -->
@@ -698,6 +769,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">Codice commessa *</label><input class="fld" id="pCodice" placeholder="Es: IB05.2025"><div class="ferr" id="pCodiceErr">Campo obbligatorio</div></div>
       <div class="fg"><label class="fl">Nome progetto *</label><input class="fld" id="pNome" placeholder="Es: Carro LEM"><div class="ferr" id="pNomeErr">Campo obbligatorio</div></div>
       <div class="fg"><label class="fl">Cliente</label><input class="fld" id="pCliente" placeholder="Es: Fibbi"></div>
+      <div class="fg"><label class="fl">Brand (logo distinte e RDO)</label><select class="fld" id="pBrand"><option value="IB">IB Motion</option><option value="YS">YuBe Solutions</option></select></div>
       <div class="fg"><label class="fl">Percorso cartella (distinta base) *</label><input class="fld" id="pCartella" placeholder="\\SERVER01\lavoro\…\NOME COMMESSA"><div class="ferr" id="pCartellaErr">Campo obbligatorio</div><div class="fhint">Cartella della commessa. Comanda la distinta generale Excel (.xlsx) al suo interno; i disegni/datasheet nelle sottocartelle finiscono nel Calderone.</div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="pNote" placeholder="Priorità, scadenze…"></textarea></div>
     </div>
@@ -726,6 +798,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni (nelle categorie sopra) viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
       <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
       <div class="fg" id="fgTipi"><label class="fl">Tipi commerciali <span class="fmuted" style="font-weight:600">→ comandano il match dei commerciali</span></label><div class="chips" id="chips_tipi" onclick="document.getElementById('chipin_tipi').focus()"></div><div class="fhint">Ogni commerciale con uno di questi tipi viene assegnato a questo fornitore (se è l'unico che lo copre). Voci dal vocabolario tipi.</div></div>
+      <div class="fg"><label class="fl">Template mail predefinito <span class="fmuted" style="font-weight:600">→ usato di default nelle RDO a questo fornitore</span></label><select class="fld" id="fTpl"><option value="">— nessuno (testo standard) —</option></select></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
@@ -765,6 +838,25 @@ textarea.fld{resize:vertical;min-height:60px}
       <div id="rdoPreview" class="rdo-preview" style="display:none"></div>
     </div>
     <div class="mft"><button class="btn btn-ghost btn-sm" onclick="rdoTogglePreview()" id="rdoPrevBtn">👁 Anteprima</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mRdo')">Annulla</button><button class="btn btn-go" id="rdoSendBtn" onclick="rdoMailConfirm()">Segna inviata (simulato)</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mTpl" onclick="ovClose(event,'mTpl')">
+  <div class="modal" style="max-width:720px">
+    <div class="mhd"><div class="mico2">✉</div><div><div class="mtit">Template mail RDO</div><div class="msub">Segnaposto: {fornitore} · {commessa} · {commessa_nome} · {n_pezzi}</div></div><button class="mx" onclick="mClose('mTpl')">✕</button></div>
+    <div class="mbd" style="display:grid;grid-template-columns:200px 1fr;gap:12px">
+      <div>
+        <div id="tplList" class="dd-list" style="max-height:340px;border:1px solid var(--bd);border-radius:9px;padding:6px"></div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="tplNew()">+ Nuovo template</button>
+      </div>
+      <div>
+        <input type="hidden" id="tplId">
+        <div class="fg"><label class="fl">Nome template</label><input class="fld" id="tplNome" placeholder="Es: RDO standard terzisti"></div>
+        <div class="fg"><label class="fl">Oggetto</label><input class="fld" id="tplOgg" placeholder="Richiesta d'offerta {commessa} - {fornitore}"></div>
+        <div class="fg"><label class="fl">Corpo</label><textarea class="fld" id="tplCorpo" rows="10" style="resize:vertical;font-family:inherit;line-height:1.45"></textarea></div>
+      </div>
+    </div>
+    <div class="mft"><button class="btn btn-danger btn-sm" id="tplDel" style="display:none" onclick="tplDelete()">Elimina</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mTpl')">Chiudi</button><button class="btn btn-go" onclick="tplSave()">Salva template</button></div></div>
   </div>
 </div>
 
@@ -808,7 +900,7 @@ const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni()]);await loadCommesse();go('dash');}
+async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('dash');}
 async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}}
 async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
 async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(r.ok)fornitori=await r.json();}catch{}}
@@ -828,7 +920,7 @@ function go(v,pid){
   document.getElementById('v-'+v).classList.add('on');
   if(v==='dash')renderDash();
   if(v==='proj')renderProjGrid();
-  if(v==='rdo')renderRDO();
+  if(v==='rdo')rdoSub('forn');
   if(v==='forn')renderForn();
 }
 
@@ -1632,6 +1724,132 @@ async function rdoMailConfirm(){
   }catch{toast('Errore',true);}
 }
 
+/* ══ DISTINTE & APPROVAZIONE ══ */
+let TEMPLATES=[];
+async function loadTemplates(){try{const r=await fetch(API+'/api/template-mail');TEMPLATES=r.ok?await r.json():[];}catch{TEMPLATES=[];}}
+function fillTplSelect(sel,val){if(!sel)return;sel.innerHTML='<option value="">— nessuno (testo standard) —</option>'+TEMPLATES.map(t=>`<option value="${t.id}">${esc(t.nome)}</option>`).join('');sel.value=val?String(val):'';}
+
+function rdoSub(which){
+  document.getElementById('rsForn').classList.toggle('on',which==='forn');
+  document.getElementById('rsDist').classList.toggle('on',which==='dist');
+  document.getElementById('rdoByForn').style.display=which==='forn'?'block':'none';
+  document.getElementById('rdoDistView').style.display=which==='dist'?'block':'none';
+  if(which==='forn')renderRDO();else{loadTemplates().then(loadDdList);}
+}
+
+let DD=null, DDLIST=[];
+async function loadDdList(){try{const r=await fetch(API+'/api/rdo-list');DDLIST=r.ok?await r.json():[];}catch{DDLIST=[];}renderDdList();}
+function renderDdList(){
+  document.getElementById('ddCnt').textContent=DDLIST.length;
+  const byC={};DDLIST.forEach(x=>{(byC[x.commessa_id]=byC[x.commessa_id]||{cod:x.commessa_codice,nome:x.commessa_nome,items:[]}).items.push(x);});
+  let h='';
+  Object.values(byC).forEach(g=>{
+    h+=`<div class="dd-grp">${esc(g.cod)} · ${esc(g.nome)}</div>`;
+    g.items.forEach(x=>{
+      const on=DD&&DD.cid===x.commessa_id&&DD.fid===x.fornitore_id;
+      h+=`<div class="dd-card${on?' on':''}" onclick="openDd(${x.commessa_id},${x.fornitore_id})">
+        <div class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</div>
+        <div style="min-width:0;flex:1"><div class="nn">${esc(x.fornitore_nome)}</div><div class="ss">${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</div></div>
+        <span class="dd-brand ${x.brand}">${x.brand}</span><span class="dd-st ${x.stato}">${x.stato}</span></div>`;
+    });
+  });
+  document.getElementById('ddList').innerHTML=h||'<div class="dd-empty">Nessuna distinta: assegna prima i fornitori ai pezzi.</div>';
+}
+async function openDd(cid,fid){
+  DD={cid,fid};
+  try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}`);if(!r.ok)throw 0;DD.data=await r.json();}
+  catch{toast('Errore apertura distinta',true);return;}
+  renderDdList();renderDdEditor(DD.data);
+}
+function ddCols(d){
+  if(d.tipo_distinta==='commerciale')return [['qta','Q.tà'],['codice','Codice produttore'],['descrizione','Descrizione'],['fornitore','Fornitore']];
+  const c=[['qta','Q.tà'],['codice','Codice interno'],['revisione','Rev.'],['descrizione','Descrizione'],['peso','Peso kg']];
+  if(d.righe.some(r=>String(r.tratt_term||'').trim()))c.push(['tratt_term','Tratt. term.']);
+  if(d.righe.some(r=>String(r.tratt_sup||'').trim()))c.push(['tratt_sup','Tratt. superf.']);
+  return c;
+}
+function renderDdEditor(d){
+  const cols=ddCols(d);
+  const ths=cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
+  const rows=d.righe.map((r,i)=>{
+    const tds=cols.map(([k])=>{
+      if(r.tipo==='ass'&&['peso','tratt_term','tratt_sup'].includes(k))return '<td style="text-align:center;color:var(--t3)">—</td>';
+      const cls=k==='codice'?'cod':(k==='revisione'?'rev':(k==='qta'?'qta':''));
+      return `<td class="${cls}"><input value="${esc(r[k]||'')}" oninput="DD.data.righe[${i}]['${k}']=this.value"></td>`;
+    }).join('');
+    return `<tr>${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+  }).join('');
+  const logo=d.brand==='YS'?'<span style="color:#1769c4">YuBe</span><span style="color:#5AC8FA"> solutions</span>':'<span style="color:var(--br)">IB</span><span style="color:var(--go-d)"> motion</span>';
+  const st=d.stato, canSend=st==='approvata';
+  document.getElementById('ddEditor').innerHTML=`
+    <div class="dd-hd">
+      <div style="font-weight:900;font-size:18px;letter-spacing:-.5px">${logo}</div>
+      <div class="meta"><b>${esc(d.fornitore_nome)}</b><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
+      <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}" onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}" onclick="ddSetBrand('YS')">YuBe</button></div>
+    </div>
+    <div class="dd-body">
+      <div class="dd-sec">Distinta — ${esc(d.tipo_distinta)} <span class="lnk" onclick="ddRigenera()">⟳ Rigenera dalla distinta</span></div>
+      <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
+      <div class="dd-sec">Mail RDO <span class="lnk" onclick="openTemplates()">gestisci template</span></div>
+      <select class="dd-fld" id="ddTpl" style="margin-bottom:8px" onchange="ddApplyTemplate()"></select>
+      <input class="dd-fld" id="ddOgg" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
+      <textarea class="dd-fld" id="ddCorpo">${esc(d.corpo||'')}</textarea>
+      <div class="fmuted" style="font-size:10px;margin-top:6px">A: ${esc((d.emails_to||[]).join(', ')||'—')}${(d.emails_cc&&d.emails_cc.length)?' · CC: '+esc(d.emails_cc.join(', ')):''}</div>
+    </div>
+    <div class="dd-ft">
+      <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
+      <button class="btn btn-ghost btn-sm" onclick="ddSave()">💾 Salva</button>
+      <button class="btn btn-ghost btn-sm" onclick="ddExport('pdf')">⬇ PDF</button>
+      <button class="btn btn-ghost btn-sm" onclick="ddExport('xlsx')">⬇ Excel</button>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        ${st==='bozza'?'<button class="btn btn-go btn-sm" onclick="ddStato(\'approvata\')">✓ Approva</button>':''}
+        ${st!=='bozza'?'<button class="btn btn-ghost btn-sm" onclick="ddStato(\'bozza\')">↩ Rimetti in bozza</button>':''}
+        <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'}>✉ Invia (simulato)</button>
+      </div>
+    </div>`;
+  fillTplSelect(document.getElementById('ddTpl'), d.template_id);
+}
+function ddSetBrand(b){DD.data.brand=b;renderDdEditor(DD.data);}
+function ddApplyTemplate(){
+  const id=document.getElementById('ddTpl').value;DD.data.template_id=id?parseInt(id):null;
+  if(!id)return;const t=TEMPLATES.find(x=>x.id==id);if(!t)return;
+  const d=DD.data,n=d.righe.length;
+  const fill=s=>(s||'').replace(/{fornitore}/g,d.fornitore_nome).replace(/{commessa_nome}/g,d.commessa_nome).replace(/{commessa}/g,d.commessa_codice).replace(/{n_pezzi}/g,n);
+  document.getElementById('ddOgg').value=fill(t.oggetto);
+  document.getElementById('ddCorpo').value=fill(t.corpo);
+}
+async function ddPersist(){
+  const d=DD.data;const tv=document.getElementById('ddTpl').value;
+  const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}`,{method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({righe:d.righe,oggetto:document.getElementById('ddOgg').value,corpo:document.getElementById('ddCorpo').value,brand:d.brand,template_id:tv?parseInt(tv):null})});
+  if(!r.ok)throw 0;DD.data=await r.json();return DD.data;
+}
+async function ddSave(){try{await ddPersist();await loadDdList();renderDdEditor(DD.data);toast('Distinta salvata','ok');}catch{toast('Errore salvataggio',true);}}
+async function ddRigenera(){if(!confirm('Rigenerare la distinta dai dati originali? Le modifiche manuali verranno perse.'))return;
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/rigenera`,{method:'POST'});if(!r.ok)throw 0;DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);toast('Distinta rigenerata','ok');}catch{toast('Errore',true);}}
+async function ddStato(s){
+  try{if(s==='approvata')await ddPersist();
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/stato?stato=${s}`,{method:'POST'});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+    DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);
+    if(S.projId===DD.cid)refreshDetail();
+    toast(s==='approvata'?'Distinta approvata':(s==='inviata'?'RDO inviata (simulato)':'Rimessa in bozza'),'ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+async function ddExport(fmt){try{await ddPersist();}catch{}window.open(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/export?fmt=${fmt}`,'_blank');}
+
+/* ── TEMPLATE MAIL ── */
+async function openTemplates(){await loadTemplates();renderTplList();tplNew();mOpen('mTpl');}
+function renderTplList(){document.getElementById('tplList').innerHTML=TEMPLATES.map(t=>`<div class="dd-card" onclick="tplSelect(${t.id})"><div style="min-width:0"><div class="nn">${esc(t.nome)}</div><div class="ss">${esc((t.oggetto||'').slice(0,28))}</div></div></div>`).join('')||'<div class="fmuted" style="padding:8px;font-size:11px">Nessun template</div>';}
+function tplNew(){document.getElementById('tplId').value='';document.getElementById('tplNome').value='';document.getElementById('tplOgg').value='';document.getElementById('tplCorpo').value='';document.getElementById('tplDel').style.display='none';}
+function tplSelect(id){const t=TEMPLATES.find(x=>x.id===id);if(!t)return;document.getElementById('tplId').value=t.id;document.getElementById('tplNome').value=t.nome;document.getElementById('tplOgg').value=t.oggetto||'';document.getElementById('tplCorpo').value=t.corpo||'';document.getElementById('tplDel').style.display='inline-flex';}
+async function tplSave(){const id=document.getElementById('tplId').value;const nome=document.getElementById('tplNome').value.trim();if(!nome){toast('Dai un nome al template',true);return;}
+  const body={nome,oggetto:document.getElementById('tplOgg').value,corpo:document.getElementById('tplCorpo').value};
+  try{const r=await fetch(id?API+'/api/template-mail/'+id:API+'/api/template-mail',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw 0;
+    const saved=await r.json();await loadTemplates();renderTplList();tplSelect(saved.id);toast('Template salvato','ok');}catch{toast('Errore',true);}}
+async function tplDelete(){const id=document.getElementById('tplId').value;if(!id)return;if(!confirm('Eliminare il template?'))return;
+  try{const r=await fetch(API+'/api/template-mail/'+id,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;await loadTemplates();renderTplList();tplNew();toast('Template eliminato','ok');}catch{toast('Errore',true);}}
+
 /* ── IMPORT PREZZI ── */
 let IMP_ROWS=[];
 function openImport(cid,fid){
@@ -1705,10 +1923,12 @@ function renderForn(){
 /* ── NUOVO/MODIFICA PROGETTO ── */
 function openNuovo(){document.getElementById('mProgTit').textContent='Nuovo progetto';document.getElementById('mProgSub').textContent='Indica la cartella con la distinta base Excel';document.getElementById('pBtn').textContent='Crea e importa';
   ['pId','pCodice','pNome','pCliente','pCartella','pNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pBrand').value='IB';
   document.getElementById('pCartella').disabled=false;clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');setTimeout(()=>document.getElementById('pCodice').focus(),80);}
 function openModifica(){const c=commesse.find(x=>x.id===S.projId);if(!c)return;
   document.getElementById('mProgTit').textContent='Modifica progetto';document.getElementById('mProgSub').textContent='Aggiorna dati e percorso. Cambiando percorso poi usa Riscansiona.';document.getElementById('pBtn').textContent='Salva modifiche';
   document.getElementById('pId').value=c.id;document.getElementById('pCodice').value=c.codice;document.getElementById('pNome').value=c.nome;document.getElementById('pCliente').value=c.cliente||'';document.getElementById('pCartella').value=c.percorso_cartella;document.getElementById('pNote').value=c.note||'';
+  document.getElementById('pBrand').value=c.brand||'IB';
   clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');}
 async function salvaProgetto(){
   clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);
@@ -1718,10 +1938,10 @@ async function salvaProgetto(){
   const btn=document.getElementById('pBtn');btn.disabled=true;const old=btn.textContent;btn.textContent='Attendi…';
   try{
     if(id){
-      const r=await fetch(API+'/api/commesse/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),note:document.getElementById('pNote').value.trim(),percorso_cartella:cartella})});
+      const r=await fetch(API+'/api/commesse/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),note:document.getElementById('pNote').value.trim(),percorso_cartella:cartella,brand:document.getElementById('pBrand').value})});
       if(!r.ok)throw 0;mClose('mProg');toast('Progetto aggiornato','ok');await loadCommesse();await openProgetto(parseInt(id));
     } else {
-      const r=await fetch(API+'/api/commesse/importa-excel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),percorso_cartella:cartella,note:document.getElementById('pNote').value.trim()})});
+      const r=await fetch(API+'/api/commesse/importa-excel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),percorso_cartella:cartella,note:document.getElementById('pNote').value.trim(),brand:document.getElementById('pBrand').value})});
       if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore import');}
       const c=await r.json();mClose('mProg');const np=c.categorie?c.categorie.reduce((s,x)=>s+x.n_parti,0):'?';toast('Progetto creato — '+np+' parti',(np?'ok':true));
       await loadCommesse();go('pdet',c.commessa_id);
@@ -1781,6 +2001,7 @@ function openForn(id){
   chipInit('fnm',(ed&&ed.tag_fornitori)?ed.tag_fornitori:[], {suggest:PROP.fornitori});
   chipInit('tipi',(ed&&ed.tag_tipi)?ed.tag_tipi:[], {suggest:PROP.tipi});
   if(document.getElementById('fBlack'))document.getElementById('fBlack').checked=ed?!!ed.blacklist:false;
+  fillTplSelect(document.getElementById('fTpl'), ed?ed.template_default_id:null);
   fornTipoToggle();fornModalitaToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
 }
@@ -1800,7 +2021,8 @@ async function salvaForn(){
   const tagCat=tipo==='terzista'?chipVals('cat'):[];
   const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
   const tagTipi=tipo==='commerciale'?chipVals('tipi'):[];
-  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim()};
+  const tplv=document.getElementById('fTpl').value;
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim(),template_default_id:tplv?parseInt(tplv):null};
   if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
