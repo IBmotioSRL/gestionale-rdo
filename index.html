@@ -342,6 +342,7 @@ table.dd-tab td.rev input,table.dd-tab td.qta input{text-align:center}
 .dd-fld{width:100%;border:1px solid var(--bd);border-radius:8px;padding:7px 9px;font:inherit;font-size:12px;outline:none}
 .dd-fld:focus{border-color:var(--go-d)}
 textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
+#ddCorpo{min-height:52vh;margin-bottom:10px}
 .dd-ft{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--bd);align-items:center;position:sticky;bottom:0;background:var(--surf);z-index:3}
 .dd-badge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:8px}
 .dd-badge.bozza{background:rgba(255,149,0,.14);color:#b5701a}
@@ -1901,7 +1902,7 @@ let SHIPSEL=new Set();
 function setRdoHdr(h1,sub){document.getElementById('rdoH1').textContent=h1;document.getElementById('rdoVsub').textContent=sub;}
 function rdoEnter(){RV.mode='list';RV.cid=null;RV.fid=null;RV.selForn=null;loadTemplates();renderRdoView();}
 function rdoBack(){
-  if(RV.mode==='edit'){RV.mode='work';renderRdoView();}
+  if(RV.mode==='edit'){RV.mode='list';RV.selForn=null;renderRdoView();}
   else if(RV.mode==='work'){RV.mode='list';RV.selForn=null;renderRdoView();}
   else if(RV.mode==='ship'){RV.mode='list';renderRdoView();}
 }
@@ -1933,7 +1934,13 @@ function rdoRenderList(){
     </div>`;
   }).join('')+'</div>';
 }
-function rdoOpenComm(cid){RV.mode='work';RV.cid=cid;RV.selForn=null;S.projId=cid;renderRdoView();}
+function rdoOpenComm(cid){
+  // niente più livello intermedio: si va dritti all'editor (mail + elenco RDO a fianco)
+  const c=commesse.find(x=>x.id===cid);
+  const assigned=(c?flatParti(c):[]).filter(p=>p.fornitore_id);
+  if(!assigned.length){toast('Nessun fornitore assegnato a questa commessa: assegnali nel progetto.',true);return;}
+  rdoOpenEditor(cid,assigned[0].fornitore_id);
+}
 
 /* ── livello 2: workspace commessa (card fornitori + scheda laterale) ── */
 function rdoRenderWork(){
