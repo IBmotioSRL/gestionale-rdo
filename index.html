@@ -300,7 +300,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .brand-sel{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px}
 .brand-sel button{font-size:10px;font-weight:700;padding:4px 9px;border:0;border-radius:6px;background:transparent;color:var(--t2);cursor:pointer}
 .brand-sel button.on{background:#fff;color:var(--go-d);box-shadow:var(--sh)}
-.dd-body{padding:12px 16px;max-height:calc(100vh - 300px);overflow-y:auto}
+.dd-body{padding:12px 16px 16px}
+.dd-code{display:inline-block;margin-left:8px;font-family:ui-monospace,monospace;font-size:11px;font-weight:800;color:#fff;background:var(--br);padding:2px 8px;border-radius:6px;vertical-align:middle}
+.dd-split{display:grid;grid-template-columns:1fr minmax(300px,360px);gap:16px;align-items:start}
+.dd-mailcol{min-width:0}
+.dd-prevcol{position:sticky;top:6px}
+.dd-prevhd{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:10px}
+.dd-prevhd .lnk{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
+.dd-prevhd .lnk:last-child{margin-left:auto}
+@media(max-width:880px){.dd-split{grid-template-columns:1fr}.dd-prevcol{position:static}}
 .dd-sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
 .dd-sec:first-child{margin-top:2px}
 .dd-sec .lnk{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
@@ -319,7 +327,7 @@ table.dd-tab td.rev input,table.dd-tab td.qta input{text-align:center}
 .dd-fld{width:100%;border:1px solid var(--bd);border-radius:8px;padding:7px 9px;font:inherit;font-size:12px;outline:none}
 .dd-fld:focus{border-color:var(--go-d)}
 textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
-.dd-ft{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--bd);align-items:center}
+.dd-ft{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--bd);align-items:center;position:sticky;bottom:0;background:var(--surf);z-index:3}
 .dd-badge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:8px}
 .dd-badge.bozza{background:rgba(255,149,0,.14);color:#b5701a}
 .dd-badge.approvata{background:rgba(0,122,255,.12);color:#1769c4}
@@ -329,7 +337,7 @@ textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
 .dd-alleg .ai{display:flex;align-items:center;gap:9px;padding:7px 9px;border:1px solid var(--bd);border-radius:9px;cursor:pointer;font-size:11.5px;font-weight:600}
 .dd-alleg .ai:hover{border-color:var(--go-d);background:rgba(245,168,35,.04)}
 .dd-alleg .ai .open{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d)}
-.dd-pdf{width:100%;height:380px;border:1px solid var(--bd);border-radius:10px;background:#525659}
+.dd-pdf{width:100%;height:calc(100vh - 300px);min-height:440px;border:1px solid var(--bd);border-radius:10px;background:#525659}
 .dd-mailgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .dd-mailgrid .fl{display:block;margin-bottom:3px}
 .panel{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
@@ -1321,6 +1329,17 @@ function showPrev(pid){
   PREV.style.display='block';
 }
 function hidePrev(){PREV.style.display='none';prevPid=null;}
+// REGOLA: ovunque si passi sopra un file con disegno/datasheet PDF, mostra SEMPRE l'anteprima.
+// Qualsiasi elemento con data-prevpdf="<path>" (e opz. data-prevcap) attiva l'anteprima laterale al mouse.
+function showPrevPath(pdf,cap){
+  if(!pdf)return;
+  document.getElementById('prevcap').textContent=cap||'';
+  document.getElementById('previmg').innerHTML=`<img class="pv-img" src="${thumbUrl(pdf,440)}" alt="" onerror="this.outerHTML='<div class=\\'pv-ph\\'>anteprima non disponibile</div>'">`;
+  PREV.style.display='block';
+}
+document.addEventListener('mouseover',e=>{const el=e.target.closest('[data-prevpdf]');if(el)showPrevPath(el.getAttribute('data-prevpdf'),el.getAttribute('data-prevcap'));});
+document.addEventListener('mouseout',e=>{const el=e.target.closest('[data-prevpdf]');if(el&&!(e.relatedTarget&&e.relatedTarget.closest('[data-prevpdf]')))hidePrev();});
+document.addEventListener('mousemove',e=>{if(PREV.style.display==='block')movePrev(e);},true);
 function movePrev(e){
   if(PREV.style.display!=='block')return;
   let x=e.clientX+16,y=e.clientY+16;
@@ -1930,7 +1949,8 @@ function rdoSidePanel(c,fid,ps){
   const items=ps.slice().sort((a,b)=>(a.numero_parte>b.numero_parte?1:-1)).map(p=>{
     const pdf=firstPdf(p);const nf=pFiles(p).length;
     const ic=pdf?'📄':(nf?'📎':'—');const tip=pdf?'disegno/PDF':(nf?nf+' file':'nessun file');
-    return `<div class="rsp-row${pdf?' clk':''}" ${pdf?`onclick="apriFile('${jsq(pdf)}')"`:''} title="${esc(tip)}">
+    const prev=pdf?` data-prevpdf="${jsq(pdf)}" data-prevcap="${esc(p.numero_parte+' · '+(p.denominazione||''))}"`:'';
+    return `<div class="rsp-row${pdf?' clk':''}" ${pdf?`onclick="apriFile('${jsq(pdf)}')"`:''}${prev} title="${esc(tip)}">
       <span class="rsp-q">×${esc(p.quantita)}</span>
       <span class="rsp-nm"><b>${esc(p.numero_parte)}</b> ${esc(p.denominazione||'')}</span>
       <span class="rsp-f">${ic}</span></div>`;
@@ -1974,7 +1994,7 @@ function rdoRenderShip(){
       rows+=`<label class="ship-row${can?'':' off'}" oncontextmenu="ctxShip(event,${x.commessa_id},${x.fornitore_id})">
         <input type="checkbox" ${can?'':'disabled'} ${SHIPSEL.has(k)?'checked':''} onchange="shipToggle('${k}')">
         <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
-        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
+        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${x.codice_rdo?esc(x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
         <span class="dd-brand ${x.brand}">${x.brand}</span>
         <span class="dd-st ${x.stato}">${x.stato}</span>
         <span class="ship-open" onclick="event.preventDefault();rdoOpenEditor(${x.commessa_id},${x.fornitore_id})">apri ↗</span></label>`;
@@ -2089,31 +2109,39 @@ function renderDdEditor(d){
   }).join('');
   const st=d.stato, canSend=st==='approvata';
   const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
+  const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf`;
   document.getElementById('ddEditor').innerHTML=`
     <div class="dd-hd">
       <img class="dd-logo" src="${API}/api/brand-logo/${d.brand}" alt="${d.brand}">
-      <div class="meta"><b>${esc(d.fornitore_nome)}</b><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
+      <div class="meta"><b>${esc(d.fornitore_nome)}</b>${d.codice_rdo?`<span class="dd-code">${esc(d.codice_rdo)}</span>`:''}<br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
       <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}" onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}" onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
     <div class="dd-body">
+      <div class="dd-split">
+        <div class="dd-mailcol">
+          <div class="dd-sec">Mail RDO <span class="lnk" onclick="openTemplates()">gestisci template</span></div>
+          <div class="dd-mailgrid">
+            <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
+            <div><label class="fl">CC</label><input class="dd-fld" id="ddCc" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
+            <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
+          </div>
+          <select class="dd-fld" id="ddTpl" style="margin-bottom:8px" onchange="ddApplyTemplate()"></select>
+          <input class="dd-fld" id="ddOgg" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
+          <textarea class="dd-fld" id="ddCorpo">${esc(d.corpo||'')}</textarea>
+          <div class="dd-sec">Allegati alla mail</div>
+          <div class="dd-alleg">
+            <div class="ai" onclick="ddExport('pdf')"><span class="fi-ic pdf">PDF</span> Distinta RDO + richiesta (PDF) <span class="open">apri ↗</span></div>
+            <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
+          </div>
+        </div>
+        <div class="dd-prevcol">
+          <div class="dd-prevhd">Anteprima distinta <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna</span> <span class="lnk" onclick="window.open('${exportUrl}','_blank')">apri ↗</span></div>
+          <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
+        </div>
+      </div>
       <div class="dd-sec">Distinta — ${esc(d.tipo_distinta)} <span class="fmuted" style="text-transform:none;letter-spacing:0;font-weight:600">· ${nIncl}/${d.righe.length} inclusi</span> <span class="lnk" onclick="ddRigenera()">⟳ Rigenera dalla distinta</span></div>
       <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
       <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
-      <div class="dd-sec">Mail RDO <span class="lnk" onclick="openTemplates()">gestisci template</span></div>
-      <div class="dd-mailgrid">
-        <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
-        <div><label class="fl">CC</label><input class="dd-fld" id="ddCc" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
-        <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
-      </div>
-      <select class="dd-fld" id="ddTpl" style="margin-bottom:8px" onchange="ddApplyTemplate()"></select>
-      <input class="dd-fld" id="ddOgg" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
-      <textarea class="dd-fld" id="ddCorpo">${esc(d.corpo||'')}</textarea>
-      <div class="dd-sec">Allegati alla mail <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna anteprima</span></div>
-      <div class="dd-alleg">
-        <div class="ai" onclick="ddExport('pdf')"><span class="fi-ic pdf">PDF</span> Distinta RDO + richiesta (PDF) <span class="open">apri ↗</span></div>
-        <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
-      </div>
-      <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
     </div>
     <div class="dd-ft">
       <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
