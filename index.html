@@ -387,6 +387,9 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .dd-dwg .di .dc{font-family:ui-monospace,monospace;font-weight:700;color:var(--br)}
 .dd-dwg .di .dn{color:var(--t2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .dd-dwg .di .open{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);white-space:nowrap}
+/* pulsante Aggiorna contenuto (prominente) */
+.btn-aggiorna{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;border:1.5px solid var(--go-d);background:rgba(245,168,35,.12);color:var(--go-d);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;transition:all .12s}
+.btn-aggiorna:hover{background:var(--go-d);color:#fff}
 .panel{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
 
 /* ── COSTI ── */
@@ -937,7 +940,6 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fgLav"><label class="fl">Lavorazioni meccaniche <span class="fmuted" style="font-weight:600">→ comandano il match dei costruttivi</span></label><div class="chips" id="chips_lav" onclick="document.getElementById('chipin_lav').focus()"></div><div class="fhint">Ogni costruttivo con una di queste lavorazioni (nelle categorie sopra) viene assegnato a questo terzista. Voci dal vocabolario.</div></div>
       <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
       <div class="fg" id="fgTipi"><label class="fl">Tipi commerciali <span class="fmuted" style="font-weight:600">→ comandano il match dei commerciali</span></label><div class="chips" id="chips_tipi" onclick="document.getElementById('chipin_tipi').focus()"></div><div class="fhint">Ogni commerciale con uno di questi tipi viene assegnato a questo fornitore (se è l'unico che lo copre). Voci dal vocabolario tipi.</div></div>
-      <div class="fg"><label class="fl">Spedizione</label><select class="fld" id="fSped"><option value="0">A nostro carico (la organizziamo noi)</option><option value="1">Inclusa dal fornitore (franco ns. sede)</option></select></div>
       <div class="fg" id="fgTratt"><label class="fl">Trattamenti termici / superficiali</label>
         <label class="fmt-c"><input type="checkbox" id="fFornTratt"> Il fornitore fornisce i trattamenti</label>
         <div class="fhint">Se spuntato, nella RDO si specifica che i trattamenti sono a carico del fornitore; altrimenti che li forniamo noi.</div></div>
@@ -2275,9 +2277,13 @@ function renderDdEditor(d){
       :`<div class="dd-ctok">✓ Modalità di fornitura indicata.</div>`;
   }
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
+  const dwgCnt={};dwg.forEach(x=>dwgCnt[x.ext]=(dwgCnt[x.ext]||0)+1);
+  const dwgFmtTxt=Object.keys(dwgCnt).map(k=>k.toUpperCase()+' '+dwgCnt[k]).join(' · ')||'0';
   const dwgHtml=dwg.length
-    ?dwg.map(x=>`<div class="di" data-prevpdf="${esc(x.path)}" data-prevcap="${esc(x.cod)}" onclick="window.open('${jsq(fileUrl(x.path))}','_blank')"><span class="fi-ic pdf">PDF</span><span class="dc">${esc(x.cod)}</span><span class="dn">${esc(x.den||'')}</span><span class="open">apri ↗</span></div>`).join('')
-    :`<div class="fmuted" style="padding:6px 2px;font-size:11px">Nessun ${isComm?'datasheet':'disegno'} PDF collegato ai pezzi inclusi.</div>`;
+    ?dwg.map(x=>{const isPdf=x.ext==='pdf';const ic=['pdf','dwg','dxf','xlsx','xls','step','stp'].includes(x.ext)?x.ext:'oth';
+      const prev=isPdf?` data-prevpdf="${esc(x.path)}" data-prevcap="${esc(x.cod)}"`:'';
+      return `<div class="di"${prev} onclick="window.open('${jsq(fileUrl(x.path))}','_blank')"><span class="fi-ic ${ic}">${x.ext.toUpperCase()}</span><span class="dc">${esc(x.cod)}</span><span class="dn">${esc(x.den||'')}</span><span class="open">${isPdf?'apri ↗':'scarica ↗'}</span></div>`;}).join('')
+    :`<div class="fmuted" style="padding:6px 2px;font-size:11px">Nessun ${isComm?'datasheet':'disegno'} (nei formati richiesti dal fornitore) collegato ai pezzi inclusi.</div>`;
   const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
   const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf`;
   document.getElementById('ddEditor').innerHTML=`
@@ -2289,14 +2295,14 @@ function renderDdEditor(d){
     <div class="dd-body">
       <div class="dd-split">
         <div class="dd-mailcol">
-          <div class="dd-sec">Mail RDO <span class="lnk" onclick="ddAggiorna()" title="Risincronizza testo mail e rigenera i file allegati dal progetto">⟳ Aggiorna mail e file</span></div>
+          <div class="dd-sec">Mail RDO</div>
           <div class="dd-mailgrid">
-            <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
-            <div><label class="fl">CC</label><input class="dd-fld" id="ddCc" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
-            <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
+            <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" onchange="ddAutosave()" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
+            <div><label class="fl">CC</label><input class="dd-fld" id="ddCc" onchange="ddAutosave()" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
+            <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn" onchange="ddAutosave()" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
           </div>
-          <input class="dd-fld" id="ddOgg" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
-          <textarea class="dd-fld" id="ddCorpo">${esc(d.corpo||'')}</textarea>
+          <input class="dd-fld" id="ddOgg" onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
+          <textarea class="dd-fld" id="ddCorpo" onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
           <div class="dd-opts">
             <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel inviato al fornitore</span></div>
             ${optsHtml}
@@ -2320,21 +2326,18 @@ function renderDdEditor(d){
       <details class="dd-coll">
         <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
         <div class="dd-collbody">
-          <div style="text-align:right;margin-bottom:6px"><span class="lnk" style="color:var(--go-d);font-size:10px;font-weight:700;cursor:pointer" onclick="ddRigenera()">⟳ Rigenera dalla distinta</span></div>
           <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
           <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
         </div>
       </details>
       <details class="dd-coll">
-        <summary>🖼 ${dwgLbl} <span class="cnt">${dwg.length}</span></summary>
+        <summary>🖼 ${dwgLbl} allegati <span class="cnt">${dwgFmtTxt}</span></summary>
         <div class="dd-collbody"><div class="dd-dwg">${dwgHtml}</div></div>
       </details>
     </div>
     <div class="dd-ft">
       <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
-      <button class="btn btn-ghost btn-sm" onclick="ddSave()">💾 Salva</button>
-      <button class="btn btn-ghost btn-sm" onclick="ddExport('pdf')">⬇ PDF</button>
-      <button class="btn btn-ghost btn-sm" onclick="ddExport('xlsx')">⬇ Excel</button>
+      <button class="btn btn-aggiorna" onclick="ddAggiorna()" title="Rigenera distinta, file allegati e testo mail dal progetto">🔄 Aggiorna contenuto</button>
       <div style="margin-left:auto;display:flex;gap:8px">
         ${st==='bozza'?(ctBlock
           ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Seleziona un'opzione per il conto terzi">✓ Approva</button>`
@@ -2346,10 +2349,15 @@ function renderDdEditor(d){
 }
 function ddDisegniFiles(d){
   const c=commesse.find(x=>x.id===d.commessa_id);const parti=(c&&c._parti)||[];
+  const forn=fornitori.find(x=>x.id===d.fornitore_id);
+  // mostra i file nei formati richiesti dalla scheda fornitore (PDF/DWG/DXF/STEP); fallback: tutti
+  let allow=(forn&&forn.formati_preferiti||'').toLowerCase().split(/[,\s]+/).filter(Boolean);
+  if(!allow.length)allow=['pdf','dwg','dxf','step','stp'];
+  if(d.tipo_distinta==='commerciale'&&!allow.includes('pdf'))allow.push('pdf'); // i datasheet sono PDF
   const incl=new Set((d.righe||[]).filter(r=>r.incl!==false&&r.parte_id).map(r=>r.parte_id));
   const out=[];
   parti.filter(p=>incl.has(p.id)).forEach(p=>{
-    pFiles(p).filter(f=>fileExt(f)==='pdf').forEach(path=>out.push({path,cod:p.numero_parte,den:p.denominazione}));
+    pFiles(p).forEach(path=>{const ext=fileExt(path);if(allow.includes(ext))out.push({path,cod:p.numero_parte,den:p.denominazione,ext});});
   });
   return out;
 }
@@ -2358,9 +2366,11 @@ async function ddOpt(key,checked){
   try{await ddPersist();}catch{}
   renderDdEditor(DD.data);
 }
+function ddAutosave(){ddPersist().catch(()=>{});}
 async function ddAggiorna(){
+  if(DD.data&&DD.data.mail_custom&&!confirm('Aggiornare il contenuto dal progetto? Le modifiche manuali al testo della mail verranno sostituite.'))return;
   try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/aggiorna`,{method:'POST'});if(!r.ok)throw 0;
-    DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);renderDdNav&&renderDdNav();toast('Mail e file aggiornati dal progetto','ok');
+    DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);renderDdNav&&renderDdNav();toast('Contenuto aggiornato dal progetto','ok');
   }catch{toast('Errore aggiornamento',true);}
 }
 function ddSetBrand(b){DD.data.brand=b;renderDdEditor(DD.data);}
@@ -2564,7 +2574,6 @@ function openForn(id){
   chipInit('fnm',(ed&&ed.tag_fornitori)?ed.tag_fornitori:[], {suggest:PROP.fornitori});
   chipInit('tipi',(ed&&ed.tag_tipi)?ed.tag_tipi:[], {suggest:PROP.tipi});
   if(document.getElementById('fBlack'))document.getElementById('fBlack').checked=ed?!!ed.blacklist:false;
-  document.getElementById('fSped').value=ed&&ed.spedizione_inclusa?'1':'0';
   document.getElementById('fFornTratt').checked=ed?!!ed.fornisce_trattamenti:false;
   fornTipoToggle();fornModalitaToggle();
   clearErr(['fNomeErr','fToErr'],['fNome']);mOpen('mForn');
@@ -2586,7 +2595,7 @@ async function salvaForn(){
   const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
   const tagTipi=tipo==='commerciale'?chipVals('tipi'):[];
   const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim(),
-    spedizione_inclusa:document.getElementById('fSped').value==='1',fornisce_trattamenti:tipo==='terzista'&&document.getElementById('fFornTratt').checked};
+    fornisce_trattamenti:tipo==='terzista'&&document.getElementById('fFornTratt').checked};
   if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
