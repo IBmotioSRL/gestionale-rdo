@@ -308,7 +308,22 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .dd-prevhd{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:10px}
 .dd-prevhd .lnk{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
 .dd-prevhd .lnk:last-child{margin-left:auto}
-@media(max-width:880px){.dd-split{grid-template-columns:1fr}.dd-prevcol{position:static}}
+@media(max-width:980px){.dd-split{grid-template-columns:1fr}.dd-prevcol{position:static}}
+/* master-detail: elenco RDO a sx + editor a dx, cambio RDO al volo */
+.rdo-edwrap{display:grid;grid-template-columns:264px 1fr;gap:14px;align-items:start;padding:14px}
+.rdo-ednav{position:sticky;top:6px;max-height:calc(100vh - 110px);overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--surf);padding:8px}
+.rdo-ednav .nav-grp{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);padding:9px 8px 4px;position:sticky;top:-8px;background:var(--surf);z-index:1}
+.nav-it{display:flex;align-items:center;gap:9px;padding:8px;border-radius:9px;cursor:pointer;margin-bottom:3px;border:1px solid transparent}
+.nav-it:hover{background:var(--bg)}
+.nav-it.on{background:var(--go);border-color:var(--go-d)}
+.nav-av{width:30px;height:30px;border-radius:8px;color:#fff;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.nav-tx{min-width:0;flex:1}
+.nav-tx .nn{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-tx .ss{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-st{font-size:9px;font-weight:800;padding:1px 6px;border-radius:20px;flex:0 0 auto}
+.rdo-edmain{min-width:0}
+.rdo-edmain .dd-body{max-height:none}
+@media(max-width:980px){.rdo-edwrap{grid-template-columns:1fr}.rdo-ednav{position:static;max-height:220px}}
 .dd-sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
 .dd-sec:first-child{margin-top:2px}
 .dd-sec .lnk{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
@@ -1896,7 +1911,7 @@ function renderRdoView(){
   document.getElementById('rdoBtnShip').style.display=RV.mode==='list'?'inline-flex':'none';
   if(RV.mode==='list'){document.getElementById('rdoList').style.display='block';setRdoHdr("Richieste d'Offerta","Seleziona una commessa per preparare le RDO");rdoRenderList();}
   else if(RV.mode==='work'){document.getElementById('rdoWork').style.display='block';rdoRenderWork();}
-  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';}
+  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';setRdoHdr("Richieste d'Offerta","Scegli una RDO dall'elenco a sinistra e modificala — cambio al volo");}
   else if(RV.mode==='ship'){document.getElementById('rdoShip').style.display='block';setRdoHdr('Spedizione RDO','Stato di tutte le richieste — invia le approvate (anche più insieme)');rdoRenderShip();}
 }
 // compat: vecchi refresh chiamano renderRDO()
@@ -1965,12 +1980,43 @@ function rdoSidePanel(c,fid,ps){
     <button class="rsp-open" onclick="rdoOpenEditor(${c.id},${fid})">Apri RDO →</button></div>`;
 }
 
-/* ── livello 3: editor RDO (riusa renderDdEditor) ── */
+/* ── livello 3: editor RDO master-detail (elenco RDO a sx + editor a dx) ── */
 async function rdoOpenEditor(cid,fid){
   RV.mode='edit';RV.cid=cid;RV.fid=fid;S.projId=cid;
-  document.getElementById('rdoEdit').innerHTML='<div id="ddEditor" class="panel"></div>';
+  document.getElementById('rdoEdit').innerHTML=
+    `<div class="rdo-edwrap"><div class="rdo-ednav" id="ddNav"></div><div class="rdo-edmain"><div id="ddEditor" class="panel"></div></div></div>`;
   renderRdoView();
+  await loadDdList();renderDdNav();
   await openDd(cid,fid);
+  await loadDdList();renderDdNav();
+}
+// elenco di tutte le RDO potenziali (ogni fornitore assegnato di ogni commessa), per cambiare al volo
+function renderDdNav(){
+  const nav=document.getElementById('ddNav');if(!nav)return;
+  let h='';
+  commesse.forEach(c=>{
+    const parti=flatParti(c);const byF={};
+    parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
+    const fids=Object.keys(byF);if(!fids.length)return;
+    h+=`<div class="nav-grp">${esc(c.codice)} · ${esc(c.nome)}</div>`;
+    fids.forEach(fid=>{
+      const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
+      const on=String(RV.cid)===String(c.id)&&String(RV.fid)===String(fid);
+      const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
+      const code=dd&&dd.codice_rdo?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rdo)}</b> · `:'';
+      const stb=dd?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
+      h+=`<div class="nav-it${on?' on':''}" onclick="rdoNavOpen(${c.id},${fid})" oncontextmenu="ctxRdoForn(event,${c.id},${fid})">
+        <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
+        <div class="nav-tx"><div class="nn">${esc(f.nome)}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${stb}</div>`;
+    });
+  });
+  nav.innerHTML=h||'<div class="fmuted" style="padding:10px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
+}
+async function rdoNavOpen(cid,fid){
+  RV.cid=cid;RV.fid=fid;S.projId=cid;
+  renderDdNav();
+  await openDd(cid,fid);
+  await loadDdList();renderDdNav();
 }
 async function rdoQuickStato(cid,fid,stato){
   try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}/stato?stato=${stato}`,{method:'POST'});
