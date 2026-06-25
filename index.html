@@ -2264,15 +2264,15 @@ function renderDdEditor(d){
     ['tratt_term_forn','Trattamenti termici a carico del fornitore'],
     ['tratt_sup_forn','Trattamenti superficiali a carico del fornitore'],
     ['spedizione_ib','Spedizione a carico di IB Motion S.r.l.'],
-    ['particolari_ib','Presenza di particolari forniti da IB Motion come a disegno'],
-    ['materiale_forn','Il materiale è di fornitura del fornitore']
+    ['particolari_ib','Particolari forniti da IB Motion come a disegno (conto lavorazione)'],
+    ['materiale_forn','Fornitura completa del pezzo a carico del fornitore (materiale incluso)']
   ];
   const optsHtml=optDefs.map(([k,lbl])=>`<label><input type="checkbox" ${o[k]?'checked':''} onchange="ddOpt('${k}',this.checked)"><span>${lbl}</span></label>`).join('');
   let ctHtml='';
   if(ctReq){
     ctHtml=ctBlock
-      ?`<div class="dd-ctwarn">⚠<span>Conto terzi: ci sono particolari in conto lavoro / commerciali lavorati. Seleziona un'opzione per il conto terzi — «particolari forniti da IB Motion» <b>oppure</b> «materiale di fornitura del fornitore» — altrimenti la RDO non si può approvare.</span></div>`
-      :`<div class="dd-ctok">✓ Conto terzi: opzione selezionata.</div>`;
+      ?`<div class="dd-ctwarn">⚠<span>Ci sono particolari costruttivi / commerciali lavorati: indica come avviene la fornitura — <b>conto lavorazione</b> (materiale fornito da IB Motion) <b>oppure</b> <b>fornitura completa</b> (pezzo finito a carico del fornitore) — altrimenti la RDO non si può approvare.</span></div>`
+      :`<div class="dd-ctok">✓ Modalità di fornitura indicata.</div>`;
   }
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
   const dwgHtml=dwg.length
