@@ -316,6 +316,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .nav-it{display:flex;align-items:center;gap:9px;padding:8px;border-radius:9px;cursor:pointer;margin-bottom:3px;border:1px solid transparent}
 .nav-it:hover{background:var(--bg)}
 .nav-it.on{background:var(--go);border-color:var(--go-d)}
+.nav-it.sel{background:rgba(245,168,35,.16);border-color:var(--go-d)}
+.nav-it.sel.on{background:var(--go)}
+.nav-it.sel::after{content:'✓';margin-left:auto;font-weight:900;color:var(--go-d);font-size:12px}
+.nav-it{user-select:none}
+.nav-selbar{display:flex;align-items:center;gap:6px;padding:7px 8px;margin-bottom:8px;background:var(--go);border:1px solid var(--go-d);border-radius:10px;font-size:11px;font-weight:800;color:#3a2a08;position:sticky;top:-8px;z-index:2}
+.nav-selbar button{border:1px solid var(--go-d);background:#fff;border-radius:7px;padding:4px 9px;font-size:10.5px;font-weight:800;cursor:pointer;color:var(--t1)}
+.nav-selbar button:hover{background:#fff7e8}
+.nav-selbar .g{padding:4px 8px}
 .nav-av{width:30px;height:30px;border-radius:8px;color:#fff;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .nav-tx{min-width:0;flex:1}
 .nav-tx .nn{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1989,7 +1997,7 @@ function rdoSidePanel(c,fid,ps){
 
 /* ── livello 3: editor RDO master-detail (elenco RDO a sx + editor a dx) ── */
 async function rdoOpenEditor(cid,fid){
-  RV.mode='edit';RV.cid=cid;RV.fid=fid;S.projId=cid;
+  RV.mode='edit';RV.cid=cid;RV.fid=fid;S.projId=cid;NAVSEL.clear();NAVANCHOR=null;
   document.getElementById('rdoEdit').innerHTML=
     `<div class="rdo-edwrap"><div class="rdo-ednav" id="ddNav"></div><div class="rdo-edmain"><div id="ddEditor" class="panel"></div></div></div>`;
   renderRdoView();
@@ -1998,9 +2006,18 @@ async function rdoOpenEditor(cid,fid){
   await loadDdList();renderDdNav();
 }
 // elenco di tutte le RDO potenziali (ogni fornitore assegnato di ogni commessa), per cambiare al volo
+// + multi-selezione (Ctrl = singoli, Shift = intervallo) con azioni di gruppo da tasto destro
+let NAVITEMS=[], NAVSEL=new Set(), NAVANCHOR=null;
+const navKey=(cid,fid)=>cid+':'+fid;
 function renderDdNav(){
   const nav=document.getElementById('ddNav');if(!nav)return;
+  NAVITEMS=[];
   let h='';
+  if(NAVSEL.size){
+    h+=`<div class="nav-selbar"><span style="flex:1">${NAVSEL.size} selezionate</span>
+      <button onclick="navBulkStato('bozza')" title="Riporta in bozza tutte le selezionate">↩ Riporta a bozza</button>
+      <button class="g" onclick="navClearSel()" title="Deseleziona">✕</button></div>`;
+  }
   commesse.forEach(c=>{
     const parti=flatParti(c);const byF={};
     parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
@@ -2008,17 +2025,75 @@ function renderDdNav(){
     h+=`<div class="nav-grp">${esc(c.codice)} · ${esc(c.nome)}</div>`;
     fids.forEach(fid=>{
       const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
+      const idx=NAVITEMS.length;NAVITEMS.push({cid:c.id,fid:+fid});
       const on=String(RV.cid)===String(c.id)&&String(RV.fid)===String(fid);
+      const sel=NAVSEL.has(navKey(c.id,+fid));
       const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
       const code=dd&&dd.codice_rdo?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rdo)}</b> · `:'';
-      const stb=dd?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
-      h+=`<div class="nav-it${on?' on':''}" onclick="rdoNavOpen(${c.id},${fid})" oncontextmenu="ctxRdoForn(event,${c.id},${fid})">
+      const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
+      h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
         <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
         <div class="nav-tx"><div class="nn">${esc(f.nome)}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${stb}</div>`;
     });
   });
   nav.innerHTML=h||'<div class="fmuted" style="padding:10px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
 }
+function navClick(e,idx){
+  const it=NAVITEMS[idx];if(!it)return;
+  if(e.shiftKey&&NAVANCHOR!=null&&NAVITEMS[NAVANCHOR]){
+    const a=Math.min(NAVANCHOR,idx),b=Math.max(NAVANCHOR,idx);
+    for(let i=a;i<=b;i++)NAVSEL.add(navKey(NAVITEMS[i].cid,NAVITEMS[i].fid));
+    renderDdNav();return;
+  }
+  if(e.ctrlKey||e.metaKey){
+    const k=navKey(it.cid,it.fid);NAVSEL.has(k)?NAVSEL.delete(k):NAVSEL.add(k);
+    NAVANCHOR=idx;renderDdNav();return;
+  }
+  NAVSEL.clear();NAVANCHOR=idx;rdoNavOpen(it.cid,it.fid);
+}
+function navCtx(e,idx){
+  const it=NAVITEMS[idx];if(!it)return;
+  const k=navKey(it.cid,it.fid);
+  if(!NAVSEL.has(k)){NAVSEL.clear();NAVSEL.add(k);NAVANCHOR=idx;renderDdNav();}
+  const n=NAVSEL.size;
+  if(n>1){
+    showCtx(e,`${n} RDO selezionate`,[
+      ['↩ Riporta a bozza',`navBulkStato('bozza')`],
+      ['✓ Approva',`navBulkStato('approvata')`],
+      {sep:1},
+      ['⬇ Scarica PDF (tutte)',`navBulkExport('pdf')`],
+      ['⬇ Scarica Excel (tutte)',`navBulkExport('xlsx')`],
+      {sep:1},
+      ['✕ Deseleziona',`navClearSel()`]
+    ]);
+  }else{
+    const f=fornitori.find(x=>x.id==it.fid);
+    showCtx(e,f?f.nome:'RDO',[
+      ['✉ Apri RDO',`navOpenSingle(${it.cid},${it.fid})`],
+      ['✓ Approva ora',`rdoQuickStatoNav(${it.cid},${it.fid},'approvata')`],
+      ['↩ Riporta a bozza',`rdoQuickStatoNav(${it.cid},${it.fid},'bozza')`],
+      {sep:1},
+      ['⬇ Scarica distinta PDF',`window.open('${API}/api/commesse/${it.cid}/rdo/${it.fid}/export?fmt=pdf','_blank')`],
+      ['⬇ Scarica distinta Excel',`window.open('${API}/api/commesse/${it.cid}/rdo/${it.fid}/export?fmt=xlsx','_blank')`]
+    ]);
+  }
+}
+function navClearSel(){NAVSEL.clear();NAVANCHOR=null;hideCtx();renderDdNav();}
+function navOpenSingle(cid,fid){NAVSEL.clear();NAVANCHOR=null;rdoNavOpen(cid,fid);}
+async function navBulkStato(stato){
+  const keys=[...NAVSEL];if(!keys.length)return;hideCtx();
+  let ok=0,fail=0;
+  for(const key of keys){const [cid,fid]=key.split(':');
+    try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}/stato?stato=${stato}`,{method:'POST'});r.ok?ok++:fail++;}catch{fail++;}
+  }
+  const verbo=stato==='bozza'?'riportate in bozza':(stato==='approvata'?'approvate':'aggiornate');
+  toast(`${ok} RDO ${verbo}${fail?' · '+fail+' non riuscite':''}`,fail?true:'ok');
+  NAVSEL.clear();NAVANCHOR=null;
+  await loadDdList();renderDdNav();
+  if(RV.mode==='ship')rdoRenderShip();
+}
+function navBulkExport(fmt){hideCtx();[...NAVSEL].forEach(key=>{const [cid,fid]=key.split(':');window.open(`${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=${fmt}`,'_blank');});}
+async function rdoQuickStatoNav(cid,fid,stato){await rdoQuickStato(cid,fid,stato);renderDdNav();}
 async function rdoNavOpen(cid,fid){
   RV.cid=cid;RV.fid=fid;S.projId=cid;
   renderDdNav();
