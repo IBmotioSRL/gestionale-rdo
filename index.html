@@ -444,6 +444,59 @@ table.ftable tbody tr:hover{background:rgba(245,168,35,.06)}
 .fbds{background:rgba(88,86,214,.08);color:#4B49B0}.fbmisc{background:rgba(120,100,80,.08);color:var(--t2)}
 
 /* ── RDO VIEW ── */
+/* RDO — nuovo flusso a livelli */
+.rdo-clist{display:flex;flex-direction:column;gap:8px;padding:14px}
+.rdo-crow{display:flex;align-items:center;gap:11px;background:var(--surf);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);padding:13px 15px;cursor:pointer;transition:border-color .15s,transform .05s}
+.rdo-crow:hover{border-color:var(--go-d);background:rgba(245,168,35,.03)}
+.rdo-crow:active{transform:scale(.997)}
+.rdo-cli{font-size:11px;color:var(--t3)}
+.rdo-crow-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+.rdo-arr{font-size:11px;color:var(--t3)}
+.rdo-chead{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--bd);background:var(--surf)}
+.rwc-wrap{display:grid;grid-template-columns:340px 1fr;gap:14px;padding:14px;align-items:start}
+.rwc-cards{display:flex;flex-direction:column;gap:8px}
+.rwc{display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--bd);border-radius:11px;box-shadow:var(--sh);padding:11px 12px;cursor:pointer;transition:border-color .15s}
+.rwc:hover{border-color:var(--go-d)}
+.rwc.on{border-color:var(--go-d);background:rgba(245,168,35,.06);box-shadow:0 0 0 1px var(--go-d) inset}
+.rwc.warn{border-color:rgba(255,59,48,.3)}.rwc.warn:hover{border-color:#C00}
+.rwc-av{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800;flex:0 0 auto}
+.rwc-n{font-size:13px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rwc-s{font-size:10px;color:var(--t3)}
+.rwc-arr{margin-left:auto;font-size:16px;color:var(--t3)}
+.rwc-empty{padding:40px 20px;text-align:center;color:var(--t3);font-size:12px;border:1px dashed var(--bd);border-radius:12px}
+.rwc-side{position:sticky;top:14px}
+.rsp{background:var(--surf);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);overflow:hidden;display:flex;flex-direction:column}
+.rsp-hd{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--bd)}
+.rsp-n{font-size:14px;font-weight:800}
+.rsp-t{font-size:10px;color:var(--t3);text-transform:capitalize}
+.rsp-contacts{padding:10px 16px;border-bottom:1px solid var(--bd);font-size:11.5px;display:flex;flex-direction:column;gap:3px}
+.rsp-contacts a{color:var(--go-d);text-decoration:none}
+.rsp-sec{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);padding:11px 16px 6px}
+.rsp-list{max-height:46vh;overflow-y:auto;padding:0 8px 8px}
+.rsp-row{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;font-size:11.5px}
+.rsp-row.clk{cursor:pointer}.rsp-row.clk:hover{background:rgba(245,168,35,.06)}
+.rsp-q{font-weight:800;color:var(--go-d);font-size:10px;min-width:28px}
+.rsp-nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsp-nm b{font-family:ui-monospace,monospace}
+.rsp-f{font-size:13px}
+.rsp-open{margin:12px 16px 16px;padding:12px;border:0;border-radius:10px;background:var(--go-d);color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.rsp-open:hover{filter:brightness(1.05)}
+.ship-bar{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd);background:var(--surf);position:sticky;top:0;z-index:2}
+.ship-all{font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer}
+.ship-list{padding:8px 14px 14px}
+.ship-grp{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);padding:12px 4px 5px}
+.ship-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--bd);border-radius:10px;margin-bottom:6px;cursor:pointer;background:var(--surf)}
+.ship-row:hover{border-color:var(--go-d)}
+.ship-row.off{opacity:.62}
+.ship-row input[type=checkbox]{width:16px;height:16px;flex:0 0 auto}
+.ship-nm{display:flex;flex-direction:column;min-width:0;flex:1}
+.ship-nm b{font-size:12.5px}.ship-nm span{font-size:10px;color:var(--t3)}
+.ship-open{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;white-space:nowrap}
+.ddx{text-align:center;width:30px}
+.ddx input{cursor:pointer}
+tr.ddrow-off td{opacity:.4;text-decoration:line-through}
+tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
+.ddx-hint{font-size:10.5px;color:var(--t3);margin:7px 2px 0;font-style:italic}
 .rdo-grid{display:flex;flex-direction:column;gap:10px}
 .rdo-proj{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);overflow:hidden}
 .rdo-ph{display:flex;align-items:center;gap:9px;padding:11px 14px;cursor:pointer;user-select:none}
@@ -720,25 +773,19 @@ textarea.fld{resize:vertical;min-height:60px}
   <!-- ════ RDO ════ -->
   <div id="v-rdo" class="view">
     <div class="vtop"><div class="vtop-row">
-      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div><div class="h1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub">Distinte, mail e approvazione</div></div></div>
-      <div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="openTemplates()" title="Gestisci i template delle mail RDO">✉ Template mail</button></div>
-    </div></div>
-    <div class="rdo-subtabs">
-      <div class="rdo-subtab on" id="rsForn" onclick="rdoSub('forn')">Per fornitore</div>
-      <div class="rdo-subtab" id="rsDist" onclick="rdoSub('dist')">Distinte &amp; approvazione</div>
-    </div>
-    <div class="vscroll">
-      <div id="rdoByForn"><div class="rdo-grid" id="rdogrid"></div></div>
-      <div id="rdoDistView" style="display:none">
-        <div class="dd-wrap">
-          <div class="panel">
-            <div class="dd-ph">Tutte le distinte <span class="cnt" id="ddCnt">0</span></div>
-            <div id="ddList" class="dd-list"></div>
-          </div>
-          <div class="panel" id="ddEditor"><div class="dd-empty">Seleziona una distinta a sinistra per prepararla, approvarla e inviarla.</div></div>
-        </div>
+      <div style="display:flex;align-items:center;gap:6px"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <button class="hb" id="rdoBack" style="display:none" onclick="rdoBack()" title="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div><div class="h1" id="rdoH1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub" id="rdoVsub">Seleziona una commessa per preparare le RDO</div></div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="rdoBtnShip" onclick="rdoGoShip()" title="Pannello unico: stato e invio delle RDO">📤 Spedizione</button>
+        <button class="btn btn-ghost" onclick="openTemplates()" title="Gestisci i template delle mail RDO">✉ Template mail</button>
       </div>
+    </div></div>
+    <div class="vscroll">
+      <div id="rdoList"></div>
+      <div id="rdoWork" style="display:none"></div>
+      <div id="rdoEdit" style="display:none"></div>
+      <div id="rdoShip" style="display:none"></div>
     </div>
   </div>
 
@@ -962,7 +1009,7 @@ function go(v,pid){
   document.getElementById('v-'+v).classList.add('on');
   if(v==='dash')renderDash();
   if(v==='proj')renderProjGrid();
-  if(v==='rdo')rdoSub('forn');
+  if(v==='rdo')rdoEnter();
   if(v==='costi')renderCosti();
   if(v==='forn')renderForn();
 }
@@ -1036,7 +1083,7 @@ function renderProjGrid(){
   if(!commesse.length){g.innerHTML=emptyHtml('Nessun progetto','Crea il primo progetto indicando la cartella con la distinta base Excel.','openNuovo()','Nuovo progetto');return;}
   g.innerHTML='<div class="pgrid">'+commesse.map(c=>{const s=projStats(c);const pct=s.tot?Math.round((s.tot-s.daSmistare)/s.tot*100):0;const dt=fmtDate(c.importata_at);
     const stChip=s.tot===0?'<span class="chip cgr">vuoto</span>':pct===100?'<span class="chip cg">Completo</span>':s.daSmistare<s.tot?'<span class="chip co">In corso</span>':'<span class="chip cgr">Da smistare</span>';
-    return `<div class="pcard" onclick="go('pdet',${c.id})"><div class="pctop"></div><div class="pcb">
+    return `<div class="pcard" onclick="go('pdet',${c.id})" oncontextmenu="ctxProj(event,${c.id})"><div class="pctop"></div><div class="pcb">
       <div class="pchd"><span class="pccod">${esc(c.codice)}</span><span class="pcdate">${dt}</span></div>
       <div class="pcname">${esc(c.nome)}</div><div class="pccli">${esc(c.cliente||'—')}</div>
       <div class="pcbb"><div class="pcbf${pct===100?' done':''}" style="width:${pct}%"></div></div>
@@ -1814,18 +1861,191 @@ let TEMPLATES=[];
 async function loadTemplates(){try{const r=await fetch(API+'/api/template-mail');TEMPLATES=r.ok?await r.json():[];}catch{TEMPLATES=[];}}
 function fillTplSelect(sel,val){if(!sel)return;sel.innerHTML='<option value="">— nessuno (testo standard) —</option>'+TEMPLATES.map(t=>`<option value="${t.id}">${esc(t.nome)}</option>`).join('');sel.value=val?String(val):'';}
 
-function rdoSub(which){
-  document.getElementById('rsForn').classList.toggle('on',which==='forn');
-  document.getElementById('rsDist').classList.toggle('on',which==='dist');
-  document.getElementById('rdoByForn').style.display=which==='forn'?'block':'none';
-  document.getElementById('rdoDistView').style.display=which==='dist'?'block':'none';
-  if(which==='forn')renderRDO();else{loadTemplates().then(loadDdList);}
+/* ═══════════ RDO — router a livelli (lista commesse → workspace → editor + spedizione) ═══════════ */
+const RV={mode:'list',cid:null,fid:null,selForn:null};
+let SHIPSEL=new Set();
+function setRdoHdr(h1,sub){document.getElementById('rdoH1').textContent=h1;document.getElementById('rdoVsub').textContent=sub;}
+function rdoEnter(){RV.mode='list';RV.cid=null;RV.fid=null;RV.selForn=null;loadTemplates();renderRdoView();}
+function rdoBack(){
+  if(RV.mode==='edit'){RV.mode='work';renderRdoView();}
+  else if(RV.mode==='work'){RV.mode='list';RV.selForn=null;renderRdoView();}
+  else if(RV.mode==='ship'){RV.mode='list';renderRdoView();}
 }
+function renderRdoView(){
+  ['rdoList','rdoWork','rdoEdit','rdoShip'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('rdoBack').style.display=RV.mode==='list'?'none':'inline-flex';
+  document.getElementById('rdoBtnShip').style.display=RV.mode==='list'?'inline-flex':'none';
+  if(RV.mode==='list'){document.getElementById('rdoList').style.display='block';setRdoHdr("Richieste d'Offerta","Seleziona una commessa per preparare le RDO");rdoRenderList();}
+  else if(RV.mode==='work'){document.getElementById('rdoWork').style.display='block';rdoRenderWork();}
+  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';}
+  else if(RV.mode==='ship'){document.getElementById('rdoShip').style.display='block';setRdoHdr('Spedizione RDO','Stato di tutte le richieste — invia le approvate (anche più insieme)');rdoRenderShip();}
+}
+// compat: vecchi refresh chiamano renderRDO()
+function renderRDO(){if(S.v==='rdo')renderRdoView();}
+
+/* ── livello 1: lista commesse ── */
+function rdoRenderList(){
+  const el=document.getElementById('rdoList');
+  const active=commesse.filter(c=>flatParti(c).length);
+  if(!active.length){el.innerHTML=emptyHtml('Nessuna RDO','Importa un progetto e assegna i fornitori per generare le RDO.',"go('proj')",'Vai ai progetti');return;}
+  el.innerHTML='<div class="rdo-clist">'+active.map(c=>{
+    const parti=flatParti(c);const unass=parti.filter(p=>!p.fornitore_id).length;
+    const badge=unass?`<span class="rdo-warn">⚠ ${unass} non assegnati</span>`:`<span class="rdo-ok">✓ tutti assegnati</span>`;
+    return `<div class="rdo-crow" onclick="rdoOpenComm(${c.id})" oncontextmenu="ctxComm(event,${c.id})">
+      <span class="rdo-pcod">${esc(c.codice)}</span>
+      <span class="rdo-pname">${esc(c.nome)}</span>
+      ${c.cliente?`<span class="rdo-cli">${esc(c.cliente)}</span>`:''}
+      <span class="rdo-crow-r">${badge}<span class="rdo-arr">▶</span></span>
+    </div>`;
+  }).join('')+'</div>';
+}
+function rdoOpenComm(cid){RV.mode='work';RV.cid=cid;RV.selForn=null;S.projId=cid;renderRdoView();}
+
+/* ── livello 2: workspace commessa (card fornitori + scheda laterale) ── */
+function rdoRenderWork(){
+  const c=commesse.find(x=>x.id===RV.cid);
+  if(!c){RV.mode='list';return renderRdoView();}
+  setRdoHdr(c.codice+' · '+c.nome,'Fornitori della commessa — apri la scheda, poi «Apri RDO»');
+  const parti=flatParti(c);
+  const byF={};parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
+  const unass=parti.filter(p=>!p.fornitore_id);
+  let cards=Object.keys(byF).map(fid=>{
+    const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
+    const on=String(RV.selForn)===String(fid);
+    return `<div class="rwc${on?' on':''}" onclick="rdoSelForn(${fid})" oncontextmenu="ctxRdoForn(event,${c.id},${fid})">
+      <div class="rwc-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
+      <div style="min-width:0;flex:1"><div class="rwc-n">${esc(f.nome)}</div><div class="rwc-s">${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>
+      <span class="rwc-arr">›</span></div>`;
+  }).join('');
+  if(unass.length)cards+=`<div class="rwc warn" onclick="go('pdet',${c.id})"><div class="rwc-av" style="background:#9b2c2c">⚠</div><div style="min-width:0;flex:1"><div class="rwc-n">${unass.length} pezzi senza fornitore</div><div class="rwc-s">vai al progetto per assegnarli</div></div><span class="rwc-arr">›</span></div>`;
+  const side=RV.selForn?rdoSidePanel(c,RV.selForn,byF[RV.selForn]||[]):'<div class="rwc-empty">Seleziona un fornitore per vederne la scheda e i file gestiti per questa commessa.</div>';
+  document.getElementById('rdoWork').innerHTML=
+    `<div class="rdo-chead"><span class="rdo-pcod">${esc(c.codice)}</span><span class="rdo-pname">${esc(c.nome)}</span><span style="margin-left:auto">${unass.length?`<span class="rdo-warn">⚠ ${unass.length} non assegnati</span>`:`<span class="rdo-ok">✓ tutti assegnati</span>`}</span></div>
+     <div class="rwc-wrap"><div class="rwc-cards">${cards||'<div class="rwc-empty">Nessun fornitore assegnato.</div>'}</div><div class="rwc-side">${side}</div></div>`;
+}
+function rdoSelForn(fid){RV.selForn=fid;rdoRenderWork();}
+function rdoSidePanel(c,fid,ps){
+  const f=fornitori.find(x=>x.id==fid);if(!f)return '';
+  const mails=(f.emails_to&&f.emails_to.length)?f.emails_to:(f.email?[f.email]:[]);
+  const items=ps.slice().sort((a,b)=>(a.numero_parte>b.numero_parte?1:-1)).map(p=>{
+    const pdf=firstPdf(p);const nf=pFiles(p).length;
+    const ic=pdf?'📄':(nf?'📎':'—');const tip=pdf?'disegno/PDF':(nf?nf+' file':'nessun file');
+    return `<div class="rsp-row${pdf?' clk':''}" ${pdf?`onclick="apriFile('${jsq(pdf)}')"`:''} title="${esc(tip)}">
+      <span class="rsp-q">×${esc(p.quantita)}</span>
+      <span class="rsp-nm"><b>${esc(p.numero_parte)}</b> ${esc(p.denominazione||'')}</span>
+      <span class="rsp-f">${ic}</span></div>`;
+  }).join('');
+  return `<div class="rsp">
+    <div class="rsp-hd"><div class="rwc-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
+      <div style="min-width:0"><div class="rsp-n">${esc(f.nome)}</div><div class="rsp-t">${esc(f.tipo)}${f.modalita_ordine==='online'?' · shop online':''}</div></div></div>
+    <div class="rsp-contacts">${mails.map(e=>`<div>✉ <a href="mailto:${esc(e)}">${esc(e)}</a></div>`).join('')||'<div class="fmuted">Nessun indirizzo in rubrica</div>'}
+      ${(f.emails_cc&&f.emails_cc.length)?`<div class="fmuted">CC: ${esc(f.emails_cc.join(', '))}</div>`:''}</div>
+    <div class="rsp-sec">File gestiti per questa commessa (${ps.length})</div>
+    <div class="rsp-list">${items||'<div class="fmuted" style="padding:8px">Nessun pezzo</div>'}</div>
+    <button class="rsp-open" onclick="rdoOpenEditor(${c.id},${fid})">Apri RDO →</button></div>`;
+}
+
+/* ── livello 3: editor RDO (riusa renderDdEditor) ── */
+async function rdoOpenEditor(cid,fid){
+  RV.mode='edit';RV.cid=cid;RV.fid=fid;S.projId=cid;
+  document.getElementById('rdoEdit').innerHTML='<div id="ddEditor" class="panel"></div>';
+  renderRdoView();
+  await openDd(cid,fid);
+}
+async function rdoQuickStato(cid,fid,stato){
+  try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}/stato?stato=${stato}`,{method:'POST'});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+    toast(stato==='approvata'?'RDO approvata':'Stato aggiornato','ok');await loadDdList();if(RV.mode==='ship')rdoRenderShip();
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
+/* ── pannello unico di spedizione (stato + invio multiplo) ── */
+async function rdoGoShip(){RV.mode='ship';SHIPSEL=new Set();await loadDdList();renderRdoView();}
+function rdoRenderShip(){
+  const el=document.getElementById('rdoShip');
+  if(!DDLIST.length){el.innerHTML=emptyHtml('Nessuna RDO','Prepara le distinte dai fornitori delle commesse.');return;}
+  const byC={};DDLIST.forEach(x=>{(byC[x.commessa_id]=byC[x.commessa_id]||{cod:x.commessa_codice,nome:x.commessa_nome,items:[]}).items.push(x);});
+  const appr=DDLIST.filter(x=>x.stato==='approvata');
+  let rows='';
+  Object.values(byC).forEach(g=>{
+    rows+=`<div class="ship-grp">${esc(g.cod)} · ${esc(g.nome)}</div>`;
+    g.items.forEach(x=>{
+      const k=x.commessa_id+':'+x.fornitore_id;const can=x.stato==='approvata';
+      rows+=`<label class="ship-row${can?'':' off'}" oncontextmenu="ctxShip(event,${x.commessa_id},${x.fornitore_id})">
+        <input type="checkbox" ${can?'':'disabled'} ${SHIPSEL.has(k)?'checked':''} onchange="shipToggle('${k}')">
+        <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
+        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
+        <span class="dd-brand ${x.brand}">${x.brand}</span>
+        <span class="dd-st ${x.stato}">${x.stato}</span>
+        <span class="ship-open" onclick="event.preventDefault();rdoOpenEditor(${x.commessa_id},${x.fornitore_id})">apri ↗</span></label>`;
+    });
+  });
+  el.innerHTML=`<div class="ship-bar">
+      <label class="ship-all"><input type="checkbox" id="shipAll" onchange="shipSelAll(this.checked)"> Seleziona tutte le approvate (${appr.length})</label>
+      <button class="btn btn-go" onclick="shipSend()" style="margin-left:auto"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Invia selezionate (<span id="shipCnt">${SHIPSEL.size}</span>)</button>
+    </div>
+    <div class="ship-list">${rows}</div>
+    <div class="rdo-banner" style="margin:12px">⚠ Invio reale non ancora attivo (permessi Microsoft mancanti): le RDO vengono <b>segnate come inviate</b>, la mail non parte.</div>`;
+}
+function shipToggle(k){if(SHIPSEL.has(k))SHIPSEL.delete(k);else SHIPSEL.add(k);const c=document.getElementById('shipCnt');if(c)c.textContent=SHIPSEL.size;}
+function shipSelAll(on){SHIPSEL=new Set();if(on)DDLIST.filter(x=>x.stato==='approvata').forEach(x=>SHIPSEL.add(x.commessa_id+':'+x.fornitore_id));rdoRenderShip();}
+async function shipSend(){
+  const keys=[...SHIPSEL];if(!keys.length){toast('Seleziona almeno una RDO approvata');return;}
+  if(!confirm(`Inviare ${keys.length} RDO approvate insieme? (invio simulato)`))return;
+  let ok=0,err=0;const touched=new Set();
+  for(const k of keys){const [cid,fid]=k.split(':');
+    try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}/stato?stato=inviata`,{method:'POST'});if(r.ok){ok++;touched.add(+cid);}else err++;}catch{err++;}}
+  SHIPSEL=new Set();await loadDdList();rdoRenderShip();
+  touched.forEach(cid=>{if(S.projId===cid)refreshDetail();});
+  toast(`${ok} RDO inviate${err?' · '+err+' errori':''} (simulato)`,err?true:'ok');
+}
+
+/* ── menu tasto destro per sezione ── */
+function showCtx(e,title,items){
+  e.preventDefault();e.stopPropagation();
+  const mi=(label,fn,extra='')=>`<div class="mi ${extra}" onmousedown="event.preventDefault()" onclick="hideCtx();${fn}">${label}</div>`;
+  CTX.innerHTML=(title?`<div class="mh">${esc(title)}</div>`:'')+items.map(it=>it.sep?'<div class="sep"></div>':mi(it[0],it[1],it[2]||'')).join('');
+  let x=e.clientX,y=e.clientY;CTX.style.display='block';const r=CTX.getBoundingClientRect();
+  if(x+r.width>innerWidth)x-=r.width;if(y+r.height>innerHeight)y=Math.max(8,y-r.height);
+  CTX.style.left=x+'px';CTX.style.top=y+'px';
+}
+function ctxComm(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Commessa',[
+  ['📂 Apri RDO commessa',`rdoOpenComm(${cid})`],
+  ['🗂 Vai al progetto',`go('pdet',${cid})`],
+  {sep:1},
+  ['📤 Pannello spedizione',`rdoGoShip()`]
+]);}
+function ctxRdoForn(e,cid,fid){const f=fornitori.find(x=>x.id==fid);showCtx(e,f?f.nome:'Fornitore',[
+  ['✉ Apri RDO',`rdoOpenEditor(${cid},${fid})`],
+  ['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`],
+  {sep:1},
+  ['⬇ Scarica distinta PDF',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=pdf','_blank')`],
+  ['⬇ Scarica distinta Excel',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=xlsx','_blank')`]
+]);}
+function ctxShip(e,cid,fid){const f=fornitori.find(x=>x.id==fid);showCtx(e,f?f.nome:'RDO',[
+  ['✉ Apri editor RDO',`rdoOpenEditor(${cid},${fid})`],
+  ['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`],
+  ['↩ Rimetti in bozza',`rdoQuickStato(${cid},${fid},'bozza')`]
+]);}
+function ctxProj(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Progetto',[
+  ['🗂 Apri progetto',`go('pdet',${cid})`],
+  ['✉ Prepara RDO',`go('rdo');rdoOpenComm(${cid})`],
+  {sep:1},
+  ['📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(c?c.codice:'')}');toast&&toast('Codice copiato','ok')`]
+]);}
+function ctxFornCard(e,fid){const f=fornitori.find(x=>x.id==fid);if(!f)return;
+  const mail=(f.emails_to&&f.emails_to[0])||f.email||'';
+  showCtx(e,f.nome,[
+  ['✏️ Modifica scheda',`openForn(${fid})`],
+  ...(mail?[['📋 Copia email',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(mail)}');toast&&toast('Email copiata','ok')`]]:[]),
+  ...(f.url_shop?[['🔗 Apri shop',`window.open('${jsq(f.url_shop)}','_blank')`]]:[])
+]);}
 
 let DD=null, DDLIST=[];
 async function loadDdList(){try{const r=await fetch(API+'/api/rdo-list');DDLIST=r.ok?await r.json():[];}catch{DDLIST=[];}renderDdList();}
 function renderDdList(){
-  document.getElementById('ddCnt').textContent=DDLIST.length;
+  const cntEl=document.getElementById('ddCnt');if(!cntEl)return; // lista rimossa: il pannello Spedizione la sostituisce
+  cntEl.textContent=DDLIST.length;
   const byC={};DDLIST.forEach(x=>{(byC[x.commessa_id]=byC[x.commessa_id]||{cod:x.commessa_codice,nome:x.commessa_nome,items:[]}).items.push(x);});
   let h='';
   Object.values(byC).forEach(g=>{
@@ -1855,14 +2075,17 @@ function ddCols(d){
 }
 function renderDdEditor(d){
   const cols=ddCols(d);
-  const ths=cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
+  const ths='<th style="width:30px" title="Includi nella RDO">✓</th>'+cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
+  const nIncl=d.righe.filter(r=>r.incl!==false).length;
   const rows=d.righe.map((r,i)=>{
+    const inc=r.incl!==false;
     const tds=cols.map(([k])=>{
       if(r.tipo==='ass'&&['peso','tratt_term','tratt_sup'].includes(k))return '<td style="text-align:center;color:var(--t3)">—</td>';
       const cls=k==='codice'?'cod':(k==='revisione'?'rev':(k==='qta'?'qta':''));
       return `<td class="${cls}"><input value="${esc(r[k]||'')}" oninput="DD.data.righe[${i}]['${k}']=this.value"></td>`;
     }).join('');
-    return `<tr>${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+    const chk=`<td class="ddx"><input type="checkbox" ${inc?'checked':''} title="${inc?'Incluso — togli per non richiederlo':'Escluso dalla RDO'}" onchange="ddToggleIncl(${i},this.checked)"></td>`;
+    return `<tr class="${inc?'':'ddrow-off'}">${chk}${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
   }).join('');
   const st=d.stato, canSend=st==='approvata';
   const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
@@ -1873,8 +2096,9 @@ function renderDdEditor(d){
       <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}" onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}" onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
     <div class="dd-body">
-      <div class="dd-sec">Distinta — ${esc(d.tipo_distinta)} <span class="lnk" onclick="ddRigenera()">⟳ Rigenera dalla distinta</span></div>
+      <div class="dd-sec">Distinta — ${esc(d.tipo_distinta)} <span class="fmuted" style="text-transform:none;letter-spacing:0;font-weight:600">· ${nIncl}/${d.righe.length} inclusi</span> <span class="lnk" onclick="ddRigenera()">⟳ Rigenera dalla distinta</span></div>
       <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
+      <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
       <div class="dd-sec">Mail RDO <span class="lnk" onclick="openTemplates()">gestisci template</span></div>
       <div class="dd-mailgrid">
         <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
@@ -1905,6 +2129,18 @@ function renderDdEditor(d){
   fillTplSelect(document.getElementById('ddTpl'), d.template_id);
 }
 function ddSetBrand(b){DD.data.brand=b;renderDdEditor(DD.data);}
+async function ddToggleIncl(i,checked){
+  const r=DD.data.righe[i];if(!r)return;r.incl=checked;
+  if(r.parte_id){
+    try{await fetch(API+'/api/parti/'+r.parte_id,{method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(checked?{fornitore_id:DD.fid}:{fornitore_id:null,stato:'da_smistare'})});}catch{}
+    const c=commesse.find(x=>x.id===DD.cid);const p=(c&&c._parti||[]).find(x=>x.id===r.parte_id);
+    if(p){if(checked){p.fornitore_id=DD.fid;}else{p.fornitore_id=null;p.stato='da_smistare';}}
+    if(S.projId===DD.cid)refreshDetail();
+  }
+  try{await ddPersist();}catch{}
+  renderDdEditor(DD.data);
+}
 function ddApplyTemplate(){
   const id=document.getElementById('ddTpl').value;DD.data.template_id=id?parseInt(id):null;
   if(!id)return;const t=TEMPLATES.find(x=>x.id==id);if(!t)return;
@@ -2012,7 +2248,7 @@ function renderForn(){
     const mailLine=online
       ?`<span class="fmuted">🛒 shop online${f.url_shop?` · <a href="${esc(f.url_shop)}" target="_blank">apri</a>`:''}</span>`
       :(tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>');
-    return `<div class="fcard" style="${(f.attivo&&!f.blacklist)?'':'opacity:.55'}">
+    return `<div class="fcard" style="${(f.attivo&&!f.blacklist)?'':'opacity:.55'}" oncontextmenu="ctxFornCard(event,${f.id})">
     <div class="fch"><div class="fcav" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${f.blacklist?'<span class="fctipo" style="background:rgba(255,59,48,.12);color:var(--red)">🚫 lista nera</span>':''}</div></div>
     <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}${(f.tag_tipi&&f.tag_tipi.length)?`<span class="fmuted">📦 ${esc(f.tag_tipi.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
     <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`;}).join('');
