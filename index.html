@@ -703,6 +703,17 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 .ddav{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0}
 .ddn{font-size:11px;font-weight:600;color:var(--t1)}.ddt{font-size:9px;color:var(--t3)}
 .add-clear{color:#C00!important}.add-clear .ddav{background:rgba(255,59,48,.12);color:#C00}
+/* multi-selezione fornitori */
+.add-hint{font-size:10px;color:var(--t2);padding:1px 8px 6px;line-height:1.35}
+.add-item.on{background:rgba(88,86,214,.08)}
+.add-item input[type=checkbox]{width:14px;height:14px;flex-shrink:0;accent-color:var(--purple);margin:0}
+.add-ft{position:sticky;bottom:-4px;background:var(--surf);border-top:1px solid var(--bd);display:flex;gap:6px;padding:7px 4px 3px;margin-top:4px}
+.add-clr{flex:0 0 auto;border:1px solid var(--bd2);background:var(--surf);border-radius:7px;padding:6px 10px;font:inherit;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer}
+.add-clr:hover{border-color:var(--red);color:var(--red)}
+.add-ok{flex:1;border:1px solid var(--go-d);background:var(--go);border-radius:7px;padding:6px 10px;font:inherit;font-size:11px;font-weight:800;color:#3a2406;cursor:pointer}
+.add-ok:hover{filter:brightness(.97)}
+.cmptag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.12);border:1px solid rgba(88,86,214,.25);padding:1px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.dd-confwarn{margin-top:8px;border:1.4px solid var(--purple);background:rgba(88,86,214,.07);color:#4b48b0;border-radius:9px;padding:8px 11px;font-size:12px;font-weight:700;display:flex;gap:8px;align-items:flex-start}
 
 /* ── MODAL ── */
 .mov{position:fixed;inset:0;background:rgba(28,15,7,.5);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
@@ -1267,14 +1278,13 @@ function partRow(p){
   const dot=n>=2?'cmp':(n===1?'ok':'no');
   const dotT=n>=2?('In confronto · '+n+' fornitori'):(n===1?'Assegnato':'Da assegnare');
   let chips='';
-  if(n>=2)chips+=`<span class="pcmpbadge" title="Stesso pezzo a più fornitori per confronto prezzi">🔀 ${n}</span>`;
+  if(n>=2)chips+=`<span class="pcmpbadge" title="In confronto tra ${n} fornitori — clic per gestire">🔀 ${n}</span>`;
   forns.forEach((fid,i)=>{
     const f=fornById(fid);if(!f)return;
     const auto=i===0&&p.assegnazione_auto&&n===1;
-    chips+=`<span class="pchip" title="${esc(f.nome)}${auto?' (auto)':''}" onclick="event.stopPropagation();partForn(event,${p.id})"><span class="pav" style="background:${avc(f.nome)}">${ini(f.nome)}</span>${esc(f.nome.split(' ')[0])}${auto?' ·auto':''}</span>`;
+    chips+=`<span class="pchip" title="${esc(f.nome)}${auto?' (auto)':''} — clic per modificare/aggiungere fornitori" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})"><span class="pav" style="background:${avc(f.nome)}">${ini(f.nome)}</span>${esc(f.nome.split(' ')[0])}${auto?' ·auto':''}</span>`;
   });
   if(n===0)chips=`<span class="pchip empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
-  else chips+=`<span class="pchip add" title="Invia lo stesso pezzo anche a un altro fornitore (confronto prezzi)" onclick="event.stopPropagation();showCompDD(event,${p.id})">+ confronta</span>`;
   return `<div class="tr-part${sel?' sel':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
@@ -1284,8 +1294,6 @@ function partRow(p){
       <div class="tr-pfiles">${fileTags(p.files)}</div>
       <div class="pforn">${chips}</div></div>`;
 }
-// clic su un chip fornitore: se è in confronto apri la gestione, altrimenti sostituisci/rilascia
-function partForn(evt,pid){const p=S.pmap[pid];if(p&&pForns(p).length>=2)showCompDD(evt,pid);else showDD(evt,{t:'P',id:pid});}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   S.pmap={};
@@ -1732,86 +1740,63 @@ function toggleAll(on){allParti().forEach(p=>on?S.rows.add(p.id):S.rows.delete(p
 function updateFAB(){const n=S.rows.size,fab=document.getElementById('fab');fab.style.display=(n>0&&S.v==='pdet')?'flex':'none';document.getElementById('fabn').textContent=n;document.getElementById('fabn2').textContent=n;}
 function hideFAB(){S.rows.clear();document.getElementById('fab').style.display='none';const ck=document.getElementById('chkall');if(ck)ck.checked=false;}
 
-/* ── DROPDOWN ASSEGNA ── */
-let ddTarget=null;
-function ddHtml(includeClear){
+/* ── DROPDOWN ASSEGNA (multi-selezione: 1 fornitore = assegna, 2+ = confronto prezzi) ── */
+let ddTarget=null; let DDSEL=new Set();
+function ddTitle(t){
+  if(!t)return 'Assegna fornitori';
+  if(t.t==='P'){const p=S.pmap[t.id];return (p?esc(p.numero_parte):'Pezzo')+' · fornitori';}
+  if(t.t==='BULK')return S.rows.size+' pezzi · fornitori';
+  return 'Assegna fornitori al gruppo';
+}
+function ddItem(f){const on=DDSEL.has(f.id);
+  return `<div class="add-item${on?' on':''}" onclick="ddToggleSel(${f.id})">
+    <input type="checkbox" ${on?'checked':''} onclick="event.stopPropagation();ddToggleSel(${f.id})">
+    <div class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
+    <div><div class="ddn">${esc(f.nome)}</div><div class="ddt">${f.tipo}</div></div></div>`;
+}
+function ddRender(){
+  const d=document.getElementById('add');if(!d)return;
   const terz=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='terzista');
   const comm=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='commerciale');
-  let h='';
-  if(includeClear)h+=`<div class="add-item add-clear" onclick="doAssign(null)"><div class="ddav">✕</div><div><div class="ddn">Rilascia</div><div class="ddt">rimuovi fornitore</div></div></div>`;
+  let h=`<div class="add-hd">${ddTitle(ddTarget)}${DDSEL.size>=2?` · <span style="color:var(--purple)">🔀 confronto ${DDSEL.size}</span>`:''}</div>`;
+  h+=`<div class="add-hint">Spunta <b>più fornitori</b> per metterli a confronto sullo stesso pezzo.</div>`;
   if(terz.length){h+='<div class="add-hd">Terzisti</div>'+terz.map(ddItem).join('');}
   if(comm.length){h+='<div class="add-hd">Commerciali</div>'+comm.map(ddItem).join('');}
   if(!terz.length&&!comm.length)h+='<div class="add-hd">Nessun fornitore — aggiungine in Fornitori</div>';
-  return h;
+  h+=`<div class="add-ft"><button class="add-clr" onclick="DDSEL=new Set();ddRender()">Rilascia</button><button class="add-ok" onclick="ddConfirm()">Conferma${DDSEL.size?' ('+DDSEL.size+')':''}</button></div>`;
+  d.innerHTML=h;
 }
-function ddItem(f){return `<div class="add-item" onclick="doAssign(${f.id})"><div class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="ddn">${esc(f.nome)}</div><div class="ddt">${f.tipo}</div></div></div>`;}
-function showDD(evt,target){evt.stopPropagation();ddTarget=target;const d=document.getElementById('add');d.innerHTML=ddHtml(target.t==='P');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-210);let top=r.bottom+4;if(top+300>window.innerHeight)top=Math.max(8,r.top-304);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block`;}
-function showDDBulk(evt){if(!S.rows.size)return;evt.stopPropagation();ddTarget={t:'BULK'};const d=document.getElementById('add');d.innerHTML=ddHtml(true);const r=evt.currentTarget.getBoundingClientRect();d.style.cssText=`top:${Math.max(8,r.top-304)}px;left:${Math.max(8,r.left)}px;display:block`;}
+function ddToggleSel(fid){DDSEL.has(fid)?DDSEL.delete(fid):DDSEL.add(fid);ddRender();}
+function ddOpenAt(evt){const d=document.getElementById('add');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-230);let top=r.bottom+4;if(top+340>window.innerHeight)top=Math.max(8,r.top-344);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block;width:228px`;ddRender();}
+function showDD(evt,target){evt.stopPropagation();ddTarget=target;DDSEL=new Set();
+  if(target.t==='P'){const p=S.pmap[target.id];if(p)pForns(p).forEach(x=>DDSEL.add(x));}
+  ddOpenAt(evt);}
+function showDDBulk(evt){if(!S.rows.size)return;evt.stopPropagation();ddTarget={t:'BULK'};DDSEL=new Set();ddOpenAt(evt);}
 function closeDD(){const d=document.getElementById('add');if(d)d.style.display='none';}
 document.addEventListener('click',e=>{if(!e.target.closest('#add')&&!e.target.closest('.ac')&&!e.target.closest('.pchip')&&!e.target.closest('.tr-assign-all')&&!e.target.closest('.fbgh'))closeDD();});
 
-/* ── DROPDOWN CONFRONTO: invia lo stesso pezzo anche ad altri fornitori ── */
-function showCompDD(evt,pid){
-  evt.stopPropagation();
-  const p=S.pmap[pid];if(!p)return;
-  const cur=pForns(p);const primary=p.fornitore_id;
-  const list=fornitori.filter(f=>f.attivo&&!f.blacklist);
-  list.sort((a,b)=>{const ca=cur.includes(a.id),cb=cur.includes(b.id);if(ca!==cb)return ca?-1:1;return a.nome.localeCompare(b.nome);});
-  let h=`<div class="add-hd">${esc(p.numero_parte)} · invia anche a</div>`;
-  if(!list.length)h+='<div class="add-hd">Nessun fornitore — aggiungine in Fornitori</div>';
-  list.forEach(f=>{
-    const inRdo=cur.includes(f.id);const isPrim=f.id===primary;
-    const tag=inRdo
-      ? `<div class="ddt" style="color:${isPrim?'#1A7A2E':'var(--purple)'}">${isPrim?'✓ primario · clic per togliere':'✓ in confronto · clic per togliere'}</div>`
-      : `<div class="ddt" style="color:var(--purple)">+ confronta</div>`;
-    h+=`<div class="add-item" onclick="toggleComp(${pid},${f.id},${inRdo})"><div class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="ddn">${esc(f.nome)}</div>${tag}</div></div>`;
-  });
-  const d=document.getElementById('add');d.innerHTML=h;
-  const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-240);let top=r.bottom+4;if(top+320>window.innerHeight)top=Math.max(8,r.top-324);
-  d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block;width:230px`;
-}
-async function toggleComp(pid,fid,inRdo){
-  closeDD();
-  try{
-    const r=await fetch(API+'/api/parti/'+pid+'/comparazione/'+fid,{method:inRdo?'DELETE':'POST'});
-    if(!r.ok)throw 0;
-    toast(inRdo?'Rimosso dal confronto':'Aggiunto al confronto','ok');
-    await refreshDetail();
-  }catch{toast('Errore',true);}
-}
-
-async function doAssign(fid){
-  const t=ddTarget;closeDD();if(!t)return;
+async function ddConfirm(){
+  const t=ddTarget;const ids=[...DDSEL];closeDD();if(!t)return;
   try{
     if(t.t==='P'){
-      const body=fid?{fornitore_id:fid,stato:'da_inviare'}:{fornitore_id:null,stato:'da_smistare'};
-      const r=await fetch(API+'/api/parti/'+t.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      if(!r.ok)throw 0;
-    } else if(t.t==='CAT'||t.t==='LAV'){
-      if(!fid){toast('Per rilasciare un gruppo usa i singoli pezzi o riassegna',true);return;}
-      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,lav_meccanica:t.t==='LAV'?(t.lav||''):null})});
-      if(!r.ok)throw 0;
-    } else if(t.t==='TIPO'){
-      if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
-      const body={fornitore_id:fid,categoria:t.cat||null,tipo:t.tipo==null?'':t.tipo};
-      if(t.solo)body.solo_non_assegnate=true;
-      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      if(!r.ok)throw 0;
-    } else if(t.t==='FORN'){
-      if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
-      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,da_fornitore_id:t.fid})});
-      if(!r.ok)throw 0;
-    } else if(t.t==='FORNNOME'){
-      if(!fid){toast('Per rilasciare usa i singoli pezzi',true);return;}
-      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:fid,categoria:t.cat||null,da_fornitore_nome:t.nome})});
+      const r=await fetch(API+'/api/parti/'+t.id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
       if(!r.ok)throw 0;
     } else if(t.t==='BULK'){
-      const ids=[...S.rows];
-      const body=fid?{fornitore_id:fid,stato:'da_inviare'}:{fornitore_id:null,stato:'da_smistare'};
-      await Promise.all(ids.map(id=>fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})));
+      const list=[...S.rows];
+      await Promise.all(list.map(id=>fetch(API+'/api/parti/'+id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})})));
       S.rows.clear();
+    } else { // branch: CAT/LAV/TIPO/FORN/FORNNOME
+      if(!ids.length){toast('Per rilasciare un gruppo usa i singoli pezzi',true);return;}
+      const body={fornitore_id:ids[0],fornitori_extra:ids.slice(1)};
+      if(t.t==='LAV'){body.categoria=t.cat||null;body.lav_meccanica=t.lav||'';}
+      else if(t.t==='CAT'){body.categoria=t.cat||null;}
+      else if(t.t==='TIPO'){body.categoria=t.cat||null;body.tipo=t.tipo==null?'':t.tipo;if(t.solo)body.solo_non_assegnate=true;}
+      else if(t.t==='FORN'){body.categoria=t.cat||null;body.da_fornitore_id=t.fid;}
+      else if(t.t==='FORNNOME'){body.categoria=t.cat||null;body.da_fornitore_nome=t.nome;}
+      const r=await fetch(API+'/api/commesse/'+S.projId+'/assegna-branch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok)throw 0;
     }
-    toast(fid?'Fornitore assegnato':'Rilasciato','ok');
+    toast(ids.length?(ids.length>1?ids.length+' fornitori a confronto':'Fornitore assegnato'):'Rilasciato','ok');
     await refreshDetail();
   }catch{toast('Errore assegnazione',true);}
 }
@@ -2234,7 +2219,8 @@ function renderDdNav(){
   }
   commesse.forEach(c=>{
     const parti=flatParti(c);const byF={};
-    parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
+    // un pezzo "appartiene" al primario e a tutti i fornitori in confronto
+    parti.forEach(p=>{pForns(p).forEach(fid=>{(byF[fid]=byF[fid]||[]).push(p);});});
     const fids=Object.keys(byF);if(!fids.length)return;
     h+=`<div class="nav-grp">${esc(c.codice)} · ${esc(c.nome)}</div>`;
     fids.forEach(fid=>{
@@ -2244,10 +2230,12 @@ function renderDdNav(){
       const sel=NAVSEL.has(navKey(c.id,+fid));
       const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
       const code=dd&&dd.codice_rdo?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rdo)}</b> · `:'';
+      const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
+      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto: la RDO non è inviabile finché non scegli il vincitore">🔀 ${nConf}</span>`:'';
       const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
       h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
         <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
-        <div class="nav-tx"><div class="nn">${esc(f.nome)}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${stb}</div>`;
+        <div class="nav-tx"><div class="nn">${esc(f.nome)}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${confb}${stb}</div>`;
     });
   });
   nav.innerHTML=h||'<div class="fmuted" style="padding:10px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
@@ -2327,17 +2315,20 @@ function rdoRenderShip(){
   const el=document.getElementById('rdoShip');
   if(!DDLIST.length){el.innerHTML=emptyHtml('Nessuna RDO','Prepara le distinte dai fornitori delle commesse.');return;}
   const byC={};DDLIST.forEach(x=>{(byC[x.commessa_id]=byC[x.commessa_id]||{cod:x.commessa_codice,nome:x.commessa_nome,items:[]}).items.push(x);});
-  const appr=DDLIST.filter(x=>x.stato==='approvata');
+  const appr=DDLIST.filter(x=>x.stato==='approvata'&&!(x.pezzi_in_confronto||0));
   let rows='';
   Object.values(byC).forEach(g=>{
     rows+=`<div class="ship-grp">${esc(g.cod)} · ${esc(g.nome)}</div>`;
     g.items.forEach(x=>{
-      const k=x.commessa_id+':'+x.fornitore_id;const can=x.stato==='approvata';
+      const k=x.commessa_id+':'+x.fornitore_id;
+      const nConf=x.pezzi_in_confronto||0;
+      const can=x.stato==='approvata'&&!nConf;
+      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto: scegli il vincitore prima di inviare">🔀 ${nConf}</span>`:'';
       rows+=`<label class="ship-row${can?'':' off'}" oncontextmenu="ctxShip(event,${x.commessa_id},${x.fornitore_id})">
         <input type="checkbox" ${can?'':'disabled'} ${SHIPSEL.has(k)?'checked':''} onchange="shipToggle('${k}')">
         <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
         <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${x.codice_rdo?esc(x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
-        <span class="dd-brand ${x.brand}">${x.brand}</span>
+        ${confb}<span class="dd-brand ${x.brand}">${x.brand}</span>
         <span class="dd-st ${x.stato}">${x.stato}</span>
         <span class="ship-open" onclick="event.preventDefault();rdoOpenEditor(${x.commessa_id},${x.fornitore_id})">apri ↗</span></label>`;
     });
@@ -2350,7 +2341,7 @@ function rdoRenderShip(){
     <div class="rdo-banner" style="margin:12px">⚠ Invio reale non ancora attivo (permessi Microsoft mancanti): le RDO vengono <b>segnate come inviate</b>, la mail non parte.</div>`;
 }
 function shipToggle(k){if(SHIPSEL.has(k))SHIPSEL.delete(k);else SHIPSEL.add(k);const c=document.getElementById('shipCnt');if(c)c.textContent=SHIPSEL.size;}
-function shipSelAll(on){SHIPSEL=new Set();if(on)DDLIST.filter(x=>x.stato==='approvata').forEach(x=>SHIPSEL.add(x.commessa_id+':'+x.fornitore_id));rdoRenderShip();}
+function shipSelAll(on){SHIPSEL=new Set();if(on)DDLIST.filter(x=>x.stato==='approvata'&&!(x.pezzi_in_confronto||0)).forEach(x=>SHIPSEL.add(x.commessa_id+':'+x.fornitore_id));rdoRenderShip();}
 async function shipSend(){
   const keys=[...SHIPSEL];if(!keys.length){toast('Seleziona almeno una RDO approvata');return;}
   if(!confirm(`Inviare ${keys.length} RDO approvate insieme? (invio simulato)`))return;
@@ -2439,6 +2430,8 @@ function renderDdEditor(d){
   const cols=ddCols(d);
   const ths='<th style="width:30px" title="Includi nella RDO">✓</th>'+cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
   const nIncl=d.righe.filter(r=>r.incl!==false).length;
+  const _cc=commesse.find(x=>x.id===d.commessa_id);const _cp=(_cc&&_cc._parti)||[];
+  const confSet=new Set(_cp.filter(p=>pForns(p).length>=2).map(p=>p.id));
   const rows=d.righe.map((r,i)=>{
     const inc=r.incl!==false;
     const tds=cols.map(([k])=>{
@@ -2447,9 +2440,11 @@ function renderDdEditor(d){
       return `<td class="${cls}"><input value="${esc(r[k]||'')}" oninput="DD.data.righe[${i}]['${k}']=this.value"></td>`;
     }).join('');
     const chk=`<td class="ddx"><input type="checkbox" ${inc?'checked':''} title="${inc?'Incluso — togli per non richiederlo':'Escluso dalla RDO'}" onchange="ddToggleIncl(${i},this.checked)"></td>`;
-    return `<tr class="${inc?'':'ddrow-off'}">${chk}${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+    const cmpMark=(r.parte_id&&confSet.has(r.parte_id))?'<span class="cmptag" title="Pezzo in confronto tra più fornitori">🔀</span> ':'';
+    return `<tr class="${inc?'':'ddrow-off'}">${chk}${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
   }).join('');
-  const st=d.stato, canSend=st==='approvata';
+  const confN=d.pezzi_in_confronto||0, confBlock=confN>0;
+  const st=d.stato, canSend=st==='approvata'&&!confBlock;
   const o=d.opzioni||{};
   const ctReq=!!d.conto_terzi_richiesto, ctOk=!!d.conto_terzi_ok, ctBlock=ctReq&&!ctOk;
   const isComm=d.tipo_distinta==='commerciale';
@@ -2467,6 +2462,7 @@ function renderDdEditor(d){
       ?`<div class="dd-ctwarn">⚠<span>Ci sono particolari costruttivi / commerciali lavorati: indica come avviene la fornitura — <b>conto lavorazione</b> (materiale fornito da IB Motion) <b>oppure</b> <b>fornitura completa</b> (pezzo finito a carico del fornitore) — altrimenti la RDO non si può approvare.</span></div>`
       :`<div class="dd-ctok">✓ Modalità di fornitura indicata.</div>`;
   }
+  const confHtml=confBlock?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO <b>non è inviabile</b> finché non scegli il vincitore per ciascuno (pannello «👁 Colpo d'occhio» → Confronto prezzi, o dal pezzo nell'albero).</span></div>`:'';
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
   const dwgCnt={};dwg.forEach(x=>dwgCnt[x.ext]=(dwgCnt[x.ext]||0)+1);
   const dwgFmtTxt=Object.keys(dwgCnt).map(k=>k.toUpperCase()+' '+dwgCnt[k]).join(' · ')||'0';
@@ -2498,6 +2494,7 @@ function renderDdEditor(d){
             <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel inviato al fornitore</span></div>
             ${optsHtml}
             ${ctHtml}
+            ${confHtml}
           </div>
           <details class="dd-coll">
             <summary>📎 Allegati alla mail <span class="cnt">PDF · Excel</span></summary>
@@ -2534,7 +2531,7 @@ function renderDdEditor(d){
           ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Seleziona un'opzione per il conto terzi">✓ Approva</button>`
           :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
         ${st!=='bozza'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
-        <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'}>✉ Invia (simulato)</button>
+        <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${confBlock?'Ci sono pezzi in confronto: scegli prima il vincitore':(st==='approvata'?'Invia la RDO':'Approva prima di inviare')}">✉ Invia (simulato)</button>
       </div>
     </div>`;
 }
