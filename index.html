@@ -782,6 +782,30 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 .add-ok:hover{filter:brightness(.97)}
 .cmptag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.12);border:1px solid rgba(88,86,214,.25);padding:1px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 .dd-confwarn{margin-top:8px;border:1.4px solid var(--purple);background:rgba(88,86,214,.07);color:#4b48b0;border-radius:9px;padding:8px 11px;font-size:12px;font-weight:700;display:flex;gap:8px;align-items:flex-start}
+/* ── revisioni ── */
+.revbadge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:8px}
+.revbadge .dot{width:7px;height:7px;border-radius:50%}
+.revbadge.sent{background:rgba(52,199,89,.14);color:#1A7A2E}.revbadge.sent .dot{background:var(--green)}
+.revbadge.prep{background:rgba(255,149,0,.14);color:#9a5b00}.revbadge.prep .dot{background:var(--orange)}
+.revbadge.none{background:rgba(0,0,0,.05);color:var(--t2)}.revbadge.none .dot{background:var(--t3)}
+.rv-tl{display:flex;flex-direction:column;gap:0}
+.rv-row{display:flex;gap:10px;padding:11px 6px;border-bottom:1px solid var(--bd);cursor:pointer;align-items:flex-start}
+.rv-row:last-child{border-bottom:0}.rv-row:hover{background:rgba(245,168,35,.06)}
+.rv-row.on{background:rgba(245,168,35,.1)}
+.rv-num{font-family:ui-monospace,monospace;font-weight:800;font-size:13px;background:var(--br);color:#fff;border-radius:7px;padding:3px 9px;height:fit-content}
+.rv-num.prep{background:var(--orange)}
+.rv-meta .l1{font-weight:800;font-size:12.5px}.rv-meta .l2{font-size:11px;color:var(--t2);margin-top:1px}
+.rv-diff{margin-top:4px}
+.rv-dgrp{margin:8px 0}
+.rv-dh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px}
+.rv-drow{display:grid;grid-template-columns:18px 110px 1fr;gap:8px;align-items:center;padding:5px 9px;border-radius:7px;font-size:11.5px;margin-bottom:3px}
+.rv-drow .c{font-family:ui-monospace,monospace;font-weight:700;color:var(--br)}
+.rv-drow .d{color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-drow.add{background:rgba(52,199,89,.08)}.rv-drow.rem{background:rgba(255,59,48,.07)}.rv-drow.chg{background:rgba(255,149,0,.08)}
+.rv-empty{color:var(--t3);font-size:11.5px;padding:4px 2px}
+.rv-cost{display:flex;gap:8px;margin:6px 0 2px;flex-wrap:wrap}
+.rv-ct{flex:1;min-width:90px;background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:8px 10px;text-align:center}
+.rv-ct .v{font-size:15px;font-weight:800}.rv-ct .l{font-size:9.5px;color:var(--t2);font-weight:700}
 
 /* ── MODAL ── */
 .mov{position:fixed;inset:0;background:rgba(28,15,7,.5);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
@@ -931,8 +955,9 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="wsh">
       <div class="bc"><a onclick="go('proj')">Progetti</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><span id="bcproj">—</span></div>
       <div class="wpr">
-        <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span>
+        <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span><span id="wrev"></span>
         <div class="wact">
+          <button class="btn btn-ghost btn-sm" onclick="openRevHistory()" id="btnRev" title="Storico revisioni del progetto">🗂 Revisioni</button>
           <button class="btn btn-ghost btn-sm" onclick="openModifica()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifica</button>
           <button class="btn btn-ghost btn-sm" onclick="openPref()" id="btnPref"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Fornitori progetto</button>
           <button class="btn btn-ghost btn-sm" onclick="riscansiona()" id="btnRiscan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Riscansiona</button>
@@ -1116,6 +1141,13 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
     </div>
     <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mRev" onclick="ovClose(event,'mRev')">
+  <div class="modal" style="max-width:560px">
+    <div class="mhd"><div class="mico2">🗂</div><div><div class="mtit">Storico revisioni</div><div class="msub" id="revSub">—</div></div><button class="mx" onclick="mClose('mRev')">✕</button></div>
+    <div class="mbd" id="revBody" style="max-height:70vh"></div>
   </div>
 </div>
 
@@ -1335,7 +1367,7 @@ async function openProgetto(pid){
   }catch{S.albero=null;S.cal={files:[]};}
   // apri tutte le categorie di default
   if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
-  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();
+  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();
 }
 function catParti(cat){return cat.kind==='commerciale'?[...(cat.gruppi||[]).flatMap(g=>g.parti),...(cat.tipi||[]).flatMap(t=>t.parti)]:(cat.lavorazioni||[]).flatMap(l=>l.parti);}
 function allParti(){return S.albero?S.albero.categorie.flatMap(catParti):[];}
@@ -1921,7 +1953,61 @@ async function refreshDetail(){
     const c=commesse.find(x=>x.id===S.projId);if(c&&rp.ok)c._parti=await rp.json();
   }catch{}
   // la colonna Fornitore di "Ricerca file" si ri-deriva dalle parti aggiornate (join client-side)
-  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();
+  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();
+}
+
+/* ── REVISIONI DI PROGETTO ── */
+let REVDATA=null;
+function rev2(n){return (n<10?'0':'')+n;}
+async function loadRevisioni(){
+  if(!S.projId){REVDATA=null;renderRevBadge();return;}
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/revisioni');REVDATA=r.ok?await r.json():null;}catch{REVDATA=null;}
+  renderRevBadge();
+}
+function renderRevBadge(){
+  const el=document.getElementById('wrev');if(!el)return;
+  if(!REVDATA){el.innerHTML='';return;}
+  const rc=REVDATA.revisione_corrente;
+  if(rc<0){el.innerHTML='<span class="revbadge none" title="Non ancora inviato"><span class="dot"></span>Rev — · bozza</span>';return;}
+  if(REVDATA.in_preparazione){
+    const wd=REVDATA.working_diff,n=wd.add.length+wd.rem.length+wd.chg.length;
+    el.innerHTML=`<span class="revbadge prep" title="${n} modifiche dall'ultima emissione"><span class="dot"></span>Rev ${rev2(REVDATA.prossima)} · in preparazione</span>`;
+  }else{
+    el.innerHTML=`<span class="revbadge sent"><span class="dot"></span>Rev ${rev2(rc)} · inviata</span>`;
+  }
+}
+function fornNomeById(id){const f=fornitori.find(x=>x.id===id);return f?f.nome:('#'+id);}
+function revDiffBlock(wd){
+  const grp=(cls,ic,lbl,rows)=>rows.length?`<div class="rv-dgrp"><div class="rv-dh" style="color:${cls==='add'?'#1A7A2E':cls==='rem'?'var(--red)':'#9a5b00'}">${ic} ${lbl} (${rows.length})</div>${rows.map(x=>`<div class="rv-drow ${cls}"><span>${ic}</span><span class="c">${esc(x.cod)}</span><span class="d">${esc(x.den||'')} <span style="color:var(--t3)">${esc(x.info||'')}</span></span></div>`).join('')}</div>`:'';
+  return (grp('add','➕','Aggiunti',wd.add)+grp('rem','➖','Tolti',wd.rem)+grp('chg','✏️','Modificati',wd.chg))||'<div class="rv-empty">Nessuna modifica.</div>';
+}
+function openRevHistory(){
+  if(!REVDATA){toast('Revisioni non disponibili');return;}
+  document.getElementById('revSub').textContent=REVDATA.revisione_corrente<0?'Progetto non ancora inviato':('Corrente: Rev '+rev2(REVDATA.revisione_corrente)+(REVDATA.in_preparazione?' · modifiche in corso':''));
+  let h='';
+  if(REVDATA.in_preparazione){
+    const imp=(REVDATA.impattati||[]).map(fornNomeById);
+    h+=`<div class="rv-row on"><span class="rv-num prep">${REVDATA.revisione_corrente<0?'00':rev2(REVDATA.prossima)}</span>
+      <div class="rv-meta" style="flex:1"><div class="l1">✏️ In preparazione</div>
+        <div class="l2">${REVDATA.revisione_corrente<0?'Prima emissione — invia per congelare Rev 00':'Si congela al prossimo invio (solo fornitori impattati)'}</div>
+        <div class="rv-cost"><div class="rv-ct"><div class="v">${eur(REVDATA.working_totale)}</div><div class="l">Totale</div></div><div class="rv-ct"><div class="v">${REVDATA.working_pezzi}</div><div class="l">Pezzi</div></div><div class="rv-ct"><div class="v">${REVDATA.working_prezzati}</div><div class="l">Prezzati</div></div></div>
+        <div class="rv-diff">${revDiffBlock(REVDATA.working_diff)}</div>
+        ${imp.length?`<div class="l2" style="margin-top:6px"><b>↻ Da re-inviare:</b> ${imp.map(esc).join(', ')}</div>`:''}
+      </div></div>`;
+  }
+  (REVDATA.revisioni||[]).slice().reverse().forEach(r=>{
+    const forn=(r.fornitori_inviati||[]).map(fornNomeById);
+    const dt=r.data?new Date(r.data).toLocaleDateString('it-IT'):'';
+    h+=`<div class="rv-row"><span class="rv-num">${rev2(r.numero)}</span>
+      <div class="rv-meta" style="flex:1"><div class="l1">📤 Inviata${dt?' · '+dt:''}</div>
+        <div class="l2">${forn.length} fornitori: ${forn.map(esc).join(', ')||'—'}${r.nota?' · '+esc(r.nota):''}</div>
+        <div class="rv-cost"><div class="rv-ct"><div class="v">${eur(r.totale)}</div><div class="l">Totale</div></div><div class="rv-ct"><div class="v">${r.n_pezzi}</div><div class="l">Pezzi</div></div><div class="rv-ct"><div class="v">${r.n_prezzati}</div><div class="l">Prezzati</div></div></div>
+        ${r.numero>0?`<div class="rv-diff">${revDiffBlock(r.diff)}</div>`:'<div class="rv-empty">Revisione base (prima emissione).</div>'}
+      </div></div>`;
+  });
+  if(!h)h='<div class="rv-empty">Nessuna revisione: il progetto non è ancora stato inviato.</div>';
+  document.getElementById('revBody').innerHTML='<div class="rv-tl">'+h+'</div>';
+  mOpen('mRev');
 }
 
 /* ── PANNELLO "COLPO D'OCCHIO" ── */
@@ -2443,6 +2529,7 @@ function rdoRenderShip(){
         <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
         <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${x.codice_rdo?esc(x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
         ${confb}<span class="dd-brand ${x.brand}">${x.brand}</span>
+        ${x.revisione_inviata!=null?`<span title="Ultima revisione inviata" style="font-family:ui-monospace,monospace;font-size:10px;font-weight:800;background:rgba(52,199,89,.14);color:#1A7A2E;padding:2px 7px;border-radius:6px">Rev ${rev2(x.revisione_inviata)}</span>`:''}
         <span class="dd-st ${x.stato}">${x.stato}</span>
         <span class="ship-open" onclick="event.preventDefault();rdoOpenEditor(${x.commessa_id},${x.fornitore_id})">apri ↗</span></label>`;
     });
