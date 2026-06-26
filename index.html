@@ -248,7 +248,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .fi-ic.pdf{background:#c0271e}.fi-ic.dwg{background:#1769c4}.fi-ic.dxf{background:#1c7fa8}.fi-ic.xlsx,.fi-ic.xls{background:#1A7A2E}.fi-ic.oth{background:#8a7a6a}
 .fi-name{font-size:11.5px;font-weight:700;word-break:break-all}
 .fi-sub{font-size:9.5px;color:var(--t3)}
-.fi-act{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);white-space:nowrap}
+.fi-act{font-size:10px;font-weight:700;color:var(--go-d);white-space:nowrap}
+.fi-actions{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.fi-prev{color:var(--t2)}.fi-open{color:var(--blue)}.fi-open:hover{text-decoration:underline}
 .pd-viewer{height:340px;border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:#525659;margin-top:6px}
 .pd-viewer iframe{width:100%;height:100%;border:0;background:#525659}
 .pd-ext{height:160px;border:1px dashed var(--bd2);border-radius:10px;display:grid;place-items:center;text-align:center;color:var(--t2);font-size:11px;margin-top:6px;padding:14px}
@@ -694,6 +696,7 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 .fbtn svg{width:11px;height:11px}
 .fbgo{background:var(--go);color:var(--br)}.fbgo:hover{filter:brightness(1.05)}
 .fbgh{background:rgba(255,255,255,.1);color:#fff}.fbgh:hover{background:rgba(255,255,255,.18)}
+.fbrel{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.18)}.fbrel:hover{background:rgba(255,59,48,.85);color:#fff;border-color:transparent}
 
 /* ── DROPDOWN ── */
 .add{position:fixed;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);box-shadow:var(--shl);z-index:300;min-width:200px;max-height:320px;overflow-y:auto;padding:4px;display:none}
@@ -918,6 +921,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div><div class="h1" id="rdoH1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub" id="rdoVsub">Seleziona una commessa per preparare le RDO</div></div></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-ghost" id="rdoBtnShip" onclick="rdoGoShip()" title="Pannello unico: stato e invio delle RDO">📤 Spedizione</button>
+        <button class="btn btn-aggiorna" id="rdoBtnSync" onclick="rdoAggiornaTutte()" title="Rigenera distinta, allegati e testo mail di TUTTE le RDO dai dati di progetto">🔄 Aggiorna tutte</button>
       </div>
     </div></div>
     <div class="vscroll">
@@ -958,6 +962,7 @@ textarea.fld{resize:vertical;min-height:60px}
   <div class="fab-info"><strong id="fabn">0</strong> pezzi selezionati</div>
   <div class="fsep"></div>
   <button class="fbtn fbgh" onclick="showDDBulk(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Assegna fornitore</button>
+  <button class="fbtn fbrel" onclick="bulkRelease()" title="Togli il fornitore dai pezzi selezionati"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>Rilascia</button>
   <button class="fbtn fbgo" onclick="inviaSelezionate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Invia RDO (<span id="fabn2">0</span>)</button>
 </div>
 
@@ -1524,7 +1529,7 @@ function openDraw(pid){
       return `<div class="fileitem${i===0?' act':''}" onclick="openFileView('${jsq(path)}',this)">
         <span class="fi-ic ${icc}">${ext.toUpperCase()}</span>
         <span style="min-width:0"><span class="fi-name">${esc(name)}</span><span class="fi-sub">${ext.toUpperCase()}</span></span>
-        <span class="fi-act">${view?'Visualizza':'Apri ↗'}</span></div>`;
+        <span class="fi-actions">${view?'<span class="fi-act fi-prev">Anteprima</span>':''}<span class="fi-act fi-open" title="Apri il file in una scheda separata" onclick="event.stopPropagation();window.open('${jsq(fileUrl(path))}','_blank','noopener')">Apri ↗</span></span></div>`;
     }).join('');
   }
   // proprietà dalla distinta (tutte le colonne dell'Excel, in ordine)
@@ -1763,10 +1768,18 @@ function ddRender(){
   if(terz.length){h+='<div class="add-hd">Terzisti</div>'+terz.map(ddItem).join('');}
   if(comm.length){h+='<div class="add-hd">Commerciali</div>'+comm.map(ddItem).join('');}
   if(!terz.length&&!comm.length)h+='<div class="add-hd">Nessun fornitore — aggiungine in Fornitori</div>';
-  h+=`<div class="add-ft"><button class="add-clr" onclick="DDSEL=new Set();ddRender()">Rilascia</button><button class="add-ok" onclick="ddConfirm()">Conferma${DDSEL.size?' ('+DDSEL.size+')':''}</button></div>`;
+  h+=`<div class="add-ft"><button class="add-clr" onclick="ddRelease()" title="Togli ogni fornitore">↩ Rilascia</button><button class="add-ok" onclick="ddConfirm()">Conferma${DDSEL.size?' ('+DDSEL.size+')':''}</button></div>`;
   d.innerHTML=h;
 }
 function ddToggleSel(fid){DDSEL.has(fid)?DDSEL.delete(fid):DDSEL.add(fid);ddRender();}
+function ddRelease(){DDSEL=new Set();ddConfirm();}  // «Rilascia» = conferma a set vuoto (toglie i fornitori)
+async function bulkRelease(){
+  const ids=[...S.rows];if(!ids.length){toast('Seleziona dei pezzi');return;}
+  if(!confirm(`Togliere il fornitore da ${ids.length} pezzi selezionati?`))return;
+  try{await Promise.all(ids.map(id=>fetch(API+'/api/parti/'+id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:[]})})));
+    S.rows.clear();toast('Fornitori rilasciati','ok');await refreshDetail();
+  }catch{toast('Errore rilascio',true);}
+}
 function ddOpenAt(evt){const d=document.getElementById('add');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-230);let top=r.bottom+4;if(top+340>window.innerHeight)top=Math.max(8,r.top-344);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block;width:228px`;ddRender();}
 function showDD(evt,target){evt.stopPropagation();ddTarget=target;DDSEL=new Set();
   if(target.t==='P'){const p=S.pmap[target.id];if(p)pForns(p).forEach(x=>DDSEL.add(x));}
@@ -2121,6 +2134,23 @@ function renderRdoView(){
   else if(RV.mode==='work'){document.getElementById('rdoWork').style.display='block';rdoRenderWork();}
   else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';setRdoHdr("Richieste d'Offerta","Scegli una RDO dall'elenco a sinistra e modificala — cambio al volo");}
   else if(RV.mode==='ship'){document.getElementById('rdoShip').style.display='block';setRdoHdr('Spedizione RDO','Stato di tutte le richieste — invia le approvate (anche più insieme)');rdoRenderShip();}
+}
+// Aggiorna TUTTE le RDO (permanente, in alto a dx): rigenera distinta+allegati+mail dal progetto
+async function rdoAggiornaTutte(){
+  await loadDdList();
+  const list=(DDLIST||[]).slice();
+  if(!list.length){toast('Nessuna RDO da aggiornare');return;}
+  if(!confirm(`Aggiornare il contenuto di TUTTE le ${list.length} RDO dai dati di progetto?\nLe modifiche manuali al testo delle mail verranno sostituite.`))return;
+  const btn=document.getElementById('rdoBtnSync');if(btn){btn.disabled=true;btn.textContent='⏳ Aggiorno…';}
+  let ok=0,err=0;
+  for(const x of list){
+    try{const r=await fetch(API+`/api/commesse/${x.commessa_id}/rdo/${x.fornitore_id}/aggiorna`,{method:'POST'});r.ok?ok++:err++;}catch{err++;}
+  }
+  await loadDdList();
+  if(RV.mode==='edit'&&RV.cid){try{await openDd(RV.cid,RV.fid);}catch{}renderDdNav();}
+  else renderRdoView();
+  if(btn){btn.disabled=false;btn.innerHTML='🔄 Aggiorna tutte';}
+  toast(`${ok} RDO aggiornate${err?' · '+err+' errori':''}`,err?true:'ok');
 }
 // compat: vecchi refresh chiamano renderRDO()
 function renderRDO(){if(S.v==='rdo')renderRdoView();}
