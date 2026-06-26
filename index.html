@@ -2231,7 +2231,7 @@ function renderDdNav(){
       const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
       const code=dd&&dd.codice_rdo?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rdo)}</b> · `:'';
       const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
-      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto: la RDO non è inviabile finché non scegli il vincitore">🔀 ${nConf}</span>`:'';
+      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori (offerte in raccolta)">🔀 ${nConf}</span>`:'';
       const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
       h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
         <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
@@ -2315,15 +2315,15 @@ function rdoRenderShip(){
   const el=document.getElementById('rdoShip');
   if(!DDLIST.length){el.innerHTML=emptyHtml('Nessuna RDO','Prepara le distinte dai fornitori delle commesse.');return;}
   const byC={};DDLIST.forEach(x=>{(byC[x.commessa_id]=byC[x.commessa_id]||{cod:x.commessa_codice,nome:x.commessa_nome,items:[]}).items.push(x);});
-  const appr=DDLIST.filter(x=>x.stato==='approvata'&&!(x.pezzi_in_confronto||0));
+  const appr=DDLIST.filter(x=>x.stato==='approvata');
   let rows='';
   Object.values(byC).forEach(g=>{
     rows+=`<div class="ship-grp">${esc(g.cod)} · ${esc(g.nome)}</div>`;
     g.items.forEach(x=>{
       const k=x.commessa_id+':'+x.fornitore_id;
       const nConf=x.pezzi_in_confronto||0;
-      const can=x.stato==='approvata'&&!nConf;
-      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto: scegli il vincitore prima di inviare">🔀 ${nConf}</span>`:'';
+      const can=x.stato==='approvata';
+      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori (offerte in raccolta)">🔀 ${nConf}</span>`:'';
       rows+=`<label class="ship-row${can?'':' off'}" oncontextmenu="ctxShip(event,${x.commessa_id},${x.fornitore_id})">
         <input type="checkbox" ${can?'':'disabled'} ${SHIPSEL.has(k)?'checked':''} onchange="shipToggle('${k}')">
         <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
@@ -2341,7 +2341,7 @@ function rdoRenderShip(){
     <div class="rdo-banner" style="margin:12px">⚠ Invio reale non ancora attivo (permessi Microsoft mancanti): le RDO vengono <b>segnate come inviate</b>, la mail non parte.</div>`;
 }
 function shipToggle(k){if(SHIPSEL.has(k))SHIPSEL.delete(k);else SHIPSEL.add(k);const c=document.getElementById('shipCnt');if(c)c.textContent=SHIPSEL.size;}
-function shipSelAll(on){SHIPSEL=new Set();if(on)DDLIST.filter(x=>x.stato==='approvata'&&!(x.pezzi_in_confronto||0)).forEach(x=>SHIPSEL.add(x.commessa_id+':'+x.fornitore_id));rdoRenderShip();}
+function shipSelAll(on){SHIPSEL=new Set();if(on)DDLIST.filter(x=>x.stato==='approvata').forEach(x=>SHIPSEL.add(x.commessa_id+':'+x.fornitore_id));rdoRenderShip();}
 async function shipSend(){
   const keys=[...SHIPSEL];if(!keys.length){toast('Seleziona almeno una RDO approvata');return;}
   if(!confirm(`Inviare ${keys.length} RDO approvate insieme? (invio simulato)`))return;
@@ -2443,8 +2443,8 @@ function renderDdEditor(d){
     const cmpMark=(r.parte_id&&confSet.has(r.parte_id))?'<span class="cmptag" title="Pezzo in confronto tra più fornitori">🔀</span> ':'';
     return `<tr class="${inc?'':'ddrow-off'}">${chk}${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
   }).join('');
-  const confN=d.pezzi_in_confronto||0, confBlock=confN>0;
-  const st=d.stato, canSend=st==='approvata'&&!confBlock;
+  const confN=d.pezzi_in_confronto||0;
+  const st=d.stato, canSend=st==='approvata';
   const o=d.opzioni||{};
   const ctReq=!!d.conto_terzi_richiesto, ctOk=!!d.conto_terzi_ok, ctBlock=ctReq&&!ctOk;
   const isComm=d.tipo_distinta==='commerciale';
@@ -2462,7 +2462,7 @@ function renderDdEditor(d){
       ?`<div class="dd-ctwarn">⚠<span>Ci sono particolari costruttivi / commerciali lavorati: indica come avviene la fornitura — <b>conto lavorazione</b> (materiale fornito da IB Motion) <b>oppure</b> <b>fornitura completa</b> (pezzo finito a carico del fornitore) — altrimenti la RDO non si può approvare.</span></div>`
       :`<div class="dd-ctok">✓ Modalità di fornitura indicata.</div>`;
   }
-  const confHtml=confBlock?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO <b>non è inviabile</b> finché non scegli il vincitore per ciascuno (pannello «👁 Colpo d'occhio» → Confronto prezzi, o dal pezzo nell'albero).</span></div>`:'';
+  const confHtml=confN?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO si <b>invia regolarmente</b> (così raccogli le offerte). Scegli poi il vincitore (pannello «👁 Colpo d'occhio» → Confronto prezzi) — la <b>conferma d'ordine</b> è bloccata finché ci sono pezzi in comune.</span></div>`:'';
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
   const dwgCnt={};dwg.forEach(x=>dwgCnt[x.ext]=(dwgCnt[x.ext]||0)+1);
   const dwgFmtTxt=Object.keys(dwgCnt).map(k=>k.toUpperCase()+' '+dwgCnt[k]).join(' · ')||'0';
@@ -2531,7 +2531,7 @@ function renderDdEditor(d){
           ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Seleziona un'opzione per il conto terzi">✓ Approva</button>`
           :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
         ${st!=='bozza'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
-        <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${confBlock?'Ci sono pezzi in confronto: scegli prima il vincitore':(st==='approvata'?'Invia la RDO':'Approva prima di inviare')}">✉ Invia (simulato)</button>
+        <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${st==='approvata'?'Invia la RDO (richiesta offerta)':'Approva prima di inviare'}">✉ Invia (simulato)</button>
       </div>
     </div>`;
 }
