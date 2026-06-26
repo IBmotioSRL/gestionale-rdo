@@ -676,6 +676,71 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 
 /* ── FORNITORI ── */
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:9px}
+.fan-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+/* ── vista Fornitori: lista friendly + scheda ── */
+.fv-body{flex:1;display:flex;flex-direction:column;min-height:0;padding:12px 18px 16px;gap:10px}
+.fv-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.fv-search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--surf);border:1.5px solid var(--bd);border-radius:12px;padding:9px 13px;box-shadow:var(--sh)}
+.fv-search:focus-within{border-color:var(--go-d)}
+.fv-search input{border:0;outline:0;flex:1;font:inherit;font-size:13px;background:transparent;color:var(--t1)}
+.fv-chips{display:flex;gap:6px;flex-wrap:wrap}
+.fv-fchip{border:1.5px solid var(--bd2);background:var(--surf);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:5px}
+.fv-fchip:hover{border-color:var(--go-d)}
+.fv-fchip.on{background:var(--br);color:#fff;border-color:var(--br)}
+.fv-fchip .d{width:8px;height:8px;border-radius:50%}
+.fv-work{flex:1;display:grid;grid-template-columns:1fr 384px;gap:12px;min-height:0}
+.fv-list{overflow:auto;border-radius:var(--r);background:var(--surf);box-shadow:var(--sh);border:1px solid var(--bd)}
+.fv-az{position:sticky;top:0;z-index:2;background:#fff;padding:9px 14px 5px;font-size:12px;font-weight:900;color:var(--go-d);letter-spacing:.5px;border-bottom:1px solid var(--bd)}
+.fv-row{display:grid;grid-template-columns:42px 1.3fr 1.5fr 86px 78px;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);cursor:pointer}
+.fv-row:last-child{border-bottom:0}
+.fv-row:hover{background:rgba(245,168,35,.06)}
+.fv-row.sel{background:rgba(245,168,35,.12);box-shadow:inset 3px 0 0 var(--go-d)}
+.fv-av{width:38px;height:38px;border-radius:12px;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fv-nm{font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:7px;min-width:0}
+.fv-nm .bk{font-size:9px;font-weight:800;color:#fff;background:var(--red);padding:1px 6px;border-radius:20px;flex-shrink:0}
+.fv-meta{font-size:11px;color:var(--t2);margin-top:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fv-tag{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.fv-tag.terz{background:rgba(88,86,214,.1);color:var(--purple)}
+.fv-tag.comm{background:rgba(0,122,255,.1);color:var(--blue)}
+.fv-tag.online{background:rgba(52,199,89,.12);color:#1A7A2E}
+.fv-tag.bkk{background:rgba(255,59,48,.12);color:var(--red)}
+.fv-caps{display:flex;gap:5px;flex-wrap:wrap;overflow:hidden}
+.fv-cap{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:8px;background:var(--bg);color:var(--t2);border:1px solid var(--bd);white-space:nowrap}
+.fv-cap.more{background:transparent;color:var(--t3);border-style:dashed}
+.fv-fmt{font-size:10px;font-weight:800;color:var(--t3);letter-spacing:.3px}
+.fv-use{text-align:right;font-size:11px;color:var(--t2);font-weight:700}
+.fv-use b{color:var(--t1);font-size:13px}
+.fv-empty{padding:40px;text-align:center;color:var(--t3)}
+/* scheda dettaglio */
+.fv-detail{overflow:auto;border-radius:var(--r);background:var(--surf);box-shadow:var(--shd);border:1px solid var(--bd);display:flex;flex-direction:column}
+.fv-dempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t3);gap:10px;padding:40px;text-align:center}
+.fv-dempty .big{font-size:40px}
+.fv-dhd{position:relative;padding:18px 16px 14px;background:linear-gradient(135deg,rgba(245,168,35,.16),rgba(245,168,35,.03));border-bottom:1px solid var(--bd)}
+.fv-dhd-row{display:flex;align-items:center;gap:12px}
+.fv-dhd .fv-av{width:54px;height:54px;border-radius:16px;font-size:19px}
+.fv-dhd .nm{font-size:17px;font-weight:800;line-height:1.15}
+.fv-dhd .badges{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.fv-dclose{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:8px;border:1px solid var(--bd2);background:var(--surf);cursor:pointer;font-size:14px;color:var(--t2)}
+.fv-quick{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.fv-qbtn{flex:1;min-width:80px;border:1px solid var(--bd2);background:var(--surf);border-radius:10px;padding:8px 6px;font:inherit;font-size:11px;font-weight:700;color:var(--t1);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none}
+.fv-qbtn:hover{border-color:var(--go-d);background:#fff}
+.fv-qbtn .i{font-size:15px}
+.fv-dbody{padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+.fv-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fv-stat{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px;text-align:center}
+.fv-stat .v{font-size:16px;font-weight:800}
+.fv-stat .l{font-size:9.5px;color:var(--t2);font-weight:700;margin-top:1px}
+.fv-sec{font-size:10.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.fv-sec .ln{flex:1;height:1px;background:var(--bd)}
+.fv-fld{margin-bottom:8px}
+.fv-fld .lb{font-size:10.5px;font-weight:700;color:var(--t2);margin-bottom:2px}
+.fv-fld .vl{font-size:13px;font-weight:600}
+.fv-fld .vl a{color:var(--blue);text-decoration:none}
+.fv-fld .vl.muted{color:var(--t3);font-weight:600}
+.fv-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fv-editbar{position:sticky;bottom:0;background:var(--surf);border-top:1px solid var(--bd);padding:10px 16px;display:flex;gap:8px}
+.fv-editbar .btn{flex:1;justify-content:center}
+@media(max-width:900px){.fv-work{grid-template-columns:1fr}.fv-detail{display:none}.fv-detail.show{display:flex;position:fixed;inset:0;z-index:200;border-radius:0}}
 .fcard{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:14px;transition:transform .15s,box-shadow .15s}
 .fcard:hover{transform:translateY(-2px);box-shadow:var(--shd)}
 .fch{display:flex;align-items:center;gap:9px;margin-bottom:10px}
@@ -942,7 +1007,16 @@ textarea.fld{resize:vertical;min-height:60px}
         <button class="btn btn-go" onclick="openForn()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi</button>
       </div>
     </div></div>
-    <div class="vscroll"><div class="fgrid" id="fgrid"></div></div>
+    <div class="fv-body">
+      <div class="fv-toolbar">
+        <div class="fv-search">🔎 <input id="fvq" placeholder="Cerca per nome, lavorazione, tipo, città…" oninput="renderForn()"></div>
+        <div class="fv-chips" id="fvChips"></div>
+      </div>
+      <div class="fv-work">
+        <div class="fv-list" id="fgrid"></div>
+        <div class="fv-detail" id="fvDetail"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ════ COSTI ════ -->
@@ -1028,7 +1102,17 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg" id="fgForn"><label class="fl">Fornitore <span class="fmuted" style="font-weight:600">→ nomi come compaiono nella colonna FORNITORE delle distinte</span></label><div class="chips" id="chips_fnm" onclick="document.getElementById('chipin_fnm').focus()"></div><div class="fhint">Ogni commerciale con uno di questi nomi in distinta viene assegnato a questo fornitore. Voci dal vocabolario. (Il nome rubrica combacia comunque in automatico.)</div></div>
       <div class="fg" id="fgTipi"><label class="fl">Tipi commerciali <span class="fmuted" style="font-weight:600">→ comandano il match dei commerciali</span></label><div class="chips" id="chips_tipi" onclick="document.getElementById('chipin_tipi').focus()"></div><div class="fhint">Ogni commerciale con uno di questi tipi viene assegnato a questo fornitore (se è l'unico che lo copre). Voci dal vocabolario tipi.</div></div>
       <div class="fg"><label class="fl">Formati preferiti</label><div class="fmt-row"><label class="fmt-c"><input type="checkbox" id="fPdf" checked> PDF</label><label class="fmt-c"><input type="checkbox" id="fDwg"> DWG</label><label class="fmt-c"><input type="checkbox" id="fDxf"> DXF</label><label class="fmt-c"><input type="checkbox" id="fStep"> STEP</label></div></div>
-      <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, referente, tempi…"></textarea></div>
+      <div class="fg"><label class="fl">📇 Anagrafica</label>
+        <div class="fan-grid">
+          <input class="fld" id="fSede" placeholder="Sede / indirizzo">
+          <input class="fld" id="fCitta" placeholder="Città (es. Brescia)">
+          <input class="fld" id="fTel" placeholder="Telefono">
+          <input class="fld" id="fRef" placeholder="Referente">
+          <input class="fld" id="fPiva" placeholder="P.IVA">
+          <input class="fld" id="fSito" placeholder="Sito web">
+          <input class="fld" id="fPec" placeholder="PEC" style="grid-column:1/-1">
+        </div></div>
+      <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, tempi, condizioni…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
     </div>
     <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
@@ -2691,22 +2775,111 @@ async function impConferma(){
   }catch{toast('Errore salvataggio',true);btn.disabled=false;}
 }
 
-/* ── FORNITORI ── */
+/* ── FORNITORI — lista friendly + scheda dettaglio ── */
+let FFILT='all', FSEL=null, FORN_STATS_TRIED=false;
+const FFILTERS=[['all','Tutti',''],['terzista','Terzisti','var(--purple)'],['commerciale','Commerciali','var(--blue)'],['online','Online','var(--green)'],['bk','Lista nera','var(--red)']];
+function fornCaps(f){return f.tipo==='commerciale'?(f.tag_tipi||[]):(f.tag_lavorazioni||[]);}
+function fornStats(id){
+  let np=0;const seen=new Set();
+  (DDLIST||[]).forEach(x=>{if(String(x.fornitore_id)===String(id)){seen.add(x.commessa_id);np+=x.n_pezzi||0;}});
+  return {nc:seen.size,np};
+}
 function renderForn(){
   document.getElementById('fornSub').textContent=fornitori.filter(f=>f.attivo).length+' fornitori attivi';
+  const chips=document.getElementById('fvChips');
+  if(chips)chips.innerHTML=FFILTERS.map(([k,l,c])=>`<div class="fv-fchip${FFILT===k?' on':''}" onclick="FFILT='${k}';renderForn()">${c?`<span class="d" style="background:${c}"></span>`:''}${l}</div>`).join('');
+  const q=((document.getElementById('fvq')||{}).value||'').trim().toLowerCase();
+  const list=fornitori.filter(f=>{
+    if(FFILT==='terzista'&&f.tipo!=='terzista')return false;
+    if(FFILT==='commerciale'&&f.tipo!=='commerciale')return false;
+    if(FFILT==='online'&&f.modalita_ordine!=='online')return false;
+    if(FFILT==='bk'&&!f.blacklist)return false;
+    if(!q)return true;
+    const hay=[f.nome,f.citta,f.sede,f.email,...(f.tag_lavorazioni||[]),...(f.tag_categorie||[]),...(f.tag_tipi||[]),...(f.tag_fornitori||[])].join(' ').toLowerCase();
+    return hay.includes(q);
+  }).sort((a,b)=>a.nome.localeCompare(b.nome));
   const g=document.getElementById('fgrid');
-  if(!fornitori.length){g.innerHTML=emptyHtml('Nessun fornitore','Aggiungi i fornitori e terzisti alla rubrica.','openForn()','Aggiungi fornitore');return;}
-  g.innerHTML=fornitori.map(f=>{
-    const tos=(f.emails_to&&f.emails_to.length)?f.emails_to:(f.email?[f.email]:[]);
-    const extra=Math.max(0,tos.length-1)+((f.emails_cc||[]).length)+((f.emails_ccn||[]).length);
-    const online=f.modalita_ordine==='online';
-    const mailLine=online
-      ?`<span class="fmuted">🛒 shop online${f.url_shop?` · <a href="${esc(f.url_shop)}" target="_blank">apri</a>`:''}</span>`
-      :(tos.length?`<span>✉ <a href="mailto:${esc(tos[0])}">${esc(tos[0])}</a>${extra>0?` <span class="fmuted">+${extra}</span>`:''}</span>`:'<span class="fmuted">✉ nessun indirizzo</span>');
-    return `<div class="fcard" style="${(f.attivo&&!f.blacklist)?'':'opacity:.55'}" oncontextmenu="ctxFornCard(event,${f.id})">
-    <div class="fch"><div class="fcav" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div><div><div class="fcname">${esc(f.nome)}</div><span class="fctipo" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${f.blacklist?'<span class="fctipo" style="background:rgba(255,59,48,.12);color:var(--red)">🚫 lista nera</span>':''}</div></div>
-    <div class="fcc">${mailLine}${(f.tag_lavorazioni&&f.tag_lavorazioni.length)?`<span class="fmuted">⚙️ ${esc(f.tag_lavorazioni.join(', '))}</span>`:''}${(f.tag_fornitori&&f.tag_fornitori.length)?`<span class="fmuted">🏢 ${esc(f.tag_fornitori.join(', '))}</span>`:''}${(f.tag_tipi&&f.tag_tipi.length)?`<span class="fmuted">📦 ${esc(f.tag_tipi.join(', '))}</span>`:''}<span class="fmuted">📄 ${esc(f.formati_preferiti)}</span></div>
-    <div class="fcard-act"><button class="btn btn-ghost btn-sm" onclick="openForn(${f.id})">Modifica</button></div></div>`;}).join('');
+  if(!fornitori.length){g.innerHTML='<div class="fv-empty">Nessun fornitore. Usa «Aggiungi» per crearne uno.</div>';renderFornDetail();return;}
+  let html='',letter='';
+  list.forEach(f=>{
+    const L=(f.nome[0]||'?').toUpperCase();
+    if(L!==letter){letter=L;html+=`<div class="fv-az">${L}</div>`;}
+    const cp=fornCaps(f);
+    const capHtml=(cp.slice(0,2).map(c=>`<span class="fv-cap">${esc(c)}</span>`).join('')+(cp.length>2?`<span class="fv-cap more">+${cp.length-2}</span>`:''))||'<span class="fv-cap more">—</span>';
+    const tt=f.tipo==='terzista'?'<span class="fv-tag terz">terzista</span>':'<span class="fv-tag comm">commerciale</span>';
+    const st=fornStats(f.id);
+    const dim=(f.attivo&&!f.blacklist)?'':'opacity:.55';
+    html+=`<div class="fv-row${FSEL===f.id?' sel':''}" style="${dim}" onclick="selForn(${f.id})" oncontextmenu="ctxFornCard(event,${f.id})">
+      <div class="fv-av" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div>
+      <div style="min-width:0"><div class="fv-nm">${esc(f.nome)}${f.blacklist?'<span class="bk">lista nera</span>':''}</div>
+        <div class="fv-meta">${tt}${f.modalita_ordine==='online'?'<span class="fv-tag online">🛒 online</span>':''}${f.citta?' · 📍 '+esc(f.citta):''}</div></div>
+      <div class="fv-caps">${capHtml}</div>
+      <div class="fv-fmt">${esc(f.formati_preferiti||'')}</div>
+      <div class="fv-use">${st.nc?`<b>${st.nc}</b> comm.`:'<span style="color:var(--t3)">—</span>'}</div>
+    </div>`;
+  });
+  g.innerHTML=html||`<div class="fv-empty">Nessun fornitore trovato${q?' per «'+esc(q)+'»':''}</div>`;
+  renderFornDetail();
+  if((!DDLIST||!DDLIST.length)&&!FORN_STATS_TRIED){FORN_STATS_TRIED=true;loadDdList().then(()=>{if(S.v==='forn')renderForn();}).catch(()=>{});}
+}
+function selForn(id){FSEL=id;renderForn();}
+async function toggleBlackForn(id){
+  const f=fornitori.find(x=>x.id===id);if(!f)return;
+  try{const r=await fetch(API+'/api/fornitori/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({blacklist:!f.blacklist})});if(!r.ok)throw 0;
+    toast(f.blacklist?'Tolto dalla lista nera':'Messo in lista nera','ok');await loadFornitori();renderForn();
+  }catch{toast('Errore',true);}
+}
+function renderFornDetail(){
+  const el=document.getElementById('fvDetail');if(!el)return;
+  const f=fornitori.find(x=>x.id===FSEL);
+  if(!f){el.classList.remove('show');el.innerHTML='<div class="fv-dempty"><div class="big">👈</div><div><b>Clicca un fornitore</b><br>per vedere e modificare la scheda</div></div>';return;}
+  el.classList.add('show');
+  const cp=fornCaps(f);const st=fornStats(f.id);
+  const q=encodeURIComponent(f.nome+' '+(f.citta||''));
+  const sito=f.sito_web?(f.sito_web.startsWith('http')?f.sito_web:'https://'+f.sito_web):'';
+  const mail=(f.emails_to&&f.emails_to[0])||f.email||'';
+  const ro=(lb,val,link)=>`<div class="fv-fld"><div class="lb">${lb}</div><div class="vl${val?'':' muted'}">${val?(link?`<a href="${link}" target="_blank" rel="noopener">${esc(val)}</a>`:esc(val)):'—'}</div></div>`;
+  el.innerHTML=`
+    <div class="fv-dhd">
+      <button class="fv-dclose" onclick="FSEL=null;renderForn()">✕</button>
+      <div class="fv-dhd-row">
+        <div class="fv-av" style="background:${f.blacklist?'#9b2c2c':avc(f.nome)}">${ini(f.nome)}</div>
+        <div style="min-width:0"><div class="nm">${esc(f.nome)}</div>
+          <div class="badges">${f.tipo==='terzista'?'<span class="fv-tag terz">terzista</span>':'<span class="fv-tag comm">commerciale</span>'}${f.modalita_ordine==='online'?'<span class="fv-tag online">🛒 shop online</span>':''}${f.blacklist?'<span class="fv-tag bkk">🚫 lista nera</span>':''}${f.attivo?'':'<span class="fv-tag bkk">disattivato</span>'}</div></div>
+      </div>
+      <div class="fv-quick">
+        <a class="fv-qbtn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener"><span class="i">🔎</span>Google</a>
+        <a class="fv-qbtn" href="https://www.google.com/maps/search/${q}" target="_blank" rel="noopener"><span class="i">📍</span>Maps</a>
+        <a class="fv-qbtn" href="${sito||('https://www.google.com/search?q='+q)}" target="_blank" rel="noopener"><span class="i">🌐</span>Sito</a>
+        <a class="fv-qbtn" href="https://ec.europa.eu/taxation_customs/vies/" target="_blank" rel="noopener"><span class="i">🧾</span>P.IVA</a>
+      </div>
+    </div>
+    <div class="fv-dbody">
+      <div class="fv-stats">
+        <div class="fv-stat"><div class="v">${st.nc}</div><div class="l">Commesse</div></div>
+        <div class="fv-stat"><div class="v">${st.np}</div><div class="l">Pezzi</div></div>
+        <div class="fv-stat"><div class="v" style="font-size:11px">${esc(f.formati_preferiti||'—')}</div><div class="l">Formati</div></div>
+      </div>
+      <div><div class="fv-sec">📇 Anagrafica <span class="ln"></span></div>
+        ${ro('Telefono',f.telefono,f.telefono?('tel:'+f.telefono.replace(/\s/g,'')):'')}
+        ${ro('Referente',f.referente)}
+        ${ro('Sede / indirizzo',f.sede)}
+        <div class="fv-grid2">${ro('Città',f.citta)}${ro('P.IVA',f.piva)}</div>
+        ${ro('Email preventivi',mail,mail?('mailto:'+mail):'')}
+        <div class="fv-grid2">${ro('Sito web',f.sito_web,sito)}${ro('PEC',f.pec,f.pec?('mailto:'+f.pec):'')}</div>
+      </div>
+      <div><div class="fv-sec">🛠 Cosa fa <span class="ln"></span></div>
+        <div class="fv-fld"><div class="lb">${f.tipo==='commerciale'?'Tipi commerciali':'Lavorazioni'}</div><div class="fv-caps">${cp.map(c=>`<span class="fv-cap">${esc(c)}</span>`).join('')||'<span class="vl muted">—</span>'}</div></div>
+        ${f.tipo!=='commerciale'?`<div class="fv-fld"><div class="lb">Categorie (filtro)</div><div class="fv-caps">${(f.tag_categorie||[]).map(c=>`<span class="fv-cap">${esc(c)}</span>`).join('')||'<span class="vl muted">—</span>'}</div></div>`:''}
+        ${(f.tag_fornitori&&f.tag_fornitori.length)?`<div class="fv-fld"><div class="lb">Nomi in distinta</div><div class="fv-caps">${f.tag_fornitori.map(c=>`<span class="fv-cap">${esc(c)}</span>`).join('')}</div></div>`:''}
+        ${f.modalita_ordine==='online'?ro('Shop online',f.url_shop||'(nessun link)',f.url_shop?(f.url_shop.startsWith('http')?f.url_shop:'https://'+f.url_shop):''):''}
+      </div>
+      ${f.note?`<div><div class="fv-sec">📝 Note <span class="ln"></span></div><div class="vl" style="font-weight:500;white-space:pre-wrap;font-size:12.5px">${esc(f.note)}</div></div>`:''}
+    </div>
+    <div class="fv-editbar">
+      <button class="btn btn-ghost" onclick="toggleBlackForn(${f.id})">${f.blacklist?'↩ Togli lista nera':'🚫 Lista nera'}</button>
+      <button class="btn btn-go" onclick="openForn(${f.id})">✏ Modifica</button>
+    </div>`;
 }
 
 /* ── NUOVO/MODIFICA PROGETTO ── */
@@ -2777,6 +2950,13 @@ function openForn(id){
   document.getElementById('fTipo').value=ed?ed.tipo:'commerciale';
   document.getElementById('fModalita').value=ed?(ed.modalita_ordine||'rdo'):'rdo';
   document.getElementById('fUrlShop').value=ed?(ed.url_shop||''):'';
+  document.getElementById('fSede').value=ed?(ed.sede||''):'';
+  document.getElementById('fCitta').value=ed?(ed.citta||''):'';
+  document.getElementById('fTel').value=ed?(ed.telefono||''):'';
+  document.getElementById('fRef').value=ed?(ed.referente||''):'';
+  document.getElementById('fPiva').value=ed?(ed.piva||''):'';
+  document.getElementById('fSito').value=ed?(ed.sito_web||''):'';
+  document.getElementById('fPec').value=ed?(ed.pec||''):'';
   document.getElementById('fNote').value=ed?(ed.note||''):'';
   const fmts=(ed?ed.formati_preferiti:'PDF').split(',').map(x=>x.trim());
   document.getElementById('fPdf').checked=fmts.includes('PDF');document.getElementById('fDwg').checked=fmts.includes('DWG');document.getElementById('fDxf').checked=fmts.includes('DXF');document.getElementById('fStep').checked=fmts.includes('STEP');
@@ -2809,7 +2989,9 @@ async function salvaForn(){
   const tagCat=tipo==='terzista'?chipVals('cat'):[];
   const tagForn=tipo==='commerciale'?chipVals('fnm'):[];
   const tagTipi=tipo==='commerciale'?chipVals('tipi'):[];
-  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim()};
+  const gv=id=>document.getElementById(id).value.trim();
+  const payload={nome,tipo,lavorazioni:tagLav.join(','),formati_preferiti:fmts.join(',')||'PDF',note:document.getElementById('fNote').value.trim(),emails_to:to,emails_cc:cc,emails_ccn:ccn,tag_lavorazioni:tagLav,tag_fornitori:tagForn,tag_tipi:tagTipi,tag_categorie:tagCat,modalita_ordine:document.getElementById('fModalita').value,url_shop:document.getElementById('fUrlShop').value.trim(),
+    sede:gv('fSede'),citta:gv('fCitta'),telefono:gv('fTel'),referente:gv('fRef'),piva:gv('fPiva'),sito_web:gv('fSito'),pec:gv('fPec')};
   if(id){payload.attivo=document.getElementById('fAttivo').checked;payload.blacklist=document.getElementById('fBlack').checked;}
   const btn=document.getElementById('fBtn');btn.disabled=true;
   try{const r=await fetch(id?API+'/api/fornitori/'+id:API+'/api/fornitori',{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw 0;
