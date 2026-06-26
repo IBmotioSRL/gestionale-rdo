@@ -417,6 +417,72 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .ac-set:hover{background:rgba(245,168,35,.18)}
 .ac-empty{background:rgba(142,130,120,.06);color:var(--t3);border:1px solid var(--bd)}
 .ac-empty:hover{background:rgba(245,168,35,.07);color:var(--go-d)}
+/* ── multi-fornitore: chip pezzo + badge confronto ── */
+.pforn{display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pchip{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid var(--bd2);background:var(--surf);white-space:nowrap;cursor:pointer;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.pchip:hover{border-color:var(--go-d)}
+.pchip .pav{width:13px;height:13px;border-radius:50%;color:#fff;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.pchip.empty{color:var(--orange);border-color:rgba(255,149,0,.4);background:rgba(255,149,0,.08)}
+.pchip.add{color:var(--purple);border-style:dashed;border-color:rgba(88,86,214,.5);background:rgba(88,86,214,.06)}
+.pcmpbadge{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.1);border:1px solid rgba(88,86,214,.25);padding:2px 6px;border-radius:20px;white-space:nowrap}
+.tr-pst.cmp{background:var(--purple)}
+/* ── pannello "Colpo d'occhio" ── */
+.glancep{width:360px;flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(180deg,rgba(248,244,239,.5),transparent 120px);padding:12px}
+.gp-h{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.gp-h h2{font-size:13px;font-weight:800}
+.gp-sub{font-size:11px;color:var(--t2);margin-bottom:10px}
+.gp-rollup{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.gp-rl{background:var(--surf);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);padding:9px 11px}
+.gp-rl .v{font-size:18px;font-weight:800}
+.gp-rl .k{font-size:10px;color:var(--t2);font-weight:700}
+.gp-rl.acc{background:linear-gradient(135deg,rgba(88,86,214,.1),rgba(88,86,214,.03));border-color:rgba(88,86,214,.2)}
+.gp-rl.acc .v{color:var(--purple)}
+.gp-seg{display:flex;background:var(--surf);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+.gp-seg button{flex:1;border:0;background:transparent;padding:8px;font:inherit;font-size:11.5px;font-weight:800;color:var(--t2);cursor:pointer}
+.gp-seg button.on{background:var(--go);color:#3a2406}
+.gp-empty{text-align:center;font-size:11px;color:var(--t3);padding:24px 8px}
+/* card fornitore */
+.gfc{background:var(--surf);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
+.gfc-h{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+.gfc-h:hover{background:rgba(245,168,35,.04)}
+.gfc-av{width:30px;height:30px;border-radius:9px;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gfc-h .nm{font-weight:800;font-size:13px}
+.gfc-h .tp{font-size:10.5px;color:var(--t2)}
+.gfc-h .meta{margin-left:auto;text-align:right;flex-shrink:0}
+.gfc-h .cnt{font-weight:800;font-size:13px}
+.gfc-h .cnt small{font-weight:600;color:var(--t3);font-size:10px}
+.gfc-h .shb{font-size:10px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.1);padding:1px 7px;border-radius:20px;margin-top:2px;display:inline-block}
+.gfc-b{border-top:1px solid var(--bd);padding:4px 0;display:none}
+.gfc.open .gfc-b{display:block}
+.gfc.open .gfc-h{background:rgba(248,244,239,.6)}
+.gfl{display:grid;grid-template-columns:84px 1fr auto;gap:8px;align-items:center;padding:6px 12px;font-size:11.5px;cursor:pointer}
+.gfl:hover{background:rgba(245,168,35,.05)}
+.gfl .c{font-family:ui-monospace,monospace;font-weight:700;color:var(--br);overflow:hidden;text-overflow:ellipsis}
+.gfl .d{color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gfl .s{font-size:9.5px;font-weight:800;color:var(--purple);white-space:nowrap}
+.gfl .s.solo{color:var(--t3)}
+.gchev{transition:transform .15s;color:var(--t3);font-size:10px}
+.gfc.open .gchev{transform:rotate(90deg)}
+/* confronto prezzi */
+.gcmp{background:var(--surf);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
+.gcmp-h{padding:9px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;cursor:pointer}
+.gcmp-h:hover{background:rgba(245,168,35,.04)}
+.gcmp-h .c{font-family:ui-monospace,monospace;font-weight:800;color:var(--br);font-size:12px}
+.gcmp-h .d{font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcmp-h .q{margin-left:auto;font-size:10.5px;color:var(--t3);font-weight:700;white-space:nowrap}
+.gcmp-row{display:flex;align-items:center;gap:9px;padding:8px 12px;border-bottom:1px solid var(--bd)}
+.gcmp-row:last-child{border-bottom:0}
+.gcmp-row .av{width:24px;height:24px;border-radius:7px;font-size:10px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gcmp-row .nm{font-weight:700;font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcmp-row .pr{font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
+.gcmp-row .prin{width:78px;border:1px solid var(--bd2);border-radius:6px;padding:3px 6px;font:inherit;font-size:11px;font-weight:700;text-align:right}
+.gcmp-row.win{background:rgba(52,199,89,.07)}
+.gcmp-row.win .pr{color:#1A7A2E}
+.gcmp-row .best{font-size:9px;font-weight:800;color:#1A7A2E;background:rgba(52,199,89,.15);padding:1px 6px;border-radius:20px}
+.gcmp-act{padding:8px 12px;background:rgba(248,244,239,.6);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.gcmp-act .lab{font-size:11px;color:var(--t2);font-weight:600}
+.gxbtn{border:0;background:transparent;color:var(--t3);cursor:pointer;font-size:13px;line-height:1;padding:0 2px;flex-shrink:0}
+.gxbtn:hover{color:var(--red)}
 .sc{display:inline-flex;align-items:center;font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;flex-shrink:0}
 .s_da_inviare{background:rgba(0,122,255,.08);color:#0055C8}
 .s_inviata_da_confermare{background:rgba(90,200,250,.12);color:#0077A0}
@@ -802,7 +868,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="pdet-tab on" id="tabAlbero" onclick="setView('albero')">Albero parti</div>
       <div class="pdet-tab" id="tabFile" onclick="setView('file')">Ricerca file <span class="ptc" id="ftot">0</span></div>
     </div>
-    <div class="ws" style="display:flex;flex-direction:column">
+    <div class="ws" style="display:flex;min-height:0">
       <div class="treep" id="viewAlbero" style="flex:1">
         <div class="tph"><div class="tpt">Struttura progetto <span id="tstats"></span></div>
           <div class="tr-toolbar">
@@ -813,7 +879,12 @@ textarea.fld{resize:vertical;min-height:60px}
           </div></div>
         <div class="tscroll" id="tscroll"></div>
       </div>
-      <div class="filep" id="viewFile" style="display:none">
+      <div class="glancep" id="viewGlance">
+        <div class="gp-h"><span style="font-size:15px">👁</span><h2>Colpo d'occhio</h2></div>
+        <div class="gp-sub">Chi ha cosa, cosa è in confronto e con chi.</div>
+        <div id="glanceBody"></div>
+      </div>
+      <div class="filep" id="viewFile" style="display:none;flex:1">
         <div class="file-toolbar">
           <div class="csearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cerca in tutte le proprietà…" oninput="S.fq=this.value.toLowerCase();renderFileTable()"></div>
           <button class="fbtn" id="fbTipo" onclick="fMenu('tipo',event)">Tipo ▾</button>
@@ -1164,7 +1235,7 @@ async function openProgetto(pid){
   }catch{S.albero=null;S.cal={files:[]};}
   // apri tutte le categorie di default
   if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
-  renderProgress();renderTree();renderFiltri();renderFileTable();updateFAB();
+  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();
 }
 function catParti(cat){return cat.kind==='commerciale'?[...(cat.gruppi||[]).flatMap(g=>g.parti),...(cat.tipi||[]).flatMap(t=>t.parti)]:(cat.lavorazioni||[]).flatMap(l=>l.parti);}
 function allParti(){return S.albero?S.albero.categorie.flatMap(catParti):[];}
@@ -1182,22 +1253,39 @@ function renderProgress(){
     <div class="wbar" style="margin-left:auto"><div class="wbarf" style="width:${pct}%"></div></div><span style="font-size:10px;font-weight:700;color:var(--t2)">${pct}%</span>`;
 }
 
+/* ── multi-fornitore: helper su p.fornitori_comparazione / prezzi_comparazione ── */
+function pComp(p){try{return JSON.parse(p.fornitori_comparazione||'[]')||[];}catch{return[];}}
+function pPrezzi(p){try{return JSON.parse(p.prezzi_comparazione||'{}')||{};}catch{return{};}}
+function pForns(p){const a=[];if(p.fornitore_id!=null)a.push(p.fornitore_id);pComp(p).forEach(x=>{if(!a.includes(x))a.push(x);});return a;}
+function fornById(id){return fornitori.find(f=>f.id===id)||null;}
+function fornFirst(id){const f=fornById(id);return f?f.nome.split(' ')[0]:('#'+id);}
+
 function partRow(p){
   S.pmap[p.id]=p;
   const chk=S.rows.has(p.id);const sel=chk||S.sel===p.numero_parte;
-  const assigned=p.fornitore_id!=null;
-  const forn=assigned?fornitori.find(f=>f.id===p.fornitore_id):null;
-  const fc=forn?`<span class="ac ac-set" title="${esc(forn.nome)}${p.assegnazione_auto?' (auto)':''}" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">${esc(forn.nome.split(' ')[0])}${p.assegnazione_auto?' ·auto':''}</span>`
-                :`<span class="ac ac-empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
+  const forns=pForns(p);const n=forns.length;
+  const dot=n>=2?'cmp':(n===1?'ok':'no');
+  const dotT=n>=2?('In confronto · '+n+' fornitori'):(n===1?'Assegnato':'Da assegnare');
+  let chips='';
+  if(n>=2)chips+=`<span class="pcmpbadge" title="Stesso pezzo a più fornitori per confronto prezzi">🔀 ${n}</span>`;
+  forns.forEach((fid,i)=>{
+    const f=fornById(fid);if(!f)return;
+    const auto=i===0&&p.assegnazione_auto&&n===1;
+    chips+=`<span class="pchip" title="${esc(f.nome)}${auto?' (auto)':''}" onclick="event.stopPropagation();partForn(event,${p.id})"><span class="pav" style="background:${avc(f.nome)}">${ini(f.nome)}</span>${esc(f.nome.split(' ')[0])}${auto?' ·auto':''}</span>`;
+  });
+  if(n===0)chips=`<span class="pchip empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
+  else chips+=`<span class="pchip add" title="Invia lo stesso pezzo anche a un altro fornitore (confronto prezzi)" onclick="event.stopPropagation();showCompDD(event,${p.id})">+ confronta</span>`;
   return `<div class="tr-part${sel?' sel':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
-      <span class="tr-pst ${assigned?'ok':'no'}" title="${assigned?'Assegnato':'Da assegnare'}"></span>
+      <span class="tr-pst ${dot}" title="${dotT}"></span>
       <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
       <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span>
       <span class="tr-pqty">${esc(p.quantita)}<small> pz</small></span>
       <div class="tr-pfiles">${fileTags(p.files)}</div>
-      ${fc}</div>`;
+      <div class="pforn">${chips}</div></div>`;
 }
+// clic su un chip fornitore: se è in confronto apri la gestione, altrimenti sostituisci/rilascia
+function partForn(evt,pid){const p=S.pmap[pid];if(p&&pForns(p).length>=2)showCompDD(evt,pid);else showDD(evt,{t:'P',id:pid});}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   S.pmap={};
@@ -1552,6 +1640,7 @@ function filesEnriched(){
 function setView(v){
   S.view=v;
   document.getElementById('viewAlbero').style.display=v==='albero'?'flex':'none';
+  document.getElementById('viewGlance').style.display=v==='albero'?'flex':'none';
   document.getElementById('viewFile').style.display=v==='file'?'flex':'none';
   document.getElementById('tabAlbero').classList.toggle('on',v==='albero');
   document.getElementById('tabFile').classList.toggle('on',v==='file');
@@ -1659,7 +1748,37 @@ function ddItem(f){return `<div class="add-item" onclick="doAssign(${f.id})"><di
 function showDD(evt,target){evt.stopPropagation();ddTarget=target;const d=document.getElementById('add');d.innerHTML=ddHtml(target.t==='P');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-210);let top=r.bottom+4;if(top+300>window.innerHeight)top=Math.max(8,r.top-304);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block`;}
 function showDDBulk(evt){if(!S.rows.size)return;evt.stopPropagation();ddTarget={t:'BULK'};const d=document.getElementById('add');d.innerHTML=ddHtml(true);const r=evt.currentTarget.getBoundingClientRect();d.style.cssText=`top:${Math.max(8,r.top-304)}px;left:${Math.max(8,r.left)}px;display:block`;}
 function closeDD(){const d=document.getElementById('add');if(d)d.style.display='none';}
-document.addEventListener('click',e=>{if(!e.target.closest('#add')&&!e.target.closest('.ac')&&!e.target.closest('.tr-assign-all')&&!e.target.closest('.fbgh'))closeDD();});
+document.addEventListener('click',e=>{if(!e.target.closest('#add')&&!e.target.closest('.ac')&&!e.target.closest('.pchip')&&!e.target.closest('.tr-assign-all')&&!e.target.closest('.fbgh'))closeDD();});
+
+/* ── DROPDOWN CONFRONTO: invia lo stesso pezzo anche ad altri fornitori ── */
+function showCompDD(evt,pid){
+  evt.stopPropagation();
+  const p=S.pmap[pid];if(!p)return;
+  const cur=pForns(p);const primary=p.fornitore_id;
+  const list=fornitori.filter(f=>f.attivo&&!f.blacklist);
+  list.sort((a,b)=>{const ca=cur.includes(a.id),cb=cur.includes(b.id);if(ca!==cb)return ca?-1:1;return a.nome.localeCompare(b.nome);});
+  let h=`<div class="add-hd">${esc(p.numero_parte)} · invia anche a</div>`;
+  if(!list.length)h+='<div class="add-hd">Nessun fornitore — aggiungine in Fornitori</div>';
+  list.forEach(f=>{
+    const inRdo=cur.includes(f.id);const isPrim=f.id===primary;
+    const tag=inRdo
+      ? `<div class="ddt" style="color:${isPrim?'#1A7A2E':'var(--purple)'}">${isPrim?'✓ primario · clic per togliere':'✓ in confronto · clic per togliere'}</div>`
+      : `<div class="ddt" style="color:var(--purple)">+ confronta</div>`;
+    h+=`<div class="add-item" onclick="toggleComp(${pid},${f.id},${inRdo})"><div class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div><div class="ddn">${esc(f.nome)}</div>${tag}</div></div>`;
+  });
+  const d=document.getElementById('add');d.innerHTML=h;
+  const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-240);let top=r.bottom+4;if(top+320>window.innerHeight)top=Math.max(8,r.top-324);
+  d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block;width:230px`;
+}
+async function toggleComp(pid,fid,inRdo){
+  closeDD();
+  try{
+    const r=await fetch(API+'/api/parti/'+pid+'/comparazione/'+fid,{method:inRdo?'DELETE':'POST'});
+    if(!r.ok)throw 0;
+    toast(inRdo?'Rimosso dal confronto':'Aggiunto al confronto','ok');
+    await refreshDetail();
+  }catch{toast('Errore',true);}
+}
 
 async function doAssign(fid){
   const t=ddTarget;closeDD();if(!t)return;
@@ -1720,7 +1839,82 @@ async function refreshDetail(){
     const c=commesse.find(x=>x.id===S.projId);if(c&&rp.ok)c._parti=await rp.json();
   }catch{}
   // la colonna Fornitore di "Ricerca file" si ri-deriva dalle parti aggiornate (join client-side)
-  renderProgress();renderTree();renderFiltri();renderFileTable();updateFAB();
+  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();
+}
+
+/* ── PANNELLO "COLPO D'OCCHIO" ── */
+let GTAB=0; const GFOPEN=new Set();
+function gtab(i){GTAB=i;renderGlance();}
+function gfToggle(fid){GFOPEN.has(fid)?GFOPEN.delete(fid):GFOPEN.add(fid);renderGlance();}
+function jumpPart(pid){const p=S.pmap[pid];if(!p)return;S.sel=p.numero_parte;renderTree();const el=document.querySelector('.tr-part[data-pid="'+pid+'"]');if(el)el.scrollIntoView({block:'center',behavior:'smooth'});}
+function renderGlance(){
+  const body=document.getElementById('glanceBody');if(!body)return;
+  const all=allParti();
+  const assigned=all.filter(p=>pForns(p).length>=1).length;
+  const inCmp=all.filter(p=>pForns(p).length>=2).length;
+  let h=`<div class="gp-rollup"><div class="gp-rl"><div class="v">${assigned}</div><div class="k">pezzi assegnati</div></div><div class="gp-rl acc"><div class="v">${inCmp}</div><div class="k">in confronto prezzi</div></div></div>`;
+  h+=`<div class="gp-seg"><button class="${GTAB===0?'on':''}" onclick="gtab(0)">Per fornitore</button><button class="${GTAB===1?'on':''}" onclick="gtab(1)">Confronto prezzi</button></div>`;
+  h+=GTAB===0?glanceByForn(all):glanceCompare(all);
+  body.innerHTML=h;
+}
+function glanceByForn(all){
+  const map={};
+  all.forEach(p=>{pForns(p).forEach(fid=>{(map[fid]=map[fid]||[]).push(p);});});
+  const fids=Object.keys(map).map(Number);
+  if(!fids.length)return '<div class="gp-empty">Nessun pezzo assegnato.<br>Assegna i fornitori nell\'albero a sinistra.</div>';
+  fids.sort((a,b)=>map[b].length-map[a].length);
+  return fids.map(fid=>{
+    const f=fornById(fid);const nome=f?f.nome:('#'+fid);const tipo=f?f.tipo:'';
+    const parts=map[fid].slice().sort((a,b)=>a.numero_parte.localeCompare(b.numero_parte));
+    const shared=parts.filter(p=>pForns(p).length>=2).length;
+    const open=GFOPEN.has(fid);
+    const rows=parts.map(p=>{
+      const others=pForns(p).filter(x=>x!==fid).map(fornFirst);
+      const s=others.length?`<span class="s">anche: ${others.map(esc).join(', ')}</span>`:`<span class="s solo">solo ${esc(fornFirst(fid))}</span>`;
+      return `<div class="gfl" onclick="jumpPart(${p.id})"><span class="c" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span><span class="d" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span>${s}</div>`;
+    }).join('');
+    return `<div class="gfc${open?' open':''}">
+      <div class="gfc-h" onclick="gfToggle(${fid})">
+        <span class="gchev">▸</span>
+        <span class="gfc-av" style="background:${avc(nome)}">${ini(nome)}</span>
+        <div><div class="nm">${esc(nome)}</div><div class="tp">${esc(tipo)}</div></div>
+        <div class="meta"><div class="cnt">${parts.length} <small>${parts.length===1?'pezzo':'pezzi'}</small></div>${shared?`<span class="shb">${shared} condivisi</span>`:''}</div>
+      </div>
+      <div class="gfc-b">${rows}</div>
+    </div>`;
+  }).join('');
+}
+function glanceCompare(all){
+  const items=all.filter(p=>pForns(p).length>=2).sort((a,b)=>a.numero_parte.localeCompare(b.numero_parte));
+  if(!items.length)return '<div class="gp-empty">Nessun pezzo in confronto.<br>Usa «+ confronta» su un pezzo per inviarlo a più fornitori e comparare i prezzi.</div>';
+  return items.map(p=>{
+    const forns=pForns(p);const prezzi=pPrezzi(p);
+    const vals=forns.map(fid=>prezzi[String(fid)]).filter(v=>v!=null&&v!=='').map(Number);
+    const min=vals.length?Math.min(...vals):null;
+    const rows=forns.map(fid=>{
+      const f=fornById(fid);const nome=f?f.nome:('#'+fid);
+      const pr=prezzi[String(fid)];const has=pr!=null&&pr!=='';
+      const isWin=has&&vals.length>1&&Number(pr)===min;
+      return `<div class="gcmp-row${isWin?' win':''}"><span class="av" style="background:${avc(nome)}">${ini(nome)}</span><span class="nm" title="${esc(nome)}">${esc(nome)}</span>${isWin?'<span class="best">+ economico</span>':''}<input class="prin" type="number" step="0.01" min="0" placeholder="—" value="${has?pr:''}" onchange="setCompPrezzo(${p.id},${fid},this.value)"><button class="gxbtn" title="Togli dal confronto" onclick="rmComp(${p.id},${fid})">✕</button></div>`;
+    }).join('');
+    let act;
+    if(vals.length){
+      act=`<div class="gcmp-act"><span class="lab">Assegna a:</span>${forns.map(fid=>{const pr=prezzi[String(fid)];const best=pr!=null&&pr!==''&&Number(pr)===min&&vals.length>1;return `<button class="tbtn" style="${best?'background:var(--green);color:#fff;border-color:var(--green)':''}" onclick="scegliVincitore(${p.id},${fid})">${best?'✓ ':''}${esc(fornFirst(fid))}</button>`;}).join('')}</div>`;
+    }else{
+      act=`<div class="gcmp-act"><span class="lab">In attesa delle offerte…</span></div>`;
+    }
+    return `<div class="gcmp"><div class="gcmp-h"><span class="c">${esc(p.numero_parte)}</span><span class="d" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span><span class="q">×${esc(p.quantita)} pz</span></div>${rows}${act}</div>`;
+  }).join('');
+}
+async function setCompPrezzo(pid,fid,val){
+  const prezzo=(val===''||val==null)?null:parseFloat(val);
+  try{const r=await fetch(API+'/api/parti/'+pid+'/prezzo-confronto/'+fid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({prezzo})});if(!r.ok)throw 0;await refreshDetail();}catch{toast('Errore prezzo',true);}
+}
+async function rmComp(pid,fid){
+  try{const r=await fetch(API+'/api/parti/'+pid+'/comparazione/'+fid,{method:'DELETE'});if(!r.ok)throw 0;toast('Rimosso dal confronto','ok');await refreshDetail();}catch{toast('Errore',true);}
+}
+async function scegliVincitore(pid,fid){
+  try{const r=await fetch(API+'/api/parti/'+pid+'/scegli/'+fid,{method:'POST'});if(!r.ok)throw 0;toast('Vincitore assegnato — confronto chiuso','ok');await refreshDetail();}catch{toast('Errore',true);}
 }
 async function refreshFiles(){
   try{const rc=await fetch(API+'/api/commesse/'+S.projId+'/files');if(rc.ok)S.cal=await rc.json();}catch{}
