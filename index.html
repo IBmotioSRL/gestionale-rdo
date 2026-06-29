@@ -316,8 +316,29 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* storico revisioni RDO */
 .rr-item{border:1px solid var(--bd);border-radius:9px;padding:8px 11px;margin-bottom:7px;background:var(--surf)}
 .rr-item.prep{border-left:3px solid var(--go-d);background:rgba(245,168,35,.06)}
-.rr-h{font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:3px}
-.rr-diff{font-size:11px;color:var(--t2);line-height:1.55}
+.rr-h{font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:5px}
+.rr-diff{font-size:11px;color:var(--t2);line-height:1.5}
+.rr-chg{padding:4px 0;border-top:1px dashed rgba(0,0,0,.06)}
+.rr-chg:first-child{border-top:none}
+.rr-chg-t{font-size:11px;font-weight:700;color:var(--t1)}
+.rr-ba{display:flex;align-items:center;gap:7px;margin-top:3px;flex-wrap:wrap}
+.rr-before,.rr-after{font-size:11px;padding:2px 8px;border-radius:6px;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr-before{background:rgba(255,59,48,.08);color:#9a2820}
+.rr-after{background:rgba(52,199,89,.1);color:#1A7A2E}
+.rr-arr{color:var(--t3);font-weight:800}
+.rr-none{font-size:11px;color:var(--t3)}
+/* badge revisione nell'elenco fornitori RDO */
+.nav-rev{font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px;vertical-align:middle;white-space:nowrap}
+.nav-rev.sent{background:rgba(52,199,89,.16);color:#1A7A2E}
+.nav-rev.draft{background:rgba(255,149,0,.16);color:#b5701a}
+/* pulsante storico revisioni nell'elenco progetti RDO */
+.rdo-hist{font-size:10.5px;font-weight:700;color:var(--go-d);border:1px solid rgba(245,168,35,.4);background:rgba(245,168,35,.08);border-radius:8px;padding:3px 9px;cursor:pointer;white-space:nowrap}
+.rdo-hist:hover{background:var(--go-d);color:#fff;border-color:transparent}
+/* modale storico revisioni per progetto */
+.rs-forn{border:1px solid var(--bd);border-radius:11px;padding:11px 13px;margin-bottom:11px;background:var(--surf)}
+.rs-fh{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.rs-fn{font-size:13px;font-weight:800;color:var(--t1)}
+.rs-fs{font-size:11px;color:var(--t2)}
 .dd-split{display:grid;grid-template-columns:1fr minmax(300px,360px);gap:16px;align-items:start}
 .dd-mailcol{min-width:0}
 .dd-prevcol{position:sticky;top:6px}
@@ -1289,6 +1310,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mRevStorico" onclick="ovClose(event,'mRevStorico')">
+  <div class="modal" style="max-width:800px">
+    <div class="mhd"><div class="mico2">🗂</div><div><div class="mtit" id="rsTit">Storico revisioni</div><div class="msub" id="rsSub"></div></div><button class="mx" onclick="mClose('mRevStorico')">✕</button></div>
+    <div class="mbd" id="rsBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-go" onclick="mClose('mRevStorico')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mProps" onclick="ovClose(event,'mProps')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">✎</div><div><div class="mtit" id="mPropsTit">Proprietà</div><div class="msub" id="mPropsSub"></div></div><button class="mx" onclick="mClose('mProps')">✕</button></div>
@@ -1909,6 +1938,21 @@ async function renderAvvisi(){
   }).join('');
 }
 async function goToNotifica(cid,pid){go('pdet',cid);setTimeout(()=>{try{jumpPart(pid);openDraw(pid);}catch{}},450);}
+async function openStoricoRevisioni(cid,label){
+  document.getElementById('rsSub').textContent=label||'';
+  const body=document.getElementById('rsBody');body.innerHTML='<div class="fmuted" style="padding:14px">Carico…</div>';
+  mOpen('mRevStorico');
+  let data=[];try{const r=await fetch(API+`/api/commesse/${cid}/revisioni-rdo`);data=r.ok?await r.json():[];}catch{}
+  if(!data.length){body.innerHTML='<div class="av-empty">Nessuna revisione registrata.<br>Le revisioni compaiono qui mano a mano che le RDO vengono inviate o revisionate.</div>';return;}
+  body.innerHTML=data.map(g=>{
+    const revs=g.revisioni.slice().reverse().map(r=>{
+      const dt=r.inviata_at?new Date(r.inviata_at+'Z').toLocaleDateString('it-IT'):'';
+      return `<div class="rr-item"><div class="rr-h"><b>REV ${rev2(r.numero)}</b>${dt?' · inviata '+dt:''}</div><div class="rr-diff">${revDiffHtml(r.diff)}</div></div>`;
+    }).join('');
+    const cur=(g.revisione_corrente!=null&&g.revisione_corrente>=0)?('Rev '+rev2(g.revisione_corrente)):'—';
+    return `<div class="rs-forn"><div class="rs-fh"><span class="dd-av" style="background:${avc(g.fornitore_nome)}">${ini(g.fornitore_nome)}</span><div style="flex:1;min-width:0"><div class="rs-fn">${esc(g.fornitore_nome)}</div><div class="rs-fs">${g.codice_rdo?esc(g.codice_rdo)+' · ':''}corrente ${cur} · ${esc(g.stato||'')}</div></div><button class="btn-mini g" onclick="mClose('mRevStorico');rdoOpenEditor(${cid},${g.fornitore_id})">apri RDO ↗</button></div>${revs}</div>`;
+  }).join('');
+}
 async function segnaLetta(id){try{await fetch(API+'/api/notifiche/'+id+'/letta',{method:'POST'});}catch{}renderAvvisi();}
 async function segnaTutteLette(){try{await fetch(API+'/api/notifiche/lette-tutte',{method:'POST'});}catch{}toast('Tutte segnate come lette','ok');renderAvvisi();}
 async function eliminaNotifica(id){try{await fetch(API+'/api/notifiche/'+id,{method:'DELETE'});}catch{}renderAvvisi();}
@@ -2581,7 +2625,7 @@ function rdoRenderList(){
       <span class="rdo-pcod">${esc(c.codice)}</span>
       <span class="rdo-pname">${esc(c.nome)}</span>
       ${c.cliente?`<span class="rdo-cli">${esc(c.cliente)}</span>`:''}
-      <span class="rdo-crow-r">${badge}<span class="rdo-arr">▶</span></span>
+      <span class="rdo-crow-r"><span class="rdo-hist" onclick="event.stopPropagation();openStoricoRevisioni(${c.id},'${jsq(c.codice)} · ${jsq(c.nome)}')" title="Storico revisioni delle RDO di questo progetto">🗂 Storico revisioni</span>${badge}<span class="rdo-arr">▶</span></span>
     </div>`;
   }).join('')+'</div>';
 }
@@ -2674,12 +2718,14 @@ function renderDdNav(){
       const sel=NAVSEL.has(navKey(c.id,+fid));
       const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
       const code=dd&&(dd.codice_rev||dd.codice_rdo)?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rev||dd.codice_rdo)}</b> · `:'';
+      const revN=(dd&&dd.revisione!=null&&dd.revisione>=0)?dd.revisione:0;
+      const revBadge=`<span class="nav-rev ${(dd&&dd.stato==='inviata')?'sent':'draft'}">Rev ${rev2(revN)}</span>`;
       const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
       const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori (offerte in raccolta)">🔀 ${nConf}</span>`:'';
       const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
       h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
         <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
-        <div class="nav-tx"><div class="nn">${esc(f.nome)}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${confb}${stb}</div>`;
+        <div class="nav-tx"><div class="nn">${esc(f.nome)} ${revBadge}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${confb}${stb}</div>`;
     });
   });
   nav.innerHTML=h||'<div class="fmuted" style="padding:10px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
@@ -2952,8 +2998,7 @@ function renderDdEditor(d){
   const inPrep=rev>=1&&!revs.some(r=>r.numero===rev);
   const revItems=revs.slice().reverse().map(r=>{
     const dt=r.inviata_at?new Date(r.inviata_at+'Z').toLocaleDateString('it-IT'):'';
-    const diff=(r.diff||[]).map(x=>'• '+esc(x)).join('<br>')||'—';
-    return `<div class="rr-item"><div class="rr-h"><b>REV ${rev2(r.numero)}</b>${dt?' · inviata '+dt:''}</div><div class="rr-diff">${diff}</div></div>`;
+    return `<div class="rr-item"><div class="rr-h"><b>REV ${rev2(r.numero)}</b>${dt?' · inviata '+dt:''}</div><div class="rr-diff">${revDiffHtml(r.diff)}</div></div>`;
   }).join('');
   const revPanel=(rev>=0||revs.length)?`<details class="dd-coll">
       <summary>🗂 Revisioni RDO <span class="cnt">${revs.length} congelate${inPrep?' · Rev '+rev2(rev)+' in preparazione':''}</span></summary>
@@ -3126,6 +3171,16 @@ async function ddStato(s){
   }catch(e){toast(e.message||'Errore',true);}
 }
 async function ddLoadRevs(){try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/revisioni`);DD.revs=r.ok?await r.json():[];}catch{DD.revs=[];}}
+// rende l'elenco strutturato dei cambiamenti (com'era → com'è); tollera il vecchio formato a stringhe
+function revDiffHtml(diff){
+  if(!diff||!diff.length)return '<div class="rr-none">—</div>';
+  return diff.map(d=>{
+    if(typeof d==='string')return `<div class="rr-chg"><div class="rr-chg-t">• ${esc(d)}</div></div>`;
+    const hasBA=(d.prima!=null||d.dopo!=null);
+    const ba=hasBA?`<div class="rr-ba"><span class="rr-before" title="${esc(d.prima||'')}">${esc(d.prima||'—')}</span><span class="rr-arr">→</span><span class="rr-after" title="${esc(d.dopo||'')}">${esc(d.dopo||'—')}</span></div>`:'';
+    return `<div class="rr-chg"><div class="rr-chg-t">${esc(d.txt||'')}</div>${ba}</div>`;
+  }).join('');
+}
 async function ddNuovaRevisione(){
   const nxt=((DD.data&&DD.data.revisione>=0?DD.data.revisione:0))+1;
   if(!confirm('Aprire una NUOVA revisione (Rev '+rev2(nxt)+')?\nLa RDO torna modificabile; si congela al prossimo invio.'))return;
