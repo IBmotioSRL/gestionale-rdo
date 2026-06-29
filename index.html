@@ -418,6 +418,25 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .bp-hint{font-size:11px;color:var(--t3);margin:2px 0 10px;line-height:1.5}
 .bp-add{display:flex;gap:8px;margin-top:10px}
 .bp-add input{flex:1;border:1px solid var(--bd2);border-radius:7px;padding:6px 8px;font:inherit;font-size:12px}
+/* riga albero: modificato (rosso) / escluso (disattivato) */
+.tr-part.mod .tr-pcod{color:#C0151E}
+.tr-modtag{font-size:8px;font-weight:800;color:#fff;background:#C0151E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
+.tr-part.excl{opacity:.55}
+.tr-part.excl .tr-pdesc{text-decoration:line-through}
+.tr-excltag{font-size:8px;font-weight:800;color:#fff;background:#7A6050;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
+/* badge avvisi nella sidebar */
+.ni .ni-badge{margin-left:auto;font-size:9px;font-weight:800;color:#fff;background:#C0151E;border-radius:9px;padding:1px 6px;min-width:16px;text-align:center}
+/* pagina Avvisi */
+.av-list{display:flex;flex-direction:column;gap:9px}
+.av-empty{text-align:center;color:var(--t3);font-size:12px;padding:40px 10px}
+.av-card{display:flex;gap:11px;align-items:flex-start;background:var(--surf);border:1px solid var(--bd);border-radius:11px;padding:12px 14px;box-shadow:var(--sh)}
+.av-card.unread{border-left:3px solid #C0151E;background:#fffaf8}
+.av-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(192,21,30,.1);flex-shrink:0}
+.av-bd{flex:1;min-width:0}
+.av-tit{font-size:12.5px;font-weight:800;color:var(--t1);margin-bottom:2px}
+.av-msg{font-size:11.5px;color:var(--t2);line-height:1.5;white-space:pre-wrap}
+.av-meta{font-size:10px;color:var(--t3);margin-top:5px}
+.av-act{display:flex;gap:6px;flex-shrink:0;flex-direction:column}
 /* visualizzatore disegni/datasheet */
 .dd-dwg{display:flex;flex-direction:column;gap:5px}
 .dd-dwg .di{display:flex;align-items:center;gap:9px;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;font-size:11.5px}
@@ -945,6 +964,7 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>RDO</div>
     <div class="ni" data-v="costi" onclick="go('costi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi</div>
     <div class="ni" data-v="forn" onclick="go('forn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Fornitori</div>
+    <div class="ni" data-v="avvisi" onclick="go('avvisi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Avvisi<span class="ni-badge" id="navAvvisiBadge" style="display:none">0</span></div>
   </nav>
   <div class="sb-foot">
     <button class="api-pill" id="apiPill" onclick="configBackend()"><div class="api-dot"></div><span id="apiTxt">Connessione…</span></button>
@@ -1089,8 +1109,23 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="vscroll"><div id="costiBody" style="padding:14px"></div></div>
   </div>
 
+  <!-- ════ AVVISI ════ -->
+  <div id="v-avvisi" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Avvisi</div><div class="vsub" id="avvisiSub">Notifiche e cose da fare</div></div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" id="avvisiNotifBtn" onclick="abilitaNotifichePush()" title="Abilita le notifiche desktop">🔔 Notifiche desktop</button>
+        <button class="btn btn-ghost btn-sm" onclick="segnaTutteLette()">✓ Segna tutte lette</button>
+      </div>
+    </div></div>
+    <div class="vscroll"><div id="avvisiBody" style="padding:14px"><div class="av-list" id="avvisiList"></div></div></div>
+  </div>
+
 </main>
 </div>
+
+<datalist id="dlCat"></datalist><datalist id="dlTipo"></datalist><datalist id="dlLav"></datalist><datalist id="dlForn"></datalist><datalist id="dlMat"></datalist>
 
 <!-- FAB -->
 <div class="fab" id="fab">
@@ -1293,8 +1328,23 @@ const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('dash');}
-async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}}
+async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('dash');
+  await loadNotifiche(false);(NOTIF.notifiche||[]).forEach(n=>NOTIF_SEEN.add(n.id));startNotifPolling();}
+async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}fillPropDatalists();}
+// tendine personalizzabili (datalist) per le proprietà note
+function propListAttr(k){const u=(k||'').toUpperCase();
+  if(u==='CATEGORIA')return ' list="dlCat"';
+  if(u==='TIPO')return ' list="dlTipo"';
+  if(u.includes('LAV'))return ' list="dlLav"';
+  if(u==='FORNITORE')return ' list="dlForn"';
+  if(u==='MATERIALE')return ' list="dlMat"';
+  return '';}
+function fillPropDatalists(){
+  const set=(id,arr)=>{const el=document.getElementById(id);if(el)el.innerHTML=[...new Set(arr||[])].filter(Boolean).map(v=>`<option value="${esc(v)}">`).join('');};
+  set('dlCat',PROP.categorie);set('dlTipo',PROP.tipi);set('dlLav',PROP.lavorazioni);set('dlForn',PROP.fornitori);
+  const mats=new Set();commesse.forEach(c=>(c._parti||[]).forEach(p=>{if(p.materiale)mats.add(p.materiale);}));
+  set('dlMat',[...mats].sort());
+}
 async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
 async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(r.ok)fornitori=await r.json();}catch{}}
 async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r.ok)throw 0;commesse=await r.json();
@@ -1316,6 +1366,7 @@ function go(v,pid){
   if(v==='rdo')rdoEnter();
   if(v==='costi')renderCosti();
   if(v==='forn')renderForn();
+  if(v==='avvisi')renderAvvisi();
 }
 
 /* ── helpers stato/parti ── */
@@ -1327,7 +1378,7 @@ function statoBucket(p){
   if(p.stato==='confermata')return 'confermata';
   return 'daInviare';
 }
-function projStats(c){const s={tot:0,daSmistare:0,daInviare:0,inAttesa:0,confermata:0};flatParti(c).forEach(p=>{s.tot++;s[statoBucket(p)]++;});return s;}
+function projStats(c){const s={tot:0,daSmistare:0,daInviare:0,inAttesa:0,confermata:0};flatParti(c).forEach(p=>{if(p.escluso)return;s.tot++;s[statoBucket(p)]++;});return s;}
 
 /* ── DASHBOARD ── */
 function renderDash(){
@@ -1341,7 +1392,7 @@ function renderDash(){
     ${metric('mg','check',tot.confermata,'Confermate',tot.tot?Math.round(tot.confermata/tot.tot*100)+'% del totale':'')}`;
   // carico per fornitore
   const byF={};
-  commesse.forEach(c=>flatParti(c).forEach(p=>{if(p.fornitore_id){byF[p.fornitore_id]=(byF[p.fornitore_id]||0)+1;}}));
+  commesse.forEach(c=>flatParti(c).forEach(p=>{if(p.fornitore_id&&!p.escluso){byF[p.fornitore_id]=(byF[p.fornitore_id]||0)+1;}}));
   const top=Object.entries(byF).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const maxN=top.length?top[0][1]:1;
   const rows=top.map(([fid,n])=>{
@@ -1416,7 +1467,7 @@ async function openProgetto(pid){
   }catch{S.albero=null;S.cal={files:[]};}
   // apri tutte le categorie di default
   if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
-  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();
+  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();fillPropDatalists();
 }
 function catParti(cat){return cat.kind==='commerciale'?[...(cat.gruppi||[]).flatMap(g=>g.parti),...(cat.tipi||[]).flatMap(t=>t.parti)]:(cat.lavorazioni||[]).flatMap(l=>l.parti);}
 function allParti(){return S.albero?S.albero.categorie.flatMap(catParti):[];}
@@ -1455,11 +1506,13 @@ function partRow(p){
     chips+=`<span class="pchip" title="${esc(f.nome)}${auto?' (auto)':''} — clic per modificare/aggiungere fornitori" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})"><span class="pav" style="background:${avc(f.nome)}">${ini(f.nome)}</span>${esc(f.nome.split(' ')[0])}${auto?' ·auto':''}</span>`;
   });
   if(n===0)chips=`<span class="pchip empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
-  return `<div class="tr-part${sel?' sel':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
+  const modTag=p.proprieta_modificata?`<span class="tr-modtag" title="Proprietà modificate a mano — da allineare in SolidWorks">✎ mod</span>`:'';
+  const exclTag=p.escluso?`<span class="tr-excltag" title="Articolo escluso dal progetto (disattivato)">⊘ escluso</span>`:'';
+  return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
       <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
-      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span>
+      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}${modTag}${exclTag}</span>
       <span class="tr-pqty">${esc(p.quantita)}<small> pz</small></span>
       <div class="tr-pfiles">${fileTags(p.files)}</div>
       <div class="pforn">${chips}</div></div>`;
@@ -1708,11 +1761,12 @@ function openDraw(pid){
     const bulkBtn=(S.rows&&S.rows.size>1)?`<button class="btn-mini g" onclick="openPropsEditor()">✎ Modifica ${S.rows.size} selezionati</button>`:'';
     ph=`<div class="pd-dh-row"><div class="pd-dh">Proprietà · distinta</div>${bulkBtn}<button class="btn-mini" onclick="savePropsDrawer(${pid})">💾 Salva</button></div><div class="pd-props" id="pdProps">`+
        sorted.map(k=>{const kk=keyCols.includes(k.toUpperCase())?' key':'';
-         return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" style="padding:2px 4px"><input class="pp-in" data-k="${esc(k)}" value="${esc(props[k])}"></div>`;}).join('')+
+         return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" style="padding:2px 4px"><input class="pp-in" data-k="${esc(k)}"${propListAttr(k)} value="${esc(props[k])}"></div>`;}).join('')+
        `</div>`;
   }
+  const exclBtn=`<button class="btn-mini ${p.escluso?'':'g'}" onclick="setEscluso([${pid}],${p.escluso?'false':'true'})">${p.escluso?'♻ Reintegra nel progetto':'🚫 Escludi dal progetto'}</button>`;
   document.getElementById('pdBody').innerHTML=
-    `${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}<span style="flex:1"></span>${exclBtn}</div>${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
   // apri subito il primo PDF se c'è
   const fp=firstPdf(p);
   if(fp)renderViewer(fp);
@@ -1731,7 +1785,7 @@ async function savePropsDrawer(pid){
     const r=await fetch(API+'/api/parti/'+pid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proprieta:set})});
     if(!r.ok)throw 0;
     toast('Proprietà salvate','ok');
-    await refreshDetail();openDraw(pid);
+    await refreshDetail();loadNotifiche(false);openDraw(pid);
   }catch{toast('Errore salvataggio proprietà',true);}
 }
 function openPropsEditor(){
@@ -1750,9 +1804,9 @@ function openPropsEditor(){
   document.getElementById('mPropsSingle').value=single?'1':'';
   let rows;
   if(single){
-    rows=keys.map(k=>`<div class="bp-row"><span></span><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(pProps(parts[0])[k]||'')}"></div>`).join('');
+    rows=keys.map(k=>`<div class="bp-row"><span></span><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(pProps(parts[0])[k]||'')}"></div>`).join('');
   }else{
-    rows=keys.map(k=>{const cv=valOf(k);return `<div class="bp-row"><input type="checkbox" data-ck="${esc(k)}"><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(cv||'')}" placeholder="${cv===null?'(valori diversi)':''}"></div>`;}).join('');
+    rows=keys.map(k=>{const cv=valOf(k);return `<div class="bp-row"><input type="checkbox" data-ck="${esc(k)}"><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(cv||'')}" placeholder="${cv===null?'(valori diversi)':''}"></div>`;}).join('');
   }
   document.getElementById('mPropsBody').innerHTML=rows||'<div class="bp-hint">Nessuna proprietà da distinta su questi pezzi: aggiungine una qui sotto.</div>';
   mOpen('mProps');
@@ -1764,8 +1818,8 @@ function propAddRow(){
   const body=document.getElementById('mPropsBody');const empty=body.querySelector('.bp-hint');if(empty)empty.remove();
   const row=document.createElement('div');row.className='bp-row';
   row.innerHTML=single
-    ?`<span></span><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(v)}">`
-    :`<input type="checkbox" data-ck="${esc(k)}" checked><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(v)}">`;
+    ?`<span></span><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(v)}">`
+    :`<input type="checkbox" data-ck="${esc(k)}" checked><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(v)}">`;
   body.appendChild(row);ke.value='';ve.value='';
 }
 async function savePropsEditor(){
@@ -1783,9 +1837,67 @@ async function savePropsEditor(){
     catch{toast('Errore modifica massiva',true);return;}
   }
   mClose('mProps');toast('Proprietà aggiornate','ok');
-  await refreshDetail();
+  await refreshDetail();loadNotifiche(false);
   if(PROPSEL.length===1&&document.getElementById('pdraw').classList.contains('open'))openDraw(PROPSEL[0]);
 }
+
+/* ── ESCLUDI / REINTEGRA ARTICOLO ── */
+async function setEscluso(ids,on){
+  ids=(ids||[]).filter(x=>x!=null);if(!ids.length){toast('Nessun articolo selezionato');return;}
+  let ok=0;
+  for(const id of ids){
+    try{const r=await fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({escluso:on})});if(r.ok)ok++;}catch{}
+  }
+  hideCtx();
+  toast(on?(ok+' articol'+(ok===1?'o escluso':'i esclusi')):(ok+' articol'+(ok===1?'o reintegrato':'i reintegrati')),'ok');
+  await refreshDetail();
+  if(ids.length===1&&document.getElementById('pdraw').classList.contains('open'))openDraw(ids[0]);
+}
+
+/* ── AVVISI / NOTIFICHE ── */
+let NOTIF={non_lette:0,notifiche:[]}, NOTIF_SEEN=new Set(), NOTIF_POLL=null;
+async function loadNotifiche(desktop){
+  try{const r=await fetch(API+'/api/notifiche');NOTIF=r.ok?await r.json():{non_lette:0,notifiche:[]};}catch{NOTIF={non_lette:0,notifiche:[]};}
+  updateAvvisiBadge();
+  if(desktop)notifyNew();
+}
+function updateAvvisiBadge(){const b=document.getElementById('navAvvisiBadge');if(!b)return;const n=NOTIF.non_lette||0;b.textContent=n;b.style.display=n>0?'':'none';}
+function notifyNew(){
+  if(!('Notification'in window)||Notification.permission!=='granted')return;
+  (NOTIF.notifiche||[]).filter(n=>!n.letta&&!NOTIF_SEEN.has(n.id)).forEach(n=>{
+    NOTIF_SEEN.add(n.id);
+    try{const no=new Notification(n.titolo,{body:n.messaggio,tag:'rdo-'+n.id});no.onclick=()=>{window.focus();go('avvisi');};}catch{}
+  });
+}
+function startNotifPolling(){if(NOTIF_POLL)return;NOTIF_POLL=setInterval(()=>loadNotifiche(true),60000);}
+async function abilitaNotifichePush(){
+  if(!('Notification'in window)){toast('Notifiche desktop non supportate dal browser',true);return;}
+  try{const p=await Notification.requestPermission();
+    if(p==='granted'){(NOTIF.notifiche||[]).forEach(n=>NOTIF_SEEN.add(n.id));toast('Notifiche desktop attive','ok');renderAvvisi();}
+    else toast('Permesso notifiche negato',true);
+  }catch{toast('Errore',true);}
+}
+function avDate(s){if(!s)return'';try{return new Date(s+(/[zZ]|[+-]\d\d:\d\d$/.test(s)?'':'Z')).toLocaleString('it-IT');}catch{return s;}}
+async function renderAvvisi(){
+  await loadNotifiche(false);
+  const el=document.getElementById('avvisiList');if(!el)return;
+  const ns=NOTIF.notifiche||[];
+  document.getElementById('avvisiSub').textContent=ns.length?`${NOTIF.non_lette} non lette · ${ns.length} totali`:'Nessun avviso';
+  const nb=document.getElementById('avvisiNotifBtn');
+  if(nb){if(!('Notification'in window))nb.style.display='none';else if(Notification.permission==='granted'){nb.textContent='🔔 Notifiche desktop attive';nb.disabled=true;}}
+  if(!ns.length){el.innerHTML='<div class="av-empty">Nessun avviso. Quando modifichi le proprietà di un particolare comparirà qui il promemoria di allinearlo in SolidWorks.</div>';return;}
+  el.innerHTML=ns.map(n=>{
+    const goP=(n.commessa_id&&n.parte_id)?`<button class="btn-mini g" onclick="goToNotifica(${n.commessa_id},${n.parte_id})">↗ Vai al pezzo</button>`:'';
+    return `<div class="av-card${n.letta?'':' unread'}">
+      <div class="av-ic">🔧</div>
+      <div class="av-bd"><div class="av-tit">${esc(n.titolo)}</div><div class="av-msg">${esc(n.messaggio)}</div><div class="av-meta">${n.commessa_codice?esc(n.commessa_codice)+' · ':''}${avDate(n.creato_at)}</div></div>
+      <div class="av-act">${goP}${n.letta?'':`<button class="btn-mini" onclick="segnaLetta(${n.id})">✓ Letta</button>`}<button class="btn-mini g" onclick="eliminaNotifica(${n.id})">🗑</button></div></div>`;
+  }).join('');
+}
+async function goToNotifica(cid,pid){go('pdet',cid);setTimeout(()=>{try{jumpPart(pid);openDraw(pid);}catch{}},450);}
+async function segnaLetta(id){try{await fetch(API+'/api/notifiche/'+id+'/letta',{method:'POST'});}catch{}renderAvvisi();}
+async function segnaTutteLette(){try{await fetch(API+'/api/notifiche/lette-tutte',{method:'POST'});}catch{}toast('Tutte segnate come lette','ok');renderAvvisi();}
+async function eliminaNotifica(id){try{await fetch(API+'/api/notifiche/'+id,{method:'DELETE'});}catch{}renderAvvisi();}
 function openFileView(path,el){
   document.querySelectorAll('#pdBody .fileitem').forEach(x=>x.classList.remove('act'));if(el)el.classList.add('act');
   renderViewer(path);
@@ -1817,6 +1929,7 @@ function ctxPart(e,pid){
     (pdf?mi('🖼 Apri PDF in scheda nuova',`window.open('${jsq(fileUrl(pdf))}','_blank')`):'')+
     mi('📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(p.numero_parte)}');toast&&toast('Codice copiato','ok')`)+
     mi('✏️ Modifica proprietà'+(n>1?(' ('+n+')'):''),`openPropsEditor()`)+
+    mi((p.escluso?'♻ Reintegra nel progetto':'🚫 Escludi dal progetto')+(n>1?(' ('+n+')'):''),`setEscluso([...S.rows],${p.escluso?'false':'true'})`)+
     `<div class="sep"></div>`+
     mi('✉ Invia RDO selezionati',`inviaSelezionate()`)+
     mi('✕ Deseleziona tutto',`S.rows.clear();renderTree();updateFAB()`,'danger');
@@ -2070,7 +2183,7 @@ async function refreshDetail(){
     const c=commesse.find(x=>x.id===S.projId);if(c&&rp.ok)c._parti=await rp.json();
   }catch{}
   // la colonna Fornitore di "Ricerca file" si ri-deriva dalle parti aggiornate (join client-side)
-  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();
+  renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();fillPropDatalists();
 }
 
 /* ── REVISIONI DI PROGETTO ── */
