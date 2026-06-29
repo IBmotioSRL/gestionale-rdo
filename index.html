@@ -382,6 +382,42 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .dd-ctwarn{margin-top:8px;border:1.4px solid #d9822b;background:#fff6ec;color:#a85a13;border-radius:9px;padding:8px 11px;font-size:12px;font-weight:700;display:flex;gap:8px;align-items:flex-start}
 .dd-ctok{margin-top:8px;border:1px solid rgba(52,199,89,.4);background:rgba(52,199,89,.08);color:#1A7A2E;border-radius:9px;padding:7px 11px;font-size:11.5px;font-weight:700}
 .dd-ctnote{margin-top:6px;font-size:11px;color:var(--t3);font-weight:600}
+/* opzioni RDO: coppie a scelta obbligatoria (forn/IB) + flag conto terzi */
+.dd-opt-pair{padding:7px 0;border-top:1px dashed rgba(0,0,0,.08)}
+.dd-opt-pair:first-of-type{border-top:none}
+.dd-opt-lbl{font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:5px;display:flex;align-items:center;flex-wrap:wrap}
+.dd-opt-req{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#fff;background:#d9822b;padding:1px 6px;border-radius:8px;margin-left:6px}
+.dd-opt-opt{font-size:10px;font-weight:600;color:var(--t3);margin-left:6px}
+.dd-opt-pair.miss{background:rgba(217,130,43,.06);border-radius:8px;padding:7px 8px;border-top:none}
+.dd-opt-choices{display:flex;gap:8px;flex-wrap:wrap}
+.dd-opt-choices label{flex:1;min-width:148px;display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--bd2);border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--surf)}
+.dd-opt-choices label.on{border-color:var(--go-d);background:rgba(245,168,35,.12);color:var(--go-d)}
+.dd-opt-checks{display:flex;flex-direction:column;gap:6px}
+.dd-opt-checks label{display:flex;align-items:flex-start;gap:8px;padding:6px 9px;border:1px solid var(--bd2);border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--surf)}
+.dd-opt-checks label.on{border-color:var(--go-d);background:rgba(245,168,35,.1);color:var(--go-d)}
+.dd-opt-checks label input,.dd-opt-choices label input{accent-color:var(--go-d)}
+.dd-opt-banner{margin:0 0 8px;border:1.4px solid #d9822b;background:#fff6ec;color:#a85a13;border-radius:9px;padding:7px 11px;font-size:11.5px;font-weight:700}
+/* distinta RDO: barra seleziona/deseleziona tutte */
+.ddx-bar{display:flex;gap:8px;margin:2px 0 9px}
+/* proprietà particolare editabili (drawer) */
+.pp-in{width:100%;border:1px solid transparent;border-radius:6px;padding:5px 7px;font:inherit;font-size:11.5px;font-weight:600;color:var(--t1);background:transparent;outline:none}
+.pp-in:hover{border-color:var(--bd2);background:#fff}
+.pp-in:focus{border-color:var(--go);background:#fff}
+.pd-dh-row{display:flex;align-items:center;gap:8px;margin:14px 0 6px}
+.pd-dh-row .pd-dh{margin:0;flex:1}
+.btn-mini{font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:8px;border:1.5px solid var(--go-d);background:rgba(245,168,35,.12);color:var(--go-d);cursor:pointer;white-space:nowrap}
+.btn-mini:hover{background:var(--go-d);color:#fff}
+.btn-mini.g{border-color:var(--bd2);background:var(--surf);color:var(--t2)}
+.btn-mini.g:hover{border-color:var(--go);color:var(--go-d);background:rgba(245,168,35,.06)}
+/* modale modifica massiva proprietà */
+.bp-row{display:grid;grid-template-columns:26px 160px 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.bp-row .bk{font-size:11.5px;font-weight:700;color:var(--t2);text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bp-row input[type=text]{width:100%;border:1px solid var(--bd2);border-radius:7px;padding:6px 8px;font:inherit;font-size:12px;color:var(--t1)}
+.bp-row input[type=text]:focus{border-color:var(--go);outline:none}
+.bp-row input[type=checkbox]{accent-color:var(--go-d);width:15px;height:15px;justify-self:center}
+.bp-hint{font-size:11px;color:var(--t3);margin:2px 0 10px;line-height:1.5}
+.bp-add{display:flex;gap:8px;margin-top:10px}
+.bp-add input{flex:1;border:1px solid var(--bd2);border-radius:7px;padding:6px 8px;font:inherit;font-size:12px}
 /* visualizzatore disegni/datasheet */
 .dd-dwg{display:flex;flex-direction:column;gap:5px}
 .dd-dwg .di{display:flex;align-items:center;gap:9px;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;font-size:11.5px}
@@ -1204,6 +1240,19 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mProps" onclick="ovClose(event,'mProps')">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd"><div class="mico2">✎</div><div><div class="mtit" id="mPropsTit">Proprietà</div><div class="msub" id="mPropsSub"></div></div><button class="mx" onclick="mClose('mProps')">✕</button></div>
+    <div class="mbd">
+      <input type="hidden" id="mPropsSingle">
+      <div class="bp-hint" id="mPropsHint"></div>
+      <div id="mPropsBody" style="max-height:46vh;overflow:auto"></div>
+      <div class="bp-add"><input id="mPropsNewKey" placeholder="Nuova proprietà (es. TRATTAMENTO)"><input id="mPropsNewVal" placeholder="valore"><button class="btn btn-ghost btn-sm" onclick="propAddRow()">+ Aggiungi</button></div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mProps')">Annulla</button><button class="btn btn-go" onclick="savePropsEditor()">Applica</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mVoc" onclick="ovClose(event,'mVoc')">
   <div class="modal">
     <div class="mhd">
@@ -1656,9 +1705,10 @@ function openDraw(pid){
   if(pkeys.length){
     // prima le proprietà chiave, poi le altre nell'ordine della distinta
     const sorted=[...pkeys].sort((a,b)=>(keyCols.includes(a.toUpperCase())?0:1)-(keyCols.includes(b.toUpperCase())?0:1));
-    ph=`<div class="pd-dh">Proprietà · distinta</div><div class="pd-props">`+
+    const bulkBtn=(S.rows&&S.rows.size>1)?`<button class="btn-mini g" onclick="openPropsEditor()">✎ Modifica ${S.rows.size} selezionati</button>`:'';
+    ph=`<div class="pd-dh-row"><div class="pd-dh">Proprietà · distinta</div>${bulkBtn}<button class="btn-mini" onclick="savePropsDrawer(${pid})">💾 Salva</button></div><div class="pd-props" id="pdProps">`+
        sorted.map(k=>{const kk=keyCols.includes(k.toUpperCase())?' key':'';
-         return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" title="Copia" onclick="copyText('${jsq(props[k])}')">${esc(props[k])}</div>`;}).join('')+
+         return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" style="padding:2px 4px"><input class="pp-in" data-k="${esc(k)}" value="${esc(props[k])}"></div>`;}).join('')+
        `</div>`;
   }
   document.getElementById('pdBody').innerHTML=
@@ -1670,6 +1720,72 @@ function openDraw(pid){
   document.getElementById('pdraw').classList.add('open');
 }
 function closeDraw(){document.getElementById('pdraw').classList.remove('open');document.getElementById('pdrawOv').classList.remove('open');}
+
+/* ── MODIFICA PROPRIETÀ DA DISTINTA (singola dal drawer + massiva da modale) ── */
+let PROPSEL=[];
+async function savePropsDrawer(pid){
+  const wrap=document.getElementById('pdProps');if(!wrap)return;
+  const set={};
+  wrap.querySelectorAll('.pp-in').forEach(i=>{set[i.getAttribute('data-k')]=i.value;});
+  try{
+    const r=await fetch(API+'/api/parti/'+pid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proprieta:set})});
+    if(!r.ok)throw 0;
+    toast('Proprietà salvate','ok');
+    await refreshDetail();openDraw(pid);
+  }catch{toast('Errore salvataggio proprietà',true);}
+}
+function openPropsEditor(){
+  const ids=[...(S.rows||[])];
+  if(!ids.length){toast('Nessun particolare selezionato');return;}
+  const parts=ids.map(id=>S.pmap[id]).filter(Boolean);
+  if(!parts.length){toast('Nessun particolare selezionato');return;}
+  const single=parts.length===1;
+  const keys=[];const seen=new Set();
+  parts.forEach(p=>Object.keys(pProps(p)).forEach(k=>{if(!seen.has(k)){seen.add(k);keys.push(k);}}));
+  const valOf=k=>{const vals=new Set(parts.map(p=>String(pProps(p)[k]??'')));return vals.size===1?[...vals][0]:null;};
+  PROPSEL=ids;
+  document.getElementById('mPropsTit').textContent=single?('Proprietà · '+(parts[0].numero_parte||'')):('Modifica massiva · '+parts.length+' particolari');
+  document.getElementById('mPropsSub').textContent=single?'Modifica le proprietà da distinta di questo pezzo.':'Spunta le proprietà da applicare a TUTTI i pezzi selezionati. Le altre restano invariate.';
+  document.getElementById('mPropsHint').innerHTML=single?'':'Solo le righe spuntate vengono applicate (anche svuotando il campo per cancellare quella proprietà su tutti). «(valori diversi)» = i pezzi hanno valori differenti.';
+  document.getElementById('mPropsSingle').value=single?'1':'';
+  let rows;
+  if(single){
+    rows=keys.map(k=>`<div class="bp-row"><span></span><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(pProps(parts[0])[k]||'')}"></div>`).join('');
+  }else{
+    rows=keys.map(k=>{const cv=valOf(k);return `<div class="bp-row"><input type="checkbox" data-ck="${esc(k)}"><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(cv||'')}" placeholder="${cv===null?'(valori diversi)':''}"></div>`;}).join('');
+  }
+  document.getElementById('mPropsBody').innerHTML=rows||'<div class="bp-hint">Nessuna proprietà da distinta su questi pezzi: aggiungine una qui sotto.</div>';
+  mOpen('mProps');
+}
+function propAddRow(){
+  const ke=document.getElementById('mPropsNewKey'),ve=document.getElementById('mPropsNewVal');
+  const k=(ke.value||'').trim();if(!k){toast('Indica il nome della proprietà');return;}
+  const v=ve.value||'';const single=document.getElementById('mPropsSingle').value==='1';
+  const body=document.getElementById('mPropsBody');const empty=body.querySelector('.bp-hint');if(empty)empty.remove();
+  const row=document.createElement('div');row.className='bp-row';
+  row.innerHTML=single
+    ?`<span></span><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(v)}">`
+    :`<input type="checkbox" data-ck="${esc(k)}" checked><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" value="${esc(v)}">`;
+  body.appendChild(row);ke.value='';ve.value='';
+}
+async function savePropsEditor(){
+  const single=document.getElementById('mPropsSingle').value==='1';
+  const body=document.getElementById('mPropsBody');
+  const set={};
+  if(single){
+    body.querySelectorAll('input[data-k]').forEach(i=>{set[i.getAttribute('data-k')]=i.value;});
+    try{const r=await fetch(API+'/api/parti/'+PROPSEL[0],{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proprieta:set})});if(!r.ok)throw 0;}
+    catch{toast('Errore salvataggio',true);return;}
+  }else{
+    body.querySelectorAll('.bp-row').forEach(row=>{const ck=row.querySelector('input[type=checkbox]');const tx=row.querySelector('input[type=text]');if(ck&&ck.checked&&tx){set[tx.getAttribute('data-k')]=tx.value;}});
+    if(!Object.keys(set).length){toast('Spunta almeno una proprietà da applicare');return;}
+    try{const r=await fetch(API+'/api/parti/bulk-proprieta',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:PROPSEL,proprieta:set})});if(!r.ok)throw 0;}
+    catch{toast('Errore modifica massiva',true);return;}
+  }
+  mClose('mProps');toast('Proprietà aggiornate','ok');
+  await refreshDetail();
+  if(PROPSEL.length===1&&document.getElementById('pdraw').classList.contains('open'))openDraw(PROPSEL[0]);
+}
 function openFileView(path,el){
   document.querySelectorAll('#pdBody .fileitem').forEach(x=>x.classList.remove('act'));if(el)el.classList.add('act');
   renderViewer(path);
@@ -1700,6 +1816,7 @@ function ctxPart(e,pid){
     mi('📄 Apri dettaglio / disegni',`openDraw(${pid})`,files.length?'':'dis')+
     (pdf?mi('🖼 Apri PDF in scheda nuova',`window.open('${jsq(fileUrl(pdf))}','_blank')`):'')+
     mi('📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(p.numero_parte)}');toast&&toast('Codice copiato','ok')`)+
+    mi('✏️ Modifica proprietà'+(n>1?(' ('+n+')'):''),`openPropsEditor()`)+
     `<div class="sep"></div>`+
     mi('✉ Invia RDO selezionati',`inviaSelezionate()`)+
     mi('✕ Deseleziona tutto',`S.rows.clear();renderTree();updateFAB()`,'danger');
@@ -2647,22 +2764,31 @@ function renderDdEditor(d){
   const confN=d.pezzi_in_confronto||0;
   const st=d.stato, canSend=st==='approvata';
   const o=d.opzioni||{};
-  const ctReq=!!d.conto_terzi_richiesto, ctOk=!!d.conto_terzi_ok, ctBlock=ctReq&&!ctOk;
+  const ctReq=!!d.conto_terzi_richiesto;
+  const optComplete=(d.opzioni_complete!==undefined)?!!d.opzioni_complete:true;
   const isComm=d.tipo_distinta==='commerciale';
-  const optDefs=[
-    ['tratt_term_forn','Trattamenti termici a carico del fornitore'],
-    ['tratt_sup_forn','Trattamenti superficiali a carico del fornitore'],
-    ['spedizione_ib','Spedizione a carico di IB Motion S.r.l.'],
-    ['particolari_ib','Particolari forniti da IB Motion come a disegno (conto lavorazione)'],
-    ['materiale_forn','Fornitura completa del pezzo a carico del fornitore (materiale incluso)']
-  ];
-  const optsHtml=optDefs.map(([k,lbl])=>`<label><input type="checkbox" ${o[k]?'checked':''} onchange="ddOpt('${k}',this.checked)"><span>${lbl}</span></label>`).join('');
-  let ctHtml='';
-  if(ctReq){
-    ctHtml=ctBlock
-      ?`<div class="dd-ctwarn">⚠<span>Ci sono particolari costruttivi / commerciali lavorati: indica come avviene la fornitura — <b>conto lavorazione</b> (materiale fornito da IB Motion) <b>oppure</b> <b>fornitura completa</b> (pezzo finito a carico del fornitore) — altrimenti la RDO non si può approvare.</span></div>`
-      :`<div class="dd-ctok">✓ Modalità di fornitura indicata.</div>`;
-  }
+  const ibName=d.brand==='YS'?'YuBe':'IB Motion';
+  // tre coppie a scelta obbligatoria: a carico del fornitore / a carico di IB Motion
+  const optPair=(key,label)=>{
+    const v=o[key]||'';const miss=(v!=='forn'&&v!=='ib');
+    return `<div class="dd-opt-pair${miss?' miss':''}">
+      <div class="dd-opt-lbl">${label}${miss?'<span class="dd-opt-req">da indicare</span>':''}</div>
+      <div class="dd-opt-choices">
+        <label class="${v==='forn'?'on':''}"><input type="radio" name="op_${key}" ${v==='forn'?'checked':''} onchange="ddScelta('${key}','forn')"><span>a carico del fornitore</span></label>
+        <label class="${v==='ib'?'on':''}"><input type="radio" name="op_${key}" ${v==='ib'?'checked':''} onchange="ddScelta('${key}','ib')"><span>a carico di ${esc(ibName)}</span></label>
+      </div></div>`;
+  };
+  const optsHtml=optPair('tratt_term','Trattamenti termici')
+    +optPair('tratt_sup','Trattamenti superficiali')
+    +optPair('spedizione','Spedizione / trasporto');
+  // conto terzi: due flag che possono coesistere; obbligatorio almeno uno se richiesto
+  const ctMiss=ctReq&&!o.particolari_ib&&!o.materiale_forn;
+  const ctHtml=`<div class="dd-opt-pair${ctMiss?' miss':''}">
+      <div class="dd-opt-lbl">Provenienza materiale / lavorazione${ctReq?(ctMiss?'<span class="dd-opt-req">scegli almeno una</span>':''):'<span class="dd-opt-opt">(non richiesta per questi pezzi)</span>'}</div>
+      <div class="dd-opt-checks">
+        <label class="${o.particolari_ib?'on':''}"><input type="checkbox" ${o.particolari_ib?'checked':''} onchange="ddOpt('particolari_ib',this.checked)"><span>Particolari forniti da ${esc(ibName)} come a disegno <b>(conto lavorazione)</b></span></label>
+        <label class="${o.materiale_forn?'on':''}"><input type="checkbox" ${o.materiale_forn?'checked':''} onchange="ddOpt('materiale_forn',this.checked)"><span>Fornitura completa del pezzo a carico del fornitore <b>(materiale incluso)</b></span></label>
+      </div>${ctReq?'<div class="dd-ctnote">Rilevati particolari costruttivi / commerciali lavorati: possono valere entrambe le voci, ma va indicata almeno una.</div>':''}</div>`;
   const confHtml=confN?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO si <b>invia regolarmente</b> (così raccogli le offerte). Scegli poi il vincitore (pannello «👁 Colpo d'occhio» → Confronto prezzi) — la <b>conferma d'ordine</b> è bloccata finché ci sono pezzi in comune.</span></div>`:'';
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
   const dwgCnt={};dwg.forEach(x=>dwgCnt[x.ext]=(dwgCnt[x.ext]||0)+1);
@@ -2692,7 +2818,8 @@ function renderDdEditor(d){
           <input class="dd-fld" id="ddOgg" onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
           <textarea class="dd-fld" id="ddCorpo" onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
           <div class="dd-opts">
-            <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel inviato al fornitore</span></div>
+            <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel e nella mail inviati al fornitore</span></div>
+            ${optComplete?'':'<div class="dd-opt-banner">⚠ Tutte le opzioni sono obbligatorie: completale per poter approvare la RDO.</div>'}
             ${optsHtml}
             ${ctHtml}
             ${confHtml}
@@ -2715,6 +2842,7 @@ function renderDdEditor(d){
       <details class="dd-coll">
         <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
         <div class="dd-collbody">
+          <div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Seleziona tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Deseleziona tutte</button></div>
           <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
           <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
         </div>
@@ -2728,8 +2856,8 @@ function renderDdEditor(d){
       <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
       <button class="btn btn-aggiorna" onclick="ddAggiorna()" title="Rigenera distinta, file allegati e testo mail dal progetto">🔄 Aggiorna contenuto</button>
       <div style="margin-left:auto;display:flex;gap:8px">
-        ${st==='bozza'?(ctBlock
-          ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Seleziona un'opzione per il conto terzi">✓ Approva</button>`
+        ${st==='bozza'?(!optComplete
+          ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Completa tutte le OPZIONI RDO (trattamenti termici, superficiali, spedizione e provenienza materiale) per approvare">✓ Approva</button>`
           :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
         ${st!=='bozza'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
         <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${st==='approvata'?'Invia la RDO (richiesta offerta)':'Approva prima di inviare'}">✉ Invia (simulato)</button>
@@ -2755,6 +2883,12 @@ async function ddOpt(key,checked){
   try{await ddPersist();}catch{}
   renderDdEditor(DD.data);
 }
+// coppie a scelta obbligatoria (trattamenti/spedizione): "forn" | "ib"
+async function ddScelta(key,val){
+  DD.data.opzioni=DD.data.opzioni||{};DD.data.opzioni[key]=val;
+  try{await ddPersist();}catch{}
+  renderDdEditor(DD.data);
+}
 function ddAutosave(){ddPersist().catch(()=>{});}
 async function ddAggiorna(){
   if(DD.data&&DD.data.mail_custom&&!confirm('Aggiornare il contenuto dal progetto? Le modifiche manuali al testo della mail verranno sostituite.'))return;
@@ -2774,6 +2908,29 @@ async function ddToggleIncl(i,checked){
   }
   try{await ddPersist();}catch{}
   renderDdEditor(DD.data);
+}
+// seleziona / deseleziona tutte le righe della distinta in un colpo solo.
+// Stessa semantica della spunta singola: includere = (ri)assegna il pezzo al
+// fornitore; escludere = lo rilascia («da smistare»). Deselezionare tutte è
+// un'azione pesante → chiede conferma.
+async function ddInclAll(on){
+  if(!DD.data||!DD.data.righe||!DD.data.righe.length)return;
+  if(!on&&!confirm('Deselezionare tutte le righe?\nI pezzi escono da questa RDO e tornano «da smistare» nel progetto.'))return;
+  const c=commesse.find(x=>x.id===DD.cid);
+  const localParti=(c&&c._parti)||[];
+  const body=on?{fornitore_id:DD.fid}:{fornitore_id:null,stato:'da_smistare'};
+  for(const r of DD.data.righe){
+    r.incl=on;
+    if(r.parte_id){
+      try{await fetch(API+'/api/parti/'+r.parte_id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}catch{}
+      const p=localParti.find(x=>x.id===r.parte_id);
+      if(p){if(on){p.fornitore_id=DD.fid;}else{p.fornitore_id=null;p.stato='da_smistare';}}
+    }
+  }
+  try{await ddPersist();}catch{}
+  await loadDdList();renderDdEditor(DD.data);renderDdNav&&renderDdNav();
+  if(S.projId===DD.cid)refreshDetail();
+  toast(on?'Tutte le righe incluse':'Tutte le righe escluse','ok');
 }
 function splitEmails(v){return (v||'').split(/[;,]/).map(s=>s.trim()).filter(Boolean);}
 async function ddPersist(){
