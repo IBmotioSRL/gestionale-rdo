@@ -2567,7 +2567,8 @@ function rdoFornBlock(c,fid,ps){
     btns+=`<button class="btn btn-go btn-sm" onclick="rdoSend(${c.id},${fid},'ordinato')">✓ Segna ordinato</button>`;
   }else{
     btns+=`<a class="btn btn-ghost btn-sm" href="${API}/api/commesse/${c.id}/distinta/${fid}" target="_blank">⬇ Scarica distinta</a>`;
-    btns+=`<button class="btn btn-go btn-sm" onclick="openRdoMail(${c.id},${fid})">✉ Prepara RDO</button>`;
+    btns+=`<button class="btn btn-ghost btn-sm" onclick="rdoOpenEditor(${c.id},${fid})" title="Apri la RDO, approvala, poi inviala in blocco dal pannello Invio">✎ Apri / approva RDO</button>`;
+    btns+=`<span style="font-size:10.5px;color:var(--t3);align-self:center" title="L'invio parte solo dal pannello «Invio» con «Invia selezionate (approvate)»">↗ invio in blocco dal pannello RDO</span>`;
   }
   return `<div class="rdo-fb"><div class="rdo-fh"><div class="rdo-favico" style="background:${avc(f.nome)}">${ini(f.nome)}</div><span class="rdo-fname">${esc(f.nome)}</span><span class="rdo-ftype" style="${f.tipo==='commerciale'?'background:rgba(245,168,35,.12);color:var(--go-d)':'background:rgba(88,86,214,.09);color:#4B49B0'}">${f.tipo}</span>${online?'<span class="badge-online">● shop online</span>':''}<span style="font-size:9.5px;color:var(--t3)">${ps.length} pezzi</span></div><div class="rdo-items">${items}</div>${vociHtml}${totHtml}${pxTable}<div class="rdo-fbtn">${btns}</div></div>`;
 }
