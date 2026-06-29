@@ -2845,7 +2845,10 @@ function renderDdList(){
   document.getElementById('ddList').innerHTML=h||'<div class="dd-empty">Nessuna distinta: assegna prima i fornitori ai pezzi.</div>';
 }
 async function openDd(cid,fid){
-  DD={cid,fid};
+  DD={cid,fid};S.projId=cid;
+  // assicura le parti della commessa (servono per anteprime PDF + disegni allegati)
+  const _c=commesse.find(x=>x.id===cid);
+  if(_c&&!_c._parti){try{const rp=await fetch(API+`/api/commesse/${cid}/parti`);if(rp.ok)_c._parti=await rp.json();}catch{}}
   try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}`);if(!r.ok)throw 0;DD.data=await r.json();}
   catch{toast('Errore apertura distinta',true);return;}
   renderDdList();renderDdEditor(DD.data);
@@ -2863,16 +2866,22 @@ function renderDdEditor(d){
   const nIncl=d.righe.filter(r=>r.incl!==false).length;
   const _cc=commesse.find(x=>x.id===d.commessa_id);const _cp=(_cc&&_cc._parti)||[];
   const confSet=new Set(_cp.filter(p=>pForns(p).length>=2).map(p=>p.id));
+  // mappa parte_id → PDF (per l'anteprima al passaggio del mouse sulla riga)
+  const pdfByPid={};_cp.forEach(pp=>{const f=firstPdf(pp);if(f)pdfByPid[pp.id]=f;});
   const rows=d.righe.map((r,i)=>{
     const inc=r.incl!==false;
+    // celle in SOLA LETTURA: questa tabella serve solo a includere/escludere (le checkbox),
+    // non a modificare i dati del pezzo (quelli si cambiano nel pannello Progetto).
     const tds=cols.map(([k])=>{
       if(r.tipo==='ass'&&['peso','tratt_term','tratt_sup'].includes(k))return '<td style="text-align:center;color:var(--t3)">—</td>';
       const cls=k==='codice'?'cod':(k==='revisione'?'rev':(k==='qta'?'qta':''));
-      return `<td class="${cls}"><input value="${esc(r[k]||'')}" oninput="DD.data.righe[${i}]['${k}']=this.value"></td>`;
+      return `<td class="${cls}">${esc(r[k]||'')}</td>`;
     }).join('');
     const chk=`<td class="ddx"><input type="checkbox" ${inc?'checked':''} title="${inc?'Incluso — togli per non richiederlo':'Escluso dalla RDO'}" onchange="ddToggleIncl(${i},this.checked)"></td>`;
     const cmpMark=(r.parte_id&&confSet.has(r.parte_id))?'<span class="cmptag" title="Pezzo in confronto tra più fornitori">🔀</span> ':'';
-    return `<tr class="${inc?'':'ddrow-off'}">${chk}${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+    const pdf=r.parte_id?pdfByPid[r.parte_id]:null;
+    const prev=pdf?` data-prevpdf="${esc(pdf)}" data-prevcap="${esc(r.codice||'')}"`:'';
+    return `<tr class="${inc?'':'ddrow-off'}"${prev}>${chk}${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
   }).join('');
   const confN=d.pezzi_in_confronto||0;
   const st=d.stato, canSend=st==='approvata';
@@ -2891,12 +2900,15 @@ function renderDdEditor(d){
         <label class="${v==='ib'?'on':''}"><input type="radio" name="op_${key}" ${v==='ib'?'checked':''} onchange="ddScelta('${key}','ib')"><span>a carico di ${esc(ibName)}</span></label>
       </div></div>`;
   };
-  const optsHtml=optPair('tratt_term','Trattamenti termici')
-    +optPair('tratt_sup','Trattamenti superficiali')
-    +optPair('spedizione','Spedizione / trasporto');
-  // conto terzi: due flag che possono coesistere; obbligatorio almeno uno se richiesto
+  // i commerciali NON hanno trattamenti né provenienza materiale: mostriamo solo la spedizione
+  const optsHtml = isComm
+    ? optPair('spedizione','Spedizione / trasporto')
+    : optPair('tratt_term','Trattamenti termici')
+      +optPair('tratt_sup','Trattamenti superficiali')
+      +optPair('spedizione','Spedizione / trasporto');
+  // conto terzi: due flag che possono coesistere; obbligatorio almeno uno se richiesto. Niente per i commerciali.
   const ctMiss=ctReq&&!o.particolari_ib&&!o.materiale_forn;
-  const ctHtml=`<div class="dd-opt-pair${ctMiss?' miss':''}">
+  const ctHtml = isComm ? '' : `<div class="dd-opt-pair${ctMiss?' miss':''}">
       <div class="dd-opt-lbl">Provenienza materiale / lavorazione${ctReq?(ctMiss?'<span class="dd-opt-req">scegli almeno una</span>':''):'<span class="dd-opt-opt">(non richiesta per questi pezzi)</span>'}</div>
       <div class="dd-opt-checks">
         <label class="${o.particolari_ib?'on':''}"><input type="checkbox" ${o.particolari_ib?'checked':''} onchange="ddOpt('particolari_ib',this.checked)"><span>Particolari forniti da ${esc(ibName)} come a disegno <b>(conto lavorazione)</b></span></label>
