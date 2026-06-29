@@ -304,6 +304,20 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .brand-sel button.on{background:#fff;color:var(--go-d);box-shadow:var(--sh)}
 .dd-body{padding:12px 16px 16px}
 .dd-code{display:inline-block;margin-left:8px;font-family:ui-monospace,monospace;font-size:11px;font-weight:800;color:#fff;background:var(--br);padding:2px 8px;border-radius:6px;vertical-align:middle}
+/* badge/tag revisione RDO */
+.dd-revbadge{display:inline-block;margin-left:7px;font-size:10px;font-weight:800;padding:2px 9px;border-radius:10px;vertical-align:middle;letter-spacing:.3px}
+.dd-revbadge.sent{background:rgba(52,199,89,.16);color:#1A7A2E}
+.dd-revbadge.draft{background:rgba(255,149,0,.16);color:#b5701a}
+.dd-revtag{font-size:10px;font-weight:800;padding:3px 9px;border-radius:8px;letter-spacing:.3px}
+.dd-revtag.sent{background:rgba(52,199,89,.16);color:#1A7A2E}
+.dd-revtag.draft{background:rgba(255,149,0,.16);color:#b5701a}
+.dd-lock{font-size:11.5px;font-weight:700;color:#1A7A2E}
+.dd-lockbanner{border:1.4px solid rgba(52,199,89,.5);background:rgba(52,199,89,.08);color:#1A7A2E;border-radius:9px;padding:8px 11px;font-size:12px;font-weight:600;margin-bottom:10px;line-height:1.5}
+/* storico revisioni RDO */
+.rr-item{border:1px solid var(--bd);border-radius:9px;padding:8px 11px;margin-bottom:7px;background:var(--surf)}
+.rr-item.prep{border-left:3px solid var(--go-d);background:rgba(245,168,35,.06)}
+.rr-h{font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.rr-diff{font-size:11px;color:var(--t2);line-height:1.55}
 .dd-split{display:grid;grid-template-columns:1fr minmax(300px,360px);gap:16px;align-items:start}
 .dd-mailcol{min-width:0}
 .dd-prevcol{position:sticky;top:6px}
@@ -2659,7 +2673,7 @@ function renderDdNav(){
       const on=String(RV.cid)===String(c.id)&&String(RV.fid)===String(fid);
       const sel=NAVSEL.has(navKey(c.id,+fid));
       const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
-      const code=dd&&dd.codice_rdo?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rdo)}</b> · `:'';
+      const code=dd&&(dd.codice_rev||dd.codice_rdo)?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rev||dd.codice_rdo)}</b> · `:'';
       const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
       const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori (offerte in raccolta)">🔀 ${nConf}</span>`:'';
       const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
@@ -2757,9 +2771,9 @@ function rdoRenderShip(){
       rows+=`<label class="ship-row${can?'':' off'}" oncontextmenu="ctxShip(event,${x.commessa_id},${x.fornitore_id})">
         <input type="checkbox" ${can?'':'disabled'} ${SHIPSEL.has(k)?'checked':''} onchange="shipToggle('${k}')">
         <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
-        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${x.codice_rdo?esc(x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
+        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${(x.codice_rev||x.codice_rdo)?esc(x.codice_rev||x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
         ${confb}<span class="dd-brand ${x.brand}">${x.brand}</span>
-        ${x.revisione_inviata!=null?`<span title="Ultima revisione inviata" style="font-family:ui-monospace,monospace;font-size:10px;font-weight:800;background:rgba(52,199,89,.14);color:#1A7A2E;padding:2px 7px;border-radius:6px">Rev ${rev2(x.revisione_inviata)}</span>`:''}
+        ${(x.revisione!=null&&x.revisione>=0)?`<span title="Revisione RDO" style="font-family:ui-monospace,monospace;font-size:10px;font-weight:800;background:rgba(52,199,89,.14);color:#1A7A2E;padding:2px 7px;border-radius:6px">Rev ${rev2(x.revisione)}</span>`:''}
         <span class="dd-st ${x.stato}">${x.stato}</span>
         <span class="ship-open" onclick="event.preventDefault();rdoOpenEditor(${x.commessa_id},${x.fornitore_id})">apri ↗</span></label>`;
     });
@@ -2851,6 +2865,7 @@ async function openDd(cid,fid){
   if(_c&&!_c._parti){try{const rp=await fetch(API+`/api/commesse/${cid}/parti`);if(rp.ok)_c._parti=await rp.json();}catch{}}
   try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}`);if(!r.ok)throw 0;DD.data=await r.json();}
   catch{toast('Errore apertura distinta',true);return;}
+  await ddLoadRevs();
   renderDdList();renderDdEditor(DD.data);
 }
 function ddCols(d){
@@ -2862,6 +2877,13 @@ function ddCols(d){
 }
 function renderDdEditor(d){
   const cols=ddCols(d);
+  // ── revisione RDO + blocco (inviata = immodificabile) ──
+  const bloccata=!!d.bloccata;
+  const rev=(d.revisione!=null&&d.revisione>=0)?d.revisione:-1;
+  const revTxt=rev>=0?('REV '+rev2(rev)):'bozza';
+  const codeRev=d.codice_rev||d.codice_rdo||'';
+  const roAttr=bloccata?' readonly':'';
+  const disAttr=bloccata?' disabled':'';
   const ths='<th style="width:30px" title="Includi nella RDO">✓</th>'+cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
   const nIncl=d.righe.filter(r=>r.incl!==false).length;
   const _cc=commesse.find(x=>x.id===d.commessa_id);const _cp=(_cc&&_cc._parti)||[];
@@ -2877,7 +2899,7 @@ function renderDdEditor(d){
       const cls=k==='codice'?'cod':(k==='revisione'?'rev':(k==='qta'?'qta':''));
       return `<td class="${cls}">${esc(r[k]||'')}</td>`;
     }).join('');
-    const chk=`<td class="ddx"><input type="checkbox" ${inc?'checked':''} title="${inc?'Incluso — togli per non richiederlo':'Escluso dalla RDO'}" onchange="ddToggleIncl(${i},this.checked)"></td>`;
+    const chk=`<td class="ddx"><input type="checkbox" ${inc?'checked':''}${disAttr} title="${inc?'Incluso — togli per non richiederlo':'Escluso dalla RDO'}" onchange="ddToggleIncl(${i},this.checked)"></td>`;
     const cmpMark=(r.parte_id&&confSet.has(r.parte_id))?'<span class="cmptag" title="Pezzo in confronto tra più fornitori">🔀</span> ':'';
     const pdf=r.parte_id?pdfByPid[r.parte_id]:null;
     const prev=pdf?` data-prevpdf="${esc(pdf)}" data-prevcap="${esc(r.codice||'')}"`:'';
@@ -2896,8 +2918,8 @@ function renderDdEditor(d){
     return `<div class="dd-opt-pair${miss?' miss':''}">
       <div class="dd-opt-lbl">${label}${miss?'<span class="dd-opt-req">da indicare</span>':''}</div>
       <div class="dd-opt-choices">
-        <label class="${v==='forn'?'on':''}"><input type="radio" name="op_${key}" ${v==='forn'?'checked':''} onchange="ddScelta('${key}','forn')"><span>a carico del fornitore</span></label>
-        <label class="${v==='ib'?'on':''}"><input type="radio" name="op_${key}" ${v==='ib'?'checked':''} onchange="ddScelta('${key}','ib')"><span>a carico di ${esc(ibName)}</span></label>
+        <label class="${v==='forn'?'on':''}"><input type="radio" name="op_${key}" ${v==='forn'?'checked':''}${disAttr} onchange="ddScelta('${key}','forn')"><span>a carico del fornitore</span></label>
+        <label class="${v==='ib'?'on':''}"><input type="radio" name="op_${key}" ${v==='ib'?'checked':''}${disAttr} onchange="ddScelta('${key}','ib')"><span>a carico di ${esc(ibName)}</span></label>
       </div></div>`;
   };
   // i commerciali NON hanno trattamenti né provenienza materiale: mostriamo solo la spedizione
@@ -2911,8 +2933,8 @@ function renderDdEditor(d){
   const ctHtml = isComm ? '' : `<div class="dd-opt-pair${ctMiss?' miss':''}">
       <div class="dd-opt-lbl">Provenienza materiale / lavorazione${ctReq?(ctMiss?'<span class="dd-opt-req">scegli almeno una</span>':''):'<span class="dd-opt-opt">(non richiesta per questi pezzi)</span>'}</div>
       <div class="dd-opt-checks">
-        <label class="${o.particolari_ib?'on':''}"><input type="checkbox" ${o.particolari_ib?'checked':''} onchange="ddOpt('particolari_ib',this.checked)"><span>Particolari forniti da ${esc(ibName)} come a disegno <b>(conto lavorazione)</b></span></label>
-        <label class="${o.materiale_forn?'on':''}"><input type="checkbox" ${o.materiale_forn?'checked':''} onchange="ddOpt('materiale_forn',this.checked)"><span>Fornitura completa del pezzo a carico del fornitore <b>(materiale incluso)</b></span></label>
+        <label class="${o.particolari_ib?'on':''}"><input type="checkbox" ${o.particolari_ib?'checked':''}${disAttr} onchange="ddOpt('particolari_ib',this.checked)"><span>Particolari forniti da ${esc(ibName)} come a disegno <b>(conto lavorazione)</b></span></label>
+        <label class="${o.materiale_forn?'on':''}"><input type="checkbox" ${o.materiale_forn?'checked':''}${disAttr} onchange="ddOpt('materiale_forn',this.checked)"><span>Fornitura completa del pezzo a carico del fornitore <b>(materiale incluso)</b></span></label>
       </div>${ctReq?'<div class="dd-ctnote">Rilevati particolari costruttivi / commerciali lavorati: possono valere entrambe le voci, ma va indicata almeno una.</div>':''}</div>`;
   const confHtml=confN?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO si <b>invia regolarmente</b> (così raccogli le offerte). Scegli poi il vincitore (pannello «👁 Colpo d'occhio» → Confronto prezzi) — la <b>conferma d'ordine</b> è bloccata finché ci sono pezzi in comune.</span></div>`:'';
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
@@ -2925,23 +2947,39 @@ function renderDdEditor(d){
     :`<div class="fmuted" style="padding:6px 2px;font-size:11px">Nessun ${isComm?'datasheet':'disegno'} (nei formati richiesti dal fornitore) collegato ai pezzi inclusi.</div>`;
   const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
   const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf`;
+  // pannello storico revisioni
+  const revs=(DD.revs||[]).slice();
+  const inPrep=rev>=1&&!revs.some(r=>r.numero===rev);
+  const revItems=revs.slice().reverse().map(r=>{
+    const dt=r.inviata_at?new Date(r.inviata_at+'Z').toLocaleDateString('it-IT'):'';
+    const diff=(r.diff||[]).map(x=>'• '+esc(x)).join('<br>')||'—';
+    return `<div class="rr-item"><div class="rr-h"><b>REV ${rev2(r.numero)}</b>${dt?' · inviata '+dt:''}</div><div class="rr-diff">${diff}</div></div>`;
+  }).join('');
+  const revPanel=(rev>=0||revs.length)?`<details class="dd-coll">
+      <summary>🗂 Revisioni RDO <span class="cnt">${revs.length} congelate${inPrep?' · Rev '+rev2(rev)+' in preparazione':''}</span></summary>
+      <div class="dd-collbody">
+        ${inPrep?`<div class="rr-item prep"><div class="rr-h"><b>REV ${rev2(rev)}</b> · in preparazione</div><div class="rr-diff">Modifica, approva e invia per congelarla.</div></div>`:''}
+        ${revItems||'<div class="fmuted" style="font-size:11px;padding:4px">Nessuna revisione ancora inviata.</div>'}
+        ${rev>=1?`<button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="ddCancellaRevisione(${rev})">🗑 Cancella Rev ${rev2(rev)} — torna alla precedente</button>`:''}
+      </div></details>`:'';
   document.getElementById('ddEditor').innerHTML=`
     <div class="dd-hd">
       <img class="dd-logo" src="${API}/api/brand-logo/${d.brand}" alt="${d.brand}">
-      <div class="meta"><b>${esc(d.fornitore_nome)}</b>${d.codice_rdo?`<span class="dd-code">${esc(d.codice_rdo)}</span>`:''}<br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
-      <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}" onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}" onclick="ddSetBrand('YS')">YuBe</button></div>
+      <div class="meta"><b>${esc(d.fornitore_nome)}</b>${codeRev?`<span class="dd-code">${esc(codeRev)}</span>`:''}<span class="dd-revbadge ${rev>=0?'sent':'draft'}">${revTxt}${(rev>=1&&!bloccata)?' · in preparazione':''}</span><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
+      <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}"${disAttr} onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}"${disAttr} onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
     <div class="dd-body">
       <div class="dd-split">
         <div class="dd-mailcol">
           <div class="dd-sec">Mail RDO</div>
+          ${bloccata?`<div class="dd-lockbanner">🔒 RDO inviata — <b>Rev ${rev2(rev)}</b>. È immodificabile: per cambiarla apri una <b>nuova revisione</b> (in fondo).</div>`:''}
           <div class="dd-mailgrid">
-            <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo" onchange="ddAutosave()" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
-            <div><label class="fl">CC</label><input class="dd-fld" id="ddCc" onchange="ddAutosave()" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
-            <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn" onchange="ddAutosave()" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
+            <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo"${roAttr} onchange="ddAutosave()" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
+            <div><label class="fl">CC</label><input class="dd-fld" id="ddCc"${roAttr} onchange="ddAutosave()" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
+            <div><label class="fl">CCN</label><input class="dd-fld" id="ddCcn"${roAttr} onchange="ddAutosave()" value="${esc((d.emails_ccn||[]).join('; '))}" placeholder="(facoltativo)"></div>
           </div>
-          <input class="dd-fld" id="ddOgg" onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
-          <textarea class="dd-fld" id="ddCorpo" onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
+          <input class="dd-fld" id="ddOgg"${roAttr} onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
+          <textarea class="dd-fld" id="ddCorpo"${roAttr} onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
           <div class="dd-opts">
             <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel e nella mail inviati al fornitore</span></div>
             ${optComplete?'':'<div class="dd-opt-banner">⚠ Tutte le opzioni sono obbligatorie: completale per poter approvare la RDO.</div>'}
@@ -2967,7 +3005,7 @@ function renderDdEditor(d){
       <details class="dd-coll">
         <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
         <div class="dd-collbody">
-          <div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Seleziona tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Deseleziona tutte</button></div>
+          ${bloccata?'':'<div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Seleziona tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Deseleziona tutte</button></div>'}
           <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
           <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
         </div>
@@ -2976,17 +3014,26 @@ function renderDdEditor(d){
         <summary>🖼 ${dwgLbl} allegati <span class="cnt">${dwgFmtTxt}</span></summary>
         <div class="dd-collbody"><div class="dd-dwg">${dwgHtml}</div></div>
       </details>
+      ${revPanel}
     </div>
     <div class="dd-ft">
       <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
-      <button class="btn btn-aggiorna" onclick="ddAggiorna()" title="Rigenera distinta, file allegati e testo mail dal progetto">🔄 Aggiorna contenuto</button>
-      <div style="margin-left:auto;display:flex;gap:8px">
-        ${st==='bozza'?(!optComplete
-          ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Completa tutte le OPZIONI RDO (trattamenti termici, superficiali, spedizione e provenienza materiale) per approvare">✓ Approva</button>`
-          :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
-        ${st!=='bozza'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
-        <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${st==='approvata'?'Invia la RDO (richiesta offerta)':'Approva prima di inviare'}">✉ Invia (simulato)</button>
-      </div>
+      <span class="dd-revtag ${rev>=0?'sent':'draft'}">${revTxt}</span>
+      ${bloccata
+        ? `<span class="dd-lock">🔒 inviata — immodificabile</span>
+           <div style="margin-left:auto;display:flex;gap:8px">
+             <button class="btn btn-go btn-sm" onclick="ddNuovaRevisione()" title="Sblocca per modificare: crea la revisione successiva">✚ Nuova revisione</button>
+             ${rev>=1?`<button class="btn btn-ghost btn-sm" onclick="ddCancellaRevisione(${rev})" title="Cancella questa revisione e torna alla precedente">🗑 Cancella Rev ${rev2(rev)}</button>`:''}
+           </div>`
+        : `<button class="btn btn-aggiorna" onclick="ddAggiorna()" title="Rigenera distinta, file allegati e testo mail dal progetto">🔄 Aggiorna contenuto</button>
+           <div style="margin-left:auto;display:flex;gap:8px">
+             ${(rev>=1)?`<button class="btn btn-ghost btn-sm" onclick="ddCancellaRevisione(${rev})" title="Annulla questa nuova revisione e torna alla precedente">↩ Annulla Rev ${rev2(rev)}</button>`:''}
+             ${st==='bozza'?(!optComplete
+               ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Completa tutte le OPZIONI RDO per approvare">✓ Approva</button>`
+               :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
+             ${st==='approvata'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
+             <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${st==='approvata'?(rev>=1?'Invia e congela la Rev '+rev2(rev):'Invia la RDO (Rev 00)'):'Approva prima di inviare'}">✉ ${rev>=1?'Invia Rev '+rev2(rev):'Invia (simulato)'}</button>
+           </div>`}
     </div>`;
 }
 function ddDisegniFiles(d){
@@ -3073,9 +3120,29 @@ async function ddStato(s){
   try{if(s==='approvata')await ddPersist();
     const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/stato?stato=${s}`,{method:'POST'});
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
-    DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);
+    DD.data=await r.json();await ddLoadRevs();await loadDdList();renderDdEditor(DD.data);
     if(S.projId===DD.cid)refreshDetail();
-    toast(s==='approvata'?'Distinta approvata':(s==='inviata'?'RDO inviata (simulato)':'Rimessa in bozza'),'ok');
+    toast(s==='approvata'?'Distinta approvata':(s==='inviata'?('RDO inviata · Rev '+rev2(DD.data.revisione>=0?DD.data.revisione:0)+' (simulato)'):'Rimessa in bozza'),'ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+async function ddLoadRevs(){try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/revisioni`);DD.revs=r.ok?await r.json():[];}catch{DD.revs=[];}}
+async function ddNuovaRevisione(){
+  const nxt=((DD.data&&DD.data.revisione>=0?DD.data.revisione:0))+1;
+  if(!confirm('Aprire una NUOVA revisione (Rev '+rev2(nxt)+')?\nLa RDO torna modificabile; si congela al prossimo invio.'))return;
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/nuova-revisione`,{method:'POST'});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+    DD.data=await r.json();await ddLoadRevs();await loadDdList();renderDdEditor(DD.data);renderDdNav&&renderDdNav();
+    if(S.projId===DD.cid)refreshDetail();
+    toast('Nuova revisione aperta · Rev '+rev2(DD.data.revisione),'ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+async function ddCancellaRevisione(num){
+  if(!confirm('Cancellare la Rev '+rev2(num)+' e tornare alla precedente?\nLe modifiche di questa revisione andranno perse.'))return;
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/revisioni/${num}`,{method:'DELETE'});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+    DD.data=await r.json();await ddLoadRevs();await loadDdList();renderDdEditor(DD.data);renderDdNav&&renderDdNav();
+    if(S.projId===DD.cid)refreshDetail();
+    toast('Tornato alla Rev '+rev2(DD.data.revisione>=0?DD.data.revisione:0),'ok');
   }catch(e){toast(e.message||'Errore',true);}
 }
 function ddExport(fmt){
