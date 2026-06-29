@@ -2965,7 +2965,7 @@ function renderDdEditor(d){
   document.getElementById('ddEditor').innerHTML=`
     <div class="dd-hd">
       <img class="dd-logo" src="${API}/api/brand-logo/${d.brand}" alt="${d.brand}">
-      <div class="meta"><b>${esc(d.fornitore_nome)}</b>${codeRev?`<span class="dd-code">${esc(codeRev)}</span>`:''}<span class="dd-revbadge ${rev>=0?'sent':'draft'}">${revTxt}${(rev>=1&&!bloccata)?' · in preparazione':''}</span><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
+      <div class="meta"><b>${esc(d.fornitore_nome)}</b>${codeRev?`<span class="dd-code">${esc(codeRev)}</span>`:''}<span class="dd-revbadge ${bloccata?'sent':'draft'}">${revTxt}${(rev>=1&&!bloccata)?' · in preparazione':''}</span><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
       <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}"${disAttr} onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}"${disAttr} onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
     <div class="dd-body">
@@ -3018,7 +3018,7 @@ function renderDdEditor(d){
     </div>
     <div class="dd-ft">
       <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
-      <span class="dd-revtag ${rev>=0?'sent':'draft'}">${revTxt}</span>
+      <span class="dd-revtag ${bloccata?'sent':'draft'}">${revTxt}</span>
       ${bloccata
         ? `<span class="dd-lock">🔒 inviata — immodificabile</span>
            <div style="margin-left:auto;display:flex;gap:8px">
