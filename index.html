@@ -856,6 +856,9 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 /* ── DROPDOWN ── */
 .add{position:fixed;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);box-shadow:var(--shl);z-index:300;min-width:200px;max-height:320px;overflow-y:auto;padding:4px;display:none}
 .add-hd{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;padding:6px 8px 3px}
+.add-srch{position:sticky;top:-4px;background:var(--surf);padding:4px 4px 5px;z-index:2}
+.add-srch input{width:100%;box-sizing:border-box;font-size:11px;padding:6px 9px;border:1px solid var(--bd2);border-radius:var(--rx);outline:none}
+.add-srch input:focus{border-color:var(--purple)}
 .add-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rx);cursor:pointer}
 .add-item:hover{background:rgba(245,168,35,.08)}
 .ddav{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0}
@@ -944,6 +947,8 @@ textarea.fld{resize:vertical;min-height:60px}
 .voc-item{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.04);border:1px solid var(--bd);border-radius:13px;padding:3px 5px 3px 10px;font-size:11.5px;font-weight:600;color:var(--t1)}
 .voc-item button{border:none;background:rgba(0,0,0,.08);color:var(--t2);width:17px;height:17px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0}
 .voc-item button:hover{background:var(--go);color:var(--br)}
+.pref-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:0 0 10px;margin-bottom:6px;border-bottom:1px solid var(--bd)}
+.pref-copy{font-size:11px;padding:5px 8px;max-width:220px;cursor:pointer}
 .pref-row{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid rgba(0,0,0,.04);font-size:12.5px;cursor:pointer}
 .pref-row input{width:16px;height:16px;accent-color:var(--go)}
 .pref-row .ddav{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:800}
@@ -1069,7 +1074,6 @@ textarea.fld{resize:vertical;min-height:60px}
           <button class="btn btn-ghost btn-sm" onclick="openPref()" id="btnPref"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Fornitori progetto</button>
           <button class="btn btn-ghost btn-sm" onclick="riscansiona()" id="btnRiscan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Riscansiona</button>
           <button class="btn btn-danger btn-sm" onclick="eliminaProgetto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Elimina</button>
-          <button class="btn btn-go btn-sm" onclick="inviaSelezionate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Invia sel.</button>
         </div>
       </div>
       <div class="wpath" id="wpath"></div>
@@ -1184,7 +1188,6 @@ textarea.fld{resize:vertical;min-height:60px}
   <div class="fsep"></div>
   <button class="fbtn fbgh" onclick="showDDBulk(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Assegna fornitore</button>
   <button class="fbtn fbrel" onclick="bulkRelease()" title="Togli il fornitore dai pezzi selezionati"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>Rilascia</button>
-  <button class="fbtn fbgo" onclick="inviaSelezionate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Invia RDO (<span id="fabn2">0</span>)</button>
 </div>
 
 <div class="add" id="add"></div>
@@ -1349,7 +1352,9 @@ textarea.fld{resize:vertical;min-height:60px}
       <input type="hidden" id="mPropsSingle">
       <div class="bp-hint" id="mPropsHint"></div>
       <div id="mPropsBody" style="max-height:46vh;overflow:auto"></div>
-      <div class="bp-add"><input id="mPropsNewKey" placeholder="Nuova proprietà (es. TRATTAMENTO)"><input id="mPropsNewVal" placeholder="valore"><button class="btn btn-ghost btn-sm" onclick="propAddRow()">+ Aggiungi</button></div>
+      <div class="bp-add"><input id="mPropsNewKey" list="dlPropKeys" oninput="propNewKeyChanged()" placeholder="Nuova proprietà (es. TRATTAMENTO)"><input id="mPropsNewVal" list="dlNewVal" placeholder="valore"><button class="btn btn-ghost btn-sm" onclick="propAddRow()">+ Aggiungi</button></div>
+      <datalist id="dlPropKeys"></datalist><datalist id="dlNewVal"></datalist>
+      <div id="propValDls" hidden></div>
     </div>
     <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mProps')">Annulla</button><button class="btn btn-go" onclick="savePropsEditor()">Applica</button></div></div>
   </div>
@@ -1708,12 +1713,36 @@ function renderPref(){
   const att=fornitori.filter(f=>f.attivo&&!f.blacklist);
   const terz=att.filter(f=>f.tipo==='terzista'),comm=att.filter(f=>f.tipo==='commerciale');
   const row=f=>`<label class="pref-row"><input type="checkbox" ${PREF.has(f.id)?'checked':''} onchange="prefToggle(${f.id},this.checked)"><span class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</span><span>${esc(f.nome)}</span><span class="fmuted" style="margin-left:auto">${f.tipo}</span></label>`;
-  document.getElementById('prefBody').innerHTML=
+  const altri=commesse.filter(c=>c.id!==S.projId);
+  const copyOpts=altri.map(c=>`<option value="${c.id}">${esc(c.codice)} — ${esc((c.nome||'').slice(0,40))}</option>`).join('');
+  const bar=`<div class="pref-bar">
+    <button class="btn btn-ghost btn-sm" onclick="prefSelAll(true)">✓ Seleziona tutti</button>
+    <button class="btn btn-ghost btn-sm" onclick="prefSelAll(false)">▢ Deseleziona</button>
+    <select class="fld pref-copy" onchange="prefCopyFrom(this.value);this.selectedIndex=0" ${altri.length?'':'disabled'} title="Copia la lista fornitori da un altro progetto">
+      <option value="">📋 Copia da altro progetto…</option>${copyOpts}</select>
+    <span class="fmuted" id="prefCnt" style="margin-left:auto;font-size:11px"></span>
+  </div>`;
+  document.getElementById('prefBody').innerHTML=bar+
     (att.length?'':'<div class="fmuted">Nessun fornitore attivo. Aggiungine in Fornitori.</div>')+
     (terz.length?`<div class="voc-h">Terzisti</div>`+terz.map(row).join(''):'')+
     (comm.length?`<div class="voc-h" style="margin-top:10px">Commerciali</div>`+comm.map(row).join(''):'');
+  const cnt=document.getElementById('prefCnt');if(cnt)cnt.textContent=PREF.size?PREF.size+' selezionati':'';
 }
-function prefToggle(id,on){on?PREF.add(id):PREF.delete(id);}
+function prefToggle(id,on){on?PREF.add(id):PREF.delete(id);const cnt=document.getElementById('prefCnt');if(cnt)cnt.textContent=PREF.size?PREF.size+' selezionati':'';}
+function prefSelAll(on){const att=fornitori.filter(f=>f.attivo&&!f.blacklist);if(on)att.forEach(f=>PREF.add(f.id));else PREF.clear();renderPref();}
+async function prefCopyFrom(cid){
+  cid=+cid;if(!cid)return;
+  const c=commesse.find(x=>x.id===cid);
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/fornitori-preferiti');if(!r.ok)throw 0;
+    const ids=(await r.json()).ids||[];
+    if(!ids.length){toast('Quel progetto non ha fornitori selezionati',true);return;}
+    // tieni solo i fornitori ancora attivi/esistenti
+    const validi=new Set(fornitori.filter(f=>f.attivo&&!f.blacklist).map(f=>f.id));
+    let added=0;ids.forEach(id=>{if(validi.has(id)&&!PREF.has(id)){PREF.add(id);added++;}});
+    renderPref();
+    toast(added?`${added} fornitori copiati da ${c?c.codice:'progetto'}`:'Già tutti presenti','ok');
+  }catch{toast('Errore nel copiare i fornitori',true);}
+}
 async function savePref(){
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/fornitori-preferiti',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:[...PREF]})});if(!r.ok)throw 0;
     mClose('mPref');toast('Fornitori del progetto salvati','ok');
@@ -1769,7 +1798,15 @@ function showPrevPath(pdf,cap){
 }
 document.addEventListener('mouseover',e=>{const el=e.target.closest('[data-prevpdf]');if(el)showPrevPath(el.getAttribute('data-prevpdf'),el.getAttribute('data-prevcap'));});
 document.addEventListener('mouseout',e=>{const el=e.target.closest('[data-prevpdf]');if(el&&!(e.relatedTarget&&e.relatedTarget.closest('[data-prevpdf]')))hidePrev();});
-document.addEventListener('mousemove',e=>{if(PREV.style.display==='block')movePrev(e);},true);
+document.addEventListener('mousemove',e=>{
+  if(PREV.style.display!=='block')return;
+  // se il cursore non è più sopra un elemento che genera l'anteprima, chiudila.
+  // Copre il caso in cui l'elemento sotto il mouse viene RIMOSSO dal DOM (es. si
+  // deseleziona un pezzo dall'elenco allegati): senza questo l'anteprima resterebbe
+  // appiccicata al mouse perché il «mouseout» dell'elemento rimosso non scatta mai.
+  if(!e.target.closest('[data-prevpdf]')&&!e.target.closest('.tr-part')){hidePrev();return;}
+  movePrev(e);
+},true);
 function movePrev(e){
   if(PREV.style.display!=='block')return;
   let x=e.clientX+16,y=e.clientY+16;
@@ -1855,6 +1892,26 @@ async function savePropsDrawer(pid){
     await refreshDetail();loadNotifiche(false);openDraw(pid);
   }catch{toast('Errore salvataggio proprietà',true);}
 }
+// ── indice proprietà del progetto: nomi proprietà + valori già esistenti, così
+// in modifica sia il NOME proprietà sia il VALORE si scelgono da elenchi noti
+// (valori della distinta + vocabolario delle varie proprietà).
+let PROP_VALMAP={};   // {chiave: Set(valori)}
+let _pvSeq=0;
+function buildPropIndex(){
+  PROP_VALMAP={};
+  Object.values(S.pmap||{}).forEach(p=>{const o=pProps(p);Object.keys(o).forEach(k=>{const v=String(o[k]??'').trim();if(!PROP_VALMAP[k])PROP_VALMAP[k]=new Set();if(v)PROP_VALMAP[k].add(v);});});
+}
+function propVocabFor(key){const u=(key||'').toUpperCase();
+  if(u==='CATEGORIA')return PROP.categorie||[];
+  if(u==='TIPO')return PROP.tipi||[];
+  if(u.includes('LAV'))return PROP.lavorazioni||[];
+  if(u==='FORNITORE')return PROP.fornitori||[];
+  return [];}
+function propValuesFor(key){return [...new Set([...(PROP_VALMAP[key]||[]),...propVocabFor(key)])].filter(Boolean).sort();}
+function ensureValDl(key){const cont=document.getElementById('propValDls');const id='pvdl_'+(_pvSeq++);
+  const dl=document.createElement('datalist');dl.id=id;dl.innerHTML=propValuesFor(key).map(v=>`<option value="${esc(v)}">`).join('');cont.appendChild(dl);return id;}
+function propNewKeyChanged(){const k=(document.getElementById('mPropsNewKey').value||'').trim();
+  const dl=document.getElementById('dlNewVal');if(dl)dl.innerHTML=propValuesFor(k).map(v=>`<option value="${esc(v)}">`).join('');}
 function openPropsEditor(){
   const ids=[...(S.rows||[])];
   if(!ids.length){toast('Nessun particolare selezionato');return;}
@@ -1865,29 +1922,36 @@ function openPropsEditor(){
   parts.forEach(p=>Object.keys(pProps(p)).forEach(k=>{if(!seen.has(k)){seen.add(k);keys.push(k);}}));
   const valOf=k=>{const vals=new Set(parts.map(p=>String(pProps(p)[k]??'')));return vals.size===1?[...vals][0]:null;};
   PROPSEL=ids;
+  // costruisci gli elenchi di suggerimento (nomi proprietà + valori per proprietà)
+  buildPropIndex();_pvSeq=0;document.getElementById('propValDls').innerHTML='';
+  const allKeys=[...new Set([...keys,...Object.keys(PROP_VALMAP)])].sort();
+  document.getElementById('dlPropKeys').innerHTML=allKeys.map(k=>`<option value="${esc(k)}">`).join('');
+  const keyDl={};keys.forEach(k=>{keyDl[k]=ensureValDl(k);});
   document.getElementById('mPropsTit').textContent=single?('Proprietà · '+(parts[0].numero_parte||'')):('Modifica massiva · '+parts.length+' particolari');
   document.getElementById('mPropsSub').textContent=single?'Modifica le proprietà da distinta di questo pezzo.':'Spunta le proprietà da applicare a TUTTI i pezzi selezionati. Le altre restano invariate.';
   document.getElementById('mPropsHint').innerHTML=single?'':'Solo le righe spuntate vengono applicate (anche svuotando il campo per cancellare quella proprietà su tutti). «(valori diversi)» = i pezzi hanno valori differenti.';
   document.getElementById('mPropsSingle').value=single?'1':'';
   let rows;
   if(single){
-    rows=keys.map(k=>`<div class="bp-row"><span></span><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(pProps(parts[0])[k]||'')}"></div>`).join('');
+    rows=keys.map(k=>`<div class="bp-row"><span></span><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" list="${keyDl[k]}" value="${esc(pProps(parts[0])[k]||'')}"></div>`).join('');
   }else{
-    rows=keys.map(k=>{const cv=valOf(k);return `<div class="bp-row"><input type="checkbox" data-ck="${esc(k)}"><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(cv||'')}" placeholder="${cv===null?'(valori diversi)':''}"></div>`;}).join('');
+    rows=keys.map(k=>{const cv=valOf(k);return `<div class="bp-row"><input type="checkbox" data-ck="${esc(k)}"><span class="bk" title="${esc(k)}">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" list="${keyDl[k]}" value="${esc(cv||'')}" placeholder="${cv===null?'(valori diversi)':''}"></div>`;}).join('');
   }
   document.getElementById('mPropsBody').innerHTML=rows||'<div class="bp-hint">Nessuna proprietà da distinta su questi pezzi: aggiungine una qui sotto.</div>';
+  document.getElementById('mPropsNewKey').value='';document.getElementById('mPropsNewVal').value='';propNewKeyChanged();
   mOpen('mProps');
 }
 function propAddRow(){
   const ke=document.getElementById('mPropsNewKey'),ve=document.getElementById('mPropsNewVal');
   const k=(ke.value||'').trim();if(!k){toast('Indica il nome della proprietà');return;}
   const v=ve.value||'';const single=document.getElementById('mPropsSingle').value==='1';
+  const dlid=ensureValDl(k);
   const body=document.getElementById('mPropsBody');const empty=body.querySelector('.bp-hint');if(empty)empty.remove();
   const row=document.createElement('div');row.className='bp-row';
   row.innerHTML=single
-    ?`<span></span><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(v)}">`
-    :`<input type="checkbox" data-ck="${esc(k)}" checked><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}"${propListAttr(k)} value="${esc(v)}">`;
-  body.appendChild(row);ke.value='';ve.value='';
+    ?`<span></span><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" list="${dlid}" value="${esc(v)}">`
+    :`<input type="checkbox" data-ck="${esc(k)}" checked><span class="bk">${esc(k.toLowerCase())}</span><input type="text" data-k="${esc(k)}" list="${dlid}" value="${esc(v)}">`;
+  body.appendChild(row);ke.value='';ve.value='';propNewKeyChanged();
 }
 async function savePropsEditor(){
   const single=document.getElementById('mPropsSingle').value==='1';
@@ -2054,7 +2118,6 @@ function ctxPart(e,pid){
     mi('✏️ Modifica proprietà'+(n>1?(' ('+n+')'):''),`openPropsEditor()`)+
     mi((p.escluso?'♻ Reintegra nel progetto':'🚫 Escludi dal progetto')+(n>1?(' ('+n+')'):''),`setEscluso([...S.rows],${p.escluso?'false':'true'})`)+
     `<div class="sep"></div>`+
-    mi('✉ Invia RDO selezionati',`inviaSelezionate()`)+
     mi('✕ Deseleziona tutto',`S.rows.clear();renderTree();updateFAB()`,'danger');
   let x=e.clientX,y=e.clientY;
   CTX.style.display='block';
@@ -2211,7 +2274,7 @@ function apriFile(path){window.open(API+'/api/commesse/'+S.projId+'/file?path='+
 /* ── SELEZIONE + FAB ── */
 function toggleRow(id,on){on?S.rows.add(id):S.rows.delete(id);updateFAB();}
 function toggleAll(on){allParti().forEach(p=>on?S.rows.add(p.id):S.rows.delete(p.id));renderTree();updateFAB();}
-function updateFAB(){const n=S.rows.size,fab=document.getElementById('fab');fab.style.display=(n>0&&S.v==='pdet')?'flex':'none';document.getElementById('fabn').textContent=n;document.getElementById('fabn2').textContent=n;}
+function updateFAB(){const n=S.rows.size,fab=document.getElementById('fab');fab.style.display=(n>0&&S.v==='pdet')?'flex':'none';document.getElementById('fabn').textContent=n;}
 function hideFAB(){S.rows.clear();document.getElementById('fab').style.display='none';const ck=document.getElementById('chkall');if(ck)ck.checked=false;}
 
 /* ── DROPDOWN ASSEGNA (multi-selezione: 1 fornitore = assegna, 2+ = confronto prezzi) ── */
@@ -2222,25 +2285,36 @@ function ddTitle(t){
   if(t.t==='BULK')return S.rows.size+' pezzi · fornitori';
   return 'Assegna fornitori al gruppo';
 }
+let DDQ='';  // testo di ricerca fornitore nel popup di assegnazione
+function ddMatch(f){if(!DDQ.trim())return true;const n=(f.nome||'').toLowerCase();return DDQ.toLowerCase().split(/\s+/).filter(Boolean).every(t=>n.includes(t));}
 function ddItem(f){const on=DDSEL.has(f.id);
+  // tutta la riga (avatar + NOME compresi) è cliccabile, non solo la casella
   return `<div class="add-item${on?' on':''}" onclick="ddToggleSel(${f.id})">
     <input type="checkbox" ${on?'checked':''} onclick="event.stopPropagation();ddToggleSel(${f.id})">
     <div class="ddav" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
     <div><div class="ddn">${esc(f.nome)}</div><div class="ddt">${f.tipo}</div></div></div>`;
 }
-function ddRender(){
-  const d=document.getElementById('add');if(!d)return;
-  const terz=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='terzista');
-  const comm=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='commerciale');
-  let h=`<div class="add-hd">${ddTitle(ddTarget)}${DDSEL.size>=2?` · <span style="color:var(--purple)">🔀 confronto ${DDSEL.size}</span>`:''}</div>`;
-  h+=`<div class="add-hint">Spunta <b>più fornitori</b> per metterli a confronto sullo stesso pezzo.</div>`;
+function ddListHtml(){
+  const terz=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='terzista'&&ddMatch(f));
+  const comm=fornitori.filter(f=>f.attivo&&!f.blacklist&&f.tipo==='commerciale'&&ddMatch(f));
+  let h='';
   if(terz.length){h+='<div class="add-hd">Terzisti</div>'+terz.map(ddItem).join('');}
   if(comm.length){h+='<div class="add-hd">Commerciali</div>'+comm.map(ddItem).join('');}
-  if(!terz.length&&!comm.length)h+='<div class="add-hd">Nessun fornitore — aggiungine in Fornitori</div>';
+  if(!terz.length&&!comm.length)h+=`<div class="add-hd">${DDQ.trim()?'Nessun fornitore trovato':'Nessun fornitore — aggiungine in Fornitori'}</div>`;
+  return h;
+}
+function ddRender(){
+  const d=document.getElementById('add');if(!d)return;
+  let h=`<div class="add-hd">${ddTitle(ddTarget)}${DDSEL.size>=2?` · <span style="color:var(--purple)">🔀 confronto ${DDSEL.size}</span>`:''}</div>`;
+  h+=`<div class="add-srch"><input id="ddsearch" type="text" placeholder="🔎 Cerca fornitore per nome…" value="${esc(DDQ)}" oninput="DDQ=this.value;ddRenderList()" onclick="event.stopPropagation()"></div>`;
+  h+=`<div class="add-hint">Spunta <b>più fornitori</b> per metterli a confronto sullo stesso pezzo.</div>`;
+  h+=`<div id="ddlist">${ddListHtml()}</div>`;
   h+=`<div class="add-ft"><button class="add-clr" onclick="ddRelease()" title="Togli ogni fornitore">↩ Rilascia</button><button class="add-ok" onclick="ddConfirm()">Conferma${DDSEL.size?' ('+DDSEL.size+')':''}</button></div>`;
   d.innerHTML=h;
 }
-function ddToggleSel(fid){DDSEL.has(fid)?DDSEL.delete(fid):DDSEL.add(fid);ddRender();}
+// solo la lista si rigenera durante la digitazione → il campo ricerca non perde il focus
+function ddRenderList(){const l=document.getElementById('ddlist');if(l)l.innerHTML=ddListHtml();}
+function ddToggleSel(fid){DDSEL.has(fid)?DDSEL.delete(fid):DDSEL.add(fid);ddRender();const s=document.getElementById('ddsearch');if(s&&DDQ){s.focus();}}
 function ddRelease(){DDSEL=new Set();ddConfirm();}  // «Rilascia» = conferma a set vuoto (toglie i fornitori)
 async function bulkRelease(){
   const ids=[...S.rows];if(!ids.length){toast('Seleziona dei pezzi');return;}
@@ -2249,7 +2323,7 @@ async function bulkRelease(){
     S.rows.clear();toast('Fornitori rilasciati','ok');await refreshDetail();
   }catch{toast('Errore rilascio',true);}
 }
-function ddOpenAt(evt){const d=document.getElementById('add');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-230);let top=r.bottom+4;if(top+340>window.innerHeight)top=Math.max(8,r.top-344);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block;width:228px`;ddRender();}
+function ddOpenAt(evt){DDQ='';const d=document.getElementById('add');const r=evt.currentTarget.getBoundingClientRect();let left=Math.min(r.left,window.innerWidth-230);let top=r.bottom+4;if(top+340>window.innerHeight)top=Math.max(8,r.top-344);d.style.cssText=`top:${top}px;left:${Math.max(8,left)}px;display:block;width:228px`;ddRender();}
 function showDD(evt,target){evt.stopPropagation();ddTarget=target;DDSEL=new Set();
   if(target.t==='P'){const p=S.pmap[target.id];if(p)pForns(p).forEach(x=>DDSEL.add(x));}
   ddOpenAt(evt);}
@@ -3142,7 +3216,7 @@ function renderDdEditor(d){
                ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Completa tutte le OPZIONI RDO per approvare">✓ Approva</button>`
                :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
              ${st==='approvata'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
-             <button class="btn btn-go btn-sm" onclick="ddStato('inviata')" ${canSend?'':'disabled style="opacity:.5;cursor:not-allowed"'} title="${st==='approvata'?(rev>=1?'Invia e congela la Rev '+rev2(rev):'Invia la RDO (Rev 00)'):'Approva prima di inviare'}">✉ ${rev>=1?'Invia Rev '+rev2(rev):'Invia (simulato)'}</button>
+             ${st==='approvata'?`<span style="font-size:11px;color:var(--t2);font-weight:700;align-self:center" title="Le RDO si inviano dal pannello «Richieste d'Offerta», in blocco, solo se approvate">✓ Pronta — si invia dal pannello RDO</span>`:''}
            </div>`}
     </div>`;
 }
