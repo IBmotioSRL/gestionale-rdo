@@ -3078,7 +3078,16 @@ async function ddStato(s){
     toast(s==='approvata'?'Distinta approvata':(s==='inviata'?'RDO inviata (simulato)':'Rimessa in bozza'),'ok');
   }catch(e){toast(e.message||'Errore',true);}
 }
-async function ddExport(fmt){try{await ddPersist();}catch{}window.open(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/export?fmt=${fmt}`,'_blank');}
+function ddExport(fmt){
+  // apri SUBITO la scheda (dentro il gesto del click) così il browser non la blocca,
+  // poi salva e punta la scheda all'export aggiornato.
+  const w=window.open('','_blank');
+  const cid=DD.cid,fid=DD.fid;
+  ddPersist().catch(()=>{}).finally(()=>{
+    const url=API+`/api/commesse/${cid}/rdo/${fid}/export?fmt=${fmt}&_=`+Date.now();
+    if(w&&!w.closed)w.location=url;else window.open(url,'_blank');
+  });
+}
 
 /* ── TEMPLATE MAIL ── */
 async function openTemplates(){await loadTemplates();renderTplList();tplNew();mOpen('mTpl');}
