@@ -460,6 +460,14 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .tr-part.excl .tr-pdesc{text-decoration:line-through}
 .tr-excltag{font-size:8px;font-weight:800;color:#fff;background:#7A6050;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
 .tr-revtag{font-size:8px;font-weight:800;color:#fff;background:#1A7A2E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
+/* modale revisioni pezzo (preview riscansione) */
+.rs-row{border:1px solid #e6dccd;border-radius:10px;padding:10px 12px;margin-bottom:10px;background:#fffdf8}
+.rs-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;font-size:13px}
+.rs-arrow{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#8a6d3b}
+.rs-badge{font-size:9px;font-weight:800;color:#fff;background:#1A7A2E;padding:2px 6px;border-radius:5px}
+.rs-f{font-size:11px;padding:2px 0 2px 8px}
+.rs-old{color:#b04632}
+.rs-new{color:#1A7A2E}
 /* badge avvisi nella sidebar */
 .ni .ni-badge{margin-left:auto;font-size:9px;font-weight:800;color:#fff;background:#C0151E;border-radius:9px;padding:1px 6px;min-width:16px;text-align:center}
 /* pagina Avvisi */
@@ -1343,6 +1351,14 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mhd"><div class="mico2">👁</div><div><div class="mtit" id="rvTit">Revisione inviata</div><div class="msub" id="rvSub"></div></div><button class="mx" onclick="mClose('mRevView')">✕</button></div>
     <div class="mbd" id="rvBody" style="max-height:66vh;overflow:auto"></div>
     <div class="mft"><div class="mft-l fmuted" style="font-size:11px">📌 Sola consultazione — la RDO attuale non viene toccata.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mRevView')">Chiudi</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mRevScan" onclick="ovClose(event,'mRevScan')">
+  <div class="modal" style="max-width:680px">
+    <div class="mhd"><div class="mico2">⟳</div><div><div class="mtit">Pezzi revisionati rilevati</div><div class="msub" id="rsSub"></div></div><button class="mx" onclick="mClose('mRevScan')">✕</button></div>
+    <div class="mbd" id="rsBody" style="max-height:60vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">📦 I disegni della vecchia revisione vengono <b>spostati</b> in «REVISIONI PRECEDENTI», mai cancellati.</div><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mRevScan')">Annulla</button><button class="btn btn-ghost btn-sm" onclick="mClose('mRevScan');_doRiscan(false)">Solo riscansiona</button><button class="btn btn-go" onclick="mClose('mRevScan');_doRiscan(true)">Archivia e riscansiona</button></div></div>
   </div>
 </div>
 
@@ -3557,9 +3573,28 @@ async function salvaProgetto(){
 }
 async function riscansiona(){
   if(!S.projId)return;const btn=document.getElementById('btnRiscan');btn.disabled=true;
-  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/riscansiona',{method:'POST'});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+  // dry-run: se ci sono pezzi revisionati (codice .REVn), chiedi conferma prima di archiviare i disegni
+  let prev=null;
+  try{const pr=await fetch(API+'/api/commesse/'+S.projId+'/revisioni-pezzi/preview');if(pr.ok)prev=await pr.json();}catch{}
+  btn.disabled=false;
+  if(prev&&prev.n_revisioni>0){openRevScan(prev);return;}
+  _doRiscan(true);
+}
+async function _doRiscan(archivia){
+  if(!S.projId)return;const btn=document.getElementById('btnRiscan');btn.disabled=true;
+  try{const r=await fetch(API+'/api/commesse/'+S.projId+'/riscansiona?archivia='+(archivia?1:0),{method:'POST'});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
     toast('Riscansione completata','ok');await loadCommesse();await refreshDetail();await refreshFiles();
   }catch(e){toast(e.message||'Errore riscansione',true);}finally{btn.disabled=false;}
+}
+function openRevScan(prev){
+  document.getElementById('rsSub').textContent=`${prev.n_revisioni} pezzo/i revisionato/i · ${prev.n_file_da_archiviare} disegno/i da archiviare`;
+  document.getElementById('rsBody').innerHTML=(prev.revisioni||[]).map(r=>{
+    const da=(r.files_da_archiviare||[]).map(f=>`<div class="rs-f rs-old">📄 ${esc(f.nome)} → REVISIONI PRECEDENTI</div>`).join('')
+      ||'<div class="rs-f fmuted">nessun disegno trovato per il codice precedente</div>';
+    const nuovi=(r.files_nuovi||[]).map(f=>`<div class="rs-f rs-new">📄 ${esc(f.nome)} (revisione corrente)</div>`).join('');
+    return `<div class="rs-row"><div class="rs-h"><b>${esc(r.base)}</b> <span class="rs-arrow">${esc((r.da_codes||[]).join(', '))} → ${esc(r.a_code)}</span> <span class="rs-badge">Rev ${r.a_rev}</span></div>${da}${nuovi}</div>`;
+  }).join('');
+  mOpen('mRevScan');
 }
 async function eliminaProgetto(){
   const c=commesse.find(x=>x.id===S.projId);if(!c)return;
