@@ -511,6 +511,40 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .cost-av{width:20px;height:20px;border-radius:5px;display:inline-grid;place-items:center;color:#fff;font-size:7.5px;font-weight:800;vertical-align:middle;margin-right:6px}
 .cov{height:5px;border-radius:3px;background:rgba(44,21,6,.08);overflow:hidden;width:80px;display:inline-block;vertical-align:middle}
 .cov i{display:block;height:100%;background:var(--green)}
+/* sezione Costi v2 — dettaglio per categoria */
+.cx-card{cursor:pointer;transition:.15s}
+.cx-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(60,40,10,.12);border-color:var(--go)}
+.cx-toggle{display:inline-flex;background:rgba(44,21,6,.06);border-radius:9px;padding:3px;margin:4px 0 14px}
+.cx-toggle button{border:none;background:transparent;padding:7px 15px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer;color:var(--t2)}
+.cx-toggle button.on{background:var(--surf);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.cx-cat{background:var(--surf);border:1px solid var(--bd);border-radius:11px;margin-bottom:11px;overflow:hidden;box-shadow:var(--sh)}
+.cx-h{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;background:var(--surf2,#fcfaf5);border-bottom:1px solid var(--bd)}
+.cx-h .nm{font-weight:800;font-size:13px}
+.cx-h .cnt{font-size:10px;color:var(--t2);background:rgba(44,21,6,.06);padding:2px 8px;border-radius:20px;font-weight:700}
+.cx-h .sub{margin-left:auto;font-weight:800;font-size:14px;color:var(--go-d)}
+.cx-h .chev{color:var(--t3);font-size:11px;transition:.2s}
+.cx-cat.closed .chev{transform:rotate(-90deg)}
+.cx-cat.closed .cx-body{display:none}
+.cx-acorpo{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fdf3e0;border-bottom:1px solid var(--bd);padding:8px 14px;font-size:11.5px;color:#7a5a14}
+.cx-acorpo input{width:90px;border:1px solid var(--bd);border-radius:6px;padding:3px 6px;font-size:12px;text-align:right}
+.cx-tab{width:100%;border-collapse:collapse;font-size:12px}
+.cx-tab th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);font-weight:700;padding:7px 14px;border-bottom:1px solid var(--bd);background:#fdfbf6}
+.cx-tab td{padding:6px 14px;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle}
+.cx-tab tr:hover td{background:#fdf9f0}
+.cx-cod{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;white-space:nowrap}
+.cx-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cx-imp{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cx-pin{width:74px;border:1px solid var(--bd);border-radius:6px;padding:3px 5px;font-size:12px;text-align:right}
+.cx-sub td{background:#fbf3df!important;font-weight:800;border-top:2px solid var(--bd)}
+.cx-dp{color:var(--amb,#b8801f);background:#fdf3e0;font-size:9px;font-weight:800;padding:1px 6px;border-radius:5px}
+.cx-fav{width:16px;height:16px;border-radius:4px;display:inline-grid;place-items:center;color:#fff;font-size:6.5px;font-weight:800;vertical-align:middle;margin-right:4px}
+.cx-fmore{font-size:9px;color:var(--t3);font-weight:700}
+.cx-assign{border:1px solid var(--bd);border-radius:6px;padding:3px 5px;font-size:11px;background:#fff;color:var(--t1);max-width:160px}
+.cx-grand{position:sticky;bottom:0;margin-top:14px;background:linear-gradient(135deg,#2c1d0d,#4a3415);color:#fff;border-radius:11px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 22px rgba(60,40,10,.18)}
+.cx-grand .l{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;font-weight:700}
+.cx-grand .v{font-size:22px;font-weight:800}
+.cx-grand small{font-weight:600;opacity:.7;font-size:11px}
+.cx-flag{background:#fbece8;border:1px solid #e9c4ba;color:#b04632;border-radius:9px;padding:8px 13px;font-size:12px;margin-bottom:12px;font-weight:600}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -1168,7 +1202,7 @@ textarea.fld{resize:vertical;min-height:60px}
   <div id="v-costi" class="view">
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center"><button class="hb" onclick="openSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div><div class="h1" style="font-size:15px">Costi</div><div class="vsub">Riepilogo costi per commessa e fornitore</div></div></div>
+      <div><div class="h1" style="font-size:15px">Costi</div><div class="vsub">Costi per commessa · dettaglio per tipologia</div></div></div>
     </div></div>
     <div class="vscroll"><div id="costiBody" style="padding:14px"></div></div>
   </div>
@@ -1453,7 +1487,7 @@ function go(v,pid){
   if(v==='dash')renderDash();
   if(v==='proj')renderProjGrid();
   if(v==='rdo')rdoEnter();
-  if(v==='costi')renderCosti();
+  if(v==='costi'){CX.mode='list';CX.cid=null;CX.data=null;renderCosti();}
   if(v==='forn')renderForn();
   if(v==='avvisi')renderAvvisi();
 }
@@ -2693,45 +2727,188 @@ async function rdoMailConfirm(){
 }
 
 /* ══ COSTI (vista aggregata globale — v1, in attesa del mockup) ══ */
+/* ══ COSTI — router a livelli: lista commesse → dettaglio per categoria ══ */
+const CX={mode:'list',cid:null,view:'cat',data:null,closed:{}};
+const CX_ORD=['COMMERCIALE','CARPENTERIA','MECCANICA','CONTO LAVORO','MINUTERIA','PLASTICA','COMMERCIALE LAVORATO','ASSIEME DI MONTAGGIO'];
+function cxImp(p){return p.prezzo==null?null:p.prezzo*qnum(p.qta);}
+function cxForns(p){return (p.fornitori||[]).filter(f=>f&&f.id);}
+
 async function renderCosti(){
+  if(CX.mode==='detail'&&CX.cid)return renderCxDetail();
+  renderCxList();
+}
+
+async function renderCxList(){
+  CX.mode='list';
   const el=document.getElementById('costiBody');
   el.innerHTML='<div class="fmuted" style="font-size:11px">Calcolo costi…</div>';
   const datas=await Promise.all(commesse.map(async c=>{
-    let parti=c._parti;
-    if(!parti){try{const r=await fetch(API+'/api/commesse/'+c.id+'/parti');parti=r.ok?await r.json():[];c._parti=parti;}catch{parti=[];}}
-    return {c,parti};
+    try{const r=await fetch(API+'/api/commesse/'+c.id+'/costi');return r.ok?await r.json():null;}catch{return null;}
   }));
   let gTot=0,gPz=0,gPrz=0;
-  const cards=datas.map(({c,parti})=>{
-    const ass=parti.filter(p=>p.fornitore_id);
-    const byF={};
-    ass.forEach(p=>{const o=byF[p.fornitore_id]||(byF[p.fornitore_id]={n:0,prz:0,tot:0});o.n++;if(p.prezzo!=null){o.prz++;o.tot+=p.prezzo*qnum(p.quantita);}});
-    const tot=Object.values(byF).reduce((s,o)=>s+o.tot,0);
-    const npz=ass.length,nprz=ass.filter(p=>p.prezzo!=null).length;
-    gTot+=tot;gPz+=npz;gPrz+=nprz;
-    const rows=Object.entries(byF).sort((a,b)=>b[1].tot-a[1].tot).map(([fid,o])=>{
-      const f=fornitori.find(x=>x.id==fid);const nm=f?f.nome:'?';
-      const pct=o.n?Math.round(o.prz/o.n*100):0;
-      return `<tr><td><span class="cost-av" style="background:${avc(nm)}">${ini(nm)}</span>${esc(nm)}</td>`+
-        `<td class="num">${o.n}</td>`+
-        `<td class="num"><span class="cov"><i style="width:${pct}%"></i></span> ${o.prz}/${o.n}</td>`+
-        `<td class="val">${o.tot?eur(o.tot):'—'}</td></tr>`;
-    }).join('');
-    return `<div class="panel cost-card">
+  const cards=datas.map((d,i)=>{
+    const c=commesse[i]; if(!d)return '';
+    let tot=0,prz=0; d.pezzi.forEach(p=>{const im=cxImp(p);if(im!=null){tot+=im;prz++;}});
+    Object.values(d.prezzi_corpo||{}).forEach(v=>tot+=Number(v)||0);
+    const npz=d.pezzi.length; gTot+=tot;gPz+=npz;gPrz+=prz;
+    const pct=npz?Math.round(prz/npz*100):0;
+    return `<div class="panel cost-card cx-card" onclick="cxOpen(${c.id})">
       <div class="ch"><b>${esc(c.codice)}</b><span class="fmuted">${esc(c.nome)}</span><span class="tot">${tot?eur(tot):'—'}</span></div>
-      <table class="cost-tab"><thead><tr><th>Fornitore</th><th class="num">Pezzi</th><th class="num">Prezzati</th><th class="val">Totale stimato</th></tr></thead>
-      <tbody>${rows||'<tr><td colspan="4" class="fmuted">Nessun pezzo assegnato</td></tr>'}</tbody></table></div>`;
+      <div style="padding:10px 14px"><div class="cov" style="width:100%"><i style="width:${pct}%"></i></div>
+        <div class="fmuted" style="font-size:10.5px;margin-top:6px;display:flex;justify-content:space-between"><span>${prz}/${npz} pezzi prezzati</span><span>${pct}% copertura</span></div></div></div>`;
   });
   const pct=gPz?Math.round(gPrz/gPz*100):0;
   el.innerHTML=
     `<div class="cost-tiles">
-       <div class="cost-tile"><div class="v">${eur(gTot)}</div><div class="l">Totale stimato (pezzi prezzati)</div></div>
+       <div class="cost-tile"><div class="v">${eur(gTot)}</div><div class="l">Totale (pezzi prezzati + a corpo)</div></div>
        <div class="cost-tile"><div class="v">${commesse.length}</div><div class="l">Commesse</div></div>
-       <div class="cost-tile"><div class="v">${gPrz}/${gPz}</div><div class="l">Pezzi prezzati / assegnati</div></div>
+       <div class="cost-tile"><div class="v">${gPrz}/${gPz}</div><div class="l">Pezzi prezzati</div></div>
        <div class="cost-tile"><div class="v">${pct}%</div><div class="l">Copertura prezzi</div></div>
      </div>
-     <div class="fmuted" style="font-size:10.5px;margin-bottom:10px">Totali stimati sui soli pezzi con prezzo inserito (netto IVA, esclusi costi accessori). Versione iniziale — si affina sul tuo mockup.</div>`+
+     <div class="fmuted" style="font-size:10.5px;margin-bottom:10px">Netto IVA, esclusi costi accessori. Entra in una commessa per il dettaglio per tipologia.</div>`+
     (cards.join('')||'<div class="fmuted">Nessuna commessa.</div>');
+}
+
+async function cxOpen(cid){
+  CX.mode='detail';CX.cid=cid;CX.closed={};
+  const el=document.getElementById('costiBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico costi commessa…</div>';
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/costi');CX.data=r.ok?await r.json():null;}catch{CX.data=null;}
+  renderCxDetail();
+}
+function cxBackList(){CX.mode='list';CX.cid=null;CX.data=null;renderCxList();}
+
+function cxGroups(){
+  const d=CX.data,g={};
+  d.pezzi.forEach(p=>{
+    const k = CX.view==='cat' ? (p.categoria||'—') : (p.categoria_costi||'Da assegnare');
+    (g[k]=g[k]||[]).push(p);
+  });
+  return g;
+}
+function cxKeys(g){
+  const keys=Object.keys(g);
+  if(CX.view==='cat')return keys.sort((a,b)=>{let ia=CX_ORD.indexOf(a),ib=CX_ORD.indexOf(b);ia=ia<0?99:ia;ib=ib<0?99:ib;return ia-ib||a.localeCompare(b);});
+  const order=[...(CX.data.categorie_costi||[]),'Da assegnare'];
+  return keys.sort((a,b)=>{let ia=order.indexOf(a),ib=order.indexOf(b);ia=ia<0?98:ia;ib=ib<0?98:ib;return ia-ib||a.localeCompare(b);});
+}
+
+function cxFornCell(p){
+  const fs=cxForns(p);
+  if(!fs.length)return '<span class="fmuted">—</span>';
+  const first=fs[0];
+  let h=`<span class="cx-fav" style="background:${avc(first.nome)}">${ini(first.nome)}</span>${esc(first.nome)}`;
+  if(fs.length>1)h+=` <span class="cx-fmore" title="${esc(fs.slice(1).map(f=>f.nome).join(', '))}">+${fs.length-1}</span>`;
+  return h;
+}
+
+function cxSection(name,rows){
+  const isClosed=CX.closed[name];
+  let sub=0,prz=0;
+  rows.forEach(p=>{const im=cxImp(p);if(im!=null){sub+=im;prz++;}});
+  // prezzo a corpo: solo in vista per CATEGORIA
+  const ac = CX.view==='cat' ? (CX.data.prezzi_corpo||{})[name] : undefined;
+  if(ac!=null)sub+=Number(ac)||0;
+  const cols = CX.view==='mine'?6:5;
+  let body=`<table class="cx-tab"><thead><tr>
+    <th class="cx-cod">Codice</th><th>Descrizione</th><th>Fornitore</th>
+    <th class="cx-num">Prezzo cad.</th><th class="cx-num">Q.tà</th><th class="cx-imp">Importo</th>
+    ${CX.view==='mine'?'<th>Categoria</th>':''}</tr></thead><tbody>`;
+  rows.forEach(p=>{
+    const im=cxImp(p);
+    const dup=cxForns(p).length>1;
+    const prc=`<input class="cx-pin" value="${p.prezzo==null?'':String(p.prezzo).replace('.',',')}" placeholder="—" onchange="cxSetPrezzo(${p.id},this.value)">`;
+    const imp=im==null?'<span style="color:#cbbfa8">—</span>':eur(im);
+    let mvSel='';
+    if(CX.view==='mine'){
+      const cats=[...(CX.data.categorie_costi||[])];
+      const opts=['<option value="">Da assegnare</option>'].concat(cats.map(cc=>`<option ${p.categoria_costi===cc?'selected':''}>${esc(cc)}</option>`)).join('');
+      mvSel=`<td><select class="cx-assign" onchange="cxAssign(${p.id},this.value)">${opts}</select></td>`;
+    }
+    body+=`<tr>
+      <td class="cx-cod">${esc(p.cod)}${dup?' <span class="cx-dp" title="Più fornitori in confronto">🔀</span>':''}</td>
+      <td>${esc(p.descr)||'<span style="color:#cbbfa8">—</span>'}${p.tipo?` <span style="color:#a89779;font-size:10px">· ${esc(p.tipo)}</span>`:''}</td>
+      <td>${cxFornCell(p)}</td>
+      <td class="cx-num">${prc}</td>
+      <td class="cx-num">${esc(p.qta)}</td>
+      <td class="cx-imp">${imp}</td>
+      ${mvSel}</tr>`;
+  });
+  body+=`<tr class="cx-sub"><td colspan="${cols-1}">Totale ${esc(name)} (${prz}/${rows.length} prezzati)</td><td class="cx-imp">${eur(sub)}</td></tr>`;
+  body+=`</tbody></table>`;
+  // banner a corpo (vista categoria): permette di prezzare l'intero gruppo
+  let acB='';
+  if(CX.view==='cat'){
+    acB=`<div class="cx-acorpo">📦 Prezzo a corpo per «${esc(name)}» (es. fornitura completa non quotata a pezzo):
+      <input type="text" value="${ac!=null?String(ac).replace('.',','):''}" placeholder="0,00" onchange="cxSetCorpo('${esc(name).replace(/'/g,"\\'")}',this.value)"> €
+      <span class="fmuted" style="font-size:10px">${ac!=null?'attivo → si somma al gruppo':'vuoto = somma i prezzi dei singoli pezzi'}</span></div>`;
+  }
+  return `<section class="cx-cat ${isClosed?'closed':''}">
+    <div class="cx-h" onclick="cxToggle('${esc(name).replace(/'/g,"\\'")}')">
+      <span class="chev">▾</span><span class="nm">${esc(name)}</span><span class="cnt">${rows.length} pz</span>
+      <span class="sub">${eur(sub)}</span></div>
+    <div class="cx-body">${acB}${body}</div></section>`;
+}
+
+function renderCxDetail(){
+  const el=document.getElementById('costiBody');
+  if(!CX.data){el.innerHTML='<div class="fmuted">Errore nel caricamento. <a onclick="cxBackList()">Torna</a></div>';return;}
+  const d=CX.data,g=cxGroups(),keys=cxKeys(g);
+  let tot=0,prz=0,npz=d.pezzi.length;
+  d.pezzi.forEach(p=>{const im=cxImp(p);if(im!=null){tot+=im;prz++;}});
+  Object.values(d.prezzi_corpo||{}).forEach(v=>tot+=Number(v)||0);
+  const dup=d.pezzi.filter(p=>cxForns(p).length>1).length;
+  let html=`
+   <div style="margin-bottom:8px"><a onclick="cxBackList()" style="color:var(--go-d);cursor:pointer;font-weight:700;font-size:12px">‹ Costi</a> <span class="fmuted" style="font-size:12px">› ${esc(d.commessa.codice)}</span></div>
+   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+     <div><div class="h1" style="font-size:16px">${esc(d.commessa.nome)}</div><div class="vsub">${esc(d.commessa.codice)} · ${npz} pezzi · ${prz} prezzati</div></div>
+     <div class="cost-tile" style="min-width:200px"><div class="v">${eur(tot)}</div><div class="l">Totale commessa · netto IVA</div></div>
+   </div>`;
+  if(dup)html+=`<div class="cx-flag">🔀 ${dup} pezzo/i con più fornitori in confronto: il totale usa il prezzo del fornitore primario.</div>`;
+  html+=`<div class="cx-toggle">
+     <button class="${CX.view==='cat'?'on':''}" onclick="cxSetView('cat')">Per tipologia</button>
+     <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>`;
+  if(CX.view==='mine'){
+    html+=`<div style="margin-bottom:12px"><button class="btn btn-go btn-sm" onclick="cxAddCat()">＋ Nuova categoria</button>
+      ${(d.categorie_costi||[]).length?'<span class="fmuted" style="font-size:10.5px;margin-left:8px">usa la colonna «Categoria» per spostare i pezzi</span>':'<span class="fmuted" style="font-size:10.5px;margin-left:8px">crea una categoria e poi assegna i pezzi</span>'}</div>`;
+  }
+  keys.forEach(k=>{html+=cxSection(k,g[k]);});
+  html+=`<div class="cx-grand"><span class="l">Totale commessa</span><span class="v">${eur(tot)} <small>netto · IVA esclusa</small></span></div>`;
+  el.innerHTML=html;
+}
+
+// interazioni Costi
+function cxSetView(v){CX.view=v;renderCxDetail();}
+function cxToggle(n){CX.closed[n]=!CX.closed[n];renderCxDetail();}
+function _cxPatchLocal(id,fn){const p=CX.data.pezzi.find(x=>x.id===id);if(p)fn(p);}
+async function cxSetPrezzo(id,val){
+  const v=val.trim()===''?null:qnum(val);
+  _cxPatchLocal(id,p=>{p.prezzo=v;if(p.fornitori&&p.fornitori[0])p.fornitori[0].prezzo=v;});
+  renderCxDetail();
+  try{await fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({prezzo:v})});}
+  catch{toast('Errore salvataggio prezzo',true);}
+}
+async function cxAssign(id,cat){
+  _cxPatchLocal(id,p=>p.categoria_costi=cat);
+  renderCxDetail();
+  try{await fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({categoria_costi:cat})});}
+  catch{toast('Errore',true);}
+}
+async function cxSetCorpo(gruppo,val){
+  const imp=val.trim()===''?null:qnum(val);
+  try{const r=await fetch(API+'/api/commesse/'+CX.cid+'/prezzo-corpo',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({gruppo,importo:imp})});
+    if(r.ok)CX.data.prezzi_corpo=(await r.json()).prezzi_corpo;}
+  catch{toast('Errore prezzo a corpo',true);}
+  renderCxDetail();
+}
+async function cxAddCat(){
+  const n=prompt('Nome della nuova categoria personalizzata:');
+  if(!n||!n.trim())return;
+  const cats=[...(CX.data.categorie_costi||[]),n.trim()];
+  try{const r=await fetch(API+'/api/commesse/'+CX.cid+'/categorie-costi',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({categorie:cats})});
+    if(r.ok)CX.data.categorie_costi=(await r.json()).categorie;}
+  catch{toast('Errore',true);}
+  renderCxDetail();
 }
 
 /* ══ DISTINTE & APPROVAZIONE ══ */
