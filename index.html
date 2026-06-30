@@ -1597,7 +1597,7 @@ function partRow(p){
   if(n===0)chips=`<span class="pchip empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
   const modTag=p.proprieta_modificata?`<span class="tr-modtag" title="Proprietà modificate a mano — da allineare in SolidWorks">✎ mod</span>`:'';
   const exclTag=p.escluso?`<span class="tr-excltag" title="Articolo escluso dal progetto (disattivato)">⊘ escluso</span>`:'';
-  const revTag=isRevisionato(p.revisione)?`<span class="tr-revtag" title="Pezzo revisionato (revisione ${esc(p.revisione)}) — è la revisione corrente del disegno, sostituisce la rev 00">⟳ ${esc(revLabelPart(p.revisione))}</span>`:'';
+  const revTag=isRevisionato(p.revisione)?`<span class="tr-revtag" title="Pezzo revisionato (revisione ${esc(p.revisione)}) — è la revisione corrente, sostituisce la rev 00">⟳ ${esc(revLabelPart(p.revisione))}</span>`:'';
   return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
@@ -1876,9 +1876,13 @@ function openDraw(pid){
     }).join('');
   }
   // proprietà dalla distinta (tutte le colonne dell'Excel, in ordine)
-  const props=pProps(p);const pkeys=Object.keys(props);
+  const props=Object.assign({},pProps(p));
+  // la REVISIONE deve essere SEMPRE impostabile, anche sui commerciali (che in
+  // distinta hanno la colonna vuota → altrimenti la riga non comparirebbe)
+  if(!Object.keys(props).some(k=>k.toUpperCase()==='REVISIONE'))props['REVISIONE']=p.revisione||'';
+  const pkeys=Object.keys(props);
   const isComm=(p.categoria||'').toUpperCase().startsWith('COMMERC');
-  const keyCols=(isComm?['FORNITORE','TIPO']:['MATERIALE','LAV. MECCANICA','FORNITORE']).map(x=>x.toUpperCase());
+  const keyCols=(isComm?['REVISIONE','FORNITORE','TIPO']:['REVISIONE','MATERIALE','LAV. MECCANICA','FORNITORE']).map(x=>x.toUpperCase());
   let ph='';
   if(pkeys.length){
     // prima le proprietà chiave, poi le altre nell'ordine della distinta
