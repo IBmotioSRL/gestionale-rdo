@@ -459,6 +459,7 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .tr-part.excl{opacity:.55}
 .tr-part.excl .tr-pdesc{text-decoration:line-through}
 .tr-excltag{font-size:8px;font-weight:800;color:#fff;background:#7A6050;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
+.tr-revtag{font-size:8px;font-weight:800;color:#fff;background:#1A7A2E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
 /* badge avvisi nella sidebar */
 .ni .ni-badge{margin-left:auto;font-size:9px;font-weight:800;color:#fff;background:#C0151E;border-radius:9px;padding:1px 6px;min-width:16px;text-align:center}
 /* pagina Avvisi */
@@ -1580,15 +1581,19 @@ function partRow(p){
   if(n===0)chips=`<span class="pchip empty" onclick="event.stopPropagation();showDD(event,{t:'P',id:${p.id}})">+ Assegna</span>`;
   const modTag=p.proprieta_modificata?`<span class="tr-modtag" title="Proprietà modificate a mano — da allineare in SolidWorks">✎ mod</span>`:'';
   const exclTag=p.escluso?`<span class="tr-excltag" title="Articolo escluso dal progetto (disattivato)">⊘ escluso</span>`:'';
+  const revTag=isRevisionato(p.revisione)?`<span class="tr-revtag" title="Pezzo revisionato (revisione ${esc(p.revisione)}) — è la revisione corrente del disegno, sostituisce la rev 00">⟳ ${esc(revLabelPart(p.revisione))}</span>`:'';
   return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
       <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
-      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}${modTag}${exclTag}</span>
+      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}${revTag}${modTag}${exclTag}</span>
       <span class="tr-pqty">${esc(p.quantita)}<small> pz</small></span>
       <div class="tr-pfiles">${fileTags(p.files)}</div>
       <div class="pforn">${chips}</div></div>`;
 }
+// un pezzo è "revisionato" se la proprietà revisione è valorizzata e diversa da 00
+function isRevisionato(v){const s=String(v||'').trim().toUpperCase();return !!s&&s!=='00'&&s!=='0'&&s!=='REV00'&&s!=='REV0';}
+function revLabelPart(v){const s=String(v||'').trim();const m=s.match(/(\d+)/);return m?('Rev '+parseInt(m[1],10)):('Rev '+s);}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   S.pmap={};
