@@ -3000,7 +3000,10 @@ function renderCxDetail(){
     <div class="cx-toggle" style="margin:0">
      <button class="${CX.view==='cat'?'on':''}" onclick="cxSetView('cat')">Per tipologia</button>
      <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>
-    <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button></div>`;
+    <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button>
+    <span style="margin-left:auto;display:flex;gap:6px">
+      <button class="btn btn-sm" onclick="cxAll(false)">⊟ Comprimi</button>
+      <button class="btn btn-sm" onclick="cxAll(true)">⊞ Espandi</button></span></div>`;
   if(CX.view==='mine'){
     html+=`<div style="margin-bottom:12px"><button class="btn btn-go btn-sm" onclick="cxAddCat()">＋ Nuova categoria</button>
       <button class="btn btn-sm" style="margin-left:6px" onclick="openCatManage(CX.cid,()=>cxReload())">🗂 Gestisci categorie</button>
@@ -3014,6 +3017,7 @@ function renderCxDetail(){
 // interazioni Costi
 function cxSetView(v){CX.view=v;renderCxDetail();}
 function cxToggle(n){CX.closed[n]=!CX.closed[n];renderCxDetail();}
+function cxAll(open){const g=cxGroups();cxKeys(g).forEach(k=>{CX.closed[k]=!open;});renderCxDetail();}
 function _cxPatchLocal(id,fn){const p=CX.data.pezzi.find(x=>x.id===id);if(p)fn(p);}
 async function cxSetPrezzo(id,val){
   const v=val.trim()===''?null:qnum(val);
