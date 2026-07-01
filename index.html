@@ -140,7 +140,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .wdot{width:7px;height:7px;border-radius:50%}
 .wbar{flex:1;height:5px;background:rgba(44,21,6,.07);border-radius:4px;overflow:hidden;max-width:200px}
 .wbarf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--go),var(--go-d))}
-.ws{display:grid;grid-template-columns:1fr 280px;overflow:hidden;flex:1;min-height:0}
+.ws{display:grid;grid-template-columns:1fr var(--gw,320px);overflow:hidden;flex:1;min-height:0}
+.ws.gcol{grid-template-columns:1fr 0}
+.ws.gcol>.glancep{display:none}
+.gp-rz{position:absolute;left:-3px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:6}
+.gp-rz:hover,.gp-rz.drag{background:rgba(199,154,59,.30)}
 
 .treep{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--bd);background:var(--surf);min-height:0}
 .tph{padding:8px 13px;border-bottom:1px solid var(--bd);flex-shrink:0;display:flex;align-items:center;gap:8px;background:var(--bg)}
@@ -596,7 +600,7 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .pcmpbadge{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.1);border:1px solid rgba(88,86,214,.25);padding:2px 6px;border-radius:20px;white-space:nowrap}
 .tr-pst.cmp{background:var(--purple)}
 /* ── pannello "Colpo d'occhio" ── */
-.glancep{width:360px;flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(180deg,rgba(248,244,239,.5),transparent 120px);padding:12px}
+.glancep{width:auto;flex-shrink:0;position:relative;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(180deg,rgba(248,244,239,.5),transparent 120px);padding:12px}
 .gp-h{display:flex;align-items:center;gap:7px;margin-bottom:3px}
 .gp-h h2{font-size:13px;font-weight:800}
 .gp-sub{font-size:11px;color:var(--t2);margin-bottom:10px}
@@ -1081,6 +1085,7 @@ textarea.fld{resize:vertical;min-height:60px}
 @media(max-width:1024px){
   .ws{grid-template-columns:1fr}
   .glancep{width:auto;max-height:340px;border-top:1px solid var(--bd)}
+  .gp-rz{display:none}
 }
 @media(max-width:560px){
   .metrics{grid-template-columns:1fr}
@@ -1176,11 +1181,13 @@ textarea.fld{resize:vertical;min-height:60px}
             <button class="tbtn" onclick="autoAssegna()" id="btnAuto" title="Riassegna i fornitori in base ai tag">✨ Auto-assegna</button>
             <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
             <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
+            <button class="tbtn" onclick="toggleGlance()" id="btnGlance" title="Mostra/nascondi il pannello «Colpo d'occhio»">👁 Pannello</button>
             <label class="tck"><input type="checkbox" id="chkall" onchange="toggleAll(this.checked)"> Tutti</label>
           </div></div>
         <div class="tscroll" id="tscroll"></div>
       </div>
       <div class="glancep" id="viewGlance">
+        <div class="gp-rz" id="gpRz" title="Trascina per ridimensionare"></div>
         <div class="gp-h"><span style="font-size:15px">👁</span><h2>Colpo d'occhio</h2></div>
         <div class="gp-sub">Chi ha cosa, cosa è in confronto e con chi.</div>
         <div id="glanceBody"></div>
@@ -1471,6 +1478,14 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mhd"><div class="mico2">📄</div><div><div class="mtit">Carica offerta (più pezzi)</div><div class="msub">un PDF/Excel del fornitore → prezzi per molti pezzi, abbinati con AI</div></div><button class="mx" onclick="mClose('mBulkOff')">✕</button></div>
     <div class="mbd" id="bulkBody" style="max-height:68vh;overflow:auto"></div>
     <div class="mft"><div class="mft-l fmuted" id="bulkFoot" style="font-size:11px"></div><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mBulkOff')">Chiudi</button><button class="btn btn-go" id="bulkConfBtn" onclick="bulkConferma()" disabled>Crea offerte</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mStampa" onclick="ovClose(event,'mStampa')">
+  <div class="modal" style="max-width:560px">
+    <div class="mhd"><div class="mico2">🖨</div><div><div class="mtit">Riassunto offerta per fornitore</div><div class="msub">foglio stampabile: codici, q.tà, prezzi e totale</div></div><button class="mx" onclick="mClose('mStampa')">✕</button></div>
+    <div class="mbd" id="stampaBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Scegli un fornitore per generare il foglio (poi «Stampa» dalla finestra).</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mStampa')">Chiudi</button></div></div>
   </div>
 </div>
 
@@ -3025,6 +3040,7 @@ function renderCxDetail(){
      <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>
     <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button>
     <button class="btn btn-sm" onclick="openBulkOff(${CX.cid})">📄 Carica offerta</button>
+    <button class="btn btn-sm" onclick="stampaOfferta(${CX.cid})">🖨 Riassunto offerta</button>
     <span style="margin-left:auto;display:flex;gap:6px">
       <button class="btn btn-sm" onclick="cxAll(false)">⊟ Comprimi</button>
       <button class="btn btn-sm" onclick="cxAll(true)">⊞ Espandi</button></span></div>`;
@@ -3309,6 +3325,59 @@ async function eliminaArticolo(pid){
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
     toast('Articolo eliminato','ok');closeDraw();await refreshDetail();loadNotifiche(false);
   }catch(e){toast(e.message||'Errore',true);}
+}
+
+/* ══ RIASSUNTO OFFERTA STAMPABILE (per fornitore) — foglio codici/q.tà/prezzi/TOT ══ */
+function _stampaGruppi(){
+  const d=CX.data||{};const g={};
+  (d.pezzi||[]).forEach(p=>{
+    const f=(p.fornitori||[]).find(x=>x&&x.id);
+    if(!f||p.prezzo==null)return;
+    if(!g[f.id])g[f.id]={nome:f.nome,rows:[],prev:new Set()};
+    g[f.id].rows.push(p);
+    const np=p.rif&&p.rif.num_preventivo;if(np)g[f.id].prev.add(np);
+  });
+  return g;
+}
+function stampaOfferta(cid){
+  const g=_stampaGruppi();const keys=Object.keys(g);const el=document.getElementById('stampaBody');
+  if(!keys.length){el.innerHTML='<div class="fmuted" style="font-size:12px;padding:14px">Nessun fornitore con pezzi prezzati in questa commessa. Assegna prezzi/offerte e riprova.</div>';mOpen('mStampa');return;}
+  el.innerHTML=keys.map(fid=>{const x=g[fid];const tot=x.rows.reduce((s,p)=>s+((p.prezzo*(qnum(p.qta)||0))||0),0);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #f4eee2">
+      <div style="flex:1"><b>${esc(x.nome)}</b><div class="fmuted" style="font-size:11px">${x.rows.length} pezzi · ${eur(tot)}${x.prev.size?(' · prev. '+[...x.prev].map(esc).join(', ')):''}</div></div>
+      <button class="btn btn-go btn-sm" onclick="stampaFornitore('${fid}')">🖨 Stampa</button></div>`;}).join('');
+  mOpen('mStampa');
+}
+function stampaFornitore(fid){
+  const g=_stampaGruppi()[fid];if(!g)return;
+  const comm=(CX.data||{}).commessa||{};
+  const logo=new URL('logo-full.png',location.href).href;
+  const prev=[...g.prev].map(esc).join(', ');
+  let tot=0;
+  const rows=g.rows.map(p=>{const q=qnum(p.qta)||0;const cad=p.prezzo||0;const t=cad*q;tot+=t;
+    return `<tr><td>${esc(p.cod)}</td><td>${esc(p.descr)||''}</td><td class="n">${esc(p.qta)}</td><td class="n">${eur(cad)}</td><td class="n">${eur(t)}</td></tr>`;}).join('');
+  const html=`<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Riassunto offerta · ${esc(g.nome)}</title>
+  <style>*{box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;color:#2c1d0d;margin:0;padding:24px;font-size:13px}
+  .bar{margin-bottom:14px}.bar button{background:#c79a3b;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2c1d0d;padding-bottom:10px}
+  .head img{height:42px}.az{text-align:right;font-size:11px;line-height:1.5;color:#555}
+  .meta{margin:14px 0;display:flex;gap:30px;flex-wrap:wrap;font-size:12px}.meta b{color:#000}
+  h1{font-size:16px;margin:6px 0 2px}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
+  th{background:#f4eee2;text-align:left;padding:7px 8px;border-bottom:1.5px solid #2c1d0d;font-size:10px;text-transform:uppercase;letter-spacing:.03em}
+  td{padding:6px 8px;border-bottom:1px solid #eee}.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tfoot td{font-weight:800;border-top:2px solid #2c1d0d;font-size:14px}
+  @media print{.bar{display:none}body{padding:0}}</style></head><body>
+  <div class="bar"><button onclick="window.print()">🖨 Stampa / Salva PDF</button></div>
+  <div class="head"><img src="${logo}" onerror="this.style.display='none'"><div class="az"><b>IB Motion S.r.l.</b><br>Via G. Di Vittorio 1/D — 25125 Brescia (BS)<br>Tel. 030.2383845 · tecnico@ibmotion.com</div></div>
+  <div class="meta"><div>Fornitore<br><b>${esc(g.nome)}</b></div><div>Commessa<br><b>${esc(comm.codice||'')}</b> ${esc(comm.nome||'')}</div>${prev?`<div>Rif. offerta / prev.<br><b>${prev}</b></div>`:''}<div>Data<br><b>${new Date().toLocaleDateString('it-IT')}</b></div></div>
+  <h1>Riassunto offerta</h1>
+  <table><thead><tr><th>Codice</th><th>Descrizione</th><th class="n">Q.tà</th><th class="n">€ cad.</th><th class="n">€ tot.</th></tr></thead>
+  <tbody>${rows}</tbody><tfoot><tr><td colspan="4" class="n">TOTALE (netto IVA)</td><td class="n">${eur(tot)}</td></tr></tfoot></table>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(!w){toast('Consenti i popup per stampare',true);return;}
+  w.document.write(html);w.document.close();
 }
 
 /* ══ PANNELLO OFFERTE DI UN ELEMENTO (multi-fonte) ══ */
@@ -4432,6 +4501,19 @@ function toggleSb(){
   try{localStorage.setItem('rdo_sbc',c?'1':'');}catch{}
 }
 try{if(localStorage.getItem('rdo_sbc')==='1')document.querySelector('.app').classList.add('sbc');}catch{}
+// pannello «Colpo d'occhio»: collassa + ridimensiona (trascinando il bordo), stato persistito
+function toggleGlance(){const ws=document.querySelector('.ws');if(!ws)return;const c=ws.classList.toggle('gcol');try{localStorage.setItem('rdo_glance_col',c?'1':'');}catch{}}
+(function setupGlance(){
+  const ws=()=>document.querySelector('.ws');
+  try{const w=localStorage.getItem('rdo_gw');if(w&&ws())ws().style.setProperty('--gw',w+'px');
+      if(localStorage.getItem('rdo_glance_col')==='1'&&ws())ws().classList.add('gcol');}catch{}
+  const rz=document.getElementById('gpRz');if(!rz)return;
+  let sx=0,sw=0;
+  const onMove=e=>{const x=e.clientX;const w=Math.min(560,Math.max(220,sw+(sx-x)));ws().style.setProperty('--gw',w+'px');};
+  const onUp=()=>{rz.classList.remove('drag');document.removeEventListener('pointermove',onMove);document.removeEventListener('pointerup',onUp);
+    try{localStorage.setItem('rdo_gw',parseInt(getComputedStyle(ws()).getPropertyValue('--gw'))||320);}catch{}};
+  rz.addEventListener('pointerdown',e=>{e.preventDefault();const g=document.getElementById('viewGlance');sw=g?g.getBoundingClientRect().width:320;sx=e.clientX;rz.classList.add('drag');document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
+})();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();}});
 let _tt;function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='ok'?' ok':type===true?' err':'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3400);}
 
