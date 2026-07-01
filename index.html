@@ -1508,7 +1508,9 @@ textarea.fld{resize:vertical;min-height:60px}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
 /* ── CONFIG ── */
-let API = localStorage.getItem('rdo_api_base') || 'http://127.0.0.1:8123';
+// se la pagina è servita dal backend (LAN: http://IP-del-PC:8123) usa lo stesso origine;
+// da GitHub Pages (https) punta al backend locale del PC.
+let API = localStorage.getItem('rdo_api_base') || (location.hostname.endsWith('github.io') ? 'http://127.0.0.1:8123' : location.origin);
 function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)return;const u=v.trim().replace(/\/$/,'');if(u){localStorage.setItem('rdo_api_base',u);location.reload();}}
 
 /* ── STATE ── */
