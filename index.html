@@ -1455,6 +1455,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mBulkOff" onclick="ovClose(event,'mBulkOff')">
+  <div class="modal" style="max-width:780px">
+    <div class="mhd"><div class="mico2">📄</div><div><div class="mtit">Carica offerta (più pezzi)</div><div class="msub">un PDF/Excel del fornitore → prezzi per molti pezzi, abbinati con AI</div></div><button class="mx" onclick="mClose('mBulkOff')">✕</button></div>
+    <div class="mbd" id="bulkBody" style="max-height:68vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" id="bulkFoot" style="font-size:11px"></div><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mBulkOff')">Chiudi</button><button class="btn btn-go" id="bulkConfBtn" onclick="bulkConferma()" disabled>Crea offerte</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mProps" onclick="ovClose(event,'mProps')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">✎</div><div><div class="mtit" id="mPropsTit">Proprietà</div><div class="msub" id="mPropsSub"></div></div><button class="mx" onclick="mClose('mProps')">✕</button></div>
@@ -3001,6 +3009,7 @@ function renderCxDetail(){
      <button class="${CX.view==='cat'?'on':''}" onclick="cxSetView('cat')">Per tipologia</button>
      <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>
     <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button>
+    <button class="btn btn-sm" onclick="openBulkOff(${CX.cid})">📄 Carica offerta</button>
     <span style="margin-left:auto;display:flex;gap:6px">
       <button class="btn btn-sm" onclick="cxAll(false)">⊟ Comprimi</button>
       <button class="btn btn-sm" onclick="cxAll(true)">⊞ Espandi</button></span></div>`;
@@ -3118,6 +3127,85 @@ async function catMgrToggle(cat,on){
   toast(on?'Categoria sincronizzata Progetto↔Costi':'Categoria slegata','ok');
   await catMgrLoad();
   if(CATMGR.onClose)CATMGR.onClose();
+}
+
+/* ══ CARICA OFFERTA MULTI-PEZZO (una offerta → prezzi per molti pezzi, via AI) ══ */
+let BULK={cid:null,file:null,rows:[],num:'',fornAi:'',_tipi:[],_cats:[]};
+function openBulkOff(cid){BULK={cid,file:null,rows:[],num:'',fornAi:'',_tipi:[],_cats:[]};renderBulkForm();mOpen('mBulkOff');}
+function renderBulkForm(){
+  const d=CX.data||{};
+  const tipi=[...new Set((d.pezzi||[]).map(p=>p.tipo).filter(Boolean))].sort();
+  const cats=[...(d.categorie_costi||[])];
+  BULK._tipi=tipi;BULK._cats=cats;
+  const fopts='<option value="">— fornitore (opzionale) —</option>'+fornitori.map(f=>`<option value="${f.id}">${esc(f.nome)}</option>`).join('');
+  document.getElementById('bulkBody').innerHTML=`
+    <div class="bp-hint">Carica un'offerta/preventivo del fornitore: l'AI legge il documento e propone i prezzi (cadauno) per i pezzi dell'ambito scelto. Poi controlli e confermi. Carica un file alla volta.</div>
+    <div class="of-form" style="margin-top:0"><div class="r">
+      <select id="bulkForn" style="flex:1">${fopts}</select>
+      <select id="bulkAmb" onchange="bulkAmbChange()" style="flex:1"><option value="tutti">Tutta la commessa</option>${tipi.length?'<option value="tipologia">Per tipologia…</option>':''}${cats.length?'<option value="categoria">Per categoria mia…</option>':''}</select>
+      <select id="bulkAmbVal" style="flex:1;display:none"></select></div></div>
+    <input type="file" id="bulkFile" accept=".pdf,.xlsx,.xls,.csv,.eml,.msg" style="display:none" onchange="bulkPreview()">
+    <div class="of-up" onclick="document.getElementById('bulkFile').click()">📄 Carica offerta (PDF / Excel / CSV / EML)<br><span class="fmuted" style="font-size:11px">l'AI abbina le voci ai pezzi della commessa</span></div>
+    <div id="bulkPrev"></div>`;
+  document.getElementById('bulkConfBtn').disabled=true;
+  document.getElementById('bulkFoot').textContent='';
+}
+function bulkAmbChange(){
+  const amb=document.getElementById('bulkAmb').value,sel=document.getElementById('bulkAmbVal');
+  if(amb==='tipologia'){sel.style.display='';sel.innerHTML=BULK._tipi.map(t=>`<option>${esc(t)}</option>`).join('');}
+  else if(amb==='categoria'){sel.style.display='';sel.innerHTML=BULK._cats.map(t=>`<option>${esc(t)}</option>`).join('');}
+  else{sel.style.display='none';sel.innerHTML='';}
+}
+async function bulkPreview(){
+  const inp=document.getElementById('bulkFile');if(!inp.files.length)return;
+  BULK.file=inp.files[0];
+  const amb=document.getElementById('bulkAmb').value,ambVal=document.getElementById('bulkAmbVal').value;
+  const fd=new FormData();fd.append('file',BULK.file);
+  const forn=document.getElementById('bulkForn').value;if(forn)fd.append('fornitore_id',forn);
+  if(amb==='tipologia')fd.append('tipologia',ambVal); else if(amb==='categoria')fd.append('categoria',ambVal);
+  document.getElementById('bulkPrev').innerHTML='<div class="fmuted" style="font-size:12px;padding:10px">Leggo l\'offerta con l\'AI… (qualche secondo)</div>';
+  document.getElementById('bulkConfBtn').disabled=true;
+  try{const r=await fetch(API+'/api/commesse/'+BULK.cid+'/offerte-bulk/preview',{method:'POST',body:fd});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore lettura');}
+    bulkRenderPreview(await r.json());
+  }catch(e){document.getElementById('bulkPrev').innerHTML='';toast(e.message||'Errore',true);}
+}
+function bulkRenderPreview(res){
+  BULK.rows=res.righe||[];BULK.num=res.num_preventivo||'';BULK.fornAi=res.fornitore_ai||'';
+  if(!document.getElementById('bulkForn').value && res.fornitore_ai){
+    const a=res.fornitore_ai.toLowerCase();
+    const m=fornitori.find(f=>a.includes((f.nome||'').toLowerCase())||(f.nome||'').toLowerCase().includes(a.split(' ')[0]));
+    if(m)document.getElementById('bulkForn').value=m.id;
+  }
+  const col=c=>({alta:'#1a7a2e',media:'#b8801f',bassa:'#b04632',deterministico:'#2f6db0'}[c]||'#8a7a64');
+  if(!BULK.rows.length){document.getElementById('bulkPrev').innerHTML='<div class="cx-flag" style="margin-top:12px">Nessun pezzo dell\'ambito abbinato a questa offerta. Cambia ambito o verifica che l\'offerta riguardi questa commessa.</div>';return;}
+  let h=`<div style="margin-top:12px;font-size:11px" class="fmuted">${res.usato_ai?'🤖 Abbinato con AI':'Abbinato (deterministico)'} · ${BULK.rows.length}/${res.n_catalogo} pezzi · ${res.num_preventivo?('prev. '+esc(res.num_preventivo)):'nessun n° preventivo'}${res.fornitore_ai?(' · '+esc(res.fornitore_ai)):''}</div>
+    <table class="cm-tab" style="width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px"><thead><tr><th style="width:26px"><input type="checkbox" checked onchange="bulkAllCk(this.checked)"></th><th>Codice</th><th>Descrizione</th><th style="text-align:right">Prezzo cad.</th><th style="text-align:center">Conf.</th></tr></thead><tbody>`;
+  BULK.rows.forEach((r,i)=>{
+    h+=`<tr><td style="text-align:center"><input type="checkbox" class="bulk-ck" data-i="${i}" ${r.prezzo!=null?'checked':''} onchange="bulkFootUpd()"></td>
+      <td style="font-weight:700">${esc(r.codice)}</td>
+      <td>${esc(r.descr)||'<span class="fmuted">—</span>'}${r.voce_offerta?`<div class="fmuted" style="font-size:10px">↳ ${esc(r.voce_offerta)}</div>`:''}</td>
+      <td style="text-align:right"><input class="cx-pin bulk-pr" data-i="${i}" value="${r.prezzo!=null?String(r.prezzo).replace('.',','):''}" placeholder="—" style="width:82px;text-align:right"></td>
+      <td style="text-align:center"><span style="font-size:9px;font-weight:800;color:${col(r.confidenza)}">${esc((r.confidenza||'').toUpperCase())}</span></td></tr>`;
+  });
+  document.getElementById('bulkPrev').innerHTML=h+'</tbody></table>';
+  document.getElementById('bulkConfBtn').disabled=false;bulkFootUpd();
+}
+function bulkAllCk(on){document.querySelectorAll('#bulkPrev .bulk-ck').forEach(c=>c.checked=on);bulkFootUpd();}
+function bulkFootUpd(){const n=document.querySelectorAll('#bulkPrev .bulk-ck:checked').length;document.getElementById('bulkFoot').textContent=n+' selezionati → '+n+' offerte';document.getElementById('bulkConfBtn').disabled=!n;}
+async function bulkConferma(){
+  if(!BULK.file){toast('Ricarica il file',true);return;}
+  const sel=[];
+  document.querySelectorAll('#bulkPrev .bulk-ck:checked').forEach(c=>{const i=+c.dataset.i;const el=document.querySelector('#bulkPrev .bulk-pr[data-i="'+i+'"]');const v=(el&&el.value||'').trim();if(!v)return;const pr=qnum(v);const row=BULK.rows[i];if(row&&pr!=null)sel.push({parte_id:row.parte_id,prezzo:pr});});
+  if(!sel.length){toast('Nessun pezzo con prezzo selezionato',true);return;}
+  const fd=new FormData();fd.append('file',BULK.file);fd.append('righe',JSON.stringify(sel));
+  const forn=document.getElementById('bulkForn').value;if(forn)fd.append('fornitore_id',forn);
+  if(BULK.num)fd.append('num_preventivo',BULK.num);
+  document.getElementById('bulkConfBtn').disabled=true;
+  try{const r=await fetch(API+'/api/commesse/'+BULK.cid+'/offerte-bulk/conferma',{method:'POST',body:fd});
+    if(!r.ok)throw 0;const j=await r.json();
+    toast('Create '+j.create+' offerte','ok');mClose('mBulkOff');await cxReload();
+  }catch{toast('Errore salvataggio',true);document.getElementById('bulkConfBtn').disabled=false;}
 }
 
 /* ══ ELEMENTO PERSONALIZZATO (custom) ══ */
