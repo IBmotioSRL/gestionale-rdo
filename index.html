@@ -1076,6 +1076,16 @@ textarea.fld{resize:vertical;min-height:60px}
   .dash-2{grid-template-columns:1fr}
   .fab{left:50%}
 }
+/* tablet in verticale / schermi medi: impila il dettaglio progetto e rendi
+   fluido il pannello «Colpo d'occhio» (evita che 280/360px taglino i contenuti) */
+@media(max-width:1024px){
+  .ws{grid-template-columns:1fr}
+  .glancep{width:auto;max-height:340px;border-top:1px solid var(--bd)}
+}
+@media(max-width:560px){
+  .metrics{grid-template-columns:1fr}
+  .vtop-row{gap:6px}
+}
 .hb{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border:none;background:transparent;cursor:pointer;color:var(--t2);border-radius:var(--rx);margin-right:4px}
 .hb:hover{background:rgba(44,21,6,.05)}.hb svg{width:20px;height:20px}
 </style>
