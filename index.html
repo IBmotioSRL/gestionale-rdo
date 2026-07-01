@@ -3270,7 +3270,7 @@ async function saveOffFile(){
   const ff=document.getElementById('ofFileForn').value;if(ff)fd.append('fornitore_id',ff);
   toast('Carico e leggo il file…');
   try{const r=await fetch(API+'/api/parti/'+OFF.pid+'/offerte/da-file',{method:'POST',body:fd});
-    if(r.ok){const o=await r.json();toast(o.prezzo_estratto?('Prezzo estratto: '+eur(o.prezzo)):'File caricato (prezzo non trovato, inseriscilo a mano)','ok');}
+    if(r.ok){const o=await r.json();toast(o.prezzo_estratto?('Prezzo estratto'+(o.prezzo_da_ai?' con AI':'')+': '+eur(o.prezzo)):'File caricato (prezzo non trovato, inseriscilo a mano)','ok');}
     else toast('Errore caricamento',true);
   }catch{toast('Errore',true);}
   OFF.add=null;await loadOfferte();if(OFF.onClose)OFF.onClose();
