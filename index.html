@@ -546,8 +546,15 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .cx-grand small{font-weight:600;opacity:.7;font-size:11px}
 .cx-flag{background:#fbece8;border:1px solid #e9c4ba;color:#b04632;border-radius:9px;padding:8px 13px;font-size:12px;margin-bottom:12px;font-weight:600}
 /* pannello Offerte di un elemento */
-.of-row{display:grid;grid-template-columns:24px 1fr 90px 90px;gap:8px;align-items:center;padding:9px 4px;border-bottom:1px solid #f4eee2}
+.of-row{display:grid;grid-template-columns:24px 1fr 84px 84px 30px;gap:8px;align-items:center;padding:9px 4px;border-bottom:1px solid #f4eee2}
 .of-row.win{background:#e9f6ec;border-radius:8px;border-bottom:1px solid transparent}
+.of-row.of-head{padding:4px;border-bottom:1px solid var(--bd);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3,#8a7a64)}
+.of-im{text-align:right;font-variant-numeric:tabular-nums;color:var(--t2,#8a7a64)}
+.of-im.on{color:var(--t1,#2c1d0d);font-weight:600}
+.cm-tab th{text-align:center;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3,#8a7a64);font-weight:800;padding:7px 10px;border-bottom:1px solid var(--bd)}
+.cm-tab th:first-child{text-align:left}
+.cm-tab td{padding:9px 10px;border-bottom:1px solid #f4eee2}
+.cm-tab tr:hover td{background:#fdf9f0}
 .of-pill{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px}
 .of-pill.man{background:#fdf3e0;color:#b8801f}
 .of-pill.rdo{background:#e8f1fb;color:#2f6db0}
@@ -1440,6 +1447,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mCatMgr" onclick="ovClose(event,'mCatMgr')">
+  <div class="modal" style="max-width:680px">
+    <div class="mhd"><div class="mico2">🗂</div><div><div class="mtit">Gestisci categorie personalizzate</div><div class="msub" id="catMgrSub"></div></div><button class="mx" onclick="mClose('mCatMgr')">✕</button></div>
+    <div class="mbd" id="catMgrBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">🔗 sincronizzata = categoria e pezzi condivisi tra Progetto e Costi · ⛓ collega = vive in un solo ambito.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mCatMgr')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mProps" onclick="ovClose(event,'mProps')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">✎</div><div><div class="mtit" id="mPropsTit">Proprietà</div><div class="msub" id="mPropsSub"></div></div><button class="mx" onclick="mClose('mProps')">✕</button></div>
@@ -1731,6 +1746,7 @@ function renderTree(){
   const bar=`<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)">
     <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Categorie mie</button></div>
     <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
+    ${S.treeMode==='cat'?`<button class="btn btn-sm" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button>`:''}
     ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
   </div>`;
   if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=bar+renderTreeCat();return;}
@@ -2987,6 +3003,7 @@ function renderCxDetail(){
     <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button></div>`;
   if(CX.view==='mine'){
     html+=`<div style="margin-bottom:12px"><button class="btn btn-go btn-sm" onclick="cxAddCat()">＋ Nuova categoria</button>
+      <button class="btn btn-sm" style="margin-left:6px" onclick="openCatManage(CX.cid,()=>cxReload())">🗂 Gestisci categorie</button>
       <span class="fmuted" style="font-size:10.5px;margin-left:8px">spunta gli elementi e usa la barra in alto, oppure la colonna «Categoria». 🔗/⛓ = sincronizza con le categorie del Progetto.</span></div>`;
   }
   keys.forEach(k=>{html+=cxSection(k,g[k]);});
@@ -3049,6 +3066,55 @@ async function cxReload(){
   renderCxDetail();
 }
 function cxOfferte(pid){openOfferte(pid,()=>cxReload());}
+
+/* ══ GESTIONE CATEGORIE (cross-ambito Progetto ↔ Costi + sync) ══ */
+let CATMGR={cid:null,data:null,onClose:null};
+function openCatManage(cid,onClose){
+  CATMGR={cid,data:null,onClose:onClose||null};
+  mOpen('mCatMgr');
+  document.getElementById('catMgrBody').innerHTML='<div class="fmuted" style="font-size:11px;padding:8px">Carico categorie…</div>';
+  catMgrLoad();
+}
+async function catMgrLoad(){
+  try{const r=await fetch(API+'/api/commesse/'+CATMGR.cid+'/costi');CATMGR.data=r.ok?await r.json():null;}catch{CATMGR.data=null;}
+  renderCatManage();
+}
+function renderCatManage(){
+  const el=document.getElementById('catMgrBody');if(!el)return;
+  const d=CATMGR.data;if(!d){el.innerHTML='<div class="fmuted">Errore nel caricamento.</div>';return;}
+  document.getElementById('catMgrSub').textContent=(d.commessa.codice||'')+(d.commessa.nome?(' · '+d.commessa.nome):'');
+  // conta i pezzi per categoria nei due ambiti
+  const cp={},cc={};
+  (d.pezzi||[]).forEach(p=>{
+    if(p.categoria_progetto)cp[p.categoria_progetto]=(cp[p.categoria_progetto]||0)+1;
+    if(p.categoria_costi)cc[p.categoria_costi]=(cc[p.categoria_costi]||0)+1;
+  });
+  // unione dei nomi: liste dichiarate + nomi effettivamente usati (case-insensitive, primo casing vince)
+  const names={};
+  [...(d.categorie_progetto||[]),...(d.categorie_costi||[]),...Object.keys(cp),...Object.keys(cc)]
+    .forEach(n=>{if(n&&!names[n.toLowerCase()])names[n.toLowerCase()]=n;});
+  const sync=new Set((d.categorie_sync||[]).map(s=>s.toLowerCase()));
+  const keys=Object.values(names).sort((a,b)=>a.localeCompare(b));
+  if(!keys.length){el.innerHTML='<div class="fmuted" style="font-size:12px;padding:14px">Nessuna categoria personalizzata. Creane una assegnando pezzi a una categoria dal Progetto o dai Costi.</div>';return;}
+  let h=`<table class="cm-tab" style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr><th>Categoria</th><th>In Progetto</th><th>In Costi</th><th>Sincronizzazione</th></tr></thead><tbody>`;
+  keys.forEach(k=>{
+    const np=cp[k]||0,nc=cc[k]||0,on=sync.has(k.toLowerCase());
+    const pCell=np?`<b>${np}</b> pz`:'<span class="fmuted">— (solo Costi)</span>';
+    const cCell=nc?`<b>${nc}</b> pz`:'<span class="fmuted">— (solo Progetto)</span>';
+    const tag=`<span class="cx-synctag ${on?'on':'off'}" title="${on?'condivisa — clic per slegare':'separata — clic per condividere'}" onclick="catMgrToggle('${jsq(k)}',${!on})">${on?'🔗 sincronizzata':'⛓ collega'}</span>`;
+    h+=`<tr><td style="font-weight:700">${esc(k)}</td><td style="text-align:center">${pCell}</td><td style="text-align:center">${cCell}</td><td style="text-align:center">${tag}</td></tr>`;
+  });
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+async function catMgrToggle(cat,on){
+  try{const r=await fetch(API+'/api/commesse/'+CATMGR.cid+'/categoria-sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({categoria:cat,sync:on})});if(!r.ok)throw 0;}
+  catch{toast('Errore sync',true);return;}
+  toast(on?'Categoria sincronizzata Progetto↔Costi':'Categoria slegata','ok');
+  await catMgrLoad();
+  if(CATMGR.onClose)CATMGR.onClose();
+}
 
 /* ══ ELEMENTO PERSONALIZZATO (custom) ══ */
 let CUSTOM={cid:null,props:[],onCreate:null,base:{}};
@@ -3118,19 +3184,33 @@ async function loadOfferte(){
 function ofPill(f){return `<span class="of-pill ${f}">${f==='rdo'?'RDO':f==='file'?'FILE':'MANUALE'}</span>`;}
 function renderOfferte(){
   const d=OFF.data;if(!d){document.getElementById('offBody').innerHTML='<div class="fmuted">Errore.</div>';return;}
+  const qty=qnum(d.parte.quantita)||1;
   document.getElementById('offTit').textContent=d.parte.numero_parte;
-  document.getElementById('offSub').textContent=(d.parte.denominazione||'')+' · q.tà '+(d.parte.quantita||'');
+  // sottotitolo: denom · q.tà · prezzo scelto → totale riga
+  const scelta=d.offerte.find(o=>o.scelta);
+  let sub=(d.parte.denominazione||'')+' · q.tà '+(d.parte.quantita||'');
+  if(scelta&&scelta.prezzo!=null)sub+='  ·  scelto '+eur(scelta.prezzo)+'/cad → totale '+eur(scelta.prezzo*qty);
+  document.getElementById('offSub').textContent=sub;
   let h='';
+  // flag anomalia: offerte da 2+ fornitori diversi → va scelto quello giusto
+  const forns=[...new Set(d.offerte.filter(o=>o.fornitore_id).map(o=>o.fornitore_id))];
+  if(forns.length>=2){
+    const nomi=forns.map(fid=>{const o=d.offerte.find(x=>x.fornitore_id===fid);return o&&o.fornitore_nome?o.fornitore_nome:('#'+fid);});
+    h+=`<div class="cx-flag">⚠ Questo elemento ha offerte da <b>${forns.length} fornitori</b> (${esc(nomi.join(', '))}): la riga «scelta» (✓) definisce prezzo e fornitore. Assicurati di non aver ordinato a più d'uno.</div>`;
+  }
   if(!d.offerte.length)h+='<div class="fmuted" style="font-size:12px;padding:8px 0">Nessuna offerta. Aggiungine una qui sotto.</div>';
+  else h+=`<div class="of-row of-head"><div></div><div>Fornitore / riferimento</div><div class="of-pr">Prezzo cad.</div><div class="of-im">Imp. ×${esc(d.parte.quantita||qty)}</div><div></div></div>`;
   d.offerte.forEach(o=>{
     const forn=o.fornitore_nome||'<span class="fmuted">— senza fornitore</span>';
     const ref=[o.riferimento,o.num_preventivo?('prev. '+o.num_preventivo):''].filter(Boolean).join(' · ');
     const fileBtn=o.ha_file?`<a href="${API}/api/offerte/${o.id}/file" target="_blank" class="btn btn-sm btn-ghost" title="Apri allegato">📎</a>`:'';
+    const imp=o.prezzo!=null?eur(o.prezzo*qty):'—';
     h+=`<div class="of-row ${o.scelta?'win':''}">
       <div>${o.scelta?'<span title="Scelta">●</span>':`<button class="btn btn-sm btn-ghost" title="Scegli" onclick="scegliOff(${o.id})">○</button>`}</div>
       <div><div style="font-weight:600">${esc(forn)} ${ofPill(o.fonte)} ${o.scelta?'<span class="of-win">SCELTA</span>':''}</div>
         <div class="of-ref">${esc(ref)||'<span class="fmuted">nessun riferimento</span>'} ${fileBtn}</div></div>
       <div class="of-pr">${o.prezzo!=null?eur(o.prezzo):'—'}</div>
+      <div class="of-im ${o.scelta?'on':''}">${imp}</div>
       <div style="text-align:right"><button class="btn btn-sm btn-ghost" title="Elimina" onclick="delOff(${o.id})">🗑</button></div>
     </div>`;
   });
