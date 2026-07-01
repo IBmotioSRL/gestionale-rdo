@@ -1489,6 +1489,22 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mOffDoc" onclick="ovClose(event,'mOffDoc')">
+  <div class="modal" style="max-width:940px">
+    <div class="mhd"><div class="mico2">📄</div><div><div class="mtit" id="odTit">Offerta normalizzata</div><div class="msub" id="odSub"></div></div><button class="mx" onclick="mClose('mOffDoc')">✕</button></div>
+    <div class="mbd" id="odBody" style="max-height:70vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" id="odFoot" style="font-size:12px"></div><div class="mft-r"><button class="btn btn-ghost" onclick="odDelete()">🗑 Elimina</button><button class="btn" onclick="odSave()">💾 Salva bozza</button><button class="btn btn-go" onclick="odConferma()">✓ Conferma → prezzi</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mOffList" onclick="ovClose(event,'mOffList')">
+  <div class="modal" style="max-width:660px">
+    <div class="mhd"><div class="mico2">📋</div><div><div class="mtit">Offerte ricevute</div><div class="msub" id="olSub"></div></div><button class="mx" onclick="mClose('mOffList')">✕</button></div>
+    <div class="mbd" id="olBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-go" onclick="mClose('mOffList')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mProps" onclick="ovClose(event,'mProps')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">✎</div><div><div class="mtit" id="mPropsTit">Proprietà</div><div class="msub" id="mPropsSub"></div></div><button class="mx" onclick="mClose('mProps')">✕</button></div>
@@ -3040,6 +3056,7 @@ function renderCxDetail(){
      <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>
     <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button>
     <button class="btn btn-sm" onclick="openBulkOff(${CX.cid})">📄 Carica offerta</button>
+    <button class="btn btn-sm" onclick="openOfferteList(${CX.cid})">📋 Offerte ricevute</button>
     <button class="btn btn-sm" onclick="stampaOfferta(${CX.cid})">🖨 Riassunto offerta</button>
     <span style="margin-left:auto;display:flex;gap:6px">
       <button class="btn btn-sm" onclick="cxAll(false)">⊟ Comprimi</button>
@@ -3194,12 +3211,12 @@ async function bulkPreview(){
   const fd=new FormData();fd.append('file',BULK.file);
   const forn=document.getElementById('bulkForn').value;if(forn)fd.append('fornitore_id',forn);
   if(amb==='tipologia')fd.append('tipologia',ambVal); else if(amb==='categoria')fd.append('categoria',ambVal);
-  document.getElementById('bulkPrev').innerHTML='<div class="fmuted" style="font-size:12px;padding:10px">Leggo l\'offerta con l\'AI… (qualche secondo)</div>';
-  document.getElementById('bulkConfBtn').disabled=true;
-  try{const r=await fetch(API+'/api/commesse/'+BULK.cid+'/offerte-bulk/preview',{method:'POST',body:fd});
+  document.getElementById('bulkPrev').innerHTML='<div class="fmuted" style="font-size:12px;padding:10px">Leggo e normalizzo l\'offerta con l\'AI… (qualche secondo)</div>';
+  document.getElementById('bulkConfBtn').style.display='none';
+  try{const r=await fetch(API+'/api/commesse/'+BULK.cid+'/offerte/estrai',{method:'POST',body:fd});
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore lettura');}
-    bulkRenderPreview(await r.json());
-  }catch(e){document.getElementById('bulkPrev').innerHTML='';toast(e.message||'Errore',true);}
+    const off=await r.json();mClose('mBulkOff');openOffDoc(off);
+  }catch(e){document.getElementById('bulkPrev').innerHTML='';document.getElementById('bulkConfBtn').style.display='';toast(e.message||'Errore',true);}
 }
 function bulkRenderPreview(res){
   BULK.rows=res.righe||[];BULK.num=res.num_preventivo||'';BULK.fornAi=res.fornitore_ai||'';
@@ -3379,6 +3396,103 @@ function stampaFornitore(fid){
   if(!w){toast('Consenti i popup per stampare',true);return;}
   w.document.write(html);w.document.close();
 }
+
+/* ══ OFFERTA DOCUMENTO NORMALIZZATA — revisione + conferma ══ */
+let DOC=null;
+function openOffDoc(off){DOC=off;renderOffDoc();mOpen('mOffDoc');}
+function renderOffDoc(){
+  const o=DOC;
+  document.getElementById('odTit').textContent='Offerta · '+(o.fornitore_nome_letto||'—');
+  document.getElementById('odSub').textContent=(o.fonte||'').toUpperCase()+' · '+(o.n_righe||0)+' righe · stato: '+o.stato;
+  const fopts='<option value="">— fornitore —</option>'+fornitori.map(f=>`<option value="${f.id}" ${f.id===o.fornitore_id?'selected':''}>${esc(f.nome)}</option>`).join('');
+  let h=`<div class="of-form" style="margin-top:0"><div class="r">
+    <select id="odForn" onchange="odRecalc()" style="flex:1">${fopts}</select>
+    <input id="odRif" value="${esc(o.riferimento||'')}" placeholder="n° preventivo" style="width:150px">
+    <input id="odData" value="${esc(o.data||'')}" placeholder="data" style="width:110px"></div>
+    <div class="r" style="align-items:center"><label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" id="odIva" ${o.iva_inclusa?'checked':''} onchange="odRecalc()"> prezzi IVA inclusa</label>
+    <input id="odAliq" value="${o.aliquota_iva||22}" style="width:56px;text-align:right" onchange="odRecalc()"> % IVA
+    ${o.fornitore_nome_letto?`<span class="fmuted" style="font-size:11px">letto: ${esc(o.fornitore_nome_letto)}</span>`:''}
+    ${o.ha_file?`<a href="${API}/api/offerte/${o.id}/file" target="_blank" class="btn btn-sm btn-ghost" style="margin-left:auto">📎 originale</a>`:''}</div></div>`;
+  h+=`<table class="cm-tab" style="width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px"><thead><tr><th>Articolo</th><th>Cod. fornitore</th><th style="text-align:right">Q.tà</th><th style="text-align:right">€ cad.</th><th style="text-align:right">€ riga</th><th></th></tr></thead><tbody id="odRows">`;
+  o.righe.forEach((r,i)=>{h+=odRowHtml(r,i);});
+  h+='</tbody></table>';
+  h+=`<div style="margin-top:12px;border-top:1px dashed var(--bd);padding-top:8px"><div style="font-weight:700;font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Accessori</div><div id="odAcc"></div><button class="btn btn-sm" onclick="odAddAcc()">+ accessorio (imballo/spedizione/sconto)</button></div>`;
+  h+=`<div style="margin-top:12px;display:flex;align-items:center;gap:10px"><span class="fmuted" style="font-size:12px">Totale dichiarato dal fornitore</span><input id="odTotDich" value="${o.totale_dichiarato!=null?String(o.totale_dichiarato).replace('.',','):''}" placeholder="—" style="width:110px;text-align:right" onchange="odRecalc()"> €</div>`;
+  h+=`<div id="odTotals" style="margin-top:10px"></div>`;
+  document.getElementById('odBody').innerHTML=h;
+  renderAcc();odRecalc();
+}
+function odRowHtml(r,i){
+  return `<tr data-i="${i}"><td>${r.abbinato?`<span class="cod" style="font-weight:700;font-family:ui-monospace,monospace;font-size:11.5px">${esc(r.codice)}</span>`:'<span class="fmuted">non abbinato</span>'}<div class="fmuted" style="font-size:10px">${esc(r.descrizione||'')}</div></td>
+    <td class="fmuted" style="font-size:11px">${esc(r.codice_fornitore||'')}</td>
+    <td style="text-align:right"><input class="cx-pin od-q" value="${String(r.quantita).replace('.',',')}" style="width:60px;text-align:right" oninput="odRecalc()"></td>
+    <td style="text-align:right"><input class="cx-pin od-u" value="${r.prezzo_unitario!=null?String(r.prezzo_unitario).replace('.',','):''}" placeholder="—" style="width:78px;text-align:right" oninput="odRecalc()"></td>
+    <td style="text-align:right" class="od-r">${r.prezzo_riga!=null?eur(r.prezzo_riga):'—'}</td>
+    <td style="text-align:center">${r.stimato?'<span style="font-size:8.5px;font-weight:800;background:#fdf3e0;color:#b8801f;padding:1px 5px;border-radius:5px">stim</span>':''}</td></tr>`;
+}
+function renderAcc(){
+  document.getElementById('odAcc').innerHTML=(DOC.accessori||[]).map((a,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <select class="od-atype" onchange="odRecalc()"><option ${a.tipo==='imballo'?'selected':''}>imballo</option><option ${a.tipo==='spedizione'?'selected':''}>spedizione</option><option ${a.tipo==='sconto'?'selected':''}>sconto</option><option ${a.tipo==='altro'?'selected':''}>altro</option></select>
+    <input class="od-adescr" value="${esc(a.descr||'')}" placeholder="descrizione" style="flex:1;border:1px solid var(--bd);border-radius:6px;padding:4px 7px;font-size:12px">
+    <input class="cx-pin od-aimp" value="${a.importo!=null?String(a.importo).replace('.',','):''}" style="width:80px;text-align:right" oninput="odRecalc()"> €
+    <button class="btn btn-sm btn-ghost" onclick="odDelAcc(${i})">✕</button></div>`).join('');
+}
+function odAddAcc(){odCollect();DOC.accessori=DOC.accessori||[];DOC.accessori.push({tipo:'spedizione',descr:'',importo:0});renderAcc();odRecalc();}
+function odDelAcc(i){odCollect();DOC.accessori.splice(i,1);renderAcc();odRecalc();}
+function odCollect(){
+  const o=DOC;
+  o.fornitore_id=document.getElementById('odForn').value?parseInt(document.getElementById('odForn').value):null;
+  o.riferimento=document.getElementById('odRif').value;o.data=document.getElementById('odData').value;
+  o.iva_inclusa=document.getElementById('odIva').checked;o.aliquota_iva=qnum(document.getElementById('odAliq').value)||22;
+  const td=document.getElementById('odTotDich').value.trim();o.totale_dichiarato=td?qnum(td):null;
+  document.querySelectorAll('#odRows tr').forEach(tr=>{const i=+tr.dataset.i;const q=qnum(tr.querySelector('.od-q').value);const uv=tr.querySelector('.od-u').value.trim();o.righe[i].quantita=q||0;o.righe[i].prezzo_unitario=uv?qnum(uv):null;});
+  const at=document.querySelectorAll('.od-atype'),ad=document.querySelectorAll('.od-adescr'),ai=document.querySelectorAll('.od-aimp');
+  (o.accessori||[]).forEach((a,i)=>{if(at[i])a.tipo=at[i].value;if(ad[i])a.descr=ad[i].value;if(ai[i]){const v=ai[i].value.trim();a.importo=v?qnum(v):0;}});
+}
+function odRecalc(){
+  odCollect();const o=DOC;let totR=0;
+  o.righe.forEach((r,i)=>{r.prezzo_riga=(r.prezzo_unitario!=null)?Math.round(r.prezzo_unitario*(r.quantita||0)*100)/100:null;if(r.prezzo_riga!=null)totR+=r.prezzo_riga;const cell=document.querySelectorAll('#odRows tr')[i]?.querySelector('.od-r');if(cell)cell.textContent=r.prezzo_riga!=null?eur(r.prezzo_riga):'—';});
+  let totA=0;(o.accessori||[]).forEach(a=>{totA+=(a.importo||0);});
+  const calc=Math.round((totR+totA)*100)/100;
+  const scost=o.totale_dichiarato!=null?Math.round((o.totale_dichiarato-calc)*100)/100:null;
+  const chk=scost==null?'':(Math.abs(scost)<0.01?`<div style="background:#e9f6ec;border:1px solid #bfe3c6;color:#155e26;border-radius:9px;padding:8px 12px;font-size:12px;margin-top:8px">✓ Totale calcolato = dichiarato (${eur(calc)})</div>`:`<div style="background:#fbece8;border:1px solid #e9c4ba;color:#b04632;border-radius:9px;padding:8px 12px;font-size:12px;margin-top:8px">⚠ Scostamento ${eur(scost)} · calcolato ${eur(calc)} vs dichiarato ${eur(o.totale_dichiarato)}</div>`);
+  document.getElementById('odTotals').innerHTML=`<div style="background:linear-gradient(135deg,#2c1d0d,#4a3415);color:#fff;border-radius:11px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span>Totale offerta · netto IVA <span style="opacity:.7;font-size:11px">(righe ${eur(totR)}${totA?(' + accessori '+eur(totA)):''})</span></span><span style="font-size:19px;font-weight:800">${eur(calc)}</span></div>${chk}`;
+  document.getElementById('odFoot').textContent=o.righe.filter(r=>r.abbinato&&r.prezzo_unitario!=null).length+' pezzi abbinati con prezzo → verranno impostati alla conferma';
+}
+async function odSave(silent){
+  odCollect();const o=DOC;
+  const body={fornitore_id:o.fornitore_id,riferimento:o.riferimento,data:o.data,iva_inclusa:o.iva_inclusa,aliquota_iva:o.aliquota_iva,totale_dichiarato:o.totale_dichiarato,
+    accessori:(o.accessori||[]).map(a=>({tipo:a.tipo,descr:a.descr,importo:a.importo})),
+    righe:o.righe.map(r=>({id:r.id,quantita:r.quantita,prezzo_unitario:r.prezzo_unitario}))};
+  const r=await fetch(API+'/api/offerte/'+o.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){toast('Errore salvataggio',true);return false;}
+  DOC=await r.json();if(!silent){toast('Bozza salvata','ok');renderOffDoc();}
+  return true;
+}
+async function odConferma(){
+  if(!await odSave(true))return;
+  if(!confirm('Confermare l\'offerta? Verranno impostati i prezzi scelti dei pezzi abbinati.'))return;
+  try{const r=await fetch(API+'/api/offerte/'+DOC.id+'/conferma',{method:'POST'});
+    if(!r.ok)throw 0;const j=await r.json();toast('Offerta confermata · '+j.prezzi_impostati+' prezzi impostati','ok');mClose('mOffDoc');await cxReload();
+  }catch{toast('Errore conferma',true);}
+}
+async function odDelete(){
+  if(!confirm('Eliminare questa offerta?'))return;
+  try{await fetch(API+'/api/offerte/'+DOC.id,{method:'DELETE'});toast('Offerta eliminata','ok');mClose('mOffDoc');await cxReload();}catch{toast('Errore',true);}
+}
+async function openOfferteList(cid){
+  mOpen('mOffList');document.getElementById('olBody').innerHTML='<div class="fmuted" style="font-size:11px;padding:8px">Carico…</div>';
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/offerte');const a=r.ok?await r.json():[];
+    document.getElementById('olSub').textContent=a.length+' offerte';
+    if(!a.length){document.getElementById('olBody').innerHTML='<div class="fmuted" style="font-size:12px;padding:14px">Nessuna offerta caricata. Usa «📄 Carica offerta».</div>';return;}
+    const stcol={ricevuta:'#8a7a64',confermata:'#1a7a2e',ordinata:'#2f6db0',pagata:'#6b4ea8'};
+    document.getElementById('olBody').innerHTML=a.map(o=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #f4eee2">
+      <div style="flex:1"><b>${esc(o.fornitore_nome_letto||'—')}</b> <span class="fmuted" style="font-size:11px">${o.riferimento?('· '+esc(o.riferimento)):''} · ${o.n_righe} righe · ${eur(o.totale_calcolato)}</span>
+      <div><span style="font-size:9px;font-weight:800;color:${stcol[o.stato]||'#888'}">${(o.stato||'').toUpperCase()}</span>${o.scostamento&&Math.abs(o.scostamento)>=0.01?` <span style="font-size:9px;color:#b04632">⚠ scost. ${eur(o.scostamento)}</span>`:''}</div></div>
+      <button class="btn btn-sm" onclick="offDocOpen(${o.id})">Apri</button></div>`).join('');
+  }catch{document.getElementById('olBody').innerHTML='<div class="fmuted">Errore</div>';}
+}
+async function offDocOpen(oid){try{const r=await fetch(API+'/api/offerte/'+oid);if(!r.ok)throw 0;mClose('mOffList');openOffDoc(await r.json());}catch{toast('Errore',true);}}
 
 /* ══ PANNELLO OFFERTE DI UN ELEMENTO (multi-fonte) ══ */
 let OFF={pid:null,data:null,onClose:null};
