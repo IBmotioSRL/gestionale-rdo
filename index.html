@@ -545,6 +545,31 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .cx-grand .v{font-size:22px;font-weight:800}
 .cx-grand small{font-weight:600;opacity:.7;font-size:11px}
 .cx-flag{background:#fbece8;border:1px solid #e9c4ba;color:#b04632;border-radius:9px;padding:8px 13px;font-size:12px;margin-bottom:12px;font-weight:600}
+/* pannello Offerte di un elemento */
+.of-row{display:grid;grid-template-columns:24px 1fr 90px 90px;gap:8px;align-items:center;padding:9px 4px;border-bottom:1px solid #f4eee2}
+.of-row.win{background:#e9f6ec;border-radius:8px;border-bottom:1px solid transparent}
+.of-pill{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px}
+.of-pill.man{background:#fdf3e0;color:#b8801f}
+.of-pill.rdo{background:#e8f1fb;color:#2f6db0}
+.of-pill.file{background:#efe9f8;color:#6b4ea8}
+.of-ref{font-size:11px;color:var(--t2,#8a7a64)}
+.of-ref b{color:var(--t1,#2c1d0d)}
+.of-pr{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.of-win{font-size:8.5px;font-weight:800;color:#fff;background:#1a7a2e;padding:2px 6px;border-radius:5px}
+.of-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.of-up{border:2px dashed var(--bd);border-radius:10px;padding:16px;text-align:center;color:var(--t2,#8a7a64);font-size:12px;background:#fcfaf5;cursor:pointer;margin-top:10px}
+.of-form{background:#fcfaf5;border:1px solid var(--bd);border-radius:10px;padding:12px;margin-top:10px}
+.of-form .r{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.of-form input,.of-form select{border:1px solid var(--bd);border-radius:7px;padding:7px 9px;font-size:13px}
+.of-badge{font-size:9px;font-weight:800;color:#fff;padding:1px 6px;border-radius:5px;margin-left:6px;cursor:pointer}
+.of-badge.man{background:#b8801f}.of-badge.rdo{background:#2f6db0}.of-badge.file{background:#6b4ea8}.of-badge.none{background:#c9bca3}
+.cx-multi{width:15px;height:15px;vertical-align:middle}
+.cx-selbar{position:sticky;top:0;z-index:6;background:var(--t1,#2c1d0d);color:#fff;border-radius:10px;padding:8px 13px;display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px;flex-wrap:wrap}
+.cx-selbar select{border:none;border-radius:6px;padding:5px 8px;font-size:12px}
+.cx-synctag{font-size:9px;font-weight:800;padding:2px 7px;border-radius:5px;cursor:pointer;margin-left:8px}
+.cx-synctag.on{background:#e9f6ec;color:#1a7a2e}
+.cx-synctag.off{background:#f0e8d8;color:#8a7a64}
+.cx-ctag{font-size:8.5px;font-weight:800;color:#fff;background:#6b4ea8;padding:1px 5px;border-radius:4px;margin-left:6px}
 .ftag{font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:3px;color:#fff}
 .ftag-pdf{background:#E02020}.ftag-dxf{background:#1E40AF}.ftag-dwg{background:#107C41}.ftag-step{background:#0078D4}.ftag-stp{background:#0078D4}
 .ac{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
@@ -1396,6 +1421,25 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mOff" onclick="ovClose(event,'mOff')">
+  <div class="modal" style="max-width:640px">
+    <div class="mhd"><div class="mico2">💶</div><div><div class="mtit" id="offTit">Offerte di prezzo</div><div class="msub" id="offSub"></div></div><button class="mx" onclick="mClose('mOff')">✕</button></div>
+    <div class="mbd" id="offBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">La riga «scelta» (✓) definisce il prezzo dell'elemento.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mOff')">Chiudi</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mCustom" onclick="ovClose(event,'mCustom')">
+  <div class="modal" style="max-width:560px">
+    <div class="mhd"><div class="mico2">＋</div><div><div class="mtit">Nuovo elemento personalizzato</div><div class="msub">non presente in distinta (es. impianto elettrico)</div></div><button class="mx" onclick="mClose('mCustom')">✕</button></div>
+    <div class="mbd" style="max-height:66vh;overflow:auto">
+      <div class="bp-hint">L'elemento entra in Progetto, RDO e Costi come un pezzo di distinta.</div>
+      <div id="cuForm"></div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mCustom')">Annulla</button><button class="btn btn-go" onclick="salvaCustom()">Crea elemento</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mProps" onclick="ovClose(event,'mProps')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">✎</div><div><div class="mtit" id="mPropsTit">Proprietà</div><div class="msub" id="mPropsSub"></div></div><button class="mx" onclick="mClose('mProps')">✕</button></div>
@@ -1644,10 +1688,53 @@ function partRow(p){
 // un pezzo è "revisionato" se la proprietà revisione è valorizzata e diversa da 00
 function isRevisionato(v){const s=String(v||'').trim().toUpperCase();return !!s&&s!=='00'&&s!=='0'&&s!=='REV00'&&s!=='REV0';}
 function revLabelPart(v){const s=String(v||'').trim();const m=s.match(/(\d+)/);return m?('Rev '+parseInt(m[1],10)):('Rev '+s);}
+// ── vista albero raggruppata per CATEGORIA PROGETTO (categorie personalizzate) ──
+function setTreeMode(m){S.treeMode=m;renderTree();}
+function renderTreeCat(){
+  const all=allParti().filter(p=>!p.escluso);
+  const cats=(S.albero&&S.albero.categorie_progetto)||[];
+  const g={};all.forEach(p=>{const k=p.categoria_progetto||'Da assegnare';(g[k]=g[k]||[]).push(p);});
+  const order=[...cats,'Da assegnare'];
+  const keys=Object.keys(g).sort((a,b)=>{let ia=order.indexOf(a),ib=order.indexOf(b);ia=ia<0?98:ia;ib=ib<0?98:ib;return ia-ib||a.localeCompare(b);});
+  if(!keys.length)return '<div style="padding:20px;text-align:center;font-size:11px;color:var(--t3)">Nessun elemento.</div>';
+  let html='';
+  keys.forEach(k=>{
+    const arr=g[k];const done=arr.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
+    const sync=(S.albero&&S.albero.categorie_sync||[]).some(s=>s.toLowerCase()===k.toLowerCase());
+    const tag=k!=='Da assegnare'?`<span class="cx-synctag ${sync?'on':'off'}" title="${sync?'sincronizzata coi Costi':'separata dai Costi'}" onclick="event.stopPropagation();projToggleSync('${jsq(k)}',${!sync})">${sync?'🔗 sync':'⛓ sync'}</span>`:'';
+    html+=`<div class="tr-cat" onclick="toggleCatProg('${jsq(k)}')"><span class="tr-arrow">${S.openCatProg&&S.openCatProg[k]===false?'▸':'▾'}</span>
+      <span class="tr-cat-label">${esc(k)}</span><span class="tr-cnt ${done===arr.length&&arr.length?'done':''}">${done}/${arr.length}</span>${tag}</div>`;
+    if(!(S.openCatProg&&S.openCatProg[k]===false))arr.forEach(p=>{html+=partRow(p);});
+  });
+  return html;
+}
+function toggleCatProg(k){S.openCatProg=S.openCatProg||{};S.openCatProg[k]=S.openCatProg[k]===false?true:false;renderTree();}
+async function assegnaCatProgetto(){
+  const ids=[...S.rows];if(!ids.length)return;
+  const cats=(S.albero&&S.albero.categorie_progetto)||[];
+  let cat=prompt('Categoria progetto da assegnare a '+ids.length+' elementi'+(cats.length?('\n(esistenti: '+cats.join(', ')+')'):'')+'\n(vuoto = togli categoria):');
+  if(cat===null)return;cat=cat.trim();
+  try{await fetch(API+'/api/commesse/'+S.projId+'/bulk-categoria',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids,ambito:'progetto',categoria:cat})});}
+  catch{toast('Errore',true);return;}
+  S.rows.clear();await openProgetto();toast('Categoria assegnata','ok');
+}
+async function projToggleSync(cat,on){
+  try{await fetch(API+'/api/commesse/'+S.projId+'/categoria-sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({categoria:cat,sync:on})});}
+  catch{toast('Errore sync',true);return;}
+  await openProgetto();toast(on?'Sincronizzata coi Costi':'Slegata','ok');
+}
+function offertePezzo(pid){openOfferte(pid,()=>refreshDetail());}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   S.pmap={};
-  let html='';
+  // barra: toggle albero/categorie-mie + aggiungi elemento + azione su selezione
+  const bar=`<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)">
+    <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Categorie mie</button></div>
+    <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
+    ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
+  </div>`;
+  if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=bar+renderTreeCat();return;}
+  let html=bar;
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
     const catOpen=S.openCat[cat.categoria]!==false;
@@ -1928,8 +2015,10 @@ function openDraw(pid){
        `</div>`;
   }
   const exclBtn=`<button class="btn-mini ${p.escluso?'':'g'}" onclick="setEscluso([${pid}],${p.escluso?'false':'true'})">${p.escluso?'♻ Reintegra nel progetto':'🚫 Escludi dal progetto'}</button>`;
+  const offBtn=`<button class="btn-mini g" onclick="offertePezzo(${pid})">💶 Offerte / prezzi</button>`;
+  const prezzoInfo=p.prezzo!=null?`<span class="pd-tag ok" title="prezzo scelto">${eur(p.prezzo)}</span>`:'';
   document.getElementById('pdBody').innerHTML=
-    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}<span style="flex:1"></span>${exclBtn}</div>${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}${prezzoInfo}<span style="flex:1"></span>${offBtn}${exclBtn}</div>${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
   // apri subito il primo PDF se c'è
   const fp=firstPdf(p);
   if(fp)renderViewer(fp);
@@ -2728,7 +2817,7 @@ async function rdoMailConfirm(){
 
 /* ══ COSTI (vista aggregata globale — v1, in attesa del mockup) ══ */
 /* ══ COSTI — router a livelli: lista commesse → dettaglio per categoria ══ */
-const CX={mode:'list',cid:null,view:'cat',data:null,closed:{}};
+const CX={mode:'list',cid:null,view:'cat',data:null,closed:{},sel:new Set(),add:null};
 const CX_ORD=['COMMERCIALE','CARPENTERIA','MECCANICA','CONTO LAVORO','MINUTERIA','PLASTICA','COMMERCIALE LAVORATO','ASSIEME DI MONTAGGIO'];
 function cxImp(p){return p.prezzo==null?null:p.prezzo*qnum(p.qta);}
 function cxForns(p){return (p.fornitori||[]).filter(f=>f&&f.id);}
@@ -2811,14 +2900,24 @@ function cxSection(name,rows){
   if(ac!=null)sub+=Number(ac)||0;
   const cols = CX.view==='mine'?6:5;
   let body=`<table class="cx-tab"><thead><tr>
+    <th style="width:26px"></th>
     <th class="cx-cod">Codice</th><th>Descrizione</th><th>Fornitore</th>
     <th class="cx-num">Prezzo cad.</th><th class="cx-num">Q.tà</th><th class="cx-imp">Importo</th>
-    ${CX.view==='mine'?'<th>Categoria</th>':''}</tr></thead><tbody>`;
+    <th>Offerte</th>${CX.view==='mine'?'<th>Categoria</th>':''}</tr></thead><tbody>`;
   rows.forEach(p=>{
     const im=cxImp(p);
     const dup=cxForns(p).length>1;
-    const prc=`<input class="cx-pin" value="${p.prezzo==null?'':String(p.prezzo).replace('.',',')}" placeholder="—" onchange="cxSetPrezzo(${p.id},this.value)">`;
+    // prezzo: editabile inline solo se NON ci sono offerte; altrimenti gestito dal pannello
+    const prc = p.n_offerte>0
+      ? `<span title="gestito dalle offerte">${p.prezzo!=null?eur(p.prezzo):'—'}</span>`
+      : `<input class="cx-pin" value="${p.prezzo==null?'':String(p.prezzo).replace('.',',')}" placeholder="—" onchange="cxSetPrezzo(${p.id},this.value)">`;
     const imp=im==null?'<span style="color:#cbbfa8">—</span>':eur(im);
+    // badge offerte (mostra fonte dell'offerta scelta + riferimento)
+    const rif=p.rif;
+    const fonte=rif?rif.fonte:'none';
+    const reftxt=rif?[rif.riferimento,rif.num_preventivo?('prev. '+rif.num_preventivo):''].filter(Boolean).join(' · '):'';
+    const offBadge=`<span class="of-badge ${fonte}" title="${rif?esc(reftxt):'aggiungi offerta/prezzo'}" onclick="cxOfferte(${p.id})">${p.n_offerte>0?(p.n_offerte+' offert'+(p.n_offerte>1?'e':'a')):'+ prezzo'}</span>`;
+    const sel=CX.sel.has(p.id);
     let mvSel='';
     if(CX.view==='mine'){
       const cats=[...(CX.data.categorie_costi||[])];
@@ -2826,15 +2925,17 @@ function cxSection(name,rows){
       mvSel=`<td><select class="cx-assign" onchange="cxAssign(${p.id},this.value)">${opts}</select></td>`;
     }
     body+=`<tr>
-      <td class="cx-cod">${esc(p.cod)}${dup?' <span class="cx-dp" title="Più fornitori in confronto">🔀</span>':''}</td>
+      <td><input type="checkbox" class="cx-multi" ${sel?'checked':''} onchange="cxSelToggle(${p.id},this.checked)"></td>
+      <td class="cx-cod">${esc(p.cod)}${p.custom?'<span class="cx-ctag">custom</span>':''}${dup?' <span class="cx-dp" title="Più fornitori in confronto">🔀</span>':''}</td>
       <td>${esc(p.descr)||'<span style="color:#cbbfa8">—</span>'}${p.tipo?` <span style="color:#a89779;font-size:10px">· ${esc(p.tipo)}</span>`:''}</td>
       <td>${cxFornCell(p)}</td>
       <td class="cx-num">${prc}</td>
       <td class="cx-num">${esc(p.qta)}</td>
       <td class="cx-imp">${imp}</td>
+      <td>${offBadge}</td>
       ${mvSel}</tr>`;
   });
-  body+=`<tr class="cx-sub"><td colspan="${cols-1}">Totale ${esc(name)} (${prz}/${rows.length} prezzati)</td><td class="cx-imp">${eur(sub)}</td></tr>`;
+  body+=`<tr class="cx-sub"><td colspan="6">Totale ${esc(name)} (${prz}/${rows.length} prezzati)</td><td class="cx-imp">${eur(sub)}</td><td></td>${CX.view==='mine'?'<td></td>':''}</tr>`;
   body+=`</tbody></table>`;
   // banner a corpo (vista categoria): permette di prezzare l'intero gruppo
   let acB='';
@@ -2843,9 +2944,15 @@ function cxSection(name,rows){
       <input type="text" value="${ac!=null?String(ac).replace('.',','):''}" placeholder="0,00" onchange="cxSetCorpo('${esc(name).replace(/'/g,"\\'")}',this.value)"> €
       <span class="fmuted" style="font-size:10px">${ac!=null?'attivo → si somma al gruppo':'vuoto = somma i prezzi dei singoli pezzi'}</span></div>`;
   }
+  // tag sincronizzazione (solo categorie personalizzate reali, non "Da assegnare")
+  let syncTag='';
+  if(CX.view==='mine' && name!=='Da assegnare'){
+    const on=(CX.data.categorie_sync||[]).some(s=>s.toLowerCase()===name.toLowerCase());
+    syncTag=`<span class="cx-synctag ${on?'on':'off'}" title="${on?'sincronizzata col Progetto — clic per slegare':'separata — clic per sincronizzare col Progetto'}" onclick="event.stopPropagation();cxToggleSync('${esc(name).replace(/'/g,"\\'")}',${!on})">${on?'🔗 sync':'⛓ sync'}</span>`;
+  }
   return `<section class="cx-cat ${isClosed?'closed':''}">
     <div class="cx-h" onclick="cxToggle('${esc(name).replace(/'/g,"\\'")}')">
-      <span class="chev">▾</span><span class="nm">${esc(name)}</span><span class="cnt">${rows.length} pz</span>
+      <span class="chev">▾</span><span class="nm">${esc(name)}</span><span class="cnt">${rows.length} pz</span>${syncTag}
       <span class="sub">${eur(sub)}</span></div>
     <div class="cx-body">${acB}${body}</div></section>`;
 }
@@ -2865,12 +2972,22 @@ function renderCxDetail(){
      <div class="cost-tile" style="min-width:200px"><div class="v">${eur(tot)}</div><div class="l">Totale commessa · netto IVA</div></div>
    </div>`;
   if(dup)html+=`<div class="cx-flag">🔀 ${dup} pezzo/i con più fornitori in confronto: il totale usa il prezzo del fornitore primario.</div>`;
-  html+=`<div class="cx-toggle">
+  // barra multi-selezione
+  if(CX.sel.size>0){
+    const cats=[...(CX.data.categorie_costi||[])];
+    const opts='<option value="">— scegli categoria —</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('')+'<option value="__new__">＋ nuova categoria…</option>';
+    html+=`<div class="cx-selbar">☑ <b>${CX.sel.size} selezionati</b><span style="margin-left:auto"></span>Assegna a (Costi):
+      <select id="cxBulkSel">${opts}</select><button class="btn btn-sm go" onclick="cxBulkCat()">Applica</button>
+      <button class="btn btn-sm" style="color:#fff;border-color:#7a6a52;background:transparent" onclick="cxClearSel()">deseleziona</button></div>`;
+  }
+  html+=`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+    <div class="cx-toggle" style="margin:0">
      <button class="${CX.view==='cat'?'on':''}" onclick="cxSetView('cat')">Per tipologia</button>
-     <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>`;
+     <button class="${CX.view==='mine'?'on':''}" onclick="cxSetView('mine')">Le mie categorie</button></div>
+    <button class="btn btn-sm" onclick="openCustom(${CX.cid})">＋ Elemento personalizzato</button></div>`;
   if(CX.view==='mine'){
     html+=`<div style="margin-bottom:12px"><button class="btn btn-go btn-sm" onclick="cxAddCat()">＋ Nuova categoria</button>
-      ${(d.categorie_costi||[]).length?'<span class="fmuted" style="font-size:10.5px;margin-left:8px">usa la colonna «Categoria» per spostare i pezzi</span>':'<span class="fmuted" style="font-size:10.5px;margin-left:8px">crea una categoria e poi assegna i pezzi</span>'}</div>`;
+      <span class="fmuted" style="font-size:10.5px;margin-left:8px">spunta gli elementi e usa la barra in alto, oppure la colonna «Categoria». 🔗/⛓ = sincronizza con le categorie del Progetto.</span></div>`;
   }
   keys.forEach(k=>{html+=cxSection(k,g[k]);});
   html+=`<div class="cx-grand"><span class="l">Totale commessa</span><span class="v">${eur(tot)} <small>netto · IVA esclusa</small></span></div>`;
@@ -2910,6 +3027,172 @@ async function cxAddCat(){
   catch{toast('Errore',true);}
   renderCxDetail();
 }
+// multi-selezione in Costi
+function cxSelToggle(id,on){if(on)CX.sel.add(id);else CX.sel.delete(id);renderCxDetail();}
+function cxClearSel(){CX.sel.clear();renderCxDetail();}
+async function cxBulkCat(){
+  let cat=document.getElementById('cxBulkSel').value;
+  if(cat==='__new__'){cat=(prompt('Nome nuova categoria:')||'').trim();if(!cat)return;}
+  const ids=[...CX.sel];
+  try{await fetch(API+'/api/commesse/'+CX.cid+'/bulk-categoria',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids,ambito:'costi',categoria:cat})});}
+  catch{toast('Errore',true);return;}
+  CX.sel.clear();await cxReload();toast('Categoria assegnata a '+ids.length+' elementi','ok');
+}
+async function cxToggleSync(cat,on){
+  try{const r=await fetch(API+'/api/commesse/'+CX.cid+'/categoria-sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({categoria:cat,sync:on})});
+    if(r.ok)CX.data.categorie_sync=(await r.json()).categorie_sync;}
+  catch{toast('Errore sync',true);}
+  await cxReload();toast(on?'Categoria sincronizzata col Progetto':'Categoria slegata','ok');
+}
+async function cxReload(){
+  try{const r=await fetch(API+'/api/commesse/'+CX.cid+'/costi');if(r.ok)CX.data=await r.json();}catch{}
+  renderCxDetail();
+}
+function cxOfferte(pid){openOfferte(pid,()=>cxReload());}
+
+/* ══ ELEMENTO PERSONALIZZATO (custom) ══ */
+let CUSTOM={cid:null,props:[],onCreate:null,base:{}};
+function openCustom(cid,onCreate){
+  CUSTOM={cid,props:[['','']],onCreate:onCreate||null,base:{}};
+  renderCustomForm();mOpen('mCustom');
+}
+function _cuSnap(){
+  ['cuCod','cuDen','cuCat','cuTipo','cuQta'].forEach(id=>{const e=document.getElementById(id);if(e)CUSTOM.base[id]=e.value;});
+  const f=document.getElementById('cuForn');if(f)CUSTOM.base.cuForn=f.value;
+}
+function cuAddProp(){_cuSnap();CUSTOM.props.push(['','']);renderCustomForm();}
+function cuDelProp(i){_cuSnap();CUSTOM.props.splice(i,1);renderCustomForm();}
+function renderCustomForm(){
+  const b=CUSTOM.base||{};
+  const fopts='<option value="">— da assegnare —</option>'+fornitori.map(f=>`<option value="${f.id}">${esc(f.nome)}</option>`).join('');
+  // categorie note dal vocabolario/dati per il datalist
+  const cats=[...new Set([...(PROP&&PROP.categorie?PROP.categorie:[]), 'IMPIANTISTICA','MANODOPERA','MONTAGGIO','TRASPORTO'])];
+  const propRows=CUSTOM.props.map((pr,i)=>`<div class="prop-row" style="display:flex;gap:8px;margin-bottom:6px">
+    <input style="flex:1;border:1px solid var(--bd);border-radius:7px;padding:6px 9px" placeholder="proprietà" value="${esc(pr[0])}" oninput="CUSTOM.props[${i}][0]=this.value">
+    <input style="flex:1;border:1px solid var(--bd);border-radius:7px;padding:6px 9px" placeholder="valore" value="${esc(pr[1])}" oninput="CUSTOM.props[${i}][1]=this.value">
+    <button class="btn btn-sm btn-ghost" onclick="cuDelProp(${i})">✕</button></div>`).join('');
+  const fsel=(id,v)=>v===String(b.cuForn||'')?'selected':'';
+  document.getElementById('cuForm').innerHTML=`
+    <div class="bp-grid" style="display:grid;grid-template-columns:130px 1fr;gap:8px 12px;align-items:center;margin-bottom:12px">
+      <label class="fmuted" style="font-size:12px">codice</label><input id="cuCod" placeholder="es. IB05.2025.09.X001" value="${esc(b.cuCod||'')}">
+      <label class="fmuted" style="font-size:12px">denominazione</label><input id="cuDen" placeholder="es. IMPIANTO ELETTRICO QUADRO" value="${esc(b.cuDen||'')}">
+      <label class="fmuted" style="font-size:12px">categoria</label><input id="cuCat" list="dlCuCat" placeholder="es. IMPIANTISTICA" value="${esc(b.cuCat||'')}">
+      <label class="fmuted" style="font-size:12px">tipo</label><input id="cuTipo" placeholder="es. QUADRO ELETTRICO" value="${esc(b.cuTipo||'')}">
+      <label class="fmuted" style="font-size:12px">q.tà</label><input id="cuQta" value="${esc(b.cuQta||'1')}" style="max-width:90px">
+      <label class="fmuted" style="font-size:12px">fornitore</label>
+      <select id="cuForn"><option value="">— da assegnare —</option>${fornitori.map(f=>`<option value="${f.id}" ${String(f.id)===String(b.cuForn||'')?'selected':''}>${esc(f.nome)}</option>`).join('')}</select>
+    </div>
+    <datalist id="dlCuCat">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}</datalist>
+    <div style="font-weight:700;font-size:11px;color:var(--t3,#8a7a64);text-transform:uppercase;letter-spacing:.04em;margin:4px 0 8px">Proprietà personalizzate</div>
+    ${propRows}
+    <button class="btn btn-sm" onclick="cuAddProp()">+ Aggiungi proprietà</button>`;
+}
+async function salvaCustom(){
+  const cod=document.getElementById('cuCod').value.trim();
+  if(!cod){toast('Inserisci un codice',true);return;}
+  const props={};CUSTOM.props.forEach(([k,v])=>{if(k.trim())props[k.trim()]=v;});
+  const body={numero_parte:cod,denominazione:document.getElementById('cuDen').value,
+    categoria:document.getElementById('cuCat').value,tipo:document.getElementById('cuTipo').value,
+    quantita:document.getElementById('cuQta').value||'1',
+    fornitore_id:document.getElementById('cuForn').value?parseInt(document.getElementById('cuForn').value):null,
+    proprieta:props};
+  try{const r=await fetch(API+'/api/commesse/'+CUSTOM.cid+'/parti-custom',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
+    toast('Elemento creato','ok');mClose('mCustom');
+    if(CUSTOM.onCreate)CUSTOM.onCreate(); else cxReload();
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
+/* ══ PANNELLO OFFERTE DI UN ELEMENTO (multi-fonte) ══ */
+let OFF={pid:null,data:null,onClose:null};
+async function openOfferte(pid,onClose){
+  OFF.pid=pid;OFF.onClose=onClose||null;
+  mOpen('mOff');
+  document.getElementById('offBody').innerHTML='<div class="fmuted" style="font-size:11px">Carico offerte…</div>';
+  await loadOfferte();
+}
+async function loadOfferte(){
+  try{const r=await fetch(API+'/api/parti/'+OFF.pid+'/offerte');OFF.data=r.ok?await r.json():null;}catch{OFF.data=null;}
+  renderOfferte();
+}
+function ofPill(f){return `<span class="of-pill ${f}">${f==='rdo'?'RDO':f==='file'?'FILE':'MANUALE'}</span>`;}
+function renderOfferte(){
+  const d=OFF.data;if(!d){document.getElementById('offBody').innerHTML='<div class="fmuted">Errore.</div>';return;}
+  document.getElementById('offTit').textContent=d.parte.numero_parte;
+  document.getElementById('offSub').textContent=(d.parte.denominazione||'')+' · q.tà '+(d.parte.quantita||'');
+  let h='';
+  if(!d.offerte.length)h+='<div class="fmuted" style="font-size:12px;padding:8px 0">Nessuna offerta. Aggiungine una qui sotto.</div>';
+  d.offerte.forEach(o=>{
+    const forn=o.fornitore_nome||'<span class="fmuted">— senza fornitore</span>';
+    const ref=[o.riferimento,o.num_preventivo?('prev. '+o.num_preventivo):''].filter(Boolean).join(' · ');
+    const fileBtn=o.ha_file?`<a href="${API}/api/offerte/${o.id}/file" target="_blank" class="btn btn-sm btn-ghost" title="Apri allegato">📎</a>`:'';
+    h+=`<div class="of-row ${o.scelta?'win':''}">
+      <div>${o.scelta?'<span title="Scelta">●</span>':`<button class="btn btn-sm btn-ghost" title="Scegli" onclick="scegliOff(${o.id})">○</button>`}</div>
+      <div><div style="font-weight:600">${esc(forn)} ${ofPill(o.fonte)} ${o.scelta?'<span class="of-win">SCELTA</span>':''}</div>
+        <div class="of-ref">${esc(ref)||'<span class="fmuted">nessun riferimento</span>'} ${fileBtn}</div></div>
+      <div class="of-pr">${o.prezzo!=null?eur(o.prezzo):'—'}</div>
+      <div style="text-align:right"><button class="btn btn-sm btn-ghost" title="Elimina" onclick="delOff(${o.id})">🗑</button></div>
+    </div>`;
+  });
+  // form aggiungi
+  const fopts='<option value="">— senza fornitore —</option>'+fornitori.map(f=>`<option value="${f.id}">${esc(f.nome)}</option>`).join('');
+  h+=`<div class="of-add">
+      <button class="btn btn-sm ${OFF.add==='manuale'?'btn-go':''}" onclick="ofAddMode('manuale')">+ manuale</button>
+      <button class="btn btn-sm ${OFF.add==='rdo'?'btn-go':''}" onclick="ofAddMode('rdo')">+ da RDO</button>
+      <button class="btn btn-sm ${OFF.add==='file'?'btn-go':''}" onclick="ofAddMode('file')">+ da file</button>
+    </div>`;
+  if(OFF.add==='manuale'){
+    h+=`<div class="of-form"><div class="r"><select id="ofForn" style="flex:1">${fopts}</select><input id="ofPrz" type="text" placeholder="prezzo cad." style="width:110px"></div>
+      <div class="r"><input id="ofRif" type="text" placeholder="riferimento / nota" style="flex:1"><input id="ofNum" type="text" placeholder="n° preventivo" style="width:130px"></div>
+      <button class="btn btn-go btn-sm" onclick="saveOffManuale()">Aggiungi offerta</button></div>`;
+  }else if(OFF.add==='rdo'){
+    h+=`<div class="of-form" id="ofRdoBox"><div class="fmuted" style="font-size:11px">Carico RDO…</div></div>`;
+    loadRdoDisp();
+  }else if(OFF.add==='file'){
+    h+=`<div class="of-form"><div class="r"><select id="ofFileForn" style="flex:1">${fopts}</select></div>
+      <input type="file" id="ofFile" accept=".pdf,.xlsx,.xls,.csv,.eml,.msg" style="display:none" onchange="saveOffFile()">
+      <div class="of-up" onclick="document.getElementById('ofFile').click()">📄 Carica PDF / Excel / EML / CSV<br><span class="fmuted" style="font-size:11px">provo a leggere prezzo e n° preventivo; il file resta come riferimento</span></div></div>`;
+  }
+  document.getElementById('offBody').innerHTML=h;
+}
+function ofAddMode(m){OFF.add=(OFF.add===m?null:m);renderOfferte();}
+async function loadRdoDisp(){
+  try{const r=await fetch(API+'/api/parti/'+OFF.pid+'/rdo-disponibili');const d=r.ok?await r.json():{rdo:[]};
+    const box=document.getElementById('ofRdoBox');if(!box)return;
+    if(!d.rdo.length){box.innerHTML='<div class="fmuted" style="font-size:11px">Nessuna RDO collegata a questo pezzo. Assegna prima un fornitore.</div>';return;}
+    box.innerHTML=d.rdo.map((x,i)=>`<div class="r" style="align-items:center">
+      <div style="flex:1"><b>${esc(x.fornitore_nome)}</b> ${x.codice_rdo?`<span class="of-pill rdo">${esc(x.codice_rdo)}</span>`:'<span class="fmuted" style="font-size:11px">(nessun codice RDO)</span>'}</div>
+      <input type="text" id="ofRdoP${i}" placeholder="prezzo" value="${x.prezzo_suggerito!=null?String(x.prezzo_suggerito).replace('.',','):''}" style="width:90px">
+      <button class="btn btn-go btn-sm" onclick='saveOffRdo(${JSON.stringify(x).replace(/'/g,"&#39;")},${i})'>usa</button></div>`).join('');
+  }catch{}
+}
+async function _postOff(body){
+  await fetch(API+'/api/parti/'+OFF.pid+'/offerte',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  OFF.add=null;await loadOfferte();if(OFF.onClose)OFF.onClose();
+}
+function saveOffManuale(){
+  const f=document.getElementById('ofForn').value;
+  _postOff({fornitore_id:f?parseInt(f):null,fonte:'manuale',prezzo:qnum(document.getElementById('ofPrz').value)||null,
+    riferimento:document.getElementById('ofRif').value,num_preventivo:document.getElementById('ofNum').value});
+}
+function saveOffRdo(x,i){
+  const pr=qnum(document.getElementById('ofRdoP'+i).value);
+  _postOff({fornitore_id:x.fornitore_id,fonte:'rdo',prezzo:pr||null,
+    riferimento:x.codice_rdo?('RDO '+x.codice_rdo):('RDO '+x.fornitore_nome),num_preventivo:''});
+}
+async function saveOffFile(){
+  const inp=document.getElementById('ofFile');if(!inp.files.length)return;
+  const fd=new FormData();fd.append('file',inp.files[0]);
+  const ff=document.getElementById('ofFileForn').value;if(ff)fd.append('fornitore_id',ff);
+  toast('Carico e leggo il file…');
+  try{const r=await fetch(API+'/api/parti/'+OFF.pid+'/offerte/da-file',{method:'POST',body:fd});
+    if(r.ok){const o=await r.json();toast(o.prezzo_estratto?('Prezzo estratto: '+eur(o.prezzo)):'File caricato (prezzo non trovato, inseriscilo a mano)','ok');}
+    else toast('Errore caricamento',true);
+  }catch{toast('Errore',true);}
+  OFF.add=null;await loadOfferte();if(OFF.onClose)OFF.onClose();
+}
+async function scegliOff(oid){await fetch(API+'/api/offerte/'+oid+'/scegli',{method:'POST'});await loadOfferte();if(OFF.onClose)OFF.onClose();}
+async function delOff(oid){if(!confirm('Eliminare questa offerta?'))return;await fetch(API+'/api/offerte/'+oid,{method:'DELETE'});await loadOfferte();if(OFF.onClose)OFF.onClose();}
 
 /* ══ DISTINTE & APPROVAZIONE ══ */
 let TEMPLATES=[];
