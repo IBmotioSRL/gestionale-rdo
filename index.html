@@ -25,7 +25,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 .app{display:grid;grid-template-columns:210px 1fr;height:100vh;overflow:hidden}
 .app.sbc{grid-template-columns:0 1fr}
-.app.sbc>.sb{display:none}
+/* NON usare display:none: la sidebar deve restare nella griglia (colonna 0) altrimenti
+   il main scivola nella colonna da 0px e sparisce. La clippiamo a larghezza 0. */
+.app.sbc>.sb{min-width:0;overflow:hidden;border-right:none}
 
 /* ── SIDEBAR ── */
 .sb{background:#FBF7F2;border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;position:relative}
@@ -1157,7 +1159,7 @@ textarea.fld{resize:vertical;min-height:60px}
   <!-- ════ PROGETTO DETAIL ════ -->
   <div id="v-pdet" class="view view-ws">
     <div class="wsh">
-      <div class="bc"><a onclick="go('proj')">Progetti</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><span id="bcproj">—</span></div>
+      <div class="bc"><button class="hb" onclick="toggleSb()" title="Mostra/nascondi menu" style="margin-right:2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><a onclick="go('proj')">Progetti</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><span id="bcproj">—</span></div>
       <div class="wpr">
         <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span><span id="wrev"></span>
         <div class="wact">
