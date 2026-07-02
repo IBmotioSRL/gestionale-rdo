@@ -352,6 +352,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* separatore trascinabile fra due pannelli di una griglia (resize riutilizzabile) */
 .rz-split{cursor:col-resize;align-self:stretch;min-height:60px;border-radius:4px;background:transparent}
 .rz-split:hover,.rz-split.drag{background:rgba(199,154,59,.30)}
+/* resize colonne stile Excel: maniglia sul bordo destro dei th di table.rzcols */
+table.rzcols{width:100%}
+table.rzcols thead th{position:relative;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis}
+table.rzcols thead th::after{content:'';position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize}
 .dd-mailcol{min-width:0}
 .dd-prevcol{position:sticky;top:6px}
 .dd-prevhd{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:10px}
@@ -2494,7 +2498,7 @@ function renderFileTable(){
     <td class="ft-muted" title="${esc(x.cartella)}">${esc(x.cartella||'/')}</td>
     <td class="ft-muted">${esc(x.modificato)}</td>
     <td class="ft-muted">${sz(x.size_kb)}</td></tr>`).join('');
-  document.getElementById('ftableWrap').innerHTML=`<table class="ftable">${head}<tbody>${body}</tbody></table>`;
+  document.getElementById('ftableWrap').innerHTML=`<table class="ftable rzcols" data-rzk="file">${head}<tbody>${body}</tbody></table>`;
 }
 function apriFile(path){window.open(API+'/api/commesse/'+S.projId+'/file?path='+encodeURIComponent(path),'_blank');}
 
@@ -2978,7 +2982,7 @@ function cxSection(name,rows){
   const ac = CX.view==='cat' ? (CX.data.prezzi_corpo||{})[name] : undefined;
   if(ac!=null)sub+=Number(ac)||0;
   const cols = CX.view==='mine'?6:5;
-  let body=`<table class="cx-tab"><thead><tr>
+  let body=`<table class="cx-tab rzcols" data-rzk="costi"><thead><tr>
     <th style="width:26px"></th>
     <th class="cx-cod">Codice</th><th>Descrizione</th><th>Fornitore</th>
     <th class="cx-num">Prezzo cad.</th><th class="cx-num">Q.tà</th><th class="cx-imp">Importo</th>
@@ -4652,6 +4656,39 @@ function toggleGlance(){const ws=document.querySelector('.ws');if(!ws)return;con
   });
   function mv(e){if(!st)return;const d=e.clientX-st.x;let w=st.dir==='r'?st.w+d:st.w-d;w=Math.min(st.max,Math.max(st.min,w));document.documentElement.style.setProperty(st.vr,w+'px');}
   function up(){if(!st)return;st.s.classList.remove('drag');try{localStorage.setItem(st.key,parseInt(getComputedStyle(document.documentElement).getPropertyValue(st.vr))||st.w);}catch{}document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);st=null;}
+})();
+// ── resize colonne stile Excel su table.rzcols (larghezze salvate per tabella+colonna) ──
+(function setupColResize(){
+  const kf=(t,i)=>'rzc_'+(t.dataset.rzk||t.id||'t')+'_'+i;
+  const frozen=t=>t.style.tableLayout==='fixed';
+  function freeze(t){
+    const hr=t.tHead&&t.tHead.rows[0];if(!hr)return;
+    [...hr.cells].forEach((th,i)=>{let w;try{w=localStorage.getItem(kf(t,i));}catch{}
+      th.style.width=(w?parseInt(w):Math.round(th.getBoundingClientRect().width))+'px';});
+    t.style.tableLayout='fixed';t.style.width='100%';
+  }
+  function apply(t){
+    const hr=t.tHead&&t.tHead.rows[0];if(!hr)return;let any=false;
+    for(let i=0;i<hr.cells.length;i++){try{if(localStorage.getItem(kf(t,i))){any=true;break;}}catch{}}
+    if(any)freeze(t);
+  }
+  function scan(root){try{(root.querySelectorAll?root.querySelectorAll('table.rzcols'):[]).forEach(apply);}catch{}}
+  try{new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1){if(n.matches&&n.matches('table.rzcols'))apply(n);scan(n);}}))).observe(document.body,{childList:true,subtree:true});}catch{}
+  scan(document);
+  let st=null,moved=false;
+  document.addEventListener('pointerdown',e=>{
+    const th=e.target.closest&&e.target.closest('table.rzcols thead th');if(!th)return;
+    const r=th.getBoundingClientRect();if(e.clientX<r.right-9)return;
+    e.preventDefault();e.stopPropagation();
+    const t=th.closest('table');if(!frozen(t))freeze(t);
+    st={th,t,i:th.cellIndex,x:e.clientX,w:th.getBoundingClientRect().width};moved=false;
+    document.body.style.cursor='col-resize';
+    document.addEventListener('pointermove',cmv);document.addEventListener('pointerup',cup);
+  },true);
+  function cmv(e){if(!st)return;moved=true;st.th.style.width=Math.max(48,st.w+(e.clientX-st.x))+'px';}
+  function cup(){if(!st)return;document.body.style.cursor='';try{localStorage.setItem(kf(st.t,st.i),parseInt(st.th.style.width)||st.w);}catch{}
+    if(moved){const th=st.th,stop=ev=>{ev.stopPropagation();ev.preventDefault();};th.addEventListener('click',stop,{capture:true,once:true});setTimeout(()=>{try{th.removeEventListener('click',stop,true);}catch{}},60);}
+    document.removeEventListener('pointermove',cmv);document.removeEventListener('pointerup',cup);st=null;}
 })();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();}});
 let _tt;function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='ok'?' ok':type===true?' err':'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3400);}
