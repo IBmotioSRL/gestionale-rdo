@@ -602,7 +602,7 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .pcmpbadge{display:inline-flex;align-items:center;gap:3px;font-size:8.5px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.1);border:1px solid rgba(88,86,214,.25);padding:2px 6px;border-radius:20px;white-space:nowrap}
 .tr-pst.cmp{background:var(--purple)}
 /* ── pannello "Colpo d'occhio" ── */
-.glancep{width:auto;flex-shrink:0;position:relative;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(180deg,rgba(248,244,239,.5),transparent 120px);padding:12px}
+.glancep{flex:0 0 auto;width:320px;position:relative;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(180deg,rgba(248,244,239,.5),transparent 120px);padding:12px}
 .gp-h{display:flex;align-items:center;gap:7px;margin-bottom:3px}
 .gp-h h2{font-size:13px;font-weight:800}
 .gp-sub{font-size:11px;color:var(--t2);margin-bottom:10px}
@@ -1076,7 +1076,8 @@ textarea.fld{resize:vertical;min-height:60px}
   .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:340}
   .sb-ov.open{display:block}
   .hb{display:flex!important}
-  .ws{grid-template-columns:1fr}
+  .ws{flex-direction:column}
+  .glancep{width:auto!important;max-height:320px}
   .calp{display:none}
   .metrics{grid-template-columns:1fr 1fr}
   .dash-2{grid-template-columns:1fr}
@@ -1085,8 +1086,8 @@ textarea.fld{resize:vertical;min-height:60px}
 /* tablet in verticale / schermi medi: impila il dettaglio progetto e rendi
    fluido il pannello «Colpo d'occhio» (evita che 280/360px taglino i contenuti) */
 @media(max-width:1024px){
-  .ws{grid-template-columns:1fr}
-  .glancep{width:auto;max-height:340px;border-top:1px solid var(--bd)}
+  .ws{flex-direction:column}
+  .glancep{width:auto!important;max-height:340px;border-top:1px solid var(--bd)}
   .gp-rz{display:none}
 }
 @media(max-width:560px){
@@ -4620,15 +4621,15 @@ try{if(localStorage.getItem('rdo_sbc')==='1')document.querySelector('.app').clas
 // pannello «Colpo d'occhio»: collassa + ridimensiona (trascinando il bordo), stato persistito
 function toggleGlance(){const ws=document.querySelector('.ws');if(!ws)return;const c=ws.classList.toggle('gcol');try{localStorage.setItem('rdo_glance_col',c?'1':'');}catch{}}
 (function setupGlance(){
-  const ws=()=>document.querySelector('.ws');
-  try{const w=localStorage.getItem('rdo_gw');if(w&&ws())ws().style.setProperty('--gw',w+'px');
-      if(localStorage.getItem('rdo_glance_col')==='1'&&ws())ws().classList.add('gcol');}catch{}
-  const rz=document.getElementById('gpRz');if(!rz)return;
+  const g=document.getElementById('viewGlance');const ws=document.querySelector('.ws');const rz=document.getElementById('gpRz');
+  try{const w=localStorage.getItem('rdo_gw');if(w&&g)g.style.width=w+'px';
+      if(localStorage.getItem('rdo_glance_col')==='1'&&ws)ws.classList.add('gcol');}catch{}
+  if(!rz||!g)return;
   let sx=0,sw=0;
-  const onMove=e=>{const x=e.clientX;const w=Math.min(560,Math.max(220,sw+(sx-x)));ws().style.setProperty('--gw',w+'px');};
+  const onMove=e=>{g.style.width=Math.min(600,Math.max(200,sw+(sx-e.clientX)))+'px';};
   const onUp=()=>{rz.classList.remove('drag');document.removeEventListener('pointermove',onMove);document.removeEventListener('pointerup',onUp);
-    try{localStorage.setItem('rdo_gw',parseInt(getComputedStyle(ws()).getPropertyValue('--gw'))||320);}catch{}};
-  rz.addEventListener('pointerdown',e=>{e.preventDefault();const g=document.getElementById('viewGlance');sw=g?g.getBoundingClientRect().width:320;sx=e.clientX;rz.classList.add('drag');document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
+    try{localStorage.setItem('rdo_gw',parseInt(g.style.width)||320);}catch{}};
+  rz.addEventListener('pointerdown',e=>{e.preventDefault();sw=g.getBoundingClientRect().width;sx=e.clientX;rz.classList.add('drag');document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
 })();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();}});
 let _tt;function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='ok'?' ok':type===true?' err':'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3400);}
