@@ -224,8 +224,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #rband{position:fixed;z-index:110;display:none;border:1px solid var(--blue);background:rgba(0,122,255,.1);border-radius:3px;pointer-events:none}
 
 /* ── DRAWER DETTAGLIO PARTICOLARE ── */
-#pdraw{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:92vw;background:var(--surf);box-shadow:var(--shl);z-index:140;
+#pdraw{position:fixed;top:0;right:0;bottom:0;width:var(--pdrawW,440px);max-width:96vw;background:var(--surf);box-shadow:var(--shl);z-index:140;
   transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.rz-split.abs{position:absolute;left:0;top:0;bottom:0;width:9px;min-height:0;z-index:5}
 #pdraw.open{transform:translateX(0)}
 #pdrawOv{position:fixed;inset:0;background:rgba(28,15,7,.18);z-index:139;opacity:0;visibility:hidden;transition:opacity .22s}
 #pdrawOv.open{opacity:1;visibility:visible}
@@ -347,15 +348,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .rs-fh{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .rs-fn{font-size:13px;font-weight:800;color:var(--t1)}
 .rs-fs{font-size:11px;color:var(--t2)}
-.dd-split{display:grid;grid-template-columns:1fr minmax(300px,360px);gap:16px;align-items:start}
+.dd-split{display:grid;grid-template-columns:1fr 7px var(--ddprev,340px);gap:16px;align-items:start}
+/* separatore trascinabile fra due pannelli di una griglia (resize riutilizzabile) */
+.rz-split{cursor:col-resize;align-self:stretch;min-height:60px;border-radius:4px;background:transparent}
+.rz-split:hover,.rz-split.drag{background:rgba(199,154,59,.30)}
 .dd-mailcol{min-width:0}
 .dd-prevcol{position:sticky;top:6px}
 .dd-prevhd{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:10px}
 .dd-prevhd .lnk{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
 .dd-prevhd .lnk:last-child{margin-left:auto}
-@media(max-width:980px){.dd-split{grid-template-columns:1fr}.dd-prevcol{position:static}}
+@media(max-width:980px){.dd-split{grid-template-columns:1fr}.dd-prevcol{position:static}.dd-split .rz-split{display:none}}
 /* master-detail: elenco RDO a sx + editor a dx, cambio RDO al volo */
-.rdo-edwrap{display:grid;grid-template-columns:264px 1fr;gap:14px;align-items:start;padding:14px}
+.rdo-edwrap{display:grid;grid-template-columns:var(--rdonav,264px) 7px 1fr;gap:14px;align-items:start;padding:14px}
 .rdo-ednav{position:sticky;top:6px;max-height:calc(100vh - 110px);overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--surf);padding:8px}
 .rdo-ednav .nav-grp{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);padding:9px 8px 4px;position:sticky;top:-8px;background:var(--surf);z-index:1}
 .nav-it{display:flex;align-items:center;gap:9px;padding:8px;border-radius:9px;cursor:pointer;margin-bottom:3px;border:1px solid transparent}
@@ -376,7 +380,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .nav-st{font-size:9px;font-weight:800;padding:1px 6px;border-radius:20px;flex:0 0 auto}
 .rdo-edmain{min-width:0}
 .rdo-edmain .dd-body{max-height:none}
-@media(max-width:980px){.rdo-edwrap{grid-template-columns:1fr}.rdo-ednav{position:static;max-height:220px}}
+@media(max-width:980px){.rdo-edwrap{grid-template-columns:1fr}.rdo-ednav{position:static;max-height:220px}.rdo-edwrap .rz-split{display:none}}
 .dd-sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
 .dd-sec:first-child{margin-top:2px}
 .dd-sec .lnk{margin-left:auto;font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
@@ -861,7 +865,7 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 .fv-fchip:hover{border-color:var(--go-d)}
 .fv-fchip.on{background:var(--br);color:#fff;border-color:var(--br)}
 .fv-fchip .d{width:8px;height:8px;border-radius:50%}
-.fv-work{flex:1;display:grid;grid-template-columns:1fr 384px;gap:12px;min-height:0}
+.fv-work{flex:1;display:grid;grid-template-columns:1fr 7px var(--fvdet,384px);gap:12px;min-height:0}
 .fv-list{overflow:auto;border-radius:var(--r);background:var(--surf);box-shadow:var(--sh);border:1px solid var(--bd)}
 .fv-az{position:sticky;top:0;z-index:2;background:#fff;padding:9px 14px 5px;font-size:12px;font-weight:900;color:var(--go-d);letter-spacing:.5px;border-bottom:1px solid var(--bd)}
 .fv-row{display:grid;grid-template-columns:42px 1.3fr 1.5fr 86px 78px;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);cursor:pointer}
@@ -913,7 +917,7 @@ tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 .fv-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .fv-editbar{position:sticky;bottom:0;background:var(--surf);border-top:1px solid var(--bd);padding:10px 16px;display:flex;gap:8px}
 .fv-editbar .btn{flex:1;justify-content:center}
-@media(max-width:900px){.fv-work{grid-template-columns:1fr}.fv-detail{display:none}.fv-detail.show{display:flex;position:fixed;inset:0;z-index:200;border-radius:0}}
+@media(max-width:900px){.fv-work{grid-template-columns:1fr}.fv-detail{display:none}.fv-detail.show{display:flex;position:fixed;inset:0;z-index:200;border-radius:0}.fv-work .rz-split{display:none}}
 .fcard{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:14px;transition:transform .15s,box-shadow .15s}
 .fcard:hover{transform:translateY(-2px);box-shadow:var(--shd)}
 .fch{display:flex;align-items:center;gap:9px;margin-bottom:10px}
@@ -1246,6 +1250,7 @@ textarea.fld{resize:vertical;min-height:60px}
       </div>
       <div class="fv-work">
         <div class="fv-list" id="fgrid"></div>
+        <div class="rz-split" data-dir="l" data-var="--fvdet" data-min="280" data-max="640" data-key="rdo_fvdet" title="Trascina per ridimensionare"></div>
         <div class="fv-detail" id="fvDetail"></div>
       </div>
     </div>
@@ -1297,6 +1302,7 @@ textarea.fld{resize:vertical;min-height:60px}
 <!-- Drawer dettaglio particolare -->
 <div id="pdrawOv" onclick="closeDraw()"></div>
 <div id="pdraw">
+  <div class="rz-split abs" data-target="#pdraw" data-dir="l" data-min="340" data-max="900" data-key="rdo_pdraw" title="Trascina per ridimensionare il cassetto"></div>
   <div class="pd-hd">
     <div><div class="pd-name" id="pdName">—</div><div class="pd-cod" id="pdCod"></div></div>
     <button class="mx" onclick="closeDraw()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -3719,7 +3725,7 @@ function rdoSidePanel(c,fid,ps){
 async function rdoOpenEditor(cid,fid){
   RV.mode='edit';RV.cid=cid;RV.fid=fid;S.projId=cid;NAVSEL.clear();NAVANCHOR=null;
   document.getElementById('rdoEdit').innerHTML=
-    `<div class="rdo-edwrap"><div class="rdo-ednav" id="ddNav"></div><div class="rdo-edmain"><div id="ddEditor" class="panel"></div></div></div>`;
+    `<div class="rdo-edwrap"><div class="rdo-ednav" id="ddNav"></div><div class="rz-split" data-dir="r" data-var="--rdonav" data-min="180" data-max="480" data-key="rdo_rdonav" title="Trascina per ridimensionare"></div><div class="rdo-edmain"><div id="ddEditor" class="panel"></div></div></div>`;
   renderRdoView();
   await loadDdList();renderDdNav();
   await openDd(cid,fid);
@@ -4075,6 +4081,7 @@ function renderDdEditor(d){
             </div>
           </details>
         </div>
+        <div class="rz-split" data-dir="l" data-var="--ddprev" data-min="260" data-max="620" data-key="rdo_ddprev" title="Trascina per ridimensionare"></div>
         <div class="dd-prevcol">
           <div class="dd-prevhd">Anteprima distinta <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna</span> <span class="lnk" onclick="window.open('${exportUrl}','_blank')">apri ↗</span></div>
           <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
@@ -4630,6 +4637,21 @@ function toggleGlance(){const ws=document.querySelector('.ws');if(!ws)return;con
   const onUp=()=>{rz.classList.remove('drag');document.removeEventListener('pointermove',onMove);document.removeEventListener('pointerup',onUp);
     try{localStorage.setItem('rdo_gw',parseInt(g.style.width)||320);}catch{}};
   rz.addEventListener('pointerdown',e=>{e.preventDefault();sw=g.getBoundingClientRect().width;sx=e.clientX;rz.classList.add('drag');document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
+})();
+// ── separatori trascinabili generici (.rz-split) su griglie: RDO editor, Fornitori, Distinte ──
+(function setupSplitters(){
+  // ripristina le larghezze salvate come variabili CSS su :root (ereditate dalle griglie)
+  [['rdo_rdonav','--rdonav'],['rdo_fvdet','--fvdet'],['rdo_ddprev','--ddprev'],['rdo_pdraw','--pdrawW']].forEach(([k,v])=>{
+    try{const val=localStorage.getItem(k);if(val)document.documentElement.style.setProperty(v,val+'px');}catch{}});
+  let st=null;
+  document.addEventListener('pointerdown',e=>{
+    const s=e.target.closest&&e.target.closest('.rz-split');if(!s)return;e.preventDefault();
+    const panel=s.dataset.target?document.querySelector(s.dataset.target):(s.dataset.dir==='r'?s.previousElementSibling:s.nextElementSibling);if(!panel)return;
+    st={s,x:e.clientX,w:panel.getBoundingClientRect().width,min:+s.dataset.min,max:+s.dataset.max,dir:s.dataset.dir,vr:s.dataset.var,key:s.dataset.key};
+    s.classList.add('drag');document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);
+  });
+  function mv(e){if(!st)return;const d=e.clientX-st.x;let w=st.dir==='r'?st.w+d:st.w-d;w=Math.min(st.max,Math.max(st.min,w));document.documentElement.style.setProperty(st.vr,w+'px');}
+  function up(){if(!st)return;st.s.classList.remove('drag');try{localStorage.setItem(st.key,parseInt(getComputedStyle(document.documentElement).getPropertyValue(st.vr))||st.w);}catch{}document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);st=null;}
 })();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();}});
 let _tt;function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='ok'?' ok':type===true?' err':'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3400);}
