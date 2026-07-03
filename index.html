@@ -585,6 +585,10 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .of-form{background:#fcfaf5;border:1px solid var(--bd);border-radius:10px;padding:12px;margin-top:10px}
 .of-form .r{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
 .of-form input,.of-form select{border:1px solid var(--bd);border-radius:7px;padding:7px 9px;font-size:13px}
+.ofm-row{display:grid;grid-template-columns:1fr 1.8fr 56px 100px;gap:8px;align-items:center;padding:7px 4px;border-bottom:1px solid #f4eee2}
+.ofm-row.head{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3,#8a7a64);border-bottom:1px solid var(--bd)}
+.ofm-row .cx-cod{font-size:11px}
+.ofm-row input{width:100%;border:1px solid var(--bd);border-radius:7px;padding:6px 8px;font-size:13px;text-align:right}
 .of-badge{font-size:9px;font-weight:800;color:#fff;padding:1px 6px;border-radius:5px;margin-left:6px;cursor:pointer}
 .of-badge.man{background:#b8801f}.of-badge.rdo{background:#2f6db0}.of-badge.file{background:#6b4ea8}.of-badge.none{background:#c9bca3}
 .cx-multi{width:15px;height:15px;vertical-align:middle}
@@ -1465,6 +1469,14 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mhd"><div class="mico2">💶</div><div><div class="mtit" id="offTit">Offerte di prezzo</div><div class="msub" id="offSub"></div></div><button class="mx" onclick="mClose('mOff')">✕</button></div>
     <div class="mbd" id="offBody" style="max-height:64vh;overflow:auto"></div>
     <div class="mft"><div class="mft-l fmuted" style="font-size:11px">La riga «scelta» (✓) definisce il prezzo dell'elemento.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mOff')">Chiudi</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mOffMulti" onclick="ovClose(event,'mOffMulti')">
+  <div class="modal" style="max-width:680px">
+    <div class="mhd"><div class="mico2">💶</div><div><div class="mtit">Aggiungi offerta manuale — più elementi</div><div class="msub" id="offmSub"></div></div><button class="mx" onclick="mClose('mOffMulti')">✕</button></div>
+    <div class="mbd" id="offmBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Fornitore/riferimento si applicano a tutte le righe; le righe lasciate senza prezzo vengono ignorate.</div><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOffMulti')">Annulla</button><button class="btn btn-go" onclick="saveOffMultiAll()">Salva offerte</button></div></div>
   </div>
 </div>
 
@@ -3115,7 +3127,9 @@ function renderCxDetail(){
   if(CX.sel.size>0){
     const cats=[...(CX.data.categorie_costi||[])];
     const opts='<option value="">— scegli categoria —</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('')+'<option value="__new__">＋ nuova categoria…</option>';
-    html+=`<div class="cx-selbar">☑ <b>${CX.sel.size} selezionati</b><span style="margin-left:auto"></span>Assegna a (Costi):
+    html+=`<div class="cx-selbar">☑ <b>${CX.sel.size} selezionati</b>
+      <button class="btn btn-sm go" onclick="openOffMulti([...CX.sel])">💶 Aggiungi offerta</button>
+      <span style="margin-left:auto"></span>Assegna a (Costi):
       <select id="cxBulkSel">${opts}</select><button class="btn btn-sm go" onclick="cxBulkCat()">Applica</button>
       <button class="btn btn-sm" style="color:#fff;border-color:#7a6a52;background:transparent" onclick="cxClearSel()">deseleziona</button></div>`;
   }
@@ -3667,6 +3681,53 @@ async function saveOffFile(){
 }
 async function scegliOff(oid){await fetch(API+'/api/offerte/'+oid+'/scegli',{method:'POST'});await loadOfferte();if(OFF.onClose)OFF.onClose();}
 async function delOff(oid){if(!confirm('Eliminare questa offerta?'))return;await fetch(API+'/api/offerte/'+oid,{method:'DELETE'});await loadOfferte();if(OFF.onClose)OFF.onClose();}
+
+// ── Aggiunta manuale offerta su PIÙ elementi insieme (stesso fornitore) ──
+// Caso d'uso: un fornitore fa un'unica offerta che copre 2+ pezzi diversi.
+const OFFM={rows:[]};
+function openOffMulti(pids){
+  if(!pids||!pids.length){toast('Seleziona almeno un elemento',true);return;}
+  OFFM.rows=pids.map(id=>{
+    const p=(CX.data&&CX.data.pezzi||[]).find(x=>x.id===id);
+    return {id, cod:p?p.cod:('#'+id), descr:p?p.descr:'', qta:p?p.qta:''};
+  });
+  document.getElementById('offmSub').textContent=OFFM.rows.length+' elementi selezionati';
+  renderOffMulti();
+  mOpen('mOffMulti');
+}
+function renderOffMulti(){
+  const fopts='<option value="">— senza fornitore —</option>'+fornitori.map(f=>`<option value="${f.id}">${esc(f.nome)}</option>`).join('');
+  let h=`<div class="of-form"><div class="r"><select id="offmForn" style="flex:1">${fopts}</select></div>
+    <div class="r"><input id="offmRif" type="text" placeholder="riferimento / nota (applicato a tutte le righe)" style="flex:1"><input id="offmNum" type="text" placeholder="n° preventivo" style="width:130px"></div></div>`;
+  h+=`<div class="ofm-row head"><div>Codice</div><div>Descrizione</div><div>Q.tà</div><div>Prezzo cad.</div></div>`;
+  OFFM.rows.forEach((r,i)=>{
+    h+=`<div class="ofm-row">
+      <div class="cx-cod">${esc(r.cod)}</div>
+      <div>${esc(r.descr)||'<span class="fmuted">—</span>'}</div>
+      <div>${esc(r.qta)}</div>
+      <div><input id="offmP${i}" type="text" placeholder="—"></div>
+    </div>`;
+  });
+  document.getElementById('offmBody').innerHTML=h;
+}
+async function saveOffMultiAll(){
+  const forn=document.getElementById('offmForn').value;
+  const rif=document.getElementById('offmRif').value;
+  const num=document.getElementById('offmNum').value;
+  let n=0;
+  for(let i=0;i<OFFM.rows.length;i++){
+    const val=qnum(document.getElementById('offmP'+i).value)||null;
+    if(val==null)continue;
+    await fetch(API+'/api/parti/'+OFFM.rows[i].id+'/offerte',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({fornitore_id:forn?parseInt(forn):null,fonte:'manuale',prezzo:val,riferimento:rif,num_preventivo:num})});
+    n++;
+  }
+  mClose('mOffMulti');
+  if(n===0){toast('Nessun prezzo inserito',true);return;}
+  toast(n+' offerta/e salvate','ok');
+  CX.sel.clear();
+  await cxReload();
+}
 
 /* ══ DISTINTE & APPROVAZIONE ══ */
 let TEMPLATES=[];
