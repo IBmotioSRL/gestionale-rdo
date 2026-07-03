@@ -140,8 +140,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .wpill{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--t2)}
 .wpill b{font-weight:700;color:var(--t1)}
 .wdot{width:7px;height:7px;border-radius:50%}
-.wbar{flex:1;height:5px;background:rgba(44,21,6,.07);border-radius:4px;overflow:hidden;max-width:200px}
+.wbar{flex:1;height:10px;background:rgba(44,21,6,.07);border-radius:5px;overflow:hidden;max-width:260px;display:flex}
 .wbarf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--go),var(--go-d))}
+.wbar .seg{height:100%}
 .ws{display:grid;grid-template-columns:1fr var(--gw,320px);overflow:hidden;flex:1;min-height:0}
 .ws.gcol{grid-template-columns:1fr 0}
 .ws.gcol>.glancep{display:none}
@@ -1510,6 +1511,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mVers" onclick="ovClose(event,'mVers')">
+  <div class="modal" style="max-width:560px">
+    <div class="mhd"><div class="mico2">🗂</div><div><div class="mtit" id="mVersTit">Versioni articolo</div><div class="msub" id="mVersSub"></div></div><button class="mx" onclick="mClose('mVers')">✕</button></div>
+    <div class="mbd" id="mVersBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Ogni modifica dell'articolo archivia lo stato precedente e crea un avviso.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mVers')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mOffList" onclick="ovClose(event,'mOffList')">
   <div class="modal" style="max-width:660px">
     <div class="mhd"><div class="mico2">📋</div><div><div class="mtit">Offerte ricevute</div><div class="msub" id="olSub"></div></div><button class="mx" onclick="mClose('mOffList')">✕</button></div>
@@ -1712,8 +1721,8 @@ async function openProgetto(pid){
     S.albero=ra.ok?await ra.json():null;
     S.cal=rc.ok?await rc.json():{files:[]};
   }catch{S.albero=null;S.cal={files:[]};}
-  // apri tutte le categorie di default
-  if(S.albero)S.albero.categorie.forEach(cat=>S.openCat[cat.categoria]=true);
+  // categorie COMPRESSE di default (nota Elia 03/07): si aprono col clic o con «Espandi»
+  if(S.albero)S.albero.categorie.forEach(cat=>{if(!(cat.categoria in S.openCat))S.openCat[cat.categoria]=false;});
   renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();fillPropDatalists();
 }
 function catParti(cat){return cat.kind==='commerciale'?[...(cat.gruppi||[]).flatMap(g=>g.parti),...(cat.tipi||[]).flatMap(t=>t.parti)]:(cat.lavorazioni||[]).flatMap(l=>l.parti);}
@@ -1729,7 +1738,12 @@ function renderProgress(){
     <div class="wpill"><div class="wdot" style="background:var(--blue)"></div><b>${c.daInviare}</b> da inviare</div>
     <div class="wpill"><div class="wdot" style="background:var(--teal)"></div><b>${c.inAttesa}</b> inviati</div>
     <div class="wpill"><div class="wdot" style="background:var(--green)"></div><b>${c.confermata}</b> confermati</div>
-    <div class="wbar" style="margin-left:auto"><div class="wbarf" style="width:${pct}%"></div></div><span style="font-size:10px;font-weight:700;color:var(--t2)">${pct}%</span>`;
+    <div class="wbar" style="margin-left:auto" title="${c.daSmistare} da assegnare · ${c.daInviare} da inviare · ${c.inAttesa} inviati · ${c.confermata} confermati">
+      <div class="seg" style="background:var(--green);width:${tot?c.confermata/tot*100:0}%"></div>
+      <div class="seg" style="background:var(--teal);width:${tot?c.inAttesa/tot*100:0}%"></div>
+      <div class="seg" style="background:var(--blue);width:${tot?c.daInviare/tot*100:0}%"></div>
+      <div class="seg" style="background:var(--orange);width:${tot?c.daSmistare/tot*100:0}%"></div>
+    </div><span style="font-size:10px;font-weight:700;color:var(--t2)">${pct}%</span>`;
 }
 
 /* ── multi-fornitore: helper su p.fornitori_comparazione / prezzi_comparazione ── */
@@ -2085,23 +2099,33 @@ function openDraw(pid){
   const pkeys=Object.keys(props);
   const isComm=(p.categoria||'').toUpperCase().startsWith('COMMERC');
   const keyCols=(isComm?['REVISIONE','FORNITORE','TIPO']:['REVISIONE','MATERIALE','LAV. MECCANICA','FORNITORE']).map(x=>x.toUpperCase());
-  let ph='';
-  if(pkeys.length){
-    // prima le proprietà chiave, poi le altre nell'ordine della distinta
-    const sorted=[...pkeys].sort((a,b)=>(keyCols.includes(a.toUpperCase())?0:1)-(keyCols.includes(b.toUpperCase())?0:1));
-    const bulkBtn=(S.rows&&S.rows.size>1)?`<button class="btn-mini g" onclick="openPropsEditor()">✎ Modifica ${S.rows.size} selezionati</button>`:'';
-    ph=`<div class="pd-dh-row"><div class="pd-dh">Proprietà · distinta</div>${bulkBtn}<button class="btn-mini" onclick="savePropsDrawer(${pid})">💾 Salva</button></div><div class="pd-props" id="pdProps">`+
-       sorted.map(k=>{const kk=keyCols.includes(k.toUpperCase())?' key':'';
-         return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" style="padding:2px 4px"><input class="pp-in" data-k="${esc(k)}"${propListAttr(k)} value="${esc(props[k])}"></div>`;}).join('')+
-       `</div>`;
-  }
+  // blocco proprietà SEMPRE presente: valori editabili + proprietà AGGIUNGIBILI
+  // (da vocabolario o custom, valore o testo libero) su qualsiasi articolo
+  const sorted=[...pkeys].sort((a,b)=>(keyCols.includes(a.toUpperCase())?0:1)-(keyCols.includes(b.toUpperCase())?0:1));
+  const bulkBtn=(S.rows&&S.rows.size>1)?`<button class="btn-mini g" onclick="openPropsEditor()">✎ Modifica ${S.rows.size} selezionati</button>`:'';
+  const ph=`<div class="pd-dh-row"><div class="pd-dh">Proprietà · distinta</div>${bulkBtn}<button class="btn-mini" onclick="savePropsDrawer(${pid})">💾 Salva</button></div><div class="pd-props" id="pdProps">`+
+     sorted.map(k=>{const kk=keyCols.includes(k.toUpperCase())?' key':'';
+       return `<div class="pk${kk}">${esc(k.toLowerCase())}</div><div class="pv${kk}" style="padding:2px 4px"><input class="pp-in" data-k="${esc(k)}"${propListAttr(k)} value="${esc(props[k])}"></div>`;}).join('')+
+     `</div>
+     <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+       <input id="pdNewKey" list="dlPropKeys" placeholder="+ proprietà (vocabolario o libera)" style="flex:1;border:1px solid var(--bd);border-radius:7px;padding:5px 8px;font-size:11.5px">
+       <input id="pdNewVal" placeholder="valore / testo" style="flex:1;border:1px solid var(--bd);border-radius:7px;padding:5px 8px;font-size:11.5px">
+       <button class="btn-mini g" onclick="addPropDrawer(${pid})">+ Aggiungi</button>
+     </div>`;
   const exclBtn=`<button class="btn-mini ${p.escluso?'':'g'}" onclick="setEscluso([${pid}],${p.escluso?'false':'true'})">${p.escluso?'♻ Reintegra nel progetto':'🚫 Escludi dal progetto'}</button>`;
   const offBtn=`<button class="btn-mini g" onclick="offertePezzo(${pid})">💶 Offerte / prezzi</button>`;
   // elementi personalizzati (custom): modifica completa + eliminazione
   const customBtns=p.custom?`<button class="btn-mini g" onclick="openCustomEdit(${pid})">✎ Modifica elemento</button><button class="btn-mini" style="color:#b04632;border-color:#e9c4ba" onclick="eliminaArticolo(${pid})">🗑 Elimina</button>`:'';
   const prezzoInfo=p.prezzo!=null?`<span class="pd-tag ok" title="prezzo scelto">${eur(p.prezzo)}</span>`:'';
+  const versBtn=`<button class="btn-mini" onclick="openVersioni(${pid})" title="Archivio delle versioni precedenti di questo articolo">🗂 Versioni <span id="pdVersN"></span></button>`;
   document.getElementById('pdBody').innerHTML=
-    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}${p.custom?'<span class="pd-tag" style="background:#efe9f8;color:#6b4ea8">custom</span>':''}${prezzoInfo}<span style="flex:1"></span>${customBtns}${offBtn}${exclBtn}</div>${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}${p.custom?'<span class="pd-tag" style="background:#efe9f8;color:#6b4ea8">custom</span>':''}${prezzoInfo}<span id="pdModRev"></span><span style="flex:1"></span>${customBtns}${versBtn}${offBtn}${exclBtn}</div>${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+  // n° modifiche (versioni archiviate) → badge «mod. vN» accanto al titolo
+  fetch(API+'/api/parti/'+pid+'/versioni').then(r=>r.ok?r.json():null).then(v=>{
+    if(!v||!v.n_versioni)return;
+    const b=document.getElementById('pdVersN');if(b)b.textContent='('+v.n_versioni+')';
+    const m=document.getElementById('pdModRev');if(m)m.innerHTML=`<span class="pd-tag" style="background:#fdf3e0;color:#b8801f" title="Articolo modificato ${v.n_versioni} volte — vedi Versioni">mod. v${String(v.n_versioni).padStart(2,'0')}</span>`;
+  }).catch(()=>{});
   // apri subito il primo PDF se c'è
   const fp=firstPdf(p);
   if(fp)renderViewer(fp);
@@ -2109,6 +2133,38 @@ function openDraw(pid){
   document.getElementById('pdraw').classList.add('open');
 }
 function closeDraw(){document.getElementById('pdraw').classList.remove('open');document.getElementById('pdrawOv').classList.remove('open');}
+
+// aggiunge una proprietà (da vocabolario o libera) alla griglia del drawer; si salva con 💾 Salva
+function addPropDrawer(pid){
+  const ke=document.getElementById('pdNewKey'),ve=document.getElementById('pdNewVal');
+  const k=(ke.value||'').trim();if(!k){toast('Scrivi il nome della proprietà',true);return;}
+  const wrap=document.getElementById('pdProps');if(!wrap)return;
+  if([...wrap.querySelectorAll('.pp-in')].some(i=>i.getAttribute('data-k').toUpperCase()===k.toUpperCase())){toast('Proprietà già presente',true);return;}
+  wrap.insertAdjacentHTML('beforeend',`<div class="pk">${esc(k.toLowerCase())}</div><div class="pv" style="padding:2px 4px"><input class="pp-in" data-k="${esc(k)}" value="${esc(ve.value||'')}"></div>`);
+  ke.value='';ve.value='';
+  toast('Aggiunta — premi 💾 Salva per confermare','ok');
+}
+// archivio versioni precedenti dell'articolo
+async function openVersioni(pid){
+  const p=S.pmap[pid];
+  mOpen('mVers');
+  document.getElementById('mVersTit').textContent='Versioni · '+(p?(p.denominazione||p.numero_parte):'');
+  document.getElementById('mVersSub').textContent=p?p.numero_parte:'';
+  const el=document.getElementById('mVersBody');el.innerHTML='<div class="fmuted" style="font-size:11px;padding:8px">Carico…</div>';
+  let v=null;try{const r=await fetch(API+'/api/parti/'+pid+'/versioni');v=r.ok?await r.json():null;}catch{}
+  if(!v||!v.n_versioni){el.innerHTML='<div class="fmuted" style="font-size:12px;padding:14px">Nessuna modifica archiviata: l\'articolo è ancora nella versione originale della distinta.</div>';return;}
+  el.innerHTML=v.versioni.map(x=>{
+    let props={};try{props=JSON.parse(x.dati.proprieta||'{}')||{};}catch{}
+    const quando=x.creato_at?new Date(x.creato_at).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    const campi=[['codice',x.dati.numero_parte],['denominazione',x.dati.denominazione],['q.tà',x.dati.quantita],['categoria',x.dati.categoria],['tipo',x.dati.tipo],['revisione',x.dati.revisione]].filter(c=>c[1]);
+    return `<details style="border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;background:#fcfaf5">
+      <summary style="padding:9px 12px;cursor:pointer;font-size:12.5px"><b>v${String(x.versione).padStart(2,'0')}</b> · ${quando} <span class="fmuted" style="font-size:11px">— stato prima della modifica</span><div class="fmuted" style="font-size:10.5px;margin-top:2px">✏️ ${esc(x.modifica||'')}</div></summary>
+      <div style="padding:4px 12px 10px;font-size:11.5px">
+        ${campi.map(c=>`<div style="display:flex;gap:8px;padding:2px 0"><span class="fmuted" style="width:100px">${c[0]}</span><b>${esc(String(c[1]))}</b></div>`).join('')}
+        ${Object.keys(props).length?('<div class="fmuted" style="margin-top:6px;font-size:10px;text-transform:uppercase;letter-spacing:.04em">Proprietà</div>'+Object.entries(props).map(([k,val])=>`<div style="display:flex;gap:8px;padding:2px 0"><span class="fmuted" style="width:100px">${esc(k.toLowerCase())}</span>${esc(String(val))}</div>`).join('')):''}
+      </div></details>`;
+  }).join('');
+}
 
 /* ── MODIFICA PROPRIETÀ DA DISTINTA (singola dal drawer + massiva da modale) ── */
 let PROPSEL=[];
@@ -2626,12 +2682,12 @@ function renderRevBadge(){
   const el=document.getElementById('wrev');if(!el)return;
   if(!REVDATA){el.innerHTML='';return;}
   const rc=REVDATA.revisione_corrente;
-  if(rc<0){el.innerHTML='<span class="revbadge none" title="Non ancora inviato"><span class="dot"></span>Rev — · bozza</span>';return;}
+  if(rc<0){el.innerHTML='<span class="revbadge none" style="cursor:pointer" onclick="openRevHistory()" title="Revisione di PROGETTO: nasce alla prima spedizione delle RDO (Rev 00). Non ancora inviato nulla."><span class="dot"></span>Rev — · bozza</span>';return;}
   if(REVDATA.in_preparazione){
     const wd=REVDATA.working_diff,n=wd.add.length+wd.rem.length+wd.chg.length;
-    el.innerHTML=`<span class="revbadge prep" title="${n} modifiche dall'ultima emissione"><span class="dot"></span>Rev ${rev2(REVDATA.prossima)} · in preparazione</span>`;
+    el.innerHTML=`<span class="revbadge prep" style="cursor:pointer" onclick="openRevHistory()" title="Revisione di PROGETTO: dopo l'ultima emissione sono state rilevate ${n} modifiche ai pezzi (aggiunti/tolti/cambiati) → alla prossima spedizione diventerà Rev ${rev2(REVDATA.prossima)}. Clicca per vedere il diff."><span class="dot"></span>Rev ${rev2(REVDATA.prossima)} · in preparazione</span>`;
   }else{
-    el.innerHTML=`<span class="revbadge sent"><span class="dot"></span>Rev ${rev2(rc)} · inviata</span>`;
+    el.innerHTML=`<span class="revbadge sent" style="cursor:pointer" onclick="openRevHistory()" title="Revisione di PROGETTO attuale (emessa con l'ultima spedizione). Clicca per lo storico."><span class="dot"></span>Rev ${rev2(rc)} · inviata</span>`;
   }
 }
 function fornNomeById(id){const f=fornitori.find(x=>x.id===id);return f?f.nome:('#'+id);}
