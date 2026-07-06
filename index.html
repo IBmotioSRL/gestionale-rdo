@@ -427,36 +427,41 @@ details.dd-coll[open]>summary::before{transform:rotate(90deg)}
 details.dd-coll>summary .cnt{margin-left:auto;font-weight:700;text-transform:none;letter-spacing:0;color:var(--t3)}
 details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 
-/* ── filone comunicazioni RDO (chat di mail) ── */
+/* ── filone comunicazioni RDO: chat pulita (WhatsApp-like), tranne il 1° messaggio ── */
 .thread{margin-bottom:16px}
 .thwait{display:flex;align-items:center;gap:8px;background:#FDEDED;border:1px solid #F3C6C6;color:#B01515;font-weight:700;font-size:11.5px;padding:8px 12px;border-radius:9px;margin-bottom:14px}
 .thwait .sp{flex:1}
-.tmsg{display:flex;gap:9px;margin-bottom:13px;align-items:flex-start}
-.tmsg.out{flex-direction:row-reverse}
-.tmsg .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0}
-.tmsg.out .av{background:var(--go);color:var(--br)}
-.tmsg.in .av{background:#E4E0F5;color:#4A3F8C}
-.tmsg .sysico{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:var(--t3)}
-.bubble{max-width:min(560px,82%);border-radius:14px;padding:10px 13px;box-shadow:var(--sh)}
-.tmsg.out .bubble{background:linear-gradient(135deg,#FFF6E4,#FFFDF8);border:1px solid var(--go-d);border-top-right-radius:4px}
-.tmsg.in .bubble{background:var(--surf);border:1px solid var(--bd2);border-top-left-radius:4px}
-.tmsg.sys .bubble{background:#FBF7F2;border:1px solid var(--bd);box-shadow:none;max-width:min(500px,82%)}
-.bubble.sim{border-style:dashed}
-.b-hd{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:10.5px;color:var(--t2);font-weight:700;flex-wrap:wrap}
-.b-hd .who{color:var(--t1)}
-.b-hd .tag{font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em}
-.b-hd .tag.lock{background:rgba(52,199,89,.16);color:#1A7A2E}
-.b-hd .tag.sim{background:#EFE9FF;color:#5856D6}
-.b-hd .tag.az{background:rgba(245,168,35,.18);color:var(--go-d)}
-.b-hd .sp{flex:1}
-.b-dest{font-size:10px;color:var(--t3);margin-bottom:5px}
-.b-title{font-weight:800;font-size:12.5px;margin-bottom:3px}
-.b-txt{font-size:12px;line-height:1.5;color:var(--t1);white-space:pre-line}
-.b-meta{margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,0,0,.06);font-size:10px;color:var(--t3);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.b-meta a{color:var(--t2);font-weight:700;text-decoration:none;cursor:pointer}
-.b-meta a:hover{text-decoration:underline}
-.b-del{cursor:pointer;color:var(--t3)}
-.b-del:hover{color:var(--red)}
+
+/* 1° messaggio: la RDO è un vero documento/mail, non una bolla di chat */
+.rdocard-msg{background:var(--surf);border:1.5px solid var(--go-d);border-radius:var(--r);box-shadow:var(--shd);padding:12px 14px;margin-bottom:18px}
+.rc-hd{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:10.5px;color:var(--t2);font-weight:700;flex-wrap:wrap}
+.rc-hd .who{color:var(--t1)}
+.rc-hd .tag.lock{background:rgba(52,199,89,.16);color:#1A7A2E;font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em}
+.rc-hd .sp{flex:1}
+.rc-dest{font-size:10px;color:var(--t3);margin-bottom:5px}
+.rc-txt{font-size:12.5px;line-height:1.5;color:var(--t1);white-space:pre-line}
+.rc-meta{margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,0,0,.06);font-size:10px;color:var(--t3);display:flex;gap:10px;flex-wrap:wrap}
+.rc-meta a{color:var(--t2);font-weight:700;text-decoration:none;cursor:pointer}
+.rc-meta a:hover{text-decoration:underline}
+
+/* dal 2° messaggio in poi: chat a due, dietro resta una mail ma non si vede a ogni riga */
+.tmsg{display:flex;margin-bottom:7px}
+.tmsg.out{justify-content:flex-end}
+.tmsg.in{justify-content:flex-start}
+.tmsg.sys{justify-content:center;margin:12px 0}
+.bubble.chat{max-width:min(480px,78%);border-radius:16px;padding:8px 12px 6px;box-shadow:var(--sh)}
+.tmsg.out .bubble.chat{background:linear-gradient(135deg,#FFF3D6,#FFEAB8);border:1px solid var(--go-d);border-bottom-right-radius:4px}
+.tmsg.in .bubble.chat{background:var(--surf);border:1px solid var(--bd2);border-bottom-left-radius:4px}
+.bubble.chat.sim{border-style:dashed}
+.chat-txt{font-size:12.5px;line-height:1.45;color:var(--t1);white-space:pre-line}
+.chat-meta{display:flex;align-items:center;gap:6px;margin-top:3px;justify-content:flex-end}
+.chat-time{font-size:9.5px;color:var(--t3)}
+.chat-ico{font-size:10px}
+.chat-del{font-size:10px;color:var(--t3);cursor:pointer;opacity:0;transition:opacity .15s}
+.bubble.chat:hover .chat-del,.sysrow:hover .chat-del{opacity:1}
+.chat-del:hover{color:var(--red)}
+.sysrow{display:flex;align-items:center;gap:7px;background:#FBF7F2;border:1px solid var(--bd);border-radius:20px;padding:6px 14px;font-size:11px;color:var(--t2);max-width:min(500px,82%)}
+.sys-txt{flex:1}
 
 .thqa{margin-bottom:14px}
 .thqa summary{list-style:none;cursor:pointer;font-size:11px;font-weight:700;color:var(--t2);padding:4px 0}
@@ -475,10 +480,13 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .rchip{border:1px solid var(--bd2);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
 .rchip.on{background:var(--go);border-color:var(--go-d);color:var(--br)}
 .compose textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:56px;margin-bottom:9px}
-.compose .destrow{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap}
-.compose .destrow label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:2px}
-.compose .destrow input{width:100%;border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
-.compose .destrow .fld{flex:1;min-width:140px}
+.thdest{margin-bottom:9px}
+.thdest summary{list-style:none;cursor:pointer;font-size:10px;font-weight:700;color:var(--t3)}
+.thdest summary::-webkit-details-marker{display:none}
+.thdest .destrow{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.thdest .destrow label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:2px}
+.thdest .destrow input{width:100%;border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
+.thdest .destrow .fld{flex:1;min-width:140px}
 .compose-ft{display:flex;align-items:center;gap:9px}
 .compose-ft .sp{flex:1}
 .ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
@@ -4157,52 +4165,49 @@ function thDestRow(e){
   if(e.email_to&&e.email_to.length)parts.push('A: '+e.email_to.join(', '));
   if(e.email_cc&&e.email_cc.length)parts.push('CC: '+e.email_cc.join(', '));
   if(e.email_ccn&&e.email_ccn.length)parts.push('CCN: '+e.email_ccn.join(', '));
-  return parts.length?`<div class="b-dest">${esc(parts.join(' · '))}</div>`:'';
+  return parts.length?`<div class="rc-dest">${esc(parts.join(' · '))}</div>`:'';
+}
+function thTime(iso){
+  const d=new Date(iso+'Z');
+  return d.toLocaleDateString('it-IT')+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
 }
 function thBubble(d,e){
-  const dt=new Date(e.data+'Z').toLocaleDateString('it-IT');
-  const del=`<span class="b-del" onclick="thDelete(${e.id})" title="Elimina">🗑</span>`;
-  const brand=d.brand==='YS'?'YuBe Solutions':'IB Motion';
+  const time=thTime(e.data);
+  const del=`<span class="chat-del" onclick="thDelete(${e.id})" title="Elimina">🗑</span>`;
+  // la RDO ufficiale è un DOCUMENTO (mail vera, intestazione completa), non un messaggio di chat
   if(e.is_rdo_ufficiale){
+    const brand=d.brand==='YS'?'YuBe Solutions':'IB Motion';
     const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=`;
-    return `<div class="tmsg out">
-      <div class="av">IB</div>
-      <div class="bubble">
-        <div class="b-hd"><span class="who">${esc(brand)} → ${esc(d.fornitore_nome)}</span><span class="tag lock">🔒 RDO ufficiale · ${esc(d.codice_rev||d.codice_rdo||'')}</span><span class="sp"></span><span>${dt}</span></div>
-        ${thDestRow(e)}
-        <div class="b-txt" id="thRdoTxt" data-full="${esc(e.testo||'')}">${esc(thSnippet(e.testo))}</div>
-        <div class="b-meta"><span>📎 ${d.n_files_pdf||0} disegni · distinta</span><a onclick="thToggleRdo(this)">${(e.testo||'').length>160?'Vedi mail completa ↓':''}</a><a onclick="window.open('${exportUrl}pdf','_blank')">PDF ↗</a><a onclick="window.open('${exportUrl}xlsx','_blank')">Excel ↗</a></div>
-      </div>
+    return `<div class="rdocard-msg">
+      <div class="rc-hd"><span class="ico">✉️</span><span class="who">${esc(brand)} → ${esc(d.fornitore_nome)}</span><span class="tag lock">🔒 RDO ufficiale · ${esc(d.codice_rev||d.codice_rdo||'')}</span><span class="sp"></span><span class="rc-time">${time}</span></div>
+      ${thDestRow(e)}
+      <div class="rc-txt" id="thRdoTxt" data-full="${esc(e.testo||'')}">${esc(thSnippet(e.testo))}</div>
+      <div class="rc-meta"><span>📎 ${d.n_files_pdf||0} disegni · distinta</span><a onclick="thToggleRdo(this)">${(e.testo||'').length>160?'Vedi mail completa ↓':''}</a><a onclick="window.open('${exportUrl}pdf','_blank')">PDF ↗</a><a onclick="window.open('${exportUrl}xlsx','_blank')">Excel ↗</a></div>
     </div>`;
   }
+  // dal secondo messaggio in poi: chat pulita stile WhatsApp — sotto resta una mail vera
+  // (destinatari salvati), ma non la mostriamo a ogni riga: qui è una conversazione a due.
   if(e.tipo==='mail_inviata'){
     const azi=RTYPES.find(r=>r.key===e.azione);
     return `<div class="tmsg out">
-      <div class="av">IB</div>
-      <div class="bubble">
-        <div class="b-hd"><span class="who">${esc(brand)} → ${esc(d.fornitore_nome)}</span>${azi?`<span class="tag az">${azi.ico} ${esc(azi.lbl)}</span>`:''}<span class="sp"></span><span>${dt}</span>${del}</div>
-        ${thDestRow(e)}
-        <div class="b-txt">${esc(e.testo||'')}</div>
+      <div class="bubble chat">
+        <div class="chat-txt">${esc(e.testo||'')}</div>
+        <div class="chat-meta">${azi?`<span class="chat-ico" title="${esc(azi.lbl)}">${azi.ico}</span>`:''}<span class="chat-time">${time}</span>${del}</div>
       </div>
     </div>`;
   }
   if(e.tipo==='mail_ricevuta'){
     return `<div class="tmsg in">
-      <div class="av">${ini(d.fornitore_nome)}</div>
-      <div class="bubble sim">
-        <div class="b-hd"><span class="who">${esc(e.email_da||d.fornitore_nome)}</span><span class="tag sim">✎ simulata</span><span class="sp"></span><span>${dt}</span>${del}</div>
-        <div class="b-txt">${esc(e.testo||'')}</div>
+      <div class="bubble chat sim">
+        <div class="chat-txt">${esc(e.testo||'')}</div>
+        <div class="chat-meta"><span class="chat-ico" title="Simulata a mano — in attesa dell'integrazione mail automatica">✎</span><span class="chat-time">${time}</span>${del}</div>
       </div>
     </div>`;
   }
-  // telefonata / nota: NON sono mail, riga semplice senza destinatari/mittente
+  // telefonata / nota: NON sono mail — riga di sistema centrata, come i divisori di WhatsApp
   const ico=e.tipo==='telefonata'?'📞':'📝';
   return `<div class="tmsg sys">
-    <div class="sysico">${ico}</div>
-    <div class="bubble">
-      <div class="b-hd"><span class="who">${e.tipo==='telefonata'?'Telefonata':'Nota'}</span><span class="sp"></span><span>${dt}</span>${del}</div>
-      <div class="b-txt">${esc(e.testo||'')}</div>
-    </div>
+    <div class="sysrow"><span>${ico}</span><span class="sys-txt">${esc(e.testo||'')}</span><span class="chat-time">${time}</span>${del}</div>
   </div>`;
 }
 function thToggleRdo(el){
@@ -4259,12 +4264,15 @@ function thComposeHtml(d){
   return `<div class="compose">
     <div class="compose-tit">Rispondi a ${esc(d.fornitore_nome)}</div>
     <div class="rtypes">${chips}</div>
-    <div class="destrow" id="thDestRow" style="${showDest?'':'display:none'}">
-      <div class="fld"><label>A</label><input type="text" id="thTo" value="${esc(to)}"></div>
-      <div class="fld"><label>CC</label><input type="text" id="thCc" value="${esc(cc)}"></div>
-      <div class="fld"><label>CCN</label><input type="text" id="thCcn" value="${esc(ccn)}"></div>
-    </div>
     <textarea id="thTxt" placeholder="Scrivi la risposta…">${esc(sugg)}</textarea>
+    <details class="thdest" id="thDestWrap" style="${showDest?'':'display:none'}">
+      <summary>✎ destinatari (A/CC/CCN)</summary>
+      <div class="destrow" id="thDestRow">
+        <div class="fld"><label>A</label><input type="text" id="thTo" value="${esc(to)}"></div>
+        <div class="fld"><label>CC</label><input type="text" id="thCc" value="${esc(cc)}"></div>
+        <div class="fld"><label>CCN</label><input type="text" id="thCcn" value="${esc(ccn)}"></div>
+      </div>
+    </details>
     <div class="compose-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thInvia()">${showDest?'✉️ Apri mail e segna come inviata':'📝 Salva nota'}</button></div>
   </div>`;
 }
@@ -4274,7 +4282,7 @@ function thSetRtype(key){
   const r=RTYPES.find(x=>x.key===key);
   document.getElementById('thTxt').value=r.sugg||'';
   const show=key!=='nota';
-  document.getElementById('thDestRow').style.display=show?'flex':'none';
+  document.getElementById('thDestWrap').style.display=show?'block':'none';
   document.querySelector('.compose-ft button').textContent=show?'✉️ Apri mail e segna come inviata':'📝 Salva nota';
 }
 function splitEmails(s){return (s||'').split(/[,;]/).map(x=>x.trim()).filter(Boolean);}
