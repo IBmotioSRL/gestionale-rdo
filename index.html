@@ -426,6 +426,33 @@ details.dd-coll>summary::before{content:'▸';color:var(--go-d);font-size:11px;t
 details.dd-coll[open]>summary::before{transform:rotate(90deg)}
 details.dd-coll>summary .cnt{margin-left:auto;font-weight:700;text-transform:none;letter-spacing:0;color:var(--t3)}
 details.dd-coll>.dd-collbody{padding:4px 12px 12px}
+
+/* ── registro comunicazioni RDO ── */
+.comm{background:var(--surf);border:1.5px solid var(--go-d);border-radius:var(--r);margin-bottom:12px;box-shadow:var(--shd)}
+.comm-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--bd)}
+.comm-hd .ico{font-size:15px}
+.comm-hd h2{font-size:12.5px;margin:0;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);font-weight:800}
+.comm-body{padding:12px 14px}
+.mailto-row{margin-bottom:12px}
+.tl{border-top:1px solid var(--bd)}
+.tl-row{display:grid;grid-template-columns:24px 82px 1fr 22px;gap:9px;align-items:start;padding:9px 2px;border-bottom:1px solid #f4eee2}
+.tl-ico{font-size:14px;text-align:center}
+.tl-date{font-size:10px;color:var(--t3);font-weight:700;padding-top:2px;white-space:nowrap}
+.tl-txt{font-size:12px;line-height:1.4}
+.tl-tag{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin-bottom:2px}
+.tl-del{color:var(--t3);cursor:pointer;text-align:right;font-size:12px}
+.tl-del:hover{color:var(--red)}
+.addf{margin-top:12px;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:11px}
+.addf-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t2);margin-bottom:9px}
+.addf-types{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap}
+.tchip{border:1px solid var(--bd2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
+.tchip.on{background:var(--go);border-color:var(--go-d);color:var(--br)}
+.addf textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:48px;margin-bottom:8px}
+.addf-ft{display:flex;align-items:center;gap:9px}
+.addf-ft input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
+.addf-ft .sp{flex:1}
+.ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
+.ct-badge.warn{color:#B01515;font-weight:800}
 /* opzioni RDO (condizioni di fornitura) */
 .dd-opts{border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:rgba(248,244,239,.45)}
 .dd-opts .oh{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--t2);margin-bottom:7px;display:flex;align-items:center;gap:6px}
@@ -3856,6 +3883,12 @@ async function rdoOpenEditor(cid,fid){
 // + multi-selezione (Ctrl = singoli, Shift = intervallo) con azioni di gruppo da tasto destro
 let NAVITEMS=[], NAVSEL=new Set(), NAVANCHOR=null;
 const navKey=(cid,fid)=>cid+':'+fid;
+function ctText(x){
+  if(x==null||x.giorni_da_ultimo_contatto==null)return '';
+  const g=x.giorni_da_ultimo_contatto;
+  const txt=g===0?'oggi':(g===1?'1 giorno fa':g+' giorni fa');
+  return (x.in_attesa_risposta?'⚠ ':'')+txt;
+}
 function renderDdNav(){
   const nav=document.getElementById('ddNav');if(!nav)return;
   NAVITEMS=[];
@@ -3883,9 +3916,10 @@ function renderDdNav(){
       const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
       const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori (offerte in raccolta)">🔀 ${nConf}</span>`:'';
       const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
+      const ct=ctText(dd);
       h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
         <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
-        <div class="nav-tx"><div class="nn">${esc(f.nome)} ${revBadge}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div></div>${confb}${stb}</div>`;
+        <div class="nav-tx"><div class="nn">${esc(f.nome)} ${revBadge}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div>${ct?`<div class="ct-badge${dd.in_attesa_risposta?' warn':''}">${ct}</div>`:''}</div>${confb}${stb}</div>`;
     });
   });
   nav.innerHTML=h||'<div class="fmuted" style="padding:10px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
@@ -3977,7 +4011,7 @@ function rdoRenderShip(){
       rows+=`<label class="ship-row${can?'':' off'}" oncontextmenu="ctxShip(event,${x.commessa_id},${x.fornitore_id})">
         <input type="checkbox" ${can?'':'disabled'} ${SHIPSEL.has(k)?'checked':''} onchange="shipToggle('${k}')">
         <span class="dd-av" style="background:${avc(x.fornitore_nome)}">${ini(x.fornitore_nome)}</span>
-        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${(x.codice_rev||x.codice_rdo)?esc(x.codice_rev||x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}</span></span>
+        <span class="ship-nm"><b>${esc(x.fornitore_nome)}</b><span>${(x.codice_rev||x.codice_rdo)?esc(x.codice_rev||x.codice_rdo)+' · ':''}${x.n_pezzi} pezzi · ${esc(x.fornitore_tipo)}${ctText(x)?` · <span class="ct-badge${x.in_attesa_risposta?' warn':''}">${ctText(x)}</span>`:''}</span></span>
         ${confb}<span class="dd-brand ${x.brand}">${x.brand}</span>
         ${(x.revisione!=null&&x.revisione>=0)?`<span title="Revisione RDO" style="font-family:ui-monospace,monospace;font-size:10px;font-weight:800;background:rgba(52,199,89,.14);color:#1A7A2E;padding:2px 7px;border-radius:6px">Rev ${rev2(x.revisione)}</span>`:''}
         <span class="dd-st ${x.stato}">${x.stato}</span>
@@ -4046,6 +4080,9 @@ function ctxFornCard(e,fid){const f=fornitori.find(x=>x.id==fid);if(!f)return;
 ]);}
 
 let DD=null, DDLIST=[];
+let COMM_TIPO='mail_ricevuta';
+const COMM_ICO={mail_inviata:'📧',mail_ricevuta:'📩',telefonata:'📞',nota:'📝'};
+const COMM_LBL={mail_inviata:'Mail inviata',mail_ricevuta:'Mail ricevuta',telefonata:'Telefonata',nota:'Nota'};
 async function loadDdList(){try{const r=await fetch(API+'/api/rdo-list');DDLIST=r.ok?await r.json():[];}catch{DDLIST=[];}renderDdList();}
 function renderDdList(){
   const cntEl=document.getElementById('ddCnt');if(!cntEl)return; // lista rimossa: il pannello Spedizione la sostituisce
@@ -4065,14 +4102,86 @@ function renderDdList(){
   document.getElementById('ddList').innerHTML=h||'<div class="dd-empty">Nessuna distinta: assegna prima i fornitori ai pezzi.</div>';
 }
 async function openDd(cid,fid){
-  DD={cid,fid};S.projId=cid;
+  DD={cid,fid};S.projId=cid;COMM_TIPO='mail_ricevuta';
   // assicura le parti della commessa (servono per anteprime PDF + disegni allegati)
   const _c=commesse.find(x=>x.id===cid);
   if(_c&&!_c._parti){try{const rp=await fetch(API+`/api/commesse/${cid}/parti`);if(rp.ok)_c._parti=await rp.json();}catch{}}
   try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}`);if(!r.ok)throw 0;DD.data=await r.json();}
   catch{toast('Errore apertura distinta',true);return;}
   await ddLoadRevs();
+  await ddLoadEventi();
   renderDdList();renderDdEditor(DD.data);
+}
+async function ddLoadEventi(){
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/eventi`);DD.eventi=r.ok?await r.json():[];}catch{DD.eventi=[];}
+}
+function commHtml(d){
+  const evs=(DD.eventi||[]).slice().sort((a,b)=>new Date(a.data)-new Date(b.data));
+  const rows=evs.map(e=>{
+    const dt=new Date(e.data+'Z').toLocaleDateString('it-IT');
+    return `<div class="tl-row">
+      <div class="tl-ico">${COMM_ICO[e.tipo]||'📝'}</div>
+      <div class="tl-date">${dt}</div>
+      <div class="tl-txt"><span class="tl-tag">${COMM_LBL[e.tipo]||e.tipo}</span>${esc(e.testo||'')}</div>
+      <div class="tl-del" onclick="commDelete(${e.id})" title="Elimina">🗑</div>
+    </div>`;
+  }).join('');
+  const chips=['mail_inviata','mail_ricevuta','telefonata','nota'].map(t=>
+    `<div class="tchip${COMM_TIPO===t?' on':''}" onclick="commSetTipo('${t}')">${COMM_ICO[t]} ${COMM_LBL[t]}</div>`
+  ).join('');
+  const today=new Date().toISOString().slice(0,10);
+  return `<div class="comm">
+    <div class="comm-hd"><span class="ico">💬</span><h2>Comunicazioni</h2></div>
+    <div class="comm-body">
+      <div class="mailto-row"><a class="btn btn-go" href="#" onclick="ddMailto();return false">✉️ Apri mail per ${esc(d.fornitore_nome)}</a></div>
+      <div class="tl">${rows||'<div class="fmuted" style="font-size:11.5px;padding:8px 2px">Nessun evento ancora. La mail di invio comparirà qui da sola.</div>'}</div>
+      <div class="addf">
+        <div class="addf-tit">+ Aggiungi evento</div>
+        <div class="addf-types">${chips}</div>
+        <textarea id="commTxt" placeholder="Cosa è successo?"></textarea>
+        <div class="addf-ft"><input type="date" id="commData" value="${today}"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="commSalva()">Salva</button></div>
+      </div>
+    </div>
+  </div>`;
+}
+function commSetTipo(t){
+  COMM_TIPO=t;
+  const chips=document.querySelectorAll('.addf-types .tchip');
+  const order=['mail_inviata','mail_ricevuta','telefonata','nota'];
+  chips.forEach((el,i)=>el.classList.toggle('on',order[i]===t));
+}
+async function commSalva(){
+  const txtEl=document.getElementById('commTxt');
+  const testo=(txtEl.value||'').trim();
+  const data=document.getElementById('commData').value;
+  if(!testo){toast('Scrivi cosa è successo',true);return;}
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/eventi`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tipo:COMM_TIPO,testo,data})});
+    if(!r.ok)throw 0;
+    await ddLoadEventi();
+    renderDdEditor(DD.data);
+    await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();
+    toast('Evento registrato','ok');
+  }catch{toast('Errore salvataggio',true);}
+}
+async function commDelete(id){
+  if(!confirm('Eliminare questo evento?'))return;
+  try{
+    await fetch(API+'/api/eventi/'+id,{method:'DELETE'});
+    await ddLoadEventi();
+    renderDdEditor(DD.data);
+    await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();
+  }catch{toast('Errore',true);}
+}
+function ddMailto(){
+  const d=DD.data;
+  const to=(d.emails_to||[]).join(',');
+  const cc=(d.emails_cc||[]).join(',');
+  const subj=encodeURIComponent('Re: RDO '+(d.codice_rev||d.codice_rdo||'')+' - '+(d.commessa_codice||''));
+  let url='mailto:'+to+'?subject='+subj;
+  if(cc)url+='&cc='+cc;
+  window.location.href=url;
 }
 function ddCols(d){
   if(d.tipo_distinta==='commerciale')return [['qta','Q.tà'],['codice','Codice produttore'],['descrizione','Descrizione'],['fornitore','Fornitore']];
@@ -4208,6 +4317,7 @@ function renderDdEditor(d){
           <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
         </div>
       </div>
+      ${commHtml(d)}
       <details class="dd-coll">
         <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
         <div class="dd-collbody">
