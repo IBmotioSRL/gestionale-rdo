@@ -427,30 +427,60 @@ details.dd-coll[open]>summary::before{transform:rotate(90deg)}
 details.dd-coll>summary .cnt{margin-left:auto;font-weight:700;text-transform:none;letter-spacing:0;color:var(--t3)}
 details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 
-/* ── registro comunicazioni RDO ── */
-.comm{background:var(--surf);border:1.5px solid var(--go-d);border-radius:var(--r);margin-bottom:12px;box-shadow:var(--shd)}
-.comm-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--bd)}
-.comm-hd .ico{font-size:15px}
-.comm-hd h2{font-size:12.5px;margin:0;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);font-weight:800}
-.comm-body{padding:12px 14px}
-.mailto-row{margin-bottom:12px}
-.tl{border-top:1px solid var(--bd)}
-.tl-row{display:grid;grid-template-columns:24px 82px 1fr 22px;gap:9px;align-items:start;padding:9px 2px;border-bottom:1px solid #f4eee2}
-.tl-ico{font-size:14px;text-align:center}
-.tl-date{font-size:10px;color:var(--t3);font-weight:700;padding-top:2px;white-space:nowrap}
-.tl-txt{font-size:12px;line-height:1.4}
-.tl-tag{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin-bottom:2px}
-.tl-del{color:var(--t3);cursor:pointer;text-align:right;font-size:12px}
-.tl-del:hover{color:var(--red)}
-.addf{margin-top:12px;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:11px}
-.addf-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t2);margin-bottom:9px}
-.addf-types{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap}
-.tchip{border:1px solid var(--bd2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
-.tchip.on{background:var(--go);border-color:var(--go-d);color:var(--br)}
-.addf textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:48px;margin-bottom:8px}
-.addf-ft{display:flex;align-items:center;gap:9px}
-.addf-ft input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
-.addf-ft .sp{flex:1}
+/* ── filone comunicazioni RDO (chat di mail) ── */
+.thread{margin-bottom:16px}
+.thwait{display:flex;align-items:center;gap:8px;background:#FDEDED;border:1px solid #F3C6C6;color:#B01515;font-weight:700;font-size:11.5px;padding:8px 12px;border-radius:9px;margin-bottom:14px}
+.thwait .sp{flex:1}
+.tmsg{display:flex;gap:9px;margin-bottom:13px;align-items:flex-start}
+.tmsg.out{flex-direction:row-reverse}
+.tmsg .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0}
+.tmsg.out .av{background:var(--go);color:var(--br)}
+.tmsg.in .av{background:#E4E0F5;color:#4A3F8C}
+.tmsg .sysico{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:var(--t3)}
+.bubble{max-width:min(560px,82%);border-radius:14px;padding:10px 13px;box-shadow:var(--sh)}
+.tmsg.out .bubble{background:linear-gradient(135deg,#FFF6E4,#FFFDF8);border:1px solid var(--go-d);border-top-right-radius:4px}
+.tmsg.in .bubble{background:var(--surf);border:1px solid var(--bd2);border-top-left-radius:4px}
+.tmsg.sys .bubble{background:#FBF7F2;border:1px solid var(--bd);box-shadow:none;max-width:min(500px,82%)}
+.bubble.sim{border-style:dashed}
+.b-hd{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:10.5px;color:var(--t2);font-weight:700;flex-wrap:wrap}
+.b-hd .who{color:var(--t1)}
+.b-hd .tag{font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em}
+.b-hd .tag.lock{background:rgba(52,199,89,.16);color:#1A7A2E}
+.b-hd .tag.sim{background:#EFE9FF;color:#5856D6}
+.b-hd .tag.az{background:rgba(245,168,35,.18);color:var(--go-d)}
+.b-hd .sp{flex:1}
+.b-dest{font-size:10px;color:var(--t3);margin-bottom:5px}
+.b-title{font-weight:800;font-size:12.5px;margin-bottom:3px}
+.b-txt{font-size:12px;line-height:1.5;color:var(--t1);white-space:pre-line}
+.b-meta{margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,0,0,.06);font-size:10px;color:var(--t3);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.b-meta a{color:var(--t2);font-weight:700;text-decoration:none;cursor:pointer}
+.b-meta a:hover{text-decoration:underline}
+.b-del{cursor:pointer;color:var(--t3)}
+.b-del:hover{color:var(--red)}
+
+.thqa{margin-bottom:14px}
+.thqa summary{list-style:none;cursor:pointer;font-size:11px;font-weight:700;color:var(--t2);padding:4px 0}
+.thqa summary::-webkit-details-marker{display:none}
+.thqa summary::before{content:'+ ';color:var(--go-d);font-weight:800}
+.thqa-body{background:#FBF7F2;border:1px solid var(--bd);border-radius:10px;padding:11px;margin-top:8px}
+.thqa-types{display:flex;gap:6px;margin-bottom:9px}
+.thqa textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:44px;margin-bottom:8px}
+.thqa .row{display:flex;gap:8px;margin-bottom:8px}
+.thqa input[type=text],.thqa input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit}
+.thqa input[type=text]{flex:1}
+
+.compose{background:var(--surf);border:1.5px solid var(--go-d);border-radius:var(--r);padding:13px 15px;box-shadow:var(--shd)}
+.compose-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t2);margin-bottom:9px}
+.rtypes{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap}
+.rchip{border:1px solid var(--bd2);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
+.rchip.on{background:var(--go);border-color:var(--go-d);color:var(--br)}
+.compose textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:56px;margin-bottom:9px}
+.compose .destrow{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+.compose .destrow label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:2px}
+.compose .destrow input{width:100%;border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
+.compose .destrow .fld{flex:1;min-width:140px}
+.compose-ft{display:flex;align-items:center;gap:9px}
+.compose-ft .sp{flex:1}
 .ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
 .ct-badge.warn{color:#B01515;font-weight:800}
 /* opzioni RDO (condizioni di fornitura) */
@@ -1152,7 +1182,7 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="sb-sec">Principale</div>
     <div class="ni on" data-v="dash" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
     <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
-    <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>RDO</div>
+    <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Comunicazioni</div>
     <div class="ni" data-v="costi" onclick="go('costi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi</div>
     <div class="ni" data-v="forn" onclick="go('forn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Fornitori</div>
     <div class="ni" data-v="avvisi" onclick="go('avvisi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Avvisi<span class="ni-badge" id="navAvvisiBadge" style="display:none">0</span></div>
@@ -1255,7 +1285,7 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center;gap:6px"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <button class="hb" id="rdoBack" style="display:none" onclick="rdoBack()" title="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <div><div class="h1" id="rdoH1" style="font-size:15px">Richieste d'Offerta</div><div class="vsub" id="rdoVsub">Seleziona una commessa per preparare le RDO</div></div></div>
+      <div><div class="h1" id="rdoH1" style="font-size:15px">Comunicazioni</div><div class="vsub" id="rdoVsub">Seleziona una commessa per il filone comunicazioni coi fornitori</div></div></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-ghost" id="rdoBtnShip" onclick="rdoGoShip()" title="Pannello unico: stato e invio delle RDO">📤 Spedizione</button>
         <button class="btn btn-aggiorna" id="rdoBtnSync" onclick="rdoAggiornaTutte()" title="Rigenera distinta, allegati e testo mail di TUTTE le RDO dai dati di progetto">🔄 Aggiorna tutte</button>
@@ -3775,9 +3805,9 @@ function renderRdoView(){
   ['rdoList','rdoWork','rdoEdit','rdoShip'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('rdoBack').style.display=RV.mode==='list'?'none':'inline-flex';
   document.getElementById('rdoBtnShip').style.display=RV.mode==='list'?'inline-flex':'none';
-  if(RV.mode==='list'){document.getElementById('rdoList').style.display='block';setRdoHdr("Richieste d'Offerta","Seleziona una commessa per preparare le RDO");rdoRenderList();}
+  if(RV.mode==='list'){document.getElementById('rdoList').style.display='block';setRdoHdr("Comunicazioni","Seleziona una commessa per il filone comunicazioni coi fornitori");rdoRenderList();}
   else if(RV.mode==='work'){document.getElementById('rdoWork').style.display='block';rdoRenderWork();}
-  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';setRdoHdr("Richieste d'Offerta","Scegli una RDO dall'elenco a sinistra e modificala — cambio al volo");}
+  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';setRdoHdr("Comunicazioni","Scegli un fornitore dall'elenco a sinistra per vedere il filone — cambio al volo");}
   else if(RV.mode==='ship'){document.getElementById('rdoShip').style.display='block';setRdoHdr('Spedizione RDO','Stato di tutte le richieste — invia le approvate (anche più insieme)');rdoRenderShip();}
 }
 // Aggiorna TUTTE le RDO (permanente, in alto a dx): rigenera distinta+allegati+mail dal progetto
@@ -4080,9 +4110,15 @@ function ctxFornCard(e,fid){const f=fornitori.find(x=>x.id==fid);if(!f)return;
 ]);}
 
 let DD=null, DDLIST=[];
-let COMM_TIPO='mail_ricevuta';
-const COMM_ICO={mail_inviata:'📧',mail_ricevuta:'📩',telefonata:'📞',nota:'📝'};
-const COMM_LBL={mail_inviata:'Mail inviata',mail_ricevuta:'Mail ricevuta',telefonata:'Telefonata',nota:'Nota'};
+// tipologie di risposta rapida nel compose del filone (mail_inviata + azione, tranne 'nota' = tipo=nota)
+const RTYPES=[
+  {key:'conferma',ico:'✅',lbl:'Confermo ordine',sugg:"Confermiamo l'ordine come da Vs. offerta."},
+  {key:'chiarimento',ico:'❓',lbl:'Chiedo chiarimento',sugg:''},
+  {key:'rifiuto',ico:'🚫',lbl:'Rifiuto offerta',sugg:'Non procediamo con questa offerta, grazie comunque per la disponibilità.'},
+  {key:'nota',ico:'📝',lbl:'Nota libera',sugg:''},
+];
+let TH_RTYPE='chiarimento';    // chip attivo nel compose "Rispondi"
+let TH_QATIPO='mail_ricevuta'; // tipo attivo nel quick-add "Comunicazione ricevuta"
 async function loadDdList(){try{const r=await fetch(API+'/api/rdo-list');DDLIST=r.ok?await r.json():[];}catch{DDLIST=[];}renderDdList();}
 function renderDdList(){
   const cntEl=document.getElementById('ddCnt');if(!cntEl)return; // lista rimossa: il pannello Spedizione la sostituisce
@@ -4102,7 +4138,7 @@ function renderDdList(){
   document.getElementById('ddList').innerHTML=h||'<div class="dd-empty">Nessuna distinta: assegna prima i fornitori ai pezzi.</div>';
 }
 async function openDd(cid,fid){
-  DD={cid,fid};S.projId=cid;COMM_TIPO='mail_ricevuta';
+  DD={cid,fid};S.projId=cid;TH_RTYPE='chiarimento';TH_QATIPO='mail_ricevuta';
   // assicura le parti della commessa (servono per anteprime PDF + disegni allegati)
   const _c=commesse.find(x=>x.id===cid);
   if(_c&&!_c._parti){try{const rp=await fetch(API+`/api/commesse/${cid}/parti`);if(rp.ok)_c._parti=await rp.json();}catch{}}
@@ -4115,57 +4151,161 @@ async function openDd(cid,fid){
 async function ddLoadEventi(){
   try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/eventi`);DD.eventi=r.ok?await r.json():[];}catch{DD.eventi=[];}
 }
-function commHtml(d){
-  const evs=(DD.eventi||[]).slice().sort((a,b)=>new Date(a.data)-new Date(b.data));
-  const rows=evs.map(e=>{
-    const dt=new Date(e.data+'Z').toLocaleDateString('it-IT');
-    return `<div class="tl-row">
-      <div class="tl-ico">${COMM_ICO[e.tipo]||'📝'}</div>
-      <div class="tl-date">${dt}</div>
-      <div class="tl-txt"><span class="tl-tag">${COMM_LBL[e.tipo]||e.tipo}</span>${esc(e.testo||'')}</div>
-      <div class="tl-del" onclick="commDelete(${e.id})" title="Elimina">🗑</div>
-    </div>`;
-  }).join('');
-  const chips=['mail_inviata','mail_ricevuta','telefonata','nota'].map(t=>
-    `<div class="tchip${COMM_TIPO===t?' on':''}" onclick="commSetTipo('${t}')">${COMM_ICO[t]} ${COMM_LBL[t]}</div>`
-  ).join('');
-  const today=new Date().toISOString().slice(0,10);
-  return `<div class="comm">
-    <div class="comm-hd"><span class="ico">💬</span><h2>Comunicazioni</h2></div>
-    <div class="comm-body">
-      <div class="mailto-row"><a class="btn btn-go" href="#" onclick="ddMailto();return false">✉️ Apri mail per ${esc(d.fornitore_nome)}</a></div>
-      <div class="tl">${rows||'<div class="fmuted" style="font-size:11.5px;padding:8px 2px">Nessun evento ancora. La mail di invio comparirà qui da sola.</div>'}</div>
-      <div class="addf">
-        <div class="addf-tit">+ Aggiungi evento</div>
-        <div class="addf-types">${chips}</div>
-        <textarea id="commTxt" placeholder="Cosa è successo?"></textarea>
-        <div class="addf-ft"><input type="date" id="commData" value="${today}"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="commSalva()">Salva</button></div>
+function thSnippet(t){t=(t||'').trim();return t.length>160?t.slice(0,160)+'…':t;}
+function thDestRow(e){
+  const parts=[];
+  if(e.email_to&&e.email_to.length)parts.push('A: '+e.email_to.join(', '));
+  if(e.email_cc&&e.email_cc.length)parts.push('CC: '+e.email_cc.join(', '));
+  if(e.email_ccn&&e.email_ccn.length)parts.push('CCN: '+e.email_ccn.join(', '));
+  return parts.length?`<div class="b-dest">${esc(parts.join(' · '))}</div>`:'';
+}
+function thBubble(d,e){
+  const dt=new Date(e.data+'Z').toLocaleDateString('it-IT');
+  const del=`<span class="b-del" onclick="thDelete(${e.id})" title="Elimina">🗑</span>`;
+  const brand=d.brand==='YS'?'YuBe Solutions':'IB Motion';
+  if(e.is_rdo_ufficiale){
+    const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=`;
+    return `<div class="tmsg out">
+      <div class="av">IB</div>
+      <div class="bubble">
+        <div class="b-hd"><span class="who">${esc(brand)} → ${esc(d.fornitore_nome)}</span><span class="tag lock">🔒 RDO ufficiale · ${esc(d.codice_rev||d.codice_rdo||'')}</span><span class="sp"></span><span>${dt}</span></div>
+        ${thDestRow(e)}
+        <div class="b-txt" id="thRdoTxt" data-full="${esc(e.testo||'')}">${esc(thSnippet(e.testo))}</div>
+        <div class="b-meta"><span>📎 ${d.n_files_pdf||0} disegni · distinta</span><a onclick="thToggleRdo(this)">${(e.testo||'').length>160?'Vedi mail completa ↓':''}</a><a onclick="window.open('${exportUrl}pdf','_blank')">PDF ↗</a><a onclick="window.open('${exportUrl}xlsx','_blank')">Excel ↗</a></div>
       </div>
+    </div>`;
+  }
+  if(e.tipo==='mail_inviata'){
+    const azi=RTYPES.find(r=>r.key===e.azione);
+    return `<div class="tmsg out">
+      <div class="av">IB</div>
+      <div class="bubble">
+        <div class="b-hd"><span class="who">${esc(brand)} → ${esc(d.fornitore_nome)}</span>${azi?`<span class="tag az">${azi.ico} ${esc(azi.lbl)}</span>`:''}<span class="sp"></span><span>${dt}</span>${del}</div>
+        ${thDestRow(e)}
+        <div class="b-txt">${esc(e.testo||'')}</div>
+      </div>
+    </div>`;
+  }
+  if(e.tipo==='mail_ricevuta'){
+    return `<div class="tmsg in">
+      <div class="av">${ini(d.fornitore_nome)}</div>
+      <div class="bubble sim">
+        <div class="b-hd"><span class="who">${esc(e.email_da||d.fornitore_nome)}</span><span class="tag sim">✎ simulata</span><span class="sp"></span><span>${dt}</span>${del}</div>
+        <div class="b-txt">${esc(e.testo||'')}</div>
+      </div>
+    </div>`;
+  }
+  // telefonata / nota: NON sono mail, riga semplice senza destinatari/mittente
+  const ico=e.tipo==='telefonata'?'📞':'📝';
+  return `<div class="tmsg sys">
+    <div class="sysico">${ico}</div>
+    <div class="bubble">
+      <div class="b-hd"><span class="who">${e.tipo==='telefonata'?'Telefonata':'Nota'}</span><span class="sp"></span><span>${dt}</span>${del}</div>
+      <div class="b-txt">${esc(e.testo||'')}</div>
     </div>
   </div>`;
 }
-function commSetTipo(t){
-  COMM_TIPO=t;
-  const chips=document.querySelectorAll('.addf-types .tchip');
-  const order=['mail_inviata','mail_ricevuta','telefonata','nota'];
-  chips.forEach((el,i)=>el.classList.toggle('on',order[i]===t));
+function thToggleRdo(el){
+  const box=document.getElementById('thRdoTxt');
+  const full=box.dataset.full||'';
+  const open=el.textContent.indexOf('Nascondi')===0;
+  box.textContent=open?thSnippet(full):full;
+  el.textContent=open?'Vedi mail completa ↓':'Nascondi ↑';
 }
-async function commSalva(){
-  const txtEl=document.getElementById('commTxt');
-  const testo=(txtEl.value||'').trim();
-  const data=document.getElementById('commData').value;
+function threadHtml(d){
+  const evs=(DD.eventi||[]).slice().sort((a,b)=>new Date(a.data)-new Date(b.data));
+  const bubbles=evs.map(e=>thBubble(d,e)).join('');
+  const wait=d.in_attesa_risposta?`<div class="thwait">⚠ In attesa di risposta da ${d.giorni_da_ultimo_contatto} giorni<span class="sp"></span>soglia: 5 giorni</div>`:'';
+  return `<div class="thread">
+    ${wait}
+    ${bubbles||'<div class="fmuted" style="font-size:11.5px;padding:8px 2px">Il filone comincia con l\'invio della RDO ufficiale.</div>'}
+    ${thQuickAddHtml(d)}
+    ${thComposeHtml(d)}
+  </div>`;
+}
+function thQuickAddHtml(d){
+  const today=new Date().toISOString().slice(0,10);
+  return `<details class="thqa">
+    <summary>Comunicazione ricevuta (simulata)</summary>
+    <div class="thqa-body">
+      <div class="thqa-types">
+        <div class="rchip on" data-qt="mail_ricevuta" onclick="thQaSetTipo('mail_ricevuta')">📩 Mail ricevuta</div>
+        <div class="rchip" data-qt="telefonata" onclick="thQaSetTipo('telefonata')">📞 Telefonata</div>
+      </div>
+      <div class="row" id="thQaDaRow"><input type="text" id="thQaDa" placeholder="Da (nome/mail mittente)" value="${esc(d.fornitore_nome)}"></div>
+      <textarea id="thQaTxt" placeholder="Cosa ha detto/scritto il fornitore?"></textarea>
+      <div class="row"><input type="date" id="thQaData" value="${today}"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thQaSalva()">Salva</button></div>
+    </div>
+  </details>`;
+}
+function thQaSetTipo(t){
+  TH_QATIPO=t;
+  document.querySelectorAll('.thqa-types .rchip').forEach(el=>el.classList.toggle('on',el.dataset.qt===t));
+  document.getElementById('thQaDaRow').style.display=t==='telefonata'?'none':'flex';
+}
+async function thQaSalva(){
+  const testo=(document.getElementById('thQaTxt').value||'').trim();
+  const data=document.getElementById('thQaData').value;
   if(!testo){toast('Scrivi cosa è successo',true);return;}
+  const payload={tipo:TH_QATIPO,testo,data};
+  if(TH_QATIPO==='mail_ricevuta')payload.email_da=(document.getElementById('thQaDa').value||'').trim()||DD.data.fornitore_nome;
+  await thSalvaEvento(payload);
+}
+function thComposeHtml(d){
+  const chips=RTYPES.map(r=>`<div class="rchip${TH_RTYPE===r.key?' on':''}" data-rt="${r.key}" onclick="thSetRtype('${r.key}')">${r.ico} ${esc(r.lbl)}</div>`).join('');
+  const to=(d.emails_to||[]).join(', '), cc=(d.emails_cc||[]).join(', '), ccn=(d.emails_ccn||[]).join(', ');
+  const showDest=TH_RTYPE!=='nota';
+  const sugg=(RTYPES.find(r=>r.key===TH_RTYPE)||{}).sugg||'';
+  return `<div class="compose">
+    <div class="compose-tit">Rispondi a ${esc(d.fornitore_nome)}</div>
+    <div class="rtypes">${chips}</div>
+    <div class="destrow" id="thDestRow" style="${showDest?'':'display:none'}">
+      <div class="fld"><label>A</label><input type="text" id="thTo" value="${esc(to)}"></div>
+      <div class="fld"><label>CC</label><input type="text" id="thCc" value="${esc(cc)}"></div>
+      <div class="fld"><label>CCN</label><input type="text" id="thCcn" value="${esc(ccn)}"></div>
+    </div>
+    <textarea id="thTxt" placeholder="Scrivi la risposta…">${esc(sugg)}</textarea>
+    <div class="compose-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thInvia()">${showDest?'✉️ Apri mail e segna come inviata':'📝 Salva nota'}</button></div>
+  </div>`;
+}
+function thSetRtype(key){
+  TH_RTYPE=key;
+  document.querySelectorAll('.compose .rchip').forEach(el=>el.classList.toggle('on',el.dataset.rt===key));
+  const r=RTYPES.find(x=>x.key===key);
+  document.getElementById('thTxt').value=r.sugg||'';
+  const show=key!=='nota';
+  document.getElementById('thDestRow').style.display=show?'flex':'none';
+  document.querySelector('.compose-ft button').textContent=show?'✉️ Apri mail e segna come inviata':'📝 Salva nota';
+}
+function splitEmails(s){return (s||'').split(/[,;]/).map(x=>x.trim()).filter(Boolean);}
+async function thInvia(){
+  const testo=(document.getElementById('thTxt').value||'').trim();
+  if(!testo){toast('Scrivi la risposta',true);return;}
+  const d=DD.data;
+  if(TH_RTYPE==='nota'){await thSalvaEvento({tipo:'nota',testo});return;}
+  const to=splitEmails(document.getElementById('thTo').value);
+  const cc=splitEmails(document.getElementById('thCc').value);
+  const ccn=splitEmails(document.getElementById('thCcn').value);
+  const ok=await thSalvaEvento({tipo:'mail_inviata',testo,azione:TH_RTYPE,email_to:to,email_cc:cc,email_ccn:ccn});
+  if(ok){
+    const subj=encodeURIComponent('Re: RDO '+(d.codice_rev||d.codice_rdo||'')+' - '+(d.commessa_codice||''));
+    let url='mailto:'+to.join(',')+'?subject='+subj;
+    if(cc.length)url+='&cc='+cc.join(',');
+    window.location.href=url;
+  }
+}
+async function thSalvaEvento(payload){
   try{
-    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/eventi`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({tipo:COMM_TIPO,testo,data})});
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/eventi`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!r.ok)throw 0;
     await ddLoadEventi();
     renderDdEditor(DD.data);
     await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();
-    toast('Evento registrato','ok');
-  }catch{toast('Errore salvataggio',true);}
+    toast('Registrato','ok');
+    return true;
+  }catch{toast('Errore salvataggio',true);return false;}
 }
-async function commDelete(id){
+async function thDelete(id){
   if(!confirm('Eliminare questo evento?'))return;
   try{
     await fetch(API+'/api/eventi/'+id,{method:'DELETE'});
@@ -4173,15 +4313,6 @@ async function commDelete(id){
     renderDdEditor(DD.data);
     await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();
   }catch{toast('Errore',true);}
-}
-function ddMailto(){
-  const d=DD.data;
-  const to=(d.emails_to||[]).join(',');
-  const cc=(d.emails_cc||[]).join(',');
-  const subj=encodeURIComponent('Re: RDO '+(d.codice_rev||d.codice_rdo||'')+' - '+(d.commessa_codice||''));
-  let url='mailto:'+to+'?subject='+subj;
-  if(cc)url+='&cc='+cc;
-  window.location.href=url;
 }
 function ddCols(d){
   if(d.tipo_distinta==='commerciale')return [['qta','Q.tà'],['codice','Codice produttore'],['descrizione','Descrizione'],['fornitore','Fornitore']];
@@ -4283,7 +4414,7 @@ function renderDdEditor(d){
       <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}"${disAttr} onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}"${disAttr} onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
     <div class="dd-body">
-      <div class="dd-split">
+      ${bloccata?'':`<div class="dd-split">
         <div class="dd-mailcol">
           <div class="dd-sec">Mail RDO</div>
           ${bloccata?`<div class="dd-lockbanner">🔒 RDO inviata — <b>Rev ${rev2(rev)}</b>. È immodificabile: per cambiarla apri una <b>nuova revisione</b> (in fondo).</div>`:''}
@@ -4316,8 +4447,8 @@ function renderDdEditor(d){
           <div class="dd-prevhd">Anteprima distinta <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna</span> <span class="lnk" onclick="window.open('${exportUrl}','_blank')">apri ↗</span></div>
           <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
         </div>
-      </div>
-      ${commHtml(d)}
+      </div>`}
+      ${threadHtml(d)}
       <details class="dd-coll">
         <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
         <div class="dd-collbody">
