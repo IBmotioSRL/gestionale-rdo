@@ -452,7 +452,6 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .bubble.chat{max-width:min(480px,78%);border-radius:16px;padding:8px 12px 6px;box-shadow:var(--sh)}
 .tmsg.out .bubble.chat{background:linear-gradient(135deg,#FFF3D6,#FFEAB8);border:1px solid var(--go-d);border-bottom-right-radius:4px}
 .tmsg.in .bubble.chat{background:var(--surf);border:1px solid var(--bd2);border-bottom-left-radius:4px}
-.bubble.chat.sim{border-style:dashed}
 .chat-txt{font-size:12.5px;line-height:1.45;color:var(--t1);white-space:pre-line}
 .chat-meta{display:flex;align-items:center;gap:6px;margin-top:3px;justify-content:flex-end}
 .chat-time{font-size:9.5px;color:var(--t3)}
@@ -468,11 +467,9 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .thqa summary::-webkit-details-marker{display:none}
 .thqa summary::before{content:'+ ';color:var(--go-d);font-weight:800}
 .thqa-body{background:#FBF7F2;border:1px solid var(--bd);border-radius:10px;padding:11px;margin-top:8px}
-.thqa-types{display:flex;gap:6px;margin-bottom:9px}
 .thqa textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:44px;margin-bottom:8px}
 .thqa .row{display:flex;gap:8px;margin-bottom:8px}
-.thqa input[type=text],.thqa input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit}
-.thqa input[type=text]{flex:1}
+.thqa input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit}
 
 .compose{background:var(--surf);border:1.5px solid var(--go-d);border-radius:var(--r);padding:13px 15px;box-shadow:var(--shd)}
 .compose-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t2);margin-bottom:9px}
@@ -4126,7 +4123,6 @@ const RTYPES=[
   {key:'nota',ico:'📝',lbl:'Nota libera',sugg:''},
 ];
 let TH_RTYPE='chiarimento';    // chip attivo nel compose "Rispondi"
-let TH_QATIPO='mail_ricevuta'; // tipo attivo nel quick-add "Comunicazione ricevuta"
 async function loadDdList(){try{const r=await fetch(API+'/api/rdo-list');DDLIST=r.ok?await r.json():[];}catch{DDLIST=[];}renderDdList();}
 function renderDdList(){
   const cntEl=document.getElementById('ddCnt');if(!cntEl)return; // lista rimossa: il pannello Spedizione la sostituisce
@@ -4146,7 +4142,7 @@ function renderDdList(){
   document.getElementById('ddList').innerHTML=h||'<div class="dd-empty">Nessuna distinta: assegna prima i fornitori ai pezzi.</div>';
 }
 async function openDd(cid,fid){
-  DD={cid,fid};S.projId=cid;TH_RTYPE='chiarimento';TH_QATIPO='mail_ricevuta';
+  DD={cid,fid};S.projId=cid;TH_RTYPE='chiarimento';
   // assicura le parti della commessa (servono per anteprime PDF + disegni allegati)
   const _c=commesse.find(x=>x.id===cid);
   if(_c&&!_c._parti){try{const rp=await fetch(API+`/api/commesse/${cid}/parti`);if(rp.ok)_c._parti=await rp.json();}catch{}}
@@ -4197,10 +4193,11 @@ function thBubble(d,e){
     </div>`;
   }
   if(e.tipo==='mail_ricevuta'){
+    // popolata solo dall'integrazione mail automatica (Graph), non più simulabile a mano
     return `<div class="tmsg in">
-      <div class="bubble chat sim">
+      <div class="bubble chat">
         <div class="chat-txt">${esc(e.testo||'')}</div>
-        <div class="chat-meta"><span class="chat-ico" title="Simulata a mano — in attesa dell'integrazione mail automatica">✎</span><span class="chat-time">${time}</span>${del}</div>
+        <div class="chat-meta"><span class="chat-time">${time}</span>${del}</div>
       </div>
     </div>`;
   }
@@ -4231,30 +4228,18 @@ function threadHtml(d){
 function thQuickAddHtml(d){
   const today=new Date().toISOString().slice(0,10);
   return `<details class="thqa">
-    <summary>Comunicazione ricevuta (simulata)</summary>
+    <summary>Registra telefonata</summary>
     <div class="thqa-body">
-      <div class="thqa-types">
-        <div class="rchip on" data-qt="mail_ricevuta" onclick="thQaSetTipo('mail_ricevuta')">📩 Mail ricevuta</div>
-        <div class="rchip" data-qt="telefonata" onclick="thQaSetTipo('telefonata')">📞 Telefonata</div>
-      </div>
-      <div class="row" id="thQaDaRow"><input type="text" id="thQaDa" placeholder="Da (nome/mail mittente)" value="${esc(d.fornitore_nome)}"></div>
-      <textarea id="thQaTxt" placeholder="Cosa ha detto/scritto il fornitore?"></textarea>
+      <textarea id="thQaTxt" placeholder="Cosa vi siete detti?"></textarea>
       <div class="row"><input type="date" id="thQaData" value="${today}"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thQaSalva()">Salva</button></div>
     </div>
   </details>`;
-}
-function thQaSetTipo(t){
-  TH_QATIPO=t;
-  document.querySelectorAll('.thqa-types .rchip').forEach(el=>el.classList.toggle('on',el.dataset.qt===t));
-  document.getElementById('thQaDaRow').style.display=t==='telefonata'?'none':'flex';
 }
 async function thQaSalva(){
   const testo=(document.getElementById('thQaTxt').value||'').trim();
   const data=document.getElementById('thQaData').value;
   if(!testo){toast('Scrivi cosa è successo',true);return;}
-  const payload={tipo:TH_QATIPO,testo,data};
-  if(TH_QATIPO==='mail_ricevuta')payload.email_da=(document.getElementById('thQaDa').value||'').trim()||DD.data.fornitore_nome;
-  await thSalvaEvento(payload);
+  await thSalvaEvento({tipo:'telefonata',testo,data});
 }
 function thComposeHtml(d){
   const chips=RTYPES.map(r=>`<div class="rchip${TH_RTYPE===r.key?' on':''}" data-rt="${r.key}" onclick="thSetRtype('${r.key}')">${r.ico} ${esc(r.lbl)}</div>`).join('');
