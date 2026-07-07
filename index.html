@@ -471,21 +471,25 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .thqa .row{display:flex;gap:8px;margin-bottom:8px}
 .thqa input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit}
 
-.compose{background:var(--surf);border:1.5px solid var(--go-d);border-radius:var(--r);padding:13px 15px;box-shadow:var(--shd)}
-.compose-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t2);margin-bottom:9px}
+/* zona di risposta: pannello a sé, sfondo diverso dalla cronologia — più "messaggistica",
+   meno documento ufficiale (quello resta sopra, nella card dorata) */
+.reply-zone{background:#EAF3FB;border:1px solid #D2E4F2;border-radius:var(--r);padding:14px 16px;margin-top:14px;box-shadow:0 2px 12px rgba(20,60,90,.06)}
+.compose{background:transparent;border:none;box-shadow:none;padding:0}
+.compose-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#3A6E96;margin-bottom:9px}
 .rtypes{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap}
-.rchip{border:1px solid var(--bd2);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
-.rchip.on{background:var(--go);border-color:var(--go-d);color:var(--br)}
-.compose textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:56px;margin-bottom:9px}
+.rchip{border:1px solid #C7DCEC;border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
+.rchip.on{background:var(--blue);border-color:#0064D6;color:#fff}
+.compose textarea{width:100%;border:1px solid #C7DCEC;border-radius:10px;padding:9px 11px;font-size:12.5px;font-family:inherit;resize:vertical;min-height:56px;margin-bottom:9px;background:var(--surf)}
 .thdest{margin-bottom:9px}
-.thdest summary{list-style:none;cursor:pointer;font-size:10px;font-weight:700;color:var(--t3)}
+.thdest summary{list-style:none;cursor:pointer;font-size:10px;font-weight:700;color:#5F87A8}
 .thdest summary::-webkit-details-marker{display:none}
 .thdest .destrow{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.thdest .destrow label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:2px}
-.thdest .destrow input{width:100%;border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
+.thdest .destrow label{font-size:9px;font-weight:800;text-transform:uppercase;color:#5F87A8;display:block;margin-bottom:2px}
+.thdest .destrow input{width:100%;border:1px solid #C7DCEC;border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
 .thdest .destrow .fld{flex:1;min-width:140px}
 .compose-ft{display:flex;align-items:center;gap:9px}
 .compose-ft .sp{flex:1}
+.reply-zone .btn-go{background:var(--blue);border-color:#0064D6;color:#fff;box-shadow:0 2px 7px rgba(0,122,255,.25)}
 .ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
 .ct-badge.warn{color:#B01515;font-weight:800}
 /* opzioni RDO (condizioni di fornitura) */
@@ -4249,10 +4253,14 @@ function threadHtml(d){
   const evs=(DD.eventi||[]).slice().sort((a,b)=>new Date(a.data)-new Date(b.data));
   const bubbles=evs.map(e=>thBubble(d,e)).join('');
   const wait=d.in_attesa_risposta?`<div class="thwait">⚠ In attesa di risposta da ${d.giorni_da_ultimo_contatto} giorni<span class="sp"></span>soglia: 5 giorni</div>`:'';
+  // due zone distinte, come una chat: cronologia sopra (sfondo pagina), risposta/allegati
+  // sotto in un pannello con sfondo diverso — più "messaggistica", meno documento ufficiale.
   return `<div class="thread">
     ${wait}
     ${bubbles||'<div class="fmuted" style="font-size:11.5px;padding:8px 2px">Il filone comincia con l\'invio della RDO ufficiale.</div>'}
     ${thQuickAddHtml(d)}
+  </div>
+  <div class="reply-zone">
     ${thComposeHtml(d)}
   </div>`;
 }
