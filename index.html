@@ -4498,9 +4498,17 @@ function ddDisegniFiles(d,righeOverride){
   if(d.tipo_distinta==='commerciale'&&!allow.includes('pdf'))allow.push('pdf'); // i datasheet sono PDF
   // righeOverride: distinta CONGELATA di una revisione storica (già filtrata su incl=true dal backend)
   const righe=righeOverride||d.righe||[];
-  const incl=new Set(righe.filter(r=>righeOverride?r.parte_id:(r.incl!==false&&r.parte_id)).map(r=>r.parte_id));
-  const out=[];
-  parti.filter(p=>incl.has(p.id)).forEach(p=>{
+  const rows=righe.filter(r=>righeOverride?r.parte_id:(r.incl!==false&&r.parte_id));
+  const byId={};parti.forEach(p=>byId[p.id]=p);
+  const byCod={};parti.forEach(p=>{if(p.numero_parte)byCod[p.numero_parte]=p;});
+  const out=[];const seen=new Set();
+  rows.forEach(r=>{
+    // il parte_id di uno snapshot storico può puntare a un id non più esistente (una
+    // riscansione può rigenerare gli id delle parti): il CODICE resta l'identità stabile,
+    // si usa come riserva quando l'id diretto non trova nulla.
+    const p=byId[r.parte_id]||(r.codice&&byCod[r.codice]);
+    if(!p||seen.has(p.id))return;
+    seen.add(p.id);
     pFiles(p).forEach(path=>{const ext=fileExt(path);if(allow.includes(ext))out.push({path,cod:p.numero_parte,den:p.denominazione,ext});});
   });
   return out;
