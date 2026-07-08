@@ -462,34 +462,21 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .sysrow{display:flex;align-items:center;gap:7px;background:#FBF7F2;border:1px solid var(--bd);border-radius:20px;padding:6px 14px;font-size:11px;color:var(--t2);max-width:min(500px,82%)}
 .sys-txt{flex:1}
 
-.thqa{margin-bottom:14px}
-.thqa summary{list-style:none;cursor:pointer;font-size:11px;font-weight:700;color:var(--t2);padding:4px 0}
-.thqa summary::-webkit-details-marker{display:none}
-.thqa summary::before{content:'+ ';color:var(--go-d);font-weight:800}
-.thqa-body{background:#FBF7F2;border:1px solid var(--bd);border-radius:10px;padding:11px;margin-top:8px}
-.thqa textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:44px;margin-bottom:8px}
-.thqa .row{display:flex;gap:8px;margin-bottom:8px}
-.thqa input[type=date]{border:1px solid var(--bd);border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit}
+/* cronologia: filigrana del logo, come lo sfondo di una chat */
+.thread{position:relative}
+.thread-wm{position:absolute;inset:0;background-repeat:repeat;background-size:130px;opacity:.05;filter:blur(.3px);pointer-events:none;z-index:0;border-radius:10px}
+.thread-content{position:relative;z-index:1}
 
-/* zona di risposta: pannello a sé, sfondo diverso dalla cronologia — più "messaggistica",
-   meno documento ufficiale (quello resta sopra, nella card dorata) */
-.reply-zone{background:#EAF3FB;border:1px solid #D2E4F2;border-radius:var(--r);padding:14px 16px;margin-top:14px;box-shadow:0 2px 12px rgba(20,60,90,.06)}
-.compose{background:transparent;border:none;box-shadow:none;padding:0}
-.compose-tit{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#3A6E96;margin-bottom:9px}
-.rtypes{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap}
-.rchip{border:1px solid #C7DCEC;border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf);color:var(--t2)}
-.rchip.on{background:var(--blue);border-color:#0064D6;color:#fff}
-.compose textarea{width:100%;border:1px solid #C7DCEC;border-radius:10px;padding:9px 11px;font-size:12.5px;font-family:inherit;resize:vertical;min-height:56px;margin-bottom:9px;background:var(--surf)}
-.thdest{margin-bottom:9px}
-.thdest summary{list-style:none;cursor:pointer;font-size:10px;font-weight:700;color:#5F87A8}
-.thdest summary::-webkit-details-marker{display:none}
-.thdest .destrow{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.thdest .destrow label{font-size:9px;font-weight:800;text-transform:uppercase;color:#5F87A8;display:block;margin-bottom:2px}
-.thdest .destrow input{width:100%;border:1px solid #C7DCEC;border-radius:8px;padding:6px 8px;font-size:11.5px;font-family:inherit}
-.thdest .destrow .fld{flex:1;min-width:140px}
-.compose-ft{display:flex;align-items:center;gap:9px}
-.compose-ft .sp{flex:1}
-.reply-zone .btn-go{background:var(--blue);border-color:#0064D6;color:#fff;box-shadow:0 2px 7px rgba(0,122,255,.25)}
+/* zona di risposta: barra unica, come una app di messaggistica — niente preset,
+   niente destinatari da scegliere: solo testo + allegato + telefonata + invio */
+.reply-zone{background:#EAF3FB;border:1px solid #D2E4F2;border-radius:var(--r);padding:12px 14px;margin-top:14px;box-shadow:0 2px 12px rgba(20,60,90,.06)}
+.compose-bar{display:flex;align-items:flex-end;gap:8px}
+.compose-bar textarea{flex:1;border:1px solid #C7DCEC;border-radius:20px;padding:9px 15px;font-size:12.5px;font-family:inherit;resize:none;max-height:120px;min-height:20px;background:var(--surf);line-height:1.4;overflow:hidden}
+.cb-ic{flex-shrink:0;width:36px;height:36px;border-radius:50%;border:1px solid #C7DCEC;background:var(--surf);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#3A6E96}
+.cb-ic:hover{background:#DCEBF7}
+.cb-send{flex-shrink:0;width:38px;height:38px;border-radius:50%;border:none;background:var(--blue);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 7px rgba(0,122,255,.3)}
+.cb-send:hover{filter:brightness(1.06)}
+.compose-sig{margin-top:8px;padding:8px 11px;background:rgba(255,255,255,.55);border-radius:8px;font-size:10px;color:#5F87A8;white-space:pre-line;line-height:1.5;border:1px dashed #C7DCEC}
 .ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
 .ct-badge.warn{color:#B01515;font-weight:800}
 /* opzioni RDO (condizioni di fornitura) */
@@ -4119,14 +4106,6 @@ function ctxFornCard(e,fid){const f=fornitori.find(x=>x.id==fid);if(!f)return;
 ]);}
 
 let DD=null, DDLIST=[];
-// tipologie di risposta rapida nel compose del filone (mail_inviata + azione, tranne 'nota' = tipo=nota)
-const RTYPES=[
-  {key:'conferma',ico:'✅',lbl:'Confermo ordine',sugg:"Confermiamo l'ordine come da Vs. offerta."},
-  {key:'chiarimento',ico:'❓',lbl:'Chiedo chiarimento',sugg:''},
-  {key:'rifiuto',ico:'🚫',lbl:'Rifiuto offerta',sugg:'Non procediamo con questa offerta, grazie comunque per la disponibilità.'},
-  {key:'nota',ico:'📝',lbl:'Nota libera',sugg:''},
-];
-let TH_RTYPE='chiarimento';    // chip attivo nel compose "Rispondi"
 async function loadDdList(){try{const r=await fetch(API+'/api/rdo-list');DDLIST=r.ok?await r.json():[];}catch{DDLIST=[];}renderDdList();}
 function renderDdList(){
   const cntEl=document.getElementById('ddCnt');if(!cntEl)return; // lista rimossa: il pannello Spedizione la sostituisce
@@ -4146,7 +4125,7 @@ function renderDdList(){
   document.getElementById('ddList').innerHTML=h||'<div class="dd-empty">Nessuna distinta: assegna prima i fornitori ai pezzi.</div>';
 }
 async function openDd(cid,fid){
-  DD={cid,fid};S.projId=cid;TH_RTYPE='chiarimento';
+  DD={cid,fid};S.projId=cid;
   // assicura le parti della commessa (servono per anteprime PDF + disegni allegati)
   const _c=commesse.find(x=>x.id===cid);
   if(_c&&!_c._parti){try{const rp=await fetch(API+`/api/commesse/${cid}/parti`);if(rp.ok)_c._parti=await rp.json();}catch{}}
@@ -4219,11 +4198,10 @@ function thBubble(d,e){
   // dal secondo messaggio in poi: chat pulita stile WhatsApp — sotto resta una mail vera
   // (destinatari salvati), ma non la mostriamo a ogni riga: qui è una conversazione a due.
   if(e.tipo==='mail_inviata'){
-    const azi=RTYPES.find(r=>r.key===e.azione);
     return `<div class="tmsg out">
       <div class="bubble chat">
         <div class="chat-txt">${esc(e.testo||'')}</div>
-        <div class="chat-meta">${azi?`<span class="chat-ico" title="${esc(azi.lbl)}">${azi.ico}</span>`:''}<span class="chat-time">${time}</span>${del}</div>
+        <div class="chat-meta"><span class="chat-time">${time}</span>${del}</div>
       </div>
     </div>`;
   }
@@ -4253,75 +4231,67 @@ function threadHtml(d){
   const evs=(DD.eventi||[]).slice().sort((a,b)=>new Date(a.data)-new Date(b.data));
   const bubbles=evs.map(e=>thBubble(d,e)).join('');
   const wait=d.in_attesa_risposta?`<div class="thwait">⚠ In attesa di risposta da ${d.giorni_da_ultimo_contatto} giorni<span class="sp"></span>soglia: 5 giorni</div>`:'';
-  // due zone distinte, come una chat: cronologia sopra (sfondo pagina), risposta/allegati
-  // sotto in un pannello con sfondo diverso — più "messaggistica", meno documento ufficiale.
+  const hasUfficiale=evs.some(e=>e.is_rdo_ufficiale);
+  const wmUrl=API+`/api/brand-logo/${d.brand==='YS'?'YS':'IB'}`;
+  // cronologia con filigrana del logo (sfondo "da chat"); la barra di risposta compare
+  // solo DOPO il primo invio — prima non c'è nessuno a cui rispondere.
   return `<div class="thread">
-    ${wait}
-    ${bubbles||'<div class="fmuted" style="font-size:11.5px;padding:8px 2px">Il filone comincia con l\'invio della RDO ufficiale.</div>'}
-    ${thQuickAddHtml(d)}
-  </div>
-  <div class="reply-zone">
-    ${thComposeHtml(d)}
-  </div>`;
-}
-function thQuickAddHtml(d){
-  const today=new Date().toISOString().slice(0,10);
-  return `<details class="thqa">
-    <summary>Registra telefonata</summary>
-    <div class="thqa-body">
-      <textarea id="thQaTxt" placeholder="Cosa vi siete detti?"></textarea>
-      <div class="row"><input type="date" id="thQaData" value="${today}"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thQaSalva()">Salva</button></div>
+    <div class="thread-wm" style="background-image:url('${wmUrl}')"></div>
+    <div class="thread-content">
+      ${wait}
+      ${bubbles||'<div class="fmuted" style="font-size:11.5px;padding:8px 2px">Il filone comincia con l\'invio della RDO ufficiale.</div>'}
     </div>
-  </details>`;
+  </div>
+  ${hasUfficiale?`<div class="reply-zone">${thComposeHtml(d)}</div>`:''}`;
 }
-async function thQaSalva(){
-  const testo=(document.getElementById('thQaTxt').value||'').trim();
-  const data=document.getElementById('thQaData').value;
-  if(!testo){toast('Scrivi cosa è successo',true);return;}
-  await thSalvaEvento({tipo:'telefonata',testo,data});
+function thSignature(d){
+  const brandLabel=d.brand==='YS'?'YuBe Solutions':'IB Motion S.r.l.';
+  return `Cordiali saluti,\nElia Gatti\n${brandLabel} — Ufficio Tecnico\nTel. 030.2383896 — tecnico@ibmotion.com`;
 }
 function thComposeHtml(d){
-  const chips=RTYPES.map(r=>`<div class="rchip${TH_RTYPE===r.key?' on':''}" data-rt="${r.key}" onclick="thSetRtype('${r.key}')">${r.ico} ${esc(r.lbl)}</div>`).join('');
-  const to=(d.emails_to||[]).join(', '), cc=(d.emails_cc||[]).join(', '), ccn=(d.emails_ccn||[]).join(', ');
-  const showDest=TH_RTYPE!=='nota';
-  const sugg=(RTYPES.find(r=>r.key===TH_RTYPE)||{}).sugg||'';
   return `<div class="compose">
-    <div class="compose-tit">Rispondi a ${esc(d.fornitore_nome)}</div>
-    <div class="rtypes">${chips}</div>
-    <textarea id="thTxt" placeholder="Scrivi la risposta…">${esc(sugg)}</textarea>
-    <details class="thdest" id="thDestWrap" style="${showDest?'':'display:none'}">
-      <summary>✎ destinatari (A/CC/CCN)</summary>
-      <div class="destrow" id="thDestRow">
-        <div class="fld"><label>A</label><input type="text" id="thTo" value="${esc(to)}"></div>
-        <div class="fld"><label>CC</label><input type="text" id="thCc" value="${esc(cc)}"></div>
-        <div class="fld"><label>CCN</label><input type="text" id="thCcn" value="${esc(ccn)}"></div>
-      </div>
-    </details>
-    <div class="compose-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thInvia()">${showDest?'✉️ Apri mail e segna come inviata':'📝 Salva nota'}</button></div>
+    <div class="compose-bar">
+      <button class="cb-ic" onclick="thAttach(event)" title="Allega materiale">➕</button>
+      <textarea id="thTxt" placeholder="Scrivi un messaggio…" rows="1" oninput="thAutoGrow(this)" onkeydown="thTxtKey(event)"></textarea>
+      <button class="cb-ic" onclick="thLogCall()" title="Registra una telefonata">📞</button>
+      <button class="cb-send" onclick="thInvia()" title="Invia">➤</button>
+    </div>
+    <div class="compose-sig">${esc(thSignature(d))}</div>
   </div>`;
 }
-function thSetRtype(key){
-  TH_RTYPE=key;
-  document.querySelectorAll('.compose .rchip').forEach(el=>el.classList.toggle('on',el.dataset.rt===key));
-  const r=RTYPES.find(x=>x.key===key);
-  document.getElementById('thTxt').value=r.sugg||'';
-  const show=key!=='nota';
-  document.getElementById('thDestWrap').style.display=show?'block':'none';
-  document.querySelector('.compose-ft button').textContent=show?'✉️ Apri mail e segna come inviata':'📝 Salva nota';
-}
-function splitEmails(s){return (s||'').split(/[,;]/).map(x=>x.trim()).filter(Boolean);}
-async function thInvia(){
-  const testo=(document.getElementById('thTxt').value||'').trim();
-  if(!testo){toast('Scrivi la risposta',true);return;}
+function thAutoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function thTxtKey(ev){if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();thInvia();}}
+function thAttach(ev){
   const d=DD.data;
-  if(TH_RTYPE==='nota'){await thSalvaEvento({tipo:'nota',testo});return;}
-  const to=splitEmails(document.getElementById('thTo').value);
-  const cc=splitEmails(document.getElementById('thCc').value);
-  const ccn=splitEmails(document.getElementById('thCcn').value);
-  const ok=await thSalvaEvento({tipo:'mail_inviata',testo,azione:TH_RTYPE,email_to:to,email_cc:cc,email_ccn:ccn});
+  const dwg=ddDisegniFiles(d);
+  if(!dwg.length){toast('Nessun file collegato ai pezzi da allegare',true);return;}
+  showCtx(ev,'Allega materiale',dwg.map(x=>[`${x.ext.toUpperCase()} · ${esc(x.cod)}`,`thAttachPick('${jsq(x.path)}')`]));
+}
+function thAttachPick(path){
+  const name=path.split(/[\\/]/).pop();
+  const txtEl=document.getElementById('thTxt');
+  txtEl.value=(txtEl.value?txtEl.value+'\n':'')+'📎 '+name;
+  thAutoGrow(txtEl);txtEl.focus();
+}
+async function thLogCall(){
+  const txtEl=document.getElementById('thTxt');
+  const testo=(txtEl.value||'').trim();
+  if(!testo){toast('Scrivi cosa vi siete detti',true);return;}
+  const ok=await thSalvaEvento({tipo:'telefonata',testo});
+  if(ok){txtEl.value='';thAutoGrow(txtEl);}
+}
+async function thInvia(){
+  const txtEl=document.getElementById('thTxt');
+  const msg=(txtEl.value||'').trim();
+  if(!msg){toast('Scrivi un messaggio',true);return;}
+  const d=DD.data;
+  const testo=msg+'\n\n'+thSignature(d);
+  const to=d.emails_to||[], cc=d.emails_cc||[], ccn=d.emails_ccn||[];
+  const ok=await thSalvaEvento({tipo:'mail_inviata',testo,email_to:to,email_cc:cc,email_ccn:ccn});
   if(ok){
+    txtEl.value='';thAutoGrow(txtEl);
     const subj=encodeURIComponent('Re: RDO '+(d.codice_rev||d.codice_rdo||'')+' - '+(d.commessa_codice||''));
-    let url='mailto:'+to.join(',')+'?subject='+subj;
+    let url='mailto:'+to.join(',')+'?subject='+subj+'&body='+encodeURIComponent(testo);
     if(cc.length)url+='&cc='+cc.join(',');
     window.location.href=url;
   }
