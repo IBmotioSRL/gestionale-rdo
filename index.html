@@ -4281,6 +4281,8 @@ async function thLogCall(){
   if(ok){txtEl.value='';thAutoGrow(txtEl);}
 }
 async function thInvia(){
+  // l'invio reale (Graph) non è ancora attivo, ma qui costruiamo tutto COME SE lo fosse:
+  // nessun client di posta esterno, il messaggio si considera inviato appena salvato.
   const txtEl=document.getElementById('thTxt');
   const msg=(txtEl.value||'').trim();
   if(!msg){toast('Scrivi un messaggio',true);return;}
@@ -4288,13 +4290,7 @@ async function thInvia(){
   const testo=msg+'\n\n'+thSignature(d);
   const to=d.emails_to||[], cc=d.emails_cc||[], ccn=d.emails_ccn||[];
   const ok=await thSalvaEvento({tipo:'mail_inviata',testo,email_to:to,email_cc:cc,email_ccn:ccn});
-  if(ok){
-    txtEl.value='';thAutoGrow(txtEl);
-    const subj=encodeURIComponent('Re: RDO '+(d.codice_rev||d.codice_rdo||'')+' - '+(d.commessa_codice||''));
-    let url='mailto:'+to.join(',')+'?subject='+subj+'&body='+encodeURIComponent(testo);
-    if(cc.length)url+='&cc='+cc.join(',');
-    window.location.href=url;
-  }
+  if(ok){txtEl.value='';thAutoGrow(txtEl);}
 }
 async function thSalvaEvento(payload){
   try{
@@ -4303,7 +4299,7 @@ async function thSalvaEvento(payload){
     await ddLoadEventi();
     renderDdEditor(DD.data);
     await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();
-    toast('Registrato','ok');
+    toast(payload.tipo==='mail_inviata'?'Messaggio inviato':(payload.tipo==='telefonata'?'Telefonata registrata':'Registrato'),'ok');
     return true;
   }catch{toast('Errore salvataggio',true);return false;}
 }
