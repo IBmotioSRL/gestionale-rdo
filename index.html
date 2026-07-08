@@ -489,6 +489,10 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .ctool-row label{font-size:9px;font-weight:800;text-transform:uppercase;color:#5F87A8;display:block;margin-bottom:2px}
 .ctool-ft{display:flex;align-items:center}
 .ctool-ft .sp{flex:1}
+.ctool-file{display:flex;align-items:center;gap:7px;font-size:10.5px;color:#5F87A8;cursor:pointer;margin-bottom:7px}
+.ctool-file input{width:auto!important;margin:0!important}
+.off-link{font-size:9.5px;font-weight:800;color:var(--go-d);background:rgba(245,168,35,.14);padding:2px 8px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.off-link:hover{text-decoration:underline}
 .ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
 .ct-badge.warn{color:#B01515;font-weight:800}
 /* opzioni RDO (condizioni di fornitura) */
@@ -4227,18 +4231,19 @@ function thBubble(d,e){
     </div>`;
   }
   if(e.tipo==='mail_ricevuta'){
-    // popolata solo dall'integrazione mail automatica (Graph), non più simulabile a mano
+    // registrata a mano da Elia (cosa è arrivato per davvero via Outlook) finché Graph
+    // non fa da solo (fonte="email_auto", non ancora attivo)
     return `<div class="tmsg in">
       <div class="bubble chat">
         <div class="chat-txt">${esc(e.testo||'')}</div>
-        <div class="chat-meta"><span class="chat-time">${time}</span>${del}</div>
+        <div class="chat-meta">${thOffertaLink(e)}<span class="chat-time">${time}</span>${del}</div>
       </div>
     </div>`;
   }
   // telefonata / nota: NON sono mail — riga di sistema centrata, come i divisori di WhatsApp
   const ico=e.tipo==='telefonata'?'📞':'📝';
   return `<div class="tmsg sys">
-    <div class="sysrow"><span>${ico}</span><span class="sys-txt">${esc(e.testo||'')}</span><span class="chat-time">${time}</span>${del}</div>
+    <div class="sysrow"><span>${ico}</span><span class="sys-txt">${esc(e.testo||'')}</span>${e.tipo==='telefonata'?thOffertaLink(e):''}<span class="chat-time">${time}</span>${del}</div>
   </div>`;
 }
 function thToggleRdo(el,boxId){
@@ -4279,6 +4284,7 @@ function thComposeHtml(d){
     <div class="ctool-panel" id="thRecvBox" style="display:none">
       <input type="text" id="thRecvDa" placeholder="Da (nome/mail mittente)" value="${esc(d.fornitore_nome)}">
       <textarea id="thRecvTxt" placeholder="Cosa dice la mail che hai ricevuto?"></textarea>
+      <label class="ctool-file"><input type="file" id="thRecvFile" accept=".pdf,.xlsx,.xls,.csv,.eml,.msg"> <span>📎 Se è un'offerta/preventivo allegato, aggiungilo qui — i prezzi si leggono da soli</span></label>
       <div class="ctool-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thRecvSalva()">Registra</button></div>
     </div>
     <div class="ctool-panel" id="thContBox" style="display:none">
@@ -4302,8 +4308,42 @@ function thToggle(id){const el=document.getElementById(id);el.style.display=el.s
 async function thRecvSalva(){
   const da=(document.getElementById('thRecvDa').value||'').trim();
   const testo=(document.getElementById('thRecvTxt').value||'').trim();
-  if(!testo){toast('Scrivi cosa dice la mail',true);return;}
-  await thSalvaEvento({tipo:'mail_ricevuta',testo,email_da:da||DD.data.fornitore_nome});
+  const fileInp=document.getElementById('thRecvFile');
+  const file=fileInp&&fileInp.files[0];
+  if(!testo&&!file){toast('Scrivi cosa dice la mail o allega un file',true);return;}
+  const ev=await thSalvaEvento({tipo:'mail_ricevuta',testo:testo||'(vedi allegato)',email_da:da||DD.data.fornitore_nome});
+  if(ev&&file)await thEstraiOfferta(file,ev.id);
+}
+async function thEstraiOfferta(file,eventoId){
+  const fd=new FormData();fd.append('file',file);fd.append('fornitore_id',DD.fid);fd.append('evento_comunicazione_id',eventoId);
+  toast("Leggo l'allegato con l'AI…",'ok');
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/offerte/estrai`,{method:'POST',body:fd});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore lettura allegato');}
+    const off=await r.json();
+    await ddLoadEventi();renderDdEditor(DD.data);
+    openOffDoc(off);
+  }catch(e){toast(e.message||'Errore lettura offerta',true);}
+}
+function thOffertaLink(e){
+  if(e.offerta_id){
+    return `<a class="ctool off-link" onclick="thApriOfferta(${e.offerta_id})" title="Apri l'offerta collegata">💶 Offerta (${esc(e.offerta_stato||'')})</a>`;
+  }
+  return `<a class="ctool off-link" onclick="thNuovaOfferta(${e.id})" title="Registra il prezzo scritto in questo messaggio">💶 Registra prezzo</a>`;
+}
+async function thApriOfferta(oid){
+  try{const r=await fetch(API+'/api/offerte/'+oid);if(!r.ok)throw 0;openOffDoc(await r.json());}catch{toast('Errore apertura offerta',true);}
+}
+async function thNuovaOfferta(eventoId){
+  const ev=(DD.eventi||[]).find(x=>x.id===eventoId);
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/offerte/manuale`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({fornitore_id:DD.fid,evento_comunicazione_id:eventoId,testo:(ev&&ev.testo)||''})});
+    if(!r.ok)throw 0;
+    const off=await r.json();
+    await ddLoadEventi();renderDdEditor(DD.data);
+    openOffDoc(off);
+  }catch{toast('Errore creazione offerta',true);}
 }
 async function thContSalva(){
   const to=splitEmails(document.getElementById('thContTo').value);
@@ -4354,12 +4394,13 @@ async function thSalvaEvento(payload){
   try{
     const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/eventi`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!r.ok)throw 0;
+    const ev=await r.json();
     await ddLoadEventi();
     renderDdEditor(DD.data);
     await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();
     toast(payload.tipo==='mail_inviata'?'Messaggio inviato':(payload.tipo==='telefonata'?'Telefonata registrata':'Registrato'),'ok');
-    return true;
-  }catch{toast('Errore salvataggio',true);return false;}
+    return ev;
+  }catch{toast('Errore salvataggio',true);return null;}
 }
 async function thDelete(id){
   if(!confirm('Eliminare questo evento?'))return;
