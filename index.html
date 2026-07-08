@@ -4180,18 +4180,27 @@ function thBubble(d,e){
     const boxId='thRdoTxt_'+e.id;
     const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/revisioni/${numero}/export?fmt=`;
     const dwg=ddDisegniFiles(d,righe), dwgLbl=d.tipo_distinta==='commerciale'?'Datasheet':'Disegni';
+    // "facciamo come se si potesse fare tutto": la mail simulata porta CON SÉ distinta E
+    // disegni, non solo la distinta — un unico elenco "Allegati", coerente col testo della
+    // mail che dichiara "completa dei relativi disegni".
     return `<div class="rdocard-msg">
       <div class="rc-hd"><span class="ico">✉️</span><span class="who">${esc(brand)} → ${esc(d.fornitore_nome)}</span><span class="tag lock">🔒 RDO ufficiale · ${esc(codiceRev)}</span><span class="sp"></span><span class="rc-time">${time}</span></div>
       ${thDestRow(emTo,emCc,emCcn)}
       <div class="rc-txt" id="${boxId}" data-full="${esc(corpo)}">${esc(thSnippet(corpo))}</div>
-      <div class="rc-meta"><span>📎 ${righe.length} pezzi</span><a onclick="thToggleRdo(this,'${boxId}')">${corpo.length>160?'Vedi mail completa ↓':''}</a><a onclick="window.open('${exportUrl}pdf','_blank')">PDF ↗</a><a onclick="window.open('${exportUrl}xlsx','_blank')">Excel ↗</a></div>
+      <div class="rc-meta"><span>📎 ${righe.length} pezzi</span><a onclick="thToggleRdo(this,'${boxId}')">${corpo.length>160?'Vedi mail completa ↓':''}</a></div>
       <details class="dd-coll" style="margin-top:10px">
-        <summary>📋 Distinta inclusa <span class="cnt">${righe.length} righe</span></summary>
-        <div class="dd-collbody">${thRigheTable(righe,d.tipo_distinta)}</div>
+        <summary>📎 Allegati <span class="cnt">PDF · Excel · ${dwg.length} ${dwgLbl.toLowerCase()}</span></summary>
+        <div class="dd-collbody">
+          <div class="dd-alleg">
+            <div class="ai" onclick="window.open('${exportUrl}pdf','_blank')"><span class="fi-ic pdf">PDF</span> Distinta RDO (PDF) <span class="open">apri ↗</span></div>
+            <div class="ai" onclick="window.open('${exportUrl}xlsx','_blank')"><span class="fi-ic xlsx">XLS</span> Distinta RDO (Excel) <span class="open">apri ↗</span></div>
+          </div>
+          <div class="dd-dwg">${thDwgListHtml(dwg,d.tipo_distinta==='commerciale')}</div>
+        </div>
       </details>
       <details class="dd-coll">
-        <summary>🖼 ${dwgLbl} allegati <span class="cnt">${dwg.length}</span></summary>
-        <div class="dd-collbody"><div class="dd-dwg">${thDwgListHtml(dwg,d.tipo_distinta==='commerciale')}</div></div>
+        <summary>📋 Distinta inclusa <span class="cnt">${righe.length} righe</span></summary>
+        <div class="dd-collbody">${thRigheTable(righe,d.tipo_distinta)}</div>
       </details>
     </div>`;
   }
@@ -4403,8 +4412,6 @@ function renderDdEditor(d){
       </div>${ctReq?'<div class="dd-ctnote">Rilevati particolari costruttivi / commerciali lavorati: possono valere entrambe le voci, ma va indicata almeno una.</div>':''}</div>`;
   const confHtml=confN?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO si <b>invia regolarmente</b> (così raccogli le offerte). Scegli poi il vincitore (pannello «👁 Colpo d'occhio» → Confronto prezzi) — la <b>conferma d'ordine</b> è bloccata finché ci sono pezzi in comune.</span></div>`:'';
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
-  const dwgCnt={};dwg.forEach(x=>dwgCnt[x.ext]=(dwgCnt[x.ext]||0)+1);
-  const dwgFmtTxt=Object.keys(dwgCnt).map(k=>k.toUpperCase()+' '+dwgCnt[k]).join(' · ')||'0';
   const dwgHtml=thDwgListHtml(dwg,isComm);
   const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
   const exportUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf`;
@@ -4435,13 +4442,14 @@ function renderDdEditor(d){
             ${ctHtml}
             ${confHtml}
           </div>
-          <details class="dd-coll">
-            <summary>📎 Allegati alla mail <span class="cnt">PDF · Excel</span></summary>
+          <details class="dd-coll" open>
+            <summary>📎 Allegati alla mail <span class="cnt">PDF · Excel · ${dwg.length} ${dwgLbl.toLowerCase()}</span></summary>
             <div class="dd-collbody">
               <div class="dd-alleg">
                 <div class="ai" onclick="ddExport('pdf')"><span class="fi-ic pdf">PDF</span> Distinta RDO + richiesta (PDF) <span class="open">apri ↗</span></div>
                 <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
               </div>
+              <div class="dd-dwg">${dwgHtml}</div>
             </div>
           </details>
           <details class="dd-coll">
@@ -4451,10 +4459,6 @@ function renderDdEditor(d){
               <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
               <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
             </div>
-          </details>
-          <details class="dd-coll">
-            <summary>🖼 ${dwgLbl} allegati <span class="cnt">${dwgFmtTxt}</span></summary>
-            <div class="dd-collbody"><div class="dd-dwg">${dwgHtml}</div></div>
           </details>
         </div>
         <div class="rz-split" data-dir="l" data-var="--ddprev" data-min="260" data-max="620" data-key="rdo_ddprev" title="Trascina per ridimensionare"></div>
