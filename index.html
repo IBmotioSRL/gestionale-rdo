@@ -493,6 +493,16 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .ctool-file input{width:auto!important;margin:0!important}
 .off-link{font-size:9.5px;font-weight:800;color:var(--go-d);background:rgba(245,168,35,.14);padding:2px 8px;border-radius:20px;cursor:pointer;white-space:nowrap}
 .off-link:hover{text-decoration:underline}
+/* modale Importa mail */
+.im-list{display:flex;flex-direction:column;gap:8px}
+.im-row{display:flex;gap:10px;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--surf)}
+.im-row.off{opacity:.45}
+.im-chk{padding-top:3px}
+.im-fields{flex:1;min-width:0}
+.im-hd{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.im-hd input[type=text]{flex:1;min-width:120px;border:1px solid var(--bd2);border-radius:8px;padding:6px 9px;font-size:12px;font-family:inherit}
+.im-hd input[type=date]{border:1px solid var(--bd2);border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit}
+.im-fields textarea{width:100%;border:1px solid var(--bd2);border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;resize:vertical}
 .ct-badge{font-size:9.5px;font-weight:700;color:var(--t3);white-space:nowrap}
 .ct-badge.warn{color:#B01515;font-weight:800}
 /* opzioni RDO (condizioni di fornitura) */
@@ -1589,6 +1599,14 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mhd"><div class="mico2">📄</div><div><div class="mtit" id="odTit">Offerta normalizzata</div><div class="msub" id="odSub"></div></div><button class="mx" onclick="mClose('mOffDoc')">✕</button></div>
     <div class="mbd" id="odBody" style="max-height:70vh;overflow:auto"></div>
     <div class="mft"><div class="mft-l fmuted" id="odFoot" style="font-size:12px"></div><div class="mft-r"><button class="btn btn-ghost" onclick="odDelete()">🗑 Elimina</button><button class="btn" onclick="odSave()">💾 Salva bozza</button><button class="btn btn-go" onclick="odConferma()">✓ Conferma → prezzi</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mImportMail" onclick="ovClose(event,'mImportMail')">
+  <div class="modal" style="max-width:760px">
+    <div class="mhd"><div class="mico2">📥</div><div><div class="mtit">Importa mail</div><div class="msub" id="imSub"></div></div><button class="mx" onclick="mClose('mImportMail')">✕</button></div>
+    <div class="mbd" id="imBody" style="max-height:70vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Le nostre mail già presenti nel filone non serve importarle — deselezionale.</div><div class="mft-r"><button class="btn btn-go" onclick="imConferma()">✓ Aggiungi al filone</button></div></div>
   </div>
 </div>
 
@@ -4279,6 +4297,7 @@ function thComposeHtml(d){
   return `<div class="compose">
     <div class="compose-tools">
       <a class="ctool" onclick="thToggle('thRecvBox')">📩 Registra mail ricevuta</a>
+      <a class="ctool" onclick="thImportMail()">📥 Importa mail (.eml/.msg)</a>
       <a class="ctool" onclick="thToggle('thContBox')">✎ contatti</a>
     </div>
     <div class="ctool-panel" id="thRecvBox" style="display:none">
@@ -4356,6 +4375,56 @@ async function thContSalva(){
     renderDdEditor(DD.data);
     toast('Contatti aggiornati','ok');
   }catch{toast('Errore aggiornamento contatti',true);}
+}
+let IM={cid:null,fid:null,rows:[]};
+function thImportMail(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.eml,.msg';
+  inp.onchange=()=>{if(inp.files[0])imUpload(inp.files[0]);};
+  inp.click();
+}
+async function imUpload(file){
+  IM.cid=DD.cid;IM.fid=DD.fid;IM.rows=[];
+  document.getElementById('imBody').innerHTML='<div class="fmuted" style="padding:24px;text-align:center">Leggo la mail e separo i messaggi con l\'AI… (qualche secondo)</div>';
+  document.getElementById('imSub').textContent=file.name;
+  mOpen('mImportMail');
+  const fd=new FormData();fd.append('file',file);
+  const today=new Date().toISOString().slice(0,10);
+  try{
+    const r=await fetch(API+`/api/commesse/${IM.cid}/rdo/${IM.fid}/eventi/importa-mail`,{method:'POST',body:fd});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore lettura mail');}
+    const res=await r.json();
+    IM.rows=(res.messaggi||[]).map(m=>({mittente:m.mittente||'',testo:m.testo||'',nostra:!!m.nostra,data:today,sel:!m.nostra}));
+    document.getElementById('imSub').textContent=(res.oggetto||file.name)+(res.mittente_originale?' · da '+res.mittente_originale:'');
+    imRender();
+  }catch(e){document.getElementById('imBody').innerHTML=`<div class="av-empty">${esc(e.message||'Errore lettura mail')}</div>`;}
+}
+function imRender(){
+  const html=IM.rows.map((m,i)=>`
+    <div class="im-row${m.sel?'':' off'}">
+      <label class="im-chk"><input type="checkbox" ${m.sel?'checked':''} onchange="imToggle(${i},this.checked)"></label>
+      <div class="im-fields">
+        <div class="im-hd">
+          <input type="text" value="${esc(m.mittente)}" onchange="imEdit(${i},'mittente',this.value)" placeholder="Mittente">
+          <input type="date" value="${m.data}" onchange="imEdit(${i},'data',this.value)">
+          ${m.nostra?'<span class="off-link" style="background:rgba(0,122,255,.14);color:#0064D6">nostra — di solito non serve importarla</span>':''}
+        </div>
+        <textarea onchange="imEdit(${i},'testo',this.value)" rows="2">${esc(m.testo)}</textarea>
+      </div>
+    </div>`).join('');
+  document.getElementById('imBody').innerHTML=`<div class="im-list">${html||'<div class="fmuted" style="padding:20px;text-align:center">Nessun messaggio trovato in questa mail.</div>'}</div>`;
+}
+function imToggle(i,v){IM.rows[i].sel=v;const el=document.querySelectorAll('#imBody .im-row')[i];if(el)el.classList.toggle('off',!v);}
+function imEdit(i,k,v){IM.rows[i][k]=v;}
+async function imConferma(){
+  const righe=IM.rows.filter(m=>m.sel).map(m=>({testo:m.testo,mittente:m.mittente,data:m.data,tipo:'mail_ricevuta'}));
+  if(!righe.length){toast('Seleziona almeno un messaggio',true);return;}
+  try{
+    const r=await fetch(API+`/api/commesse/${IM.cid}/rdo/${IM.fid}/eventi/importa-mail/conferma`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({righe})});
+    if(!r.ok)throw 0;
+    mClose('mImportMail');
+    if(DD&&DD.cid===IM.cid&&DD.fid===IM.fid){await ddLoadEventi();renderDdEditor(DD.data);await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();}
+    toast(righe.length+' messaggi aggiunti al filone','ok');
+  }catch{toast('Errore importazione',true);}
 }
 function thAutoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function thTxtKey(ev){if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();thInvia();}}
