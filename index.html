@@ -850,6 +850,14 @@ table.ftable tbody tr:hover{background:rgba(245,168,35,.06)}
 .rdo-cli{font-size:11px;color:var(--t3)}
 .rdo-crow-r{margin-left:auto;display:flex;align-items:center;gap:12px}
 .rdo-arr{font-size:11px;color:var(--t3)}
+.rdo-arr2{font-size:11px;color:var(--t3);width:12px;flex-shrink:0;text-align:center}
+.rdo-csub{display:flex;flex-direction:column;gap:6px;padding:2px 6px 4px 32px}
+.rdo-frow{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.02);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer;transition:border-color .15s}
+.rdo-frow:hover{border-color:var(--go-d)}
+.rdo-frow.warn{border-color:rgba(255,59,48,.3)}
+.rdo-fnm{display:flex;flex-direction:column;min-width:0;flex:1}
+.rdo-fnm b{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rdo-fnm span{font-size:10px;color:var(--t3)}
 .rdo-chead{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--bd);background:var(--surf)}
 .rwc-wrap{display:grid;grid-template-columns:340px 1fr;gap:14px;padding:14px;align-items:start}
 .rwc-cards{display:flex;flex-direction:column;gap:8px}
@@ -3831,8 +3839,9 @@ function fillTplSelect(sel,val){if(!sel)return;sel.innerHTML='<option value="">�
 /* ═══════════ RDO — router a livelli (lista commesse → workspace → editor + spedizione) ═══════════ */
 const RV={mode:'list',cid:null,fid:null,selForn:null};
 let SHIPSEL=new Set();
+let RDOEXP=new Set();  // id delle commesse espanse nell'elenco «Comunicazioni» (collassate di default)
 function setRdoHdr(h1,sub){document.getElementById('rdoH1').textContent=h1;document.getElementById('rdoVsub').textContent=sub;}
-function rdoEnter(){RV.mode='list';RV.cid=null;RV.fid=null;RV.selForn=null;loadTemplates();renderRdoView();}
+async function rdoEnter(){RV.mode='list';RV.cid=null;RV.fid=null;RV.selForn=null;loadTemplates();await loadDdList();renderRdoView();}
 function rdoBack(){
   if(RV.mode==='edit'){RV.mode='list';RV.selForn=null;renderRdoView();}
   else if(RV.mode==='work'){RV.mode='list';RV.selForn=null;renderRdoView();}
@@ -3867,7 +3876,7 @@ async function rdoAggiornaTutte(){
 // compat: vecchi refresh chiamano renderRDO()
 function renderRDO(){if(S.v==='rdo')renderRdoView();}
 
-/* ── livello 1: lista commesse ── */
+/* ── livello 1: lista commesse, a fisarmonica (collassate di default) ── */
 function rdoRenderList(){
   const el=document.getElementById('rdoList');
   const active=commesse.filter(c=>flatParti(c).length);
@@ -3875,20 +3884,39 @@ function rdoRenderList(){
   el.innerHTML='<div class="rdo-clist">'+active.map(c=>{
     const parti=flatParti(c);const unass=parti.filter(p=>!p.fornitore_id).length;
     const badge=unass?`<span class="rdo-warn">⚠ ${unass} non assegnati</span>`:`<span class="rdo-ok">✓ tutti assegnati</span>`;
-    return `<div class="rdo-crow" onclick="rdoOpenComm(${c.id})" oncontextmenu="ctxComm(event,${c.id})">
+    const open=RDOEXP.has(c.id);
+    return `<div class="rdo-crow" onclick="rdoToggleComm(${c.id})" oncontextmenu="ctxComm(event,${c.id})">
+      <span class="rdo-arr2">${open?'▾':'▸'}</span>
       <span class="rdo-pcod">${esc(c.codice)}</span>
       <span class="rdo-pname">${esc(c.nome)}</span>
       ${c.cliente?`<span class="rdo-cli">${esc(c.cliente)}</span>`:''}
-      <span class="rdo-crow-r"><span class="rdo-hist" onclick="event.stopPropagation();openStoricoRevisioni(${c.id},'${jsq(c.codice)} · ${jsq(c.nome)}')" title="Storico revisioni delle RDO di questo progetto">🗂 Storico revisioni</span>${badge}<span class="rdo-arr">▶</span></span>
-    </div>`;
+      <span class="rdo-crow-r"><span class="rdo-hist" onclick="event.stopPropagation();openStoricoRevisioni(${c.id},'${jsq(c.codice)} · ${jsq(c.nome)}')" title="Storico revisioni delle RDO di questo progetto">🗂 Storico revisioni</span>${badge}</span>
+    </div>${open?rdoCommSubHtml(c):''}`;
   }).join('')+'</div>';
 }
-function rdoOpenComm(cid){
-  // niente più livello intermedio: si va dritti all'editor (mail + elenco RDO a fianco)
-  const c=commesse.find(x=>x.id===cid);
-  const assigned=(c?flatParti(c):[]).filter(p=>p.fornitore_id);
-  if(!assigned.length){toast('Nessun fornitore assegnato a questa commessa: assegnali nel progetto.',true);return;}
-  rdoOpenEditor(cid,assigned[0].fornitore_id);
+// riga fornitore/RDO di una commessa espansa: stato pronto/non pronto a colpo d'occhio
+function rdoCommSubHtml(c){
+  const parti=flatParti(c);const byF={};
+  parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
+  const unass=parti.filter(p=>!p.fornitore_id).length;
+  const fids=Object.keys(byF);
+  const rows=fids.map(fid=>{
+    const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
+    const st=ddStatoCorrente(c.id,+fid);
+    return `<div class="rdo-frow" onclick="event.stopPropagation();rdoOpenEditor(${c.id},${fid})" oncontextmenu="event.stopPropagation();ctxRdoForn(event,${c.id},${fid})">
+      <span class="rwc-av" style="background:${avc(f.nome)}">${ini(f.nome)}</span>
+      <span class="rdo-fnm"><b>${esc(f.nome)}</b><span>${byF[fid].length} pezzi · ${esc(f.tipo)}</span></span>
+      <span class="dd-st ${st}">${st}</span></div>`;
+  }).join('');
+  const warnRow=unass?`<div class="rdo-frow warn" onclick="event.stopPropagation();go('pdet',${c.id})">
+      <span class="rwc-av" style="background:#9b2c2c">⚠</span>
+      <span class="rdo-fnm"><b>${unass} pezzi senza fornitore</b><span>vai al progetto per assegnarli</span></span></div>`:'';
+  return `<div class="rdo-csub">${rows||(unass?'':'<div class="fmuted" style="padding:6px 12px">Nessun fornitore assegnato ancora.</div>')}${warnRow}</div>`;
+}
+async function rdoToggleComm(cid){
+  if(RDOEXP.has(cid))RDOEXP.delete(cid);
+  else{RDOEXP.add(cid);await loadDdList();}
+  rdoRenderList();
 }
 
 /* ── livello 2: workspace commessa (card fornitori + scheda laterale) ── */
@@ -4117,26 +4145,34 @@ function showCtx(e,title,items){
   CTX.style.left=x+'px';CTX.style.top=y+'px';
 }
 function ctxComm(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Commessa',[
-  ['📂 Apri RDO commessa',`rdoOpenComm(${cid})`],
+  ['📂 Espandi/comprimi fornitori',`rdoToggleComm(${cid})`],
   ['🗂 Vai al progetto',`go('pdet',${cid})`],
   {sep:1},
   ['📤 Pannello spedizione',`rdoGoShip()`]
 ]);}
-function ctxRdoForn(e,cid,fid){const f=fornitori.find(x=>x.id==fid);showCtx(e,f?f.nome:'Fornitore',[
-  ['✉ Apri RDO',`rdoOpenEditor(${cid},${fid})`],
-  ['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`],
-  {sep:1},
-  ['⬇ Scarica distinta PDF',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=pdf','_blank')`],
-  ['⬇ Scarica distinta Excel',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=xlsx','_blank')`]
-]);}
-function ctxShip(e,cid,fid){const f=fornitori.find(x=>x.id==fid);showCtx(e,f?f.nome:'RDO',[
-  ['✉ Apri editor RDO',`rdoOpenEditor(${cid},${fid})`],
-  ['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`],
-  ['↩ Rimetti in bozza',`rdoQuickStato(${cid},${fid},'bozza')`]
-]);}
+// stato attuale (cid,fid) dalla lista RDO globale — serve a non offrire "approva"/"rimetti
+// in bozza" su una RDO già inviata (una volta inviata è un documento congelato: si
+// modifica solo aprendo una nuova revisione, mai tornando indietro di stato).
+function ddStatoCorrente(cid,fid){const x=DDLIST.find(v=>String(v.commessa_id)===String(cid)&&String(v.fornitore_id)===String(fid));return x?x.stato:'bozza';}
+function ctxRdoForn(e,cid,fid){const f=fornitori.find(x=>x.id==fid);const st=ddStatoCorrente(cid,fid);
+  const items=[['✉ Apri RDO',`rdoOpenEditor(${cid},${fid})`]];
+  if(st==='inviata')items.push(['✚ Apri nuova revisione (per rimandarla)',`rdoOpenEditor(${cid},${fid})`]);
+  else items.push(['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`]);
+  items.push({sep:1},
+    ['⬇ Scarica distinta PDF',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=pdf','_blank')`],
+    ['⬇ Scarica distinta Excel',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=xlsx','_blank')`]);
+  showCtx(e,f?f.nome:'Fornitore',items);
+}
+function ctxShip(e,cid,fid){const f=fornitori.find(x=>x.id==fid);const st=ddStatoCorrente(cid,fid);
+  const items=[['✉ Apri editor RDO',`rdoOpenEditor(${cid},${fid})`]];
+  if(st==='inviata')items.push(['✚ Apri nuova revisione (per rimandarla)',`rdoOpenEditor(${cid},${fid})`]);
+  else if(st==='approvata')items.push(['↩ Rimetti in bozza',`rdoQuickStato(${cid},${fid},'bozza')`]);
+  else items.push(['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`]);
+  showCtx(e,f?f.nome:'RDO',items);
+}
 function ctxProj(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Progetto',[
   ['🗂 Apri progetto',`go('pdet',${cid})`],
-  ['✉ Prepara RDO',`go('rdo');rdoOpenComm(${cid})`],
+  ['✉ Prepara RDO',`RDOEXP.add(${cid});go('rdo')`],
   {sep:1},
   ['📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(c?c.codice:'')}');toast&&toast('Codice copiato','ok')`]
 ]);}
@@ -4695,7 +4731,8 @@ function renderDdEditor(d){
                ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Completa tutte le OPZIONI RDO per approvare">✓ Approva</button>`
                :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
              ${st==='approvata'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
-             ${st==='approvata'?`<span style="font-size:11px;color:var(--t2);font-weight:700;align-self:center" title="Le RDO si inviano dal pannello «Richieste d'Offerta», in blocco, solo se approvate">✓ Pronta — si invia dal pannello RDO</span>`:''}
+             ${st==='approvata'?`<button class="btn btn-go btn-sm" onclick="ddStato('inviata')" title="Invia questa RDO al fornitore (simulato)">✈ Invia RDO</button>`:''}
+             ${st==='approvata'?`<span style="font-size:10.5px;color:var(--t3);align-self:center" title="Da qui invii solo questa; per mandarne più insieme c'è il pannello «Richieste d'Offerta»">o in blocco dal pannello RDO</span>`:''}
            </div>`}
     </div>`;
 }
