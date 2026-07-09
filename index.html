@@ -3965,7 +3965,9 @@ function renderDdNav(){
       <button onclick="navBulkStato('bozza')" title="Riporta in bozza tutte le selezionate">↩ Riporta a bozza</button>
       <button class="g" onclick="navClearSel()" title="Deseleziona">✕</button></div>`;
   }
-  commesse.forEach(c=>{
+  // solo la commessa aperta nell'editor: i fornitori di altre commesse non c'entrano
+  // (per cambiare commessa si torna indietro con «‹», livello 1/2 del pannello Comunicazioni)
+  commesse.filter(c=>String(c.id)===String(RV.cid)).forEach(c=>{
     const parti=flatParti(c);const byF={};
     // un pezzo "appartiene" al primario e a tutti i fornitori in confronto
     parti.forEach(p=>{pForns(p).forEach(fid=>{(byF[fid]=byF[fid]||[]).push(p);});});
