@@ -459,6 +459,13 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .chat-del{font-size:10px;color:var(--t3);cursor:pointer;opacity:0;transition:opacity .15s}
 .bubble.chat:hover .chat-del,.sysrow:hover .chat-del{opacity:1}
 .chat-del:hover{color:var(--red)}
+.th-info{cursor:pointer;color:var(--t3);font-weight:800;opacity:0;transition:opacity .15s}
+.bubble.chat:hover .th-info,.sysrow:hover .th-info{opacity:1}
+.th-info:hover{color:#3A6E96}
+.th-infopanel{margin-top:8px;padding-top:8px;border-top:1px dashed var(--bd2);display:flex;flex-direction:column;gap:3px}
+.ti-row{display:flex;gap:8px;font-size:10px}
+.ti-k{color:var(--t3);font-weight:800;text-transform:uppercase;letter-spacing:.03em;min-width:70px;flex-shrink:0}
+.ti-v{color:var(--t2);word-break:break-word}
 .sysrow{display:flex;align-items:center;gap:7px;background:#FBF7F2;border:1px solid var(--bd);border-radius:20px;padding:6px 14px;font-size:11px;color:var(--t2);max-width:min(500px,82%)}
 .sys-txt{flex:1}
 
@@ -4240,11 +4247,13 @@ function thBubble(d,e){
   }
   // dal secondo messaggio in poi: chat pulita stile WhatsApp — sotto resta una mail vera
   // (destinatari salvati), ma non la mostriamo a ogni riga: qui è una conversazione a due.
+  const info=`<span class="chat-ico th-info" onclick="thToggleInfo(${e.id})" title="Info messaggio">⋯</span>`;
   if(e.tipo==='mail_inviata'){
     return `<div class="tmsg out">
       <div class="bubble chat">
         <div class="chat-txt">${esc(e.testo||'')}</div>
-        <div class="chat-meta"><span class="chat-time">${time}</span>${del}</div>
+        <div class="chat-meta">${info}<span class="chat-time">${time}</span>${del}</div>
+        ${thInfoPanel(e,d)}
       </div>
     </div>`;
   }
@@ -4254,16 +4263,32 @@ function thBubble(d,e){
     return `<div class="tmsg in">
       <div class="bubble chat">
         <div class="chat-txt">${esc(e.testo||'')}</div>
-        <div class="chat-meta">${thOffertaLink(e)}<span class="chat-time">${time}</span>${del}</div>
+        <div class="chat-meta">${thOffertaLink(e)}${info}<span class="chat-time">${time}</span>${del}</div>
+        ${thInfoPanel(e,d)}
       </div>
     </div>`;
   }
   // telefonata / nota: NON sono mail — riga di sistema centrata, come i divisori di WhatsApp
   const ico=e.tipo==='telefonata'?'📞':'📝';
   return `<div class="tmsg sys">
-    <div class="sysrow"><span>${ico}</span><span class="sys-txt">${esc(e.testo||'')}</span>${e.tipo==='telefonata'?thOffertaLink(e):''}<span class="chat-time">${time}</span>${del}</div>
+    <div class="sysrow"><span>${ico}</span><span class="sys-txt">${esc(e.testo||'')}</span>${e.tipo==='telefonata'?thOffertaLink(e):''}${info}<span class="chat-time">${time}</span>${del}</div>
+    ${thInfoPanel(e,d)}
   </div>`;
 }
+function thInfoPanel(e,d){
+  const dt=new Date(e.data+'Z').toLocaleString('it-IT',{dateStyle:'medium',timeStyle:'short'});
+  const rows=[['Data e ora',dt]];
+  if(e.tipo==='mail_ricevuta')rows.push(['Da',e.email_da||'—']);
+  if(e.tipo==='mail_inviata'){
+    rows.push(['A',(e.email_to&&e.email_to.length)?e.email_to.join(', '):(d.emails_to||[]).join(', ')||'—']);
+    if(e.email_cc&&e.email_cc.length)rows.push(['CC',e.email_cc.join(', ')]);
+    if(e.email_ccn&&e.email_ccn.length)rows.push(['CCN',e.email_ccn.join(', ')]);
+  }
+  rows.push(['Fonte',e.fonte==='email_auto'?'automatica (Graph)':'inserita a mano']);
+  if(e.offerta_id)rows.push(['Offerta collegata','#'+e.offerta_id+(e.offerta_stato?' · '+e.offerta_stato:'')]);
+  return `<div class="th-infopanel" id="thInfo${e.id}" style="display:none">${rows.map(([k,v])=>`<div class="ti-row"><span class="ti-k">${esc(k)}</span><span class="ti-v">${esc(v)}</span></div>`).join('')}</div>`;
+}
+function thToggleInfo(id){const el=document.getElementById('thInfo'+id);if(el)el.style.display=el.style.display==='none'?'block':'none';}
 function thToggleRdo(el,boxId){
   const box=document.getElementById(boxId);
   const full=box.dataset.full||'';
@@ -4355,13 +4380,28 @@ async function thApriOfferta(oid){
 }
 async function thNuovaOfferta(eventoId){
   const ev=(DD.eventi||[]).find(x=>x.id===eventoId);
+  const testo=(ev&&ev.testo)||'';
+  toast("Leggo i prezzi dal testo con l'AI…",'ok');
+  // prima tentativo: tratta il testo del messaggio come un documento e lascia che
+  // la stessa estrazione AI usata per i PDF trovi articoli e prezzi da sola
   try{
-    const r=await fetch(API+`/api/commesse/${DD.cid}/offerte/manuale`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({fornitore_id:DD.fid,evento_comunicazione_id:eventoId,testo:(ev&&ev.testo)||''})});
+    const blob=new Blob([testo],{type:'text/plain'});
+    const fd=new FormData();fd.append('file',blob,'messaggio.txt');fd.append('fornitore_id',DD.fid);fd.append('evento_comunicazione_id',eventoId);
+    const r=await fetch(API+`/api/commesse/${DD.cid}/offerte/estrai`,{method:'POST',body:fd});
     if(!r.ok)throw 0;
     const off=await r.json();
     await ddLoadEventi();renderDdEditor(DD.data);
     openOffDoc(off);
+    return;
+  }catch{/* AI non disponibile o testo non interpretabile: bozza vuota da compilare a mano */}
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/offerte/manuale`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({fornitore_id:DD.fid,evento_comunicazione_id:eventoId,testo})});
+    if(!r.ok)throw 0;
+    const off=await r.json();
+    await ddLoadEventi();renderDdEditor(DD.data);
+    openOffDoc(off);
+    toast('Prezzi non individuati automaticamente: compilali a mano','ok');
   }catch{toast('Errore creazione offerta',true);}
 }
 async function thContSalva(){
@@ -4388,15 +4428,24 @@ async function imUpload(file){
   document.getElementById('imSub').textContent=file.name;
   mOpen('mImportMail');
   const fd=new FormData();fd.append('file',file);
-  const today=new Date().toISOString().slice(0,10);
   try{
     const r=await fetch(API+`/api/commesse/${IM.cid}/rdo/${IM.fid}/eventi/importa-mail`,{method:'POST',body:fd});
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore lettura mail');}
     const res=await r.json();
-    IM.rows=(res.messaggi||[]).map(m=>({mittente:m.mittente||'',testo:m.testo||'',nostra:!!m.nostra,data:today,sel:!m.nostra}));
+    // data_originale = il vero header Date del file (affidabile). Il campo "data" di ogni
+    // messaggio invece è testo libero letto dall'AI in una riga tipo "Inviato: 11/06/2026 16:57":
+    // proviamo a interpretarlo (gg/mm/aaaa), altrimenti usiamo la data vera del file, MAI "oggi"
+    // (altrimenti una mail di settimane fa risulterebbe inviata oggi nel filone).
+    const fallback=(res.data_originale||'').slice(0,10)||new Date().toISOString().slice(0,10);
+    IM.rows=(res.messaggi||[]).map(m=>({mittente:m.mittente||'',testo:m.testo||'',nostra:!!m.nostra,data:imParseData(m.data,fallback),sel:!m.nostra}));
     document.getElementById('imSub').textContent=(res.oggetto||file.name)+(res.mittente_originale?' · da '+res.mittente_originale:'');
     imRender();
   }catch(e){document.getElementById('imBody').innerHTML=`<div class="av-empty">${esc(e.message||'Errore lettura mail')}</div>`;}
+}
+function imParseData(s,fallbackIso){
+  const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m){const [,d,mo,y]=m;return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;}
+  return fallbackIso;
 }
 function imRender(){
   const html=IM.rows.map((m,i)=>`
