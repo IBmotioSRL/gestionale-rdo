@@ -4235,6 +4235,16 @@ function thDestRow(to,cc,ccn){
   if(ccn&&ccn.length)parts.push('CCN: '+ccn.join(', '));
   return parts.length?`<div class="rc-dest">${esc(parts.join(' · '))}</div>`:'';
 }
+function thMetaRow(e){
+  // riga compatta stile chat (non un blocco intestazione mail): oggetto + destinatari,
+  // solo se presenti — visibile senza dover aprire "⋯".
+  const parts=[];
+  if(e.oggetto)parts.push('📌 '+e.oggetto);
+  if(e.email_to&&e.email_to.length)parts.push('A: '+e.email_to.join(', '));
+  if(e.email_cc&&e.email_cc.length)parts.push('CC: '+e.email_cc.join(', '));
+  if(e.email_ccn&&e.email_ccn.length)parts.push('CCN: '+e.email_ccn.join(', '));
+  return parts.length?`<div class="rc-dest chat-obj">${esc(parts.join(' · '))}</div>`:'';
+}
 function thTime(iso){
   const d=new Date(iso+'Z');
   return d.toLocaleDateString('it-IT')+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
@@ -4289,6 +4299,7 @@ function thBubble(d,e){
   if(e.tipo==='mail_inviata'){
     return `<div class="tmsg out">
       <div class="bubble chat">
+        ${thMetaRow(e)}
         <div class="chat-txt">${esc(e.testo||'')}</div>
         <div class="chat-meta">${info}<span class="chat-time">${time}</span>${del}</div>
         ${thInfoPanel(e,d)}
@@ -4300,6 +4311,7 @@ function thBubble(d,e){
     // non fa da solo (fonte="email_auto", non ancora attivo)
     return `<div class="tmsg in">
       <div class="bubble chat">
+        ${thMetaRow(e)}
         <div class="chat-txt">${esc(e.testo||'')}</div>
         <div class="chat-meta">${thOffertaLink(e)}${info}<span class="chat-time">${time}</span>${del}</div>
         ${thInfoPanel(e,d)}
@@ -4316,8 +4328,9 @@ function thBubble(d,e){
 function thInfoPanel(e,d){
   const dt=new Date(e.data+'Z').toLocaleString('it-IT',{dateStyle:'medium',timeStyle:'short'});
   const rows=[['Data e ora',dt]];
+  if(e.oggetto)rows.push(['Oggetto',e.oggetto]);
   if(e.tipo==='mail_ricevuta')rows.push(['Da',e.email_da||'—']);
-  if(e.tipo==='mail_inviata'){
+  if(e.tipo==='mail_inviata'||e.tipo==='mail_ricevuta'){
     rows.push(['A',(e.email_to&&e.email_to.length)?e.email_to.join(', '):(d.emails_to||[]).join(', ')||'—']);
     if(e.email_cc&&e.email_cc.length)rows.push(['CC',e.email_cc.join(', ')]);
     if(e.email_ccn&&e.email_ccn.length)rows.push(['CCN',e.email_ccn.join(', ')]);
@@ -4357,17 +4370,33 @@ function thSignature(d){
 }
 function thComposeHtml(d){
   const to=(d.emails_to||[]).join(', '), cc=(d.emails_cc||[]).join(', '), ccn=(d.emails_ccn||[]).join(', ');
+  const oggRisposta=d.oggetto?('R: '+d.oggetto):'';
   return `<div class="compose">
     <div class="compose-tools">
       <a class="ctool" onclick="thToggle('thRecvBox')">📩 Registra mail ricevuta</a>
       <a class="ctool" onclick="thImportMail()">📥 Importa mail (.eml/.msg)</a>
+      <a class="ctool" onclick="thToggle('thMsgBox')">✎ oggetto/destinatari</a>
       <a class="ctool" onclick="thToggle('thContBox')">✎ contatti</a>
     </div>
     <div class="ctool-panel" id="thRecvBox" style="display:none">
       <input type="text" id="thRecvDa" placeholder="Da (nome/mail mittente)" value="${esc(d.fornitore_nome)}">
+      <input type="text" id="thRecvOgg" placeholder="Oggetto (es. R: ${esc(d.oggetto||'')})">
+      <div class="ctool-row">
+        <div class="fld2"><label>A</label><input type="text" id="thRecvTo" value="${esc(to)}"></div>
+        <div class="fld2"><label>CC</label><input type="text" id="thRecvCc" value="${esc(cc)}"></div>
+        <div class="fld2"><label>CCN</label><input type="text" id="thRecvCcn" value=""></div>
+      </div>
       <textarea id="thRecvTxt" placeholder="Cosa dice la mail che hai ricevuto?"></textarea>
       <label class="ctool-file"><input type="file" id="thRecvFile" accept=".pdf,.xlsx,.xls,.csv,.eml,.msg"> <span>📎 Se è un'offerta/preventivo allegato, aggiungilo qui — i prezzi si leggono da soli</span></label>
       <div class="ctool-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thRecvSalva()">Registra</button></div>
+    </div>
+    <div class="ctool-panel" id="thMsgBox" style="display:none">
+      <input type="text" id="thMsgOgg" placeholder="Oggetto di questo messaggio" value="${esc(oggRisposta)}">
+      <div class="ctool-row">
+        <div class="fld2"><label>A</label><input type="text" id="thMsgTo" value="${esc(to)}"></div>
+        <div class="fld2"><label>CC</label><input type="text" id="thMsgCc" value="${esc(cc)}"></div>
+        <div class="fld2"><label>CCN</label><input type="text" id="thMsgCcn" value="${esc(ccn)}"></div>
+      </div>
     </div>
     <div class="ctool-panel" id="thContBox" style="display:none">
       <div class="ctool-row">
@@ -4389,11 +4418,16 @@ function thComposeHtml(d){
 function thToggle(id){const el=document.getElementById(id);el.style.display=el.style.display==='none'?'block':'none';}
 async function thRecvSalva(){
   const da=(document.getElementById('thRecvDa').value||'').trim();
+  const oggetto=(document.getElementById('thRecvOgg').value||'').trim();
+  const to=splitEmails(document.getElementById('thRecvTo').value);
+  const cc=splitEmails(document.getElementById('thRecvCc').value);
+  const ccn=splitEmails(document.getElementById('thRecvCcn').value);
   const testo=(document.getElementById('thRecvTxt').value||'').trim();
   const fileInp=document.getElementById('thRecvFile');
   const file=fileInp&&fileInp.files[0];
   if(!testo&&!file){toast('Scrivi cosa dice la mail o allega un file',true);return;}
-  const ev=await thSalvaEvento({tipo:'mail_ricevuta',testo:testo||'(vedi allegato)',email_da:da||DD.data.fornitore_nome});
+  const ev=await thSalvaEvento({tipo:'mail_ricevuta',testo:testo||'(vedi allegato)',email_da:da||DD.data.fornitore_nome,
+    oggetto:oggetto||null,email_to:to,email_cc:cc,email_ccn:ccn});
   if(ev&&file)await thEstraiOfferta(file,ev.id);
 }
 async function thEstraiOfferta(file,eventoId){
@@ -4454,14 +4488,14 @@ async function thContSalva(){
     toast('Contatti aggiornati','ok');
   }catch{toast('Errore aggiornamento contatti',true);}
 }
-let IM={cid:null,fid:null,rows:[]};
+let IM={cid:null,fid:null,rows:[],oggetto:'',to:[],cc:[],ccn:[]};
 function thImportMail(){
   const inp=document.createElement('input');inp.type='file';inp.accept='.eml,.msg';
   inp.onchange=()=>{if(inp.files[0])imUpload(inp.files[0]);};
   inp.click();
 }
 async function imUpload(file){
-  IM.cid=DD.cid;IM.fid=DD.fid;IM.rows=[];
+  IM.cid=DD.cid;IM.fid=DD.fid;IM.rows=[];IM.oggetto='';IM.to=[];IM.cc=[];IM.ccn=[];
   document.getElementById('imBody').innerHTML='<div class="fmuted" style="padding:24px;text-align:center">Leggo la mail e separo i messaggi con l\'AI… (qualche secondo)</div>';
   document.getElementById('imSub').textContent=file.name;
   mOpen('mImportMail');
@@ -4476,6 +4510,9 @@ async function imUpload(file){
     // (altrimenti una mail di settimane fa risulterebbe inviata oggi nel filone).
     const fallback=(res.data_originale||'').slice(0,10)||new Date().toISOString().slice(0,10);
     IM.rows=(res.messaggi||[]).map(m=>({mittente:m.mittente||'',testo:m.testo||'',nostra:!!m.nostra,data:imParseData(m.data,fallback),sel:!m.nostra}));
+    IM.oggetto=res.oggetto||'';
+    IM.to=splitEmails(res.destinatari||'');
+    IM.cc=splitEmails(res.cc||'');
     document.getElementById('imSub').textContent=(res.oggetto||file.name)+(res.mittente_originale?' · da '+res.mittente_originale:'');
     imRender();
   }catch(e){document.getElementById('imBody').innerHTML=`<div class="av-empty">${esc(e.message||'Errore lettura mail')}</div>`;}
@@ -4486,6 +4523,14 @@ function imParseData(s,fallbackIso){
   return fallbackIso;
 }
 function imRender(){
+  const header=`<div class="ctool-panel" style="margin-bottom:10px">
+    <input type="text" id="imOgg" placeholder="Oggetto" value="${esc(IM.oggetto)}" onchange="IM.oggetto=this.value">
+    <div class="ctool-row">
+      <div class="fld2"><label>A</label><input type="text" id="imTo" value="${esc(IM.to.join(', '))}" onchange="IM.to=splitEmails(this.value)"></div>
+      <div class="fld2"><label>CC</label><input type="text" id="imCc" value="${esc(IM.cc.join(', '))}" onchange="IM.cc=splitEmails(this.value)"></div>
+      <div class="fld2"><label>CCN</label><input type="text" id="imCcn" value="${esc(IM.ccn.join(', '))}" onchange="IM.ccn=splitEmails(this.value)"></div>
+    </div>
+  </div>`;
   const html=IM.rows.map((m,i)=>`
     <div class="im-row${m.sel?'':' off'}">
       <label class="im-chk"><input type="checkbox" ${m.sel?'checked':''} onchange="imToggle(${i},this.checked)"></label>
@@ -4498,15 +4543,16 @@ function imRender(){
         <textarea onchange="imEdit(${i},'testo',this.value)" rows="2">${esc(m.testo)}</textarea>
       </div>
     </div>`).join('');
-  document.getElementById('imBody').innerHTML=`<div class="im-list">${html||'<div class="fmuted" style="padding:20px;text-align:center">Nessun messaggio trovato in questa mail.</div>'}</div>`;
+  document.getElementById('imBody').innerHTML=`${header}<div class="im-list">${html||'<div class="fmuted" style="padding:20px;text-align:center">Nessun messaggio trovato in questa mail.</div>'}</div>`;
 }
 function imToggle(i,v){IM.rows[i].sel=v;const el=document.querySelectorAll('#imBody .im-row')[i];if(el)el.classList.toggle('off',!v);}
 function imEdit(i,k,v){IM.rows[i][k]=v;}
 async function imConferma(){
   const righe=IM.rows.filter(m=>m.sel).map(m=>({testo:m.testo,mittente:m.mittente,data:m.data,tipo:'mail_ricevuta'}));
   if(!righe.length){toast('Seleziona almeno un messaggio',true);return;}
+  const body={righe,oggetto:IM.oggetto||null,email_to:IM.to,email_cc:IM.cc,email_ccn:IM.ccn};
   try{
-    const r=await fetch(API+`/api/commesse/${IM.cid}/rdo/${IM.fid}/eventi/importa-mail/conferma`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({righe})});
+    const r=await fetch(API+`/api/commesse/${IM.cid}/rdo/${IM.fid}/eventi/importa-mail/conferma`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(!r.ok)throw 0;
     mClose('mImportMail');
     if(DD&&DD.cid===IM.cid&&DD.fid===IM.fid){await ddLoadEventi();renderDdEditor(DD.data);await loadDdList();renderDdNav();if(RV.mode==='ship')rdoRenderShip();}
@@ -4542,8 +4588,13 @@ async function thInvia(){
   if(!msg){toast('Scrivi un messaggio',true);return;}
   const d=DD.data;
   const testo=msg+'\n\n'+thSignature(d);
-  const to=d.emails_to||[], cc=d.emails_cc||[], ccn=d.emails_ccn||[];
-  const ok=await thSalvaEvento({tipo:'mail_inviata',testo,email_to:to,email_cc:cc,email_ccn:ccn});
+  const oggEl=document.getElementById('thMsgOgg'), toEl=document.getElementById('thMsgTo'),
+        ccEl=document.getElementById('thMsgCc'), ccnEl=document.getElementById('thMsgCcn');
+  const oggetto=(oggEl&&oggEl.value.trim())||(d.oggetto?('R: '+d.oggetto):null);
+  const to=toEl?splitEmails(toEl.value):(d.emails_to||[]);
+  const cc=ccEl?splitEmails(ccEl.value):(d.emails_cc||[]);
+  const ccn=ccnEl?splitEmails(ccnEl.value):(d.emails_ccn||[]);
+  const ok=await thSalvaEvento({tipo:'mail_inviata',testo,oggetto,email_to:to,email_cc:cc,email_ccn:ccn});
   if(ok){txtEl.value='';thAutoGrow(txtEl);}
 }
 async function thSalvaEvento(payload){
