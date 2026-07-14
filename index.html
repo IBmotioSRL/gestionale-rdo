@@ -1226,7 +1226,7 @@ textarea.fld{resize:vertical;min-height:60px}
   </nav>
   <div class="sb-foot">
     <button class="api-pill" id="apiPill" onclick="configBackend()"><div class="api-dot"></div><span id="apiTxt">Connessione…</span></button>
-    <div class="sb-user"><div class="av">EG</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">Elia Gatti</div><div style="font-size:9.5px;color:var(--t2)">Ufficio Acquisti</div></div></div>
+    <div class="sb-user" id="sbUser" onclick="userMenu(event)" title="Account" style="cursor:pointer"><div class="av" id="sbUserAv">EG</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)" id="sbUserNome">Elia Gatti</div><div style="font-size:9.5px;color:var(--t2)" id="sbUserEmail">Ufficio Acquisti</div></div></div>
   </div>
 </aside>
 
@@ -1691,6 +1691,17 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch
 let API = localStorage.getItem('rdo_api_base') || (location.hostname.endsWith('github.io') ? 'http://127.0.0.1:8123' : location.origin);
 function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)return;const u=v.trim().replace(/\/$/,'');if(u){localStorage.setItem('rdo_api_base',u);location.reload();}}
 
+// sessione scaduta/assente (login "Accedi con Microsoft"): qualsiasi 401 dal backend
+// rimanda al login, senza dover toccare ogni singola chiamata fetch sparsa nel file.
+(function(){
+  const _fetch = window.fetch;
+  window.fetch = async function(...args){
+    const r = await _fetch(...args);
+    if (r.status === 401) { location.href = API + '/auth/login'; }
+    return r;
+  };
+})();
+
 /* ── STATE ── */
 let commesse=[], fornitori=[];
 const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
@@ -1698,7 +1709,7 @@ const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('dash');
+async function init(){await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('dash');
   await loadNotifiche(false);(NOTIF.notifiche||[]).forEach(n=>NOTIF_SEEN.add(n.id));startNotifPolling();}
 async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}fillPropDatalists();}
 // tendine personalizzabili (datalist) per le proprietà note
@@ -1716,6 +1727,20 @@ function fillPropDatalists(){
   set('dlMat',[...mats].sort());
 }
 async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
+// utente loggato (login "Accedi con Microsoft"): se il backend gira senza login attivo
+// (solo LAN, MS_REDIRECT_URI non configurato) /auth/utente risponde 404 e si tiene il default statico.
+async function loadUtente(){try{const r=await fetch(API+'/auth/utente');if(!r.ok)return;const u=await r.json();
+  const nome=u.nome||u.email||'Utente';
+  document.getElementById('sbUserNome').textContent=nome;
+  document.getElementById('sbUserEmail').textContent=u.email||'';
+  document.getElementById('sbUserAv').textContent=nome.split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+}catch{}}
+function logout(){location.href=API+'/auth/logout';}
+function userMenu(e){
+  const nome=document.getElementById('sbUserNome').textContent;
+  const email=document.getElementById('sbUserEmail').textContent;
+  showCtx(e,nome+(email?' · '+email:''),[['🚪 Esci dal gestionale','logout()']]);
+}
 async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(r.ok)fornitori=await r.json();}catch{}}
 async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r.ok)throw 0;commesse=await r.json();
   // carica parti di ogni commessa (per stats dashboard/progetti/RDO)
