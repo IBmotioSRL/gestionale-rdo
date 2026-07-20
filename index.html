@@ -3623,22 +3623,27 @@ function renderOffDoc(){
     <input id="odAliq" value="${o.aliquota_iva||22}" style="width:56px;text-align:right" onchange="odRecalc()"> % IVA
     ${o.fornitore_nome_letto?`<span class="fmuted" style="font-size:11px">letto: ${esc(o.fornitore_nome_letto)}</span>`:''}
     ${o.ha_file?`<a href="${API}/api/offerte/${o.id}/file" target="_blank" class="btn btn-sm btn-ghost" style="margin-left:auto">📎 originale</a>`:''}</div></div>`;
-  h+=`<table class="cm-tab" style="width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px"><thead><tr><th>Articolo</th><th>Cod. fornitore</th><th style="text-align:right">Q.tà</th><th style="text-align:right">€ cad.</th><th style="text-align:right">€ riga</th><th></th></tr></thead><tbody id="odRows">`;
+  h+=`<table class="cm-tab" style="width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px"><thead><tr><th>Articolo</th><th>Cod. fornitore</th><th style="text-align:right">Q.tà</th><th style="text-align:right">€ cad.</th><th style="text-align:right">€ riga</th><th></th><th style="text-align:right">Ordina ora</th></tr></thead><tbody id="odRows">`;
   o.righe.forEach((r,i)=>{h+=odRowHtml(r,i);});
   h+='</tbody></table>';
   h+=`<div style="margin-top:12px;border-top:1px dashed var(--bd);padding-top:8px"><div style="font-weight:700;font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Accessori</div><div id="odAcc"></div><button class="btn btn-sm" onclick="odAddAcc()">+ accessorio (imballo/spedizione/sconto)</button></div>`;
   h+=`<div style="margin-top:12px;display:flex;align-items:center;gap:10px"><span class="fmuted" style="font-size:12px">Totale dichiarato dal fornitore</span><input id="odTotDich" value="${o.totale_dichiarato!=null?String(o.totale_dichiarato).replace('.',','):''}" placeholder="—" style="width:110px;text-align:right" onchange="odRecalc()"> €</div>`;
   h+=`<div id="odTotals" style="margin-top:10px"></div>`;
+  h+=`<div id="odOrdineBox" style="margin-top:16px;border-top:1px dashed var(--bd);padding-top:10px"></div>`;
   document.getElementById('odBody').innerHTML=h;
   renderAcc();odRecalc();
+  odRenderOrdineBox();
 }
 function odRowHtml(r,i){
+  const residuo=r.quantita_residua!=null?r.quantita_residua:r.quantita;
+  const ordinaVal=(residuo>0?residuo:0);
   return `<tr data-i="${i}"><td>${r.abbinato?`<span class="cod" style="font-weight:700;font-family:ui-monospace,monospace;font-size:11.5px">${esc(r.codice)}</span>`:'<span class="fmuted">non abbinato</span>'}<div class="fmuted" style="font-size:10px">${esc(r.descrizione||'')}</div></td>
     <td class="fmuted" style="font-size:11px">${esc(r.codice_fornitore||'')}</td>
     <td style="text-align:right"><input class="cx-pin od-q" value="${String(r.quantita).replace('.',',')}" style="width:60px;text-align:right" oninput="odRecalc()"></td>
     <td style="text-align:right"><input class="cx-pin od-u" value="${r.prezzo_unitario!=null?String(r.prezzo_unitario).replace('.',','):''}" placeholder="—" style="width:78px;text-align:right" oninput="odRecalc()"></td>
     <td style="text-align:right" class="od-r">${r.prezzo_riga!=null?eur(r.prezzo_riga):'—'}</td>
-    <td style="text-align:center">${r.stimato?'<span style="font-size:8.5px;font-weight:800;background:#fdf3e0;color:#b8801f;padding:1px 5px;border-radius:5px">stim</span>':''}</td></tr>`;
+    <td style="text-align:center">${r.stimato?'<span style="font-size:8.5px;font-weight:800;background:#fdf3e0;color:#b8801f;padding:1px 5px;border-radius:5px">stim</span>':''}</td>
+    <td style="text-align:right">${r.prezzo_unitario!=null?`<input class="cx-pin ord-q" data-rid="${r.id}" value="${String(ordinaVal).replace('.',',')}" style="width:60px;text-align:right" title="Q.tà da ordinare ora (residuo ${residuo})">`:'<span class="fmuted" style="font-size:10px">—</span>'}</td></tr>`;
 }
 function renderAcc(){
   document.getElementById('odAcc').innerHTML=(DOC.accessori||[]).map((a,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
@@ -3689,6 +3694,71 @@ async function odConferma(){
 async function odDelete(){
   if(!confirm('Eliminare questa offerta?'))return;
   try{await fetch(API+'/api/offerte/'+DOC.id,{method:'DELETE'});toast('Offerta eliminata','ok');mClose('mOffDoc');await cxReload();}catch{toast('Errore',true);}
+}
+let ODORD={ordini:[],allegati:[],mostraForm:false};
+async function odRenderOrdineBox(){
+  const box=document.getElementById('odOrdineBox');if(!box)return;
+  box.innerHTML='<div class="fmuted" style="font-size:11px">Carico storico ordini…</div>';
+  try{
+    const r=await fetch(API+`/api/offerte/${DOC.id}/ordini`);ODORD.ordini=r.ok?await r.json():[];
+  }catch{ODORD.ordini=[];}
+  odDrawOrdineBox();
+}
+function odDrawOrdineBox(){
+  const box=document.getElementById('odOrdineBox');if(!box)return;
+  let h='<div style="font-weight:700;font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">📦 Ordini generati</div>';
+  if(!ODORD.ordini.length)h+='<div class="fmuted" style="font-size:12px;margin-bottom:8px">Nessun ordine ancora generato per questa offerta.</div>';
+  else h+=ODORD.ordini.map(x=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f4eee2;font-size:12px">
+      <b>${esc(x.numero)}</b><span class="fmuted">${new Date(x.data).toLocaleDateString('it-IT')} · ${eur(x.totale)}</span>
+      <a href="${API}/api/ordini/${x.id}/export" target="_blank" class="btn btn-sm btn-ghost" style="margin-left:auto">📄 apri PDF</a>
+    </div>`).join('');
+  h+=ODORD.mostraForm?'':'<button class="btn btn-go btn-sm" style="margin-top:8px" onclick="odApriFormOrdine()">+ Genera Ordine</button>';
+  if(ODORD.mostraForm){
+    h+=`<div class="of-form" style="margin-top:8px">
+      <div class="r"><input id="ordConsegna" type="text" placeholder="consegna richiesta (es. 15/07/2026)" style="flex:1">
+      <input id="ordPagamento" type="text" placeholder="condizioni pagamento (es. RIBA 60 gg)" style="flex:1"></div>
+      <textarea id="ordNote" placeholder="note (facoltative)" style="width:100%;min-height:44px;margin:6px 0;border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:12px"></textarea>
+      <div id="ordAllegati" class="fmuted" style="font-size:11px;margin-bottom:8px">Carico allegati candidati…</div>
+      <div style="display:flex;gap:8px"><button class="btn btn-go btn-sm" onclick="odGeneraOrdine()">Genera PDF</button><button class="btn btn-sm btn-ghost" onclick="odChiudiFormOrdine()">Annulla</button></div>
+    </div>`;
+  }
+  box.innerHTML=h;
+  if(ODORD.mostraForm)odCaricaAllegatiCandidati();
+}
+function odApriFormOrdine(){ODORD.mostraForm=true;odDrawOrdineBox();}
+function odChiudiFormOrdine(){ODORD.mostraForm=false;odDrawOrdineBox();}
+async function odCaricaAllegatiCandidati(){
+  try{
+    const r=await fetch(API+`/api/offerte/${DOC.id}/allegati-candidati`);ODORD.allegati=r.ok?await r.json():[];
+  }catch{ODORD.allegati=[];}
+  const el=document.getElementById('ordAllegati');if(!el)return;
+  if(!ODORD.allegati.length){el.textContent='Nessun disegno/datasheet trovato da allegare.';return;}
+  el.innerHTML='<div style="font-weight:700;margin-bottom:4px">Allegati da includere (li allegherai a mano alla mail):</div>'+
+    ODORD.allegati.map((a,i)=>`<label style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><input type="checkbox" class="ord-alg" data-i="${i}" checked> ${esc(a.nome)} <span class="fmuted">(${a.kind==='offerta_originale'?'offerta originale':'disegno'})</span></label>`).join('');
+}
+async function odGeneraOrdine(){
+  const righe=[];
+  document.querySelectorAll('#odRows .ord-q').forEach(inp=>{
+    const q=qnum(inp.value);if(q&&q>0)righe.push({id:parseInt(inp.dataset.rid),quantita:q});
+  });
+  if(!righe.length){toast('Imposta almeno una quantità da ordinare',true);return;}
+  const allegati=[];
+  document.querySelectorAll('#ordAllegati .ord-alg').forEach(cb=>{if(cb.checked)allegati.push(ODORD.allegati[parseInt(cb.dataset.i)].path);});
+  const body={righe,consegna_richiesta:(document.getElementById('ordConsegna').value||'').trim(),
+    condizioni_pagamento:(document.getElementById('ordPagamento').value||'').trim(),
+    note:(document.getElementById('ordNote').value||'').trim(),allegati};
+  try{
+    const r=await fetch(API+`/api/offerte/${DOC.id}/ordine`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||'Errore generazione ordine');}
+    const ord=await r.json();
+    toast('Ordine '+ord.numero+' generato','ok');
+    window.open(API+`/api/ordini/${ord.id}/export`,'_blank');
+    ODORD.mostraForm=false;
+    // ricarica l'offerta (residui aggiornati) e lo storico ordini
+    const rr=await fetch(API+'/api/offerte/'+DOC.id);if(rr.ok)DOC=await rr.json();
+    renderOffDoc();
+    await cxReload();
+  }catch(e){toast(e.message||'Errore generazione ordine',true);}
 }
 async function openOfferteList(cid){
   mOpen('mOffList');document.getElementById('olBody').innerHTML='<div class="fmuted" style="font-size:11px;padding:8px">Carico…</div>';
@@ -4468,10 +4538,12 @@ async function thEstraiOfferta(file,eventoId){
 }
 function thOffertaLink(e){
   if(e.offerta_id){
-    return `<a class="ctool off-link" onclick="thApriOfferta(${e.offerta_id})" title="Apri l'offerta collegata">💶 Offerta (${esc(e.offerta_stato||'')})</a>`;
+    const ordChip=e.ordine_id?` <a class="ctool off-link" onclick="thApriOrdine(${e.ordine_id})" title="Apri il PDF dell'ordine generato (sola lettura)">📄 ${esc(e.ordine_numero||'Ordine')}</a>`:'';
+    return `<a class="ctool off-link" onclick="thApriOfferta(${e.offerta_id})" title="Apri l'offerta collegata">💶 Offerta (${esc(e.offerta_stato||'')})</a>${ordChip}`;
   }
   return `<a class="ctool off-link" onclick="thNuovaOfferta(${e.id})" title="Registra il prezzo scritto in questo messaggio">💶 Registra prezzo</a>`;
 }
+function thApriOrdine(ordineId){window.open(API+`/api/ordini/${ordineId}/export`,'_blank');}
 async function thApriOfferta(oid){
   try{const r=await fetch(API+'/api/offerte/'+oid);if(!r.ok)throw 0;openOffDoc(await r.json());}catch{toast('Errore apertura offerta',true);}
 }
