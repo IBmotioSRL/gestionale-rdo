@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="RDO IB Motion">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-512.png">
-<title>Gestionale RDO · IB Motion</title>
+<title>IB Motion Definer</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,6 +20,7 @@
   --shd:0 6px 20px rgba(44,21,6,.09),0 2px 6px rgba(44,21,6,.05);
   --shl:0 16px 44px rgba(44,21,6,.16),0 4px 12px rgba(44,21,6,.08);
   --r:12px;--rs:8px;--rx:6px;
+  --series-1:#2a78d6;--series-2:#eb6834;--series-3:#1baf7a;--series-4:#eda100;--series-5:#e87ba4;
 }
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;font-size:13px}
 
@@ -620,6 +621,80 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .cx-toggle{display:inline-flex;background:rgba(44,21,6,.06);border-radius:9px;padding:3px;margin:4px 0 14px}
 .cx-toggle button{border:none;background:transparent;padding:7px 15px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer;color:var(--t2)}
 .cx-toggle button.on{background:var(--surf);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+/* ══ RACCOLTA ORE ══ */
+.ore-timercard{max-width:520px;margin:0 auto;text-align:left}
+.ore-pickrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.ore-pickrow select{flex:1;min-width:140px}
+.ore-clock{text-align:center;font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;margin:18px 0 6px;color:var(--br)}
+.ore-clock.running{color:var(--go-d)}
+.ore-timerlabel{text-align:center;color:var(--t2);font-size:12px;margin-bottom:16px}
+.ore-timeractions{display:flex;justify-content:center;gap:10px}
+.ore-durpick{display:flex;gap:8px;align-items:center}
+.ore-durpick input{width:70px}
+.ore-tablewrap{border-radius:var(--r);background:var(--surf);box-shadow:var(--sh);border:1px solid var(--bd);overflow:hidden;margin-top:12px}
+.ore-tablewrap table{width:100%;border-collapse:collapse;font-size:12.5px}
+.ore-tablewrap thead th{background:var(--br);color:#fff;text-align:left;padding:9px 10px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.ore-tablewrap tbody td{padding:9px 10px;border-bottom:1px solid var(--bd)}
+.ore-tablewrap tbody tr:hover td{background:rgba(245,168,35,.05)}
+.ore-tablewrap tbody tr:last-child td{border-bottom:0}
+.ore-tablewrap td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.ore-codechip{font-family:ui-monospace,monospace;font-size:10.5px;background:rgba(0,0,0,.06);color:var(--t2);padding:2px 6px;border-radius:5px;margin-right:4px}
+.ore-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.ore-pill.timer{background:rgba(245,168,35,.16);color:var(--go-d)}
+.ore-pill.man{background:rgba(0,0,0,.06);color:var(--t2)}
+.ore-kpirow{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px}
+.ore-kpi{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sh)}
+.ore-kpi .v{font-size:20px;font-weight:800}
+.ore-kpi .l{font-size:10.5px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.ore-calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.ore-calhd{text-align:center;font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;padding-bottom:4px}
+.ore-calday{border-radius:10px;padding:8px 6px;min-height:56px;font-size:11px;cursor:pointer;border:1.5px solid var(--bd);background:var(--surf);position:relative}
+.ore-calday.empty{background:transparent;border-color:transparent;cursor:default}
+.ore-calday .dnum{font-weight:800;font-size:11.5px}
+.ore-calday .dtot{font-size:10.5px;font-weight:700;margin-top:14px}
+.ore-calday.g{background:rgba(52,199,89,.14);border-color:rgba(52,199,89,.35)}
+.ore-calday.y{background:rgba(245,168,35,.16);border-color:rgba(245,168,35,.4)}
+.ore-calday.r{background:rgba(255,59,48,.14);border-color:rgba(255,59,48,.4)}
+.ore-calday.sel{outline:2px solid var(--go-d)}
+.ore-calday.weekend{opacity:.5}
+/* ── RACCOLTA ORE: report/statistiche (grafici a barre/torta + andamento) ── */
+.ore-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.ore-toolbar select,.ore-toolbar input{border:1.4px solid var(--bd2);border-radius:9px;padding:8px 10px;font:inherit;font-size:12.5px}
+.ore-chartcard{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;margin-top:12px}
+.ore-chartcard-hd{display:flex;align-items:start;justify-content:space-between;gap:10px}
+.ore-chartcard h3{font-size:12.5px;font-weight:800;color:var(--t1);margin-bottom:2px}
+.ore-chartcard .ore-cs{font-size:11px;color:var(--t2);margin-bottom:14px}
+.ore-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--t2)}
+.ore-legend .lk{display:inline-flex;align-items:center;gap:6px}
+.ore-legend .sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.ore-hbar-row{display:grid;grid-template-columns:120px 1fr 62px;gap:10px;align-items:center;margin-bottom:9px}
+.ore-hbar-row .lbl{font-size:11.5px;color:var(--t2);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ore-hbar-track{background:rgba(0,0,0,.06);border-radius:4px;height:16px;position:relative;overflow:hidden;cursor:pointer}
+.ore-hbar-fill{position:absolute;left:0;top:0;height:100%;border-radius:4px}
+.ore-hbar-row .val{font-size:11.5px;font-weight:800;color:var(--t1);text-align:right;font-variant-numeric:tabular-nums}
+.ore-hbar-row:hover .ore-hbar-fill{filter:brightness(1.08)}
+.ore-linewrap{position:relative;height:150px;margin-top:6px}
+.ore-pie-wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.ore-pie-wrap svg{cursor:pointer}
+.ore-viztip{position:fixed;background:#1C0F07;color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;pointer-events:none;white-space:nowrap;z-index:1000;opacity:0;transition:opacity .08s;transform:translate(-50%,-130%)}
+.ore-viztip.show{opacity:1}
+/* ── RACCOLTA ORE: Impostazioni (admin) ── */
+.ore-setsec{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;margin-top:12px}
+.ore-setsec h3{font-size:13px;font-weight:800;margin-bottom:4px}
+.ore-setsec .ore-cs{font-size:11px;color:var(--t2);margin-bottom:12px}
+.ore-setrow{border-top:1px solid var(--bd);padding:10px 0}
+.ore-setrow:first-of-type{border-top:none;padding-top:0}
+.ore-chipsel{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.ore-chipsel label{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--t2);cursor:pointer}
+.ore-addf{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.ore-addf input{border:1.4px solid var(--bd2);border-radius:9px;padding:7px 10px;font:inherit;font-size:12.5px;flex:1;min-width:160px}
+.ore-taglist{display:flex;flex-wrap:wrap;gap:6px}
+.ore-commrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--bd);cursor:pointer}
+.ore-commrow:first-of-type{border-top:none}
+.ore-commrow:hover{color:var(--go-d)}
+.ore-commrow .nm{flex:1;font-weight:700;font-size:12.5px}
+.ore-grpbox{border:1px solid var(--bd);border-radius:9px;padding:12px 14px;margin-top:10px;background:rgba(0,0,0,.015)}
+.ore-note{font-size:11px;color:var(--t2);background:rgba(245,168,35,.08);border:1px solid rgba(245,168,35,.2);border-radius:9px;padding:9px 12px;margin-bottom:12px}
 .cx-cat{background:var(--surf);border:1px solid var(--bd);border-radius:11px;margin-bottom:11px;overflow:hidden;box-shadow:var(--sh)}
 .cx-h{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;background:var(--surf2,#fcfaf5);border-bottom:1px solid var(--bd)}
 .cx-h .nm{font-weight:800;font-size:13px}
@@ -762,6 +837,45 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .s_inviata_da_confermare{background:rgba(90,200,250,.12);color:#0077A0}
 .s_confermata{background:rgba(52,199,89,.1);color:#1A7A2E}
 .s_respinta{background:rgba(255,59,48,.08);color:#C00}
+
+/* ── MAGAZZINO ── */
+.mr .mn{color:var(--red)}
+.cr{background:rgba(255,59,48,.1);color:#C00}
+.mg-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
+.mg-search{flex:1;min-width:180px;display:flex;align-items:center;gap:7px;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);padding:7px 11px}
+.mg-search input{border:0;outline:0;flex:1;font:inherit;font-size:12.5px;background:transparent;color:var(--t1)}
+.mg-chips{display:flex;gap:5px;flex-wrap:wrap}
+.mg-chip{border:1.4px solid var(--bd2);background:var(--surf);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;white-space:nowrap;user-select:none}
+.mg-chip:hover{border-color:var(--go-d)}
+.mg-chip.on{background:var(--br);color:#fff;border-color:var(--br)}
+.mg-tablewrap{border-radius:var(--r);background:var(--surf);box-shadow:var(--sh);border:1px solid var(--bd);overflow:auto}
+.mg-tablewrap table{width:100%;border-collapse:collapse;font-size:12px}
+.mg-tablewrap thead th{position:sticky;top:0;background:var(--br);color:#fff;text-align:left;padding:8px 9px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;z-index:2}
+.mg-tablewrap tbody td{padding:0;border-bottom:1px solid var(--bd)}
+.mg-tablewrap tbody tr:hover td{background:rgba(245,168,35,.05)}
+.mg-tablewrap tbody tr:last-child td{border-bottom:0}
+.mg-tablewrap td.num{padding:8px 9px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mg-tablewrap td.act{text-align:center;padding:6px}
+.mg-cell{width:100%;border:1.4px solid transparent;background:transparent;padding:7px 8px;font:inherit;font-size:12px;color:var(--t1);border-radius:6px}
+.mg-cell:hover{border-color:var(--bd2)}
+.mg-cell:focus{outline:0;border-color:var(--go-d);background:#fff}
+.mg-cellnum{width:64px;text-align:right;border:1.4px solid var(--bd2);background:var(--surf);padding:5px 7px;font:inherit;font-size:12px;color:var(--t1);border-radius:6px}
+.mg-delbtn{border:0;background:transparent;color:var(--t3);cursor:pointer;font-size:13px;padding:3px 6px;border-radius:6px}
+.mg-delbtn:hover{color:var(--red);background:rgba(255,59,48,.08)}
+.mg-formbox{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}
+.mg-rline{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.mg-rline select{flex:1}
+.mg-rline input{width:90px}
+.mg-cards{display:flex;flex-direction:column;gap:10px}
+.mg-card-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.mg-card-hd b{font-size:13px}
+.mg-card-hd .sp{flex:1}
+.mg-card-sub{font-size:11px;color:var(--t2);margin-bottom:8px}
+.mg-card-rows{border-top:1px dashed var(--bd);padding-top:8px;display:flex;flex-direction:column;gap:4px}
+.mg-cardrow{display:flex;align-items:center;gap:8px;font-size:12px}
+.mg-cardrow .nm{flex:1}
+.mg-cardrow .q{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mg-card-ft{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 
 /* ── CALDERONE ── */
 /* toggle Albero / Ricerca file */
@@ -1213,18 +1327,22 @@ textarea.fld{resize:vertical;min-height:60px}
 <aside class="sb" id="sb">
   <div class="sb-brand">
     <img class="sb-logo" src="logo-full.png" alt="IB Motion" onerror="this.style.display='none'">
-    <div class="sb-prod">Gestionale RDO</div>
+    <div class="sb-prod">IB Motion Definer</div>
   </div>
   <nav class="sb-nav">
     <div class="sb-sec">Principale</div>
-    <div class="ni on" data-v="dash" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
+    <div class="ni on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</div>
+    <div class="ni" data-v="dash" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
     <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
     <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Comunicazioni</div>
+    <div class="ni" data-v="ore" onclick="go('ore')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Raccolta Ore</div>
+    <div class="ni" data-v="mag" onclick="go('mag')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v3M3 8l9 4 9-4M3 8v11a2 2 0 002 2h14a2 2 0 002-2V8"/><path d="M12 12v9"/></svg>Magazzino</div>
     <div class="ni" data-v="costi" onclick="go('costi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi</div>
     <div class="ni" data-v="forn" onclick="go('forn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Fornitori</div>
     <div class="ni" data-v="avvisi" onclick="go('avvisi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Avvisi<span class="ni-badge" id="navAvvisiBadge" style="display:none">0</span></div>
   </nav>
   <div class="sb-foot">
+    <button class="api-pill" id="settingsPill" onclick="go('impostazioni')" style="margin-bottom:6px">⚙<span style="margin-left:2px">Impostazioni</span></button>
     <button class="api-pill" id="apiPill" onclick="configBackend()"><div class="api-dot"></div><span id="apiTxt">Connessione…</span></button>
     <div class="sb-user" id="sbUser" onclick="userMenu(event)" title="Account" style="cursor:pointer"><div class="av" id="sbUserAv">EG</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)" id="sbUserNome">Elia Gatti</div><div style="font-size:9.5px;color:var(--t2)" id="sbUserEmail">Ufficio Acquisti</div></div></div>
   </div>
@@ -1232,8 +1350,42 @@ textarea.fld{resize:vertical;min-height:60px}
 
 <main class="main">
 
+  <!-- ════ HOME ════ -->
+  <div id="v-home" class="view on">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Home</div><div class="vsub">IB Motion Definer</div></div></div>
+    </div></div>
+    <div class="vscroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;padding:40px 22px;min-height:100%">
+      <img src="logo-definer.png" alt="IB Motion Definer" style="width:340px;max-width:80vw;height:auto">
+      <div class="fmuted" style="font-size:12.5px">Magazzino · Gestione Progetto · Comunicazioni · Raccolta Ore</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,220px));gap:18px;margin-top:6px;justify-content:center;width:100%;max-width:960px">
+        <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('mag')">
+          <div style="font-size:32px;margin-bottom:10px">📦</div>
+          <div style="font-weight:800;font-size:14px">Magazzino</div>
+          <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Catalogo, giacenze, richieste e riordino</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('proj')">
+          <div style="font-size:32px;margin-bottom:10px">📁</div>
+          <div style="font-weight:800;font-size:14px">Gestione Progetto</div>
+          <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Commesse, distinte e avanzamento</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('rdo')">
+          <div style="font-size:32px;margin-bottom:10px">✉</div>
+          <div style="font-weight:800;font-size:14px">Comunicazioni</div>
+          <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Filoni con i fornitori, per qualsiasi commessa</div>
+        </div>
+        <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('ore')">
+          <div style="font-size:32px;margin-bottom:10px">⏱</div>
+          <div style="font-weight:800;font-size:14px">Raccolta Ore</div>
+          <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Timbrature, ore e presenze</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ════ DASHBOARD ════ -->
-  <div id="v-dash" class="view on">
+  <div id="v-dash" class="view">
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <div><div class="h1">Gestionale <em>RDO</em></div><div class="vsub" id="dashSub">Panoramica</div></div></div>
@@ -1359,6 +1511,30 @@ textarea.fld{resize:vertical;min-height:60px}
     </div>
   </div>
 
+  <!-- ════ RACCOLTA ORE ════ -->
+  <div id="v-ore" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Raccolta Ore</div><div class="vsub" id="oreSub">Timbrature, inserimento ore e calendario presenze</div></div></div>
+    </div></div>
+    <div class="vscroll">
+      <div class="cx-toggle" id="oreTabs" style="margin-top:4px"></div>
+      <div id="oreBody" style="padding-bottom:14px"></div>
+    </div>
+  </div>
+
+  <!-- ════ MAGAZZINO ════ -->
+  <div id="v-mag" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Magazzino</div><div class="vsub">Catalogo, giacenze, richieste e riordino</div></div></div>
+    </div></div>
+    <div class="vscroll">
+      <div class="cx-toggle" id="magTabs" style="margin-top:4px"></div>
+      <div id="magBody" style="padding-bottom:14px"></div>
+    </div>
+  </div>
+
   <!-- ════ COSTI ════ -->
   <div id="v-costi" class="view">
     <div class="vtop"><div class="vtop-row">
@@ -1379,6 +1555,24 @@ textarea.fld{resize:vertical;min-height:60px}
       </div>
     </div></div>
     <div class="vscroll"><div id="avvisiBody" style="padding:14px"><div class="av-list" id="avvisiList"></div></div></div>
+  </div>
+
+  <!-- ════ IMPOSTAZIONI ════ -->
+  <div id="v-impostazioni" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Impostazioni</div><div class="vsub">Account e informazioni generali</div></div></div>
+    </div></div>
+    <div class="vscroll">
+      <div class="card" style="max-width:420px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px">Account</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="av" id="impUserAv" style="width:44px;height:44px;font-size:15px">EG</div>
+          <div><div style="font-weight:700;font-size:13px" id="impUserNome">—</div><div class="fmuted" style="font-size:11.5px" id="impUserEmail">—</div></div>
+        </div>
+      </div>
+      <div class="fmuted" style="font-size:11px;margin-top:14px;max-width:420px;line-height:1.6">Altre impostazioni (preferenze, notifiche, configurazione backend) arriveranno qui in un secondo momento.</div>
+    </div>
   </div>
 
 </main>
@@ -1680,6 +1874,55 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<!-- MODAL: Raccolta Ore — nuova/modifica registrazione -->
+<div class="mov" id="mOreVoce" onclick="ovClose(event,'mOreVoce')">
+  <div class="modal">
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div><div class="mtit" id="mOreVoceTit">Nuova registrazione</div></div>
+      <button class="mx" onclick="mClose('mOreVoce')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd">
+      <input type="hidden" id="oveId">
+      <div class="fg" id="oveTipoToggle"><label class="fl">Tipo</label>
+        <div class="cx-toggle">
+          <button type="button" id="oveTipoLavoroBtn" onclick="oreModalSetTipo('lavoro')">⏱ Lavoro</button>
+          <button type="button" id="oveTipoAssenzaBtn" onclick="oreModalSetTipo('assenza')">🌴 Assenza</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Data</label><input type="date" class="fld" id="oveData"></div>
+      <div id="oveFieldsLavoro">
+        <div class="fg"><label class="fl">Commessa</label><select class="fld" id="oveCommessa" onchange="oreOnCommessaChange('ove')"></select></div>
+        <div class="fg" style="display:flex;gap:8px">
+          <div style="flex:1"><label class="fl">Gruppo</label><select class="fld" id="oveGruppo" onchange="oreOnGruppoChange('ove')"></select></div>
+          <div style="flex:1"><label class="fl">Fase</label><select class="fld" id="oveFase"></select></div>
+        </div>
+      </div>
+      <div id="oveFieldsAssenza" style="display:none">
+        <div class="fg"><label class="fl">Tipo assenza</label><select class="fld" id="oveAssenzaTipo"></select></div>
+      </div>
+      <div class="fg"><label class="fl">Durata</label>
+        <div class="ore-durpick"><input class="fld" type="number" id="oveOreH" min="0" value="1"><span>h</span><select class="fld" id="oveOreM"></select><span>min</span></div>
+      </div>
+      <div class="fg"><label class="fl">Nota</label><input class="fld" id="oveNota" placeholder="Nota (facoltativa)"></div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreVoce')">Annulla</button><button class="btn btn-go" onclick="oreSalvaVoceModal()">💾 Salva</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mScanQr" onclick="magOvCloseScan(event)">
+  <div class="modal" style="max-width:480px">
+    <div class="mhd">
+      <div class="mico2">📷</div>
+      <div><div class="mtit">Scansione QR scatola</div><div class="msub">Inquadra l'etichetta o inserisci il testo a mano</div></div>
+      <button class="mx" onclick="magChiudiScanModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd" id="mScanQrBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mft" id="mScanQrFt"></div>
+  </div>
+</div>
+
+<div class="ore-viztip" id="oreViztip"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1704,12 +1947,12 @@ function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)re
 
 /* ── STATE ── */
 let commesse=[], fornitori=[];
-const S={v:'dash',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
+const S={v:'home',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
   view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set(),pmap:{}};
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('dash');
+async function init(){await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('home');
   await loadNotifiche(false);(NOTIF.notifiche||[]).forEach(n=>NOTIF_SEEN.add(n.id));startNotifPolling();}
 async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}fillPropDatalists();}
 // tendine personalizzabili (datalist) per le proprietà note
@@ -1759,9 +2002,20 @@ function go(v,pid){
   if(v==='dash')renderDash();
   if(v==='proj')renderProjGrid();
   if(v==='rdo')rdoEnter();
+  if(v==='ore')oreEnter();
+  if(v==='mag')magEnter();
   if(v==='costi'){CX.mode='list';CX.cid=null;CX.data=null;renderCosti();}
   if(v==='forn')renderForn();
   if(v==='avvisi')renderAvvisi();
+  if(v==='impostazioni')renderImpostazioni();
+}
+function renderImpostazioni(){
+  const nome=document.getElementById('sbUserNome').textContent;
+  const email=document.getElementById('sbUserEmail').textContent;
+  const av=document.getElementById('sbUserAv').textContent;
+  document.getElementById('impUserNome').textContent=nome;
+  document.getElementById('impUserEmail').textContent=email;
+  document.getElementById('impUserAv').textContent=av;
 }
 
 /* ── helpers stato/parti ── */
@@ -3338,6 +3592,1062 @@ async function cxReload(){
 }
 function cxOfferte(pid){openOfferte(pid,()=>cxReload());}
 
+/* ══════════ RACCOLTA ORE — shell con sotto-tab (Timbrature / Inserimento ore / Calendario presenze) ══════════ */
+let ORE={tab:'timbro',me:null,fasi:[],gruppi:[],assenzeTipi:[],timbro:null,timer:null,regmode:'lavoro',pending:null,
+  voci:[],mieview:'tabella',calMonth:new Date(),calSel:null,editId:null,_modalTipo:'lavoro',_voceCtx:'mie',
+  spese:[],oreConfig:null,
+  rep:{giorni:30,cv:{commessa:'bar',gruppo:'bar',assenze:'bar'}},repRows:[],
+  team:{utente:'',giorni:30,cv:{persona:'bar',commessa:'bar',gruppo:'bar',assenze:'bar'}},teamRows:[],
+  rimTeam:{utente:'',giorni:30},rimTeamRows:[],
+  set:{utenti:[],team:[],commessaSel:undefined},
+  exp:{}};
+let ORE_CLOCK_INT=null;
+
+async function oreEnter(){
+  if(!ORE.me){try{const r=await fetch(API+'/api/ore/me');ORE.me=r.ok?await r.json():null;}catch{ORE.me=null;}}
+  await oreLoadCatalogs();
+  oreGoTab(ORE.tab||'timbro');
+}
+async function oreLoadCatalogs(){
+  if((ORE.fasi||[]).length&&(ORE.gruppi||[]).length&&(ORE.assenzeTipi||[]).length)return;
+  try{
+    const [rf,rg,ra]=await Promise.all([fetch(API+'/api/ore/fasi'),fetch(API+'/api/ore/gruppi'),fetch(API+'/api/ore/assenze-tipi')]);
+    ORE.fasi=rf.ok?await rf.json():[];
+    ORE.gruppi=rg.ok?await rg.json():[];
+    ORE.assenzeTipi=ra.ok?await ra.json():[];
+  }catch{}
+}
+function oreGoTab(t){
+  ORE.tab=t;
+  renderOreTabs();
+  if(t==='timbro')oreLoadTimbro();
+  else if(t==='timer')oreLoadTimer();
+  else if(t==='mie')oreLoadVoci();
+  else if(t==='spese')oreLoadSpese();
+  else if(t==='report')oreLoadReport();
+  else if(t==='team')oreLoadTeam();
+  else if(t==='rimteam')oreLoadRimTeam();
+  else if(t==='set')oreLoadSettings();
+}
+function renderOreTabs(){
+  const el=document.getElementById('oreTabs');if(!el)return;
+  const tabs=[['timbro','🕘','Timbrature'],['timer','⏱','Inserimento ore'],['mie','📆','Calendario presenze'],['spese','🚗','Rimborso spese'],['report','📊','Report']];
+  if(ORE.me&&ORE.me.ruolo==='amministratore')tabs.push(['team','👥','Ore del team'],['rimteam','🧾','Rimborsi del team'],['set','⚙️','Impostazioni']);
+  el.innerHTML=tabs.map(([k,ic,l])=>`<button class="${ORE.tab===k?'on':''}" onclick="oreGoTab('${k}')">${ic} ${esc(l)}</button>`).join('');
+}
+function oreSelfId(){return ORE.me&&(ORE.me.id!=null?ORE.me.id:ORE.me.utente_id);}
+
+/* ── helpers comuni: commesse assegnabili, cascata commessa→gruppo→fase, minuti ── */
+function oreCommesseAssegnabili(){
+  if(!ORE.me)return [];
+  if(ORE.me.ruolo==='amministratore')return commesse;
+  const ids=ORE.me.commesse_ids||[];
+  return commesse.filter(c=>ids.includes(c.id));
+}
+function oreGruppiByCommessa(cid){cid=cid==null?null:cid;return (ORE.gruppi||[]).filter(g=>(g.commessa_id==null?null:g.commessa_id)===cid);}
+function oreCommesseOptions(){
+  const assegnabili=oreCommesseAssegnabili();
+  const list=assegnabili.filter(c=>oreGruppiByCommessa(c.id).length>0).map(c=>({id:c.id,label:(c.codice?c.codice+' — ':'')+c.nome}));
+  if(oreGruppiByCommessa(null).length>0)list.push({id:null,label:'Attività interne'});
+  return list;
+}
+function oreOptsCommesse(sel){
+  const list=oreCommesseOptions();
+  if(!list.length)return '<option value="">— nessuna commessa disponibile —</option>';
+  return list.map(o=>`<option value="${o.id==null?'':o.id}" ${(sel==null?'':String(sel))===(o.id==null?'':String(o.id))?'selected':''}>${esc(o.label)}</option>`).join('');
+}
+function oreOptsGruppi(cid,sel){
+  return oreGruppiByCommessa(cid).map(g=>`<option value="${g.id}" ${String(sel)===String(g.id)?'selected':''}>${esc(g.nome)}</option>`).join('');
+}
+function oreOptsFasi(gid,sel){
+  const g=(ORE.gruppi||[]).find(x=>x.id===Number(gid));
+  const fasi=(g&&g.fasi)||[];
+  return fasi.map(f=>`<option value="${f.id}" ${String(sel)===String(f.id)?'selected':''}>${esc(f.codice)} — ${esc(f.nome)}</option>`).join('');
+}
+function oreOptsMinuti(sel){let h='';for(let m=0;m<60;m+=5)h+=`<option value="${m}" ${m===sel?'selected':''}>${pad(m)}</option>`;return h;}
+function oreVal(id){const el=document.getElementById(id);return el?el.value:'';}
+function oreCidVal(id){const v=oreVal(id);return v===''?null:parseInt(v);}
+function oreOnCommessaChange(p){
+  const cid=oreCidVal(p+'Commessa');
+  const gEl=document.getElementById(p+'Gruppo');if(!gEl)return;
+  gEl.innerHTML=oreOptsGruppi(cid,null);
+  const fEl=document.getElementById(p+'Fase');if(fEl)fEl.innerHTML=oreOptsFasi(gEl.value,null);
+}
+function oreOnGruppoChange(p){
+  const g=oreVal(p+'Gruppo');
+  const fEl=document.getElementById(p+'Fase');if(fEl)fEl.innerHTML=oreOptsFasi(g,null);
+}
+// helpers di formattazione (portati dal mockup approvato — puri, nessuna dipendenza dai dati finti)
+function pad(n){return String(n).padStart(2,'0');}
+function oreFmtDate(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDur(min){min=Math.round(min);const h=Math.floor(min/60),m=min%60;return m===0?`${h}h`:`${h}h ${pad(m)}m`;}
+function roundTo5(min){return Math.max(5,Math.round(min/5)*5);}
+
+/* ── TIMBRATURE ── */
+async function oreLoadTimbro(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico timbrature…</div>';
+  try{const r=await fetch(API+'/api/ore/timbrature/oggi');ORE.timbro=r.ok?await r.json():{stato:'fuori',oggi:[]};}
+  catch{ORE.timbro={stato:'fuori',oggi:[]};}
+  renderOreTimbro();
+}
+function renderOreTimbro(){
+  const el=document.getElementById('oreBody');
+  const t=ORE.timbro||{stato:'fuori',oggi:[]};
+  const dentro=t.stato==='dentro';
+  el.innerHTML=`<div class="card ore-timercard" style="text-align:center;padding:26px">
+    <div style="font-weight:800;font-size:13px;margin-bottom:8px">🕘 Timbratura giornaliera</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:16px">${dentro?'Sei timbrato in entrata':'Non sei ancora timbrato oggi'}</div>
+    <button class="btn ${dentro?'btn-danger':'btn-go'}" style="padding:14px 26px;font-size:15px;border-radius:14px" onclick="oreToggleTimbro()">${dentro?'🔴 Timbra uscita':'🟢 Timbra entrata'}</button>
+    ${(t.oggi||[]).length?`<div style="margin-top:18px;display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--t2)">${t.oggi.map(x=>`<div>${x.tipo==='entrata'?'🟢 Entrata':'🔴 Uscita'} · ${esc(x.ora)}</div>`).join('')}</div>`:''}
+  </div>`;
+}
+async function oreToggleTimbro(){
+  try{const r=await fetch(API+'/api/ore/timbrature/toggle',{method:'POST'});
+    if(r.ok){ORE.timbro=await r.json();renderOreTimbro();}else toast('Errore timbratura',true);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── INSERIMENTO ORE: timer con cascata commessa→gruppo→fase, revisione post-stop, manuale, assenza ── */
+async function oreLoadTimer(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico timer…</div>';
+  try{const r=await fetch(API+'/api/ore/timer');const d=r.ok?await r.json():{timer:null};ORE.timer=d.timer||null;}
+  catch{ORE.timer=null;}
+  ORE.pending=null;
+  renderOreTimer();
+}
+function oreSetRegMode(m){ORE.regmode=m;renderOreTimer();}
+function oreRunningLabel(){
+  if(!ORE.timer)return '';
+  const cid=ORE.timer.commessa_id;
+  const c=cid==null?{codice:'',nome:'Attività interne'}:(commesse.find(x=>x.id===cid)||{codice:'',nome:'Commessa #'+cid});
+  const g=(ORE.gruppi||[]).find(x=>x.id===ORE.timer.gruppo_id);
+  const fobj=g&&(g.fasi||[]).find(f=>f.id===ORE.timer.fase_id);
+  return `in corso su <b>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</b> · ${esc(g?g.nome:'')} · ${esc(fobj?fobj.codice+' — '+fobj.nome:'')}`;
+}
+function oreElapsedStr(){
+  if(!ORE.timer)return '00:00:00';
+  const started=new Date(ORE.timer.iniziato_at).getTime();
+  const s=Math.max(0,Math.floor((Date.now()-started)/1000));
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  return pad(h)+':'+pad(m)+':'+pad(sec);
+}
+function oreStartClock(){
+  oreStopClock();
+  ORE_CLOCK_INT=setInterval(()=>{const el=document.getElementById('oreClockDisplay');if(el)el.textContent=oreElapsedStr();else oreStopClock();},1000);
+}
+function oreStopClock(){if(ORE_CLOCK_INT){clearInterval(ORE_CLOCK_INT);ORE_CLOCK_INT=null;}}
+function renderOreTimer(){
+  const el=document.getElementById('oreBody');
+  if(ORE.pending)return renderOrePending();
+  oreStopClock();
+  let html=`<div class="cx-toggle" style="margin:4px auto 14px;display:flex;justify-content:center;width:fit-content">
+    <button class="${ORE.regmode==='lavoro'?'on':''}" onclick="oreSetRegMode('lavoro')">⏱ Lavoro</button>
+    <button class="${ORE.regmode==='assenza'?'on':''}" onclick="oreSetRegMode('assenza')">🌴 Assenza (ferie, permessi, malattia…)</button>
+  </div>`;
+  if(ORE.regmode==='assenza'){el.innerHTML=html+oreAssenzaFormHtml();return;}
+  const disp=oreCommesseOptions();
+  if(!disp.length){el.innerHTML=html+`<div class="fmuted" style="margin-top:12px;text-align:center">Non sei ancora assegnato a nessuna commessa — chiedi a un amministratore di assegnartene una.</div>`;return;}
+  const running=!!ORE.timer;
+  const c0=running?ORE.timer.commessa_id:disp[0].id;
+  const g0=running?ORE.timer.gruppo_id:(oreGruppiByCommessa(disp[0].id)[0]||{}).id;
+  const f0=running?ORE.timer.fase_id:(((ORE.gruppi||[]).find(x=>x.id===g0)||{}).fasi||[])[0];
+  const f0id=running?f0:(f0&&f0.id);
+  html+=`<div class="card ore-timercard">
+    <div class="ore-pickrow"><select class="fld" id="tCommessa" ${running?'disabled':''} onchange="oreOnCommessaChange('t')">${oreOptsCommesse(c0)}</select></div>
+    <div class="ore-pickrow">
+      <select class="fld" id="tGruppo" ${running?'disabled':''} onchange="oreOnGruppoChange('t')">${oreOptsGruppi(c0,g0)}</select>
+      <select class="fld" id="tFase" ${running?'disabled':''}>${oreOptsFasi(g0,f0id)}</select>
+    </div>
+    <div class="ore-clock${running?' running':''}" id="oreClockDisplay">${running?oreElapsedStr():'00:00:00'}</div>
+    <div class="ore-timerlabel">${running?oreRunningLabel():'seleziona commessa/gruppo/fase e avvia (risoluzione 5 minuti)'}</div>
+    <div class="ore-timeractions">${running?`<button class="btn btn-danger" style="padding:14px 26px;font-size:15px;border-radius:14px" onclick="oreStopTimer()">⏹ Ferma</button>`:`<button class="btn btn-go" style="padding:14px 26px;font-size:15px;border-radius:14px" onclick="oreStartTimer()">▶ Avvia timer</button>`}</div>
+  </div>
+  <div class="card ore-timercard" style="margin-top:16px">
+    <div style="font-weight:800;font-size:12.5px;margin-bottom:10px">📝 Oppure inserisci ore a consuntivo</div>
+    <div class="ore-pickrow"><select class="fld" id="mCommessa" onchange="oreOnCommessaChange('m')">${oreOptsCommesse(disp[0].id)}</select></div>
+    <div class="ore-pickrow">
+      <select class="fld" id="mGruppo" onchange="oreOnGruppoChange('m')">${oreOptsGruppi(disp[0].id,(oreGruppiByCommessa(disp[0].id)[0]||{}).id)}</select>
+      <select class="fld" id="mFase">${oreOptsFasi((oreGruppiByCommessa(disp[0].id)[0]||{}).id,null)}</select>
+    </div>
+    <div class="ore-pickrow">
+      <input class="fld" type="date" id="mData" value="${oreFmtDate(new Date())}" style="flex:1">
+      <div class="ore-durpick"><input class="fld" type="number" id="mOreH" min="0" value="1"><span>h</span><select class="fld" id="mOreM">${oreOptsMinuti(0)}</select><span>min</span></div>
+    </div>
+    <input class="fld" id="mNota" placeholder="Nota (facoltativa)" style="margin-top:4px">
+    <div style="margin-top:12px"><button class="btn btn-go" onclick="oreSalvaManuale()">+ Registra ore</button></div>
+  </div>`;
+  el.innerHTML=html;
+  if(running)oreStartClock();
+}
+function oreAssenzaFormHtml(){
+  const tipi=ORE.assenzeTipi||[];
+  return `<div class="card ore-timercard">
+    <div style="font-weight:800;font-size:12.5px;margin-bottom:10px">🌴 Registra un'assenza (niente timer: solo a consuntivo)</div>
+    <div class="ore-pickrow"><select class="fld" id="aTipo">${tipi.map(a=>`<option value="${a.id}">${esc(a.codice)} — ${esc(a.nome)}</option>`).join('')}</select></div>
+    <div class="ore-pickrow">
+      <input class="fld" type="date" id="aData" value="${oreFmtDate(new Date())}" style="flex:1">
+      <div class="ore-durpick"><input class="fld" type="number" id="aOreH" min="0" value="8"><span>h</span><select class="fld" id="aOreM">${oreOptsMinuti(0)}</select><span>min</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('aOreH').value=8;document.getElementById('aOreM').value=0">giornata intera (8h)</button>
+    </div>
+    <input class="fld" id="aNota" placeholder="Nota (facoltativa)" style="margin-top:4px">
+    <div style="margin-top:12px"><button class="btn btn-go" onclick="oreSalvaAssenza()">+ Registra assenza</button></div>
+  </div>`;
+}
+async function oreStartTimer(){
+  const commessa_id=oreCidVal('tCommessa');
+  const gruppo_id=parseInt(oreVal('tGruppo')),fase_id=parseInt(oreVal('tFase'));
+  if(!gruppo_id||!fase_id){toast('Seleziona gruppo e fase',true);return;}
+  try{
+    const r=await fetch(API+'/api/ore/timer/avvia',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({commessa_id,gruppo_id,fase_id})});
+    if(r.ok){const d=await r.json();ORE.timer=d.timer||null;renderOreTimer();}else toast('Errore avvio timer',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreStopTimer(){
+  try{
+    const r=await fetch(API+'/api/ore/timer/ferma',{method:'POST'});
+    if(r.ok){const d=await r.json();ORE.timer=null;ORE.pending={commessa_id:d.commessa_id,gruppo_id:d.gruppo_id,fase_id:d.fase_id,minuti:d.minuti,nota:''};renderOreTimer();}
+    else toast('Errore arresto timer',true);
+  }catch{toast('Errore di rete',true);}
+}
+function renderOrePending(){
+  const el=document.getElementById('oreBody');
+  const p=ORE.pending;
+  const h=Math.floor(p.minuti/60),m=p.minuti%60;
+  const cid=p.commessa_id;
+  const c=cid==null?{codice:'',nome:'Attività interne'}:(commesse.find(x=>x.id===cid)||{codice:'',nome:'Commessa #'+cid});
+  const g=(ORE.gruppi||[]).find(x=>x.id===p.gruppo_id);
+  const fobj=g&&(g.fasi||[]).find(f=>f.id===p.fase_id);
+  el.innerHTML=`<div class="card ore-timercard">
+    <div style="font-weight:800;font-size:13px;margin-bottom:4px">⏹ Timer fermato — controlla e salva</div>
+    <div style="color:var(--t2);font-size:12px;margin-bottom:16px"><b>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</b> · ${esc(g?g.nome:'')} · ${esc(fobj?fobj.codice+' — '+fobj.nome:'')}</div>
+    <div style="font-size:11.5px;font-weight:700;color:var(--t2);margin-bottom:4px">Durata (aggiustabile — risoluzione 5 minuti)</div>
+    <div class="ore-durpick" style="margin-bottom:14px"><input class="fld" type="number" id="pOreH" min="0" value="${h}"><span>h</span><select class="fld" id="pOreM">${oreOptsMinuti(m)}</select><span>min</span></div>
+    <input class="fld" id="pNota" placeholder="Nota — cosa hai fatto" value="${esc(p.nota||'')}">
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-ghost" onclick="oreAnnullaPending()">✖ Annulla (non salvare)</button>
+      <button class="btn btn-go" style="margin-left:auto" onclick="oreConfermaPending()">💾 Salva nel calendario</button>
+    </div>
+  </div>`;
+}
+async function oreConfermaPending(){
+  const h=parseInt(oreVal('pOreH'))||0,m=parseInt(oreVal('pOreM'))||0;
+  const minuti=h*60+m;
+  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
+  const p=ORE.pending;
+  const body={tipo:'lavoro',data:oreFmtDate(new Date()),minuti,nota:oreVal('pNota'),modalita:'timer',commessa_id:p.commessa_id,gruppo_id:p.gruppo_id,fase_id:p.fase_id};
+  try{
+    const r=await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){ORE.pending=null;toast('Registrazione salvata','ok');renderOreTimer();}else toast('Errore salvataggio',true);
+  }catch{toast('Errore di rete',true);}
+}
+function oreAnnullaPending(){
+  if(!confirm('Il tempo registrato dal timer andrà perso, confermi?'))return;
+  ORE.pending=null;renderOreTimer();
+}
+async function oreSalvaManuale(){
+  const h=parseInt(oreVal('mOreH'))||0,m=parseInt(oreVal('mOreM'))||0;
+  const minuti=h*60+m;
+  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
+  const commessa_id=oreCidVal('mCommessa');
+  const gruppo_id=parseInt(oreVal('mGruppo')),fase_id=parseInt(oreVal('mFase'));
+  if(!gruppo_id||!fase_id){toast('Seleziona gruppo e fase',true);return;}
+  const body={tipo:'lavoro',data:oreVal('mData'),minuti,nota:oreVal('mNota'),modalita:'manuale',commessa_id,gruppo_id,fase_id};
+  try{
+    const r=await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){toast('Ore registrate','ok');renderOreTimer();}else toast('Errore salvataggio',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreSalvaAssenza(){
+  const h=parseInt(oreVal('aOreH'))||0,m=parseInt(oreVal('aOreM'))||0;
+  const minuti=h*60+m;
+  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
+  const assenza_tipo_id=parseInt(oreVal('aTipo'));
+  const body={tipo:'assenza',data:oreVal('aData'),minuti,nota:oreVal('aNota'),modalita:'manuale',assenza_tipo_id};
+  try{
+    const r=await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){toast('Assenza registrata','ok');renderOreTimer();}else toast('Errore salvataggio',true);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── CALENDARIO PRESENZE: tabella / calendario delle proprie voci, con aggiungi/modifica/elimina ── */
+async function oreLoadVoci(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico registrazioni…</div>';
+  const self=oreSelfId();
+  const url=API+'/api/ore/voci'+(self!=null?('?utente_id='+encodeURIComponent(self)):'');
+  try{const r=await fetch(url);ORE.voci=r.ok?await r.json():[];}catch{ORE.voci=[];}
+  renderOreVoci();
+}
+function renderOreVoci(){
+  const el=document.getElementById('oreBody');
+  const rows=ORE.voci||[];
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div class="cx-toggle" style="margin:4px 0">
+      <button class="${ORE.mieview==='tabella'?'on':''}" onclick="oreSetMieView('tabella')">📋 Tabella</button>
+      <button class="${ORE.mieview==='calendario'?'on':''}" onclick="oreSetMieView('calendario')">📅 Calendario</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-go btn-sm" onclick="oreApriNuovaVoce()">+ Aggiungi voce</button>
+      ${oreExportBarHtml('mie')}
+    </div>
+  </div>`;
+  html+=ORE.mieview==='tabella'?oreTableHtml(rows):oreCalendarHtml(rows);
+  el.innerHTML=html;
+}
+function oreSetMieView(v){ORE.mieview=v;renderOreVoci();}
+function oreCommessaCellHtml(v){
+  if(v.tipo==='assenza')return `<span class="ore-pill" style="background:rgba(52,199,89,.14);color:#1A7A2E">🌴 ${esc(v.assenza_tipo_nome||'')}</span>`;
+  return v.commessa_id==null?'Attività interne':esc(v.commessa_nome||('Commessa #'+v.commessa_id));
+}
+function oreVUtenteId(v){return v.utente_id!=null?v.utente_id:v.utente_ore_id;}
+function oreVUtenteNome(v){return v.utente_nome||v.utente_email||('Utente #'+oreVUtenteId(v));}
+function oreTableHtml(rows,opts){
+  opts=opts||{};
+  const persona=!!opts.persona,ctx=opts.ctx||'mie';
+  rows=rows.slice().sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
+  const tot=rows.reduce((s,v)=>s+v.minuti,0);
+  return `<div class="ore-kpirow"><div class="ore-kpi"><div class="v">${fmtDur(tot)}</div><div class="l">Ore totali</div></div>
+    <div class="ore-kpi"><div class="v">${rows.length}</div><div class="l">Registrazioni</div></div></div>
+  <div class="ore-tablewrap"><table>
+    <thead><tr><th>Data</th>${persona?'<th>Persona</th>':''}<th>Commessa / assenza</th><th>Gruppo</th><th>Fase</th><th style="text-align:right">Durata</th><th>Modalità</th><th>Nota</th><th></th></tr></thead>
+    <tbody>${rows.map(v=>`<tr>
+      <td>${esc(v.data)}</td>${persona?'<td>'+esc(oreVUtenteNome(v))+'</td>':''}
+      <td>${oreCommessaCellHtml(v)}</td>
+      <td>${v.tipo==='assenza'?'—':esc(v.gruppo_nome||'—')}</td>
+      <td>${v.tipo==='assenza'?'—':(v.fase_codice?`<span class="ore-codechip">${esc(v.fase_codice)}</span>${esc(v.fase_nome||'')}`:'—')}</td>
+      <td class="num">${fmtDur(v.minuti)}</td>
+      <td><span class="ore-pill ${v.modalita==='timer'?'timer':'man'}">${v.modalita==='timer'?'⏱ timer':'📝 manuale'}</span></td>
+      <td style="color:var(--t3)">${esc(v.nota)||'—'}</td>
+      <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="oreApriModifica(${v.id},'${ctx}')" title="Modifica">✏️</button><button class="btn btn-ghost btn-sm" onclick="oreDelVoce(${v.id},'${ctx}')" title="Elimina">🗑</button></td>
+    </tr>`).join('')||`<tr><td colspan="${persona?9:8}" style="text-align:center;padding:30px;color:var(--t3)">Nessuna registrazione</td></tr>`}</tbody>
+  </table></div>`;
+}
+function oreCalendarHtml(rows){
+  const y=ORE.calMonth.getFullYear(),m=ORE.calMonth.getMonth();
+  const first=new Date(y,m,1),startDow=(first.getDay()+6)%7;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const byDay={};rows.forEach(v=>{byDay[v.data]=(byDay[v.data]||0)+v.minuti;});
+  let cells='';
+  for(let i=0;i<startDow;i++)cells+='<div class="ore-calday empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(y,m,d),key=oreFmtDate(dt);
+    const tot=byDay[key]||0;
+    const isWeekend=dt.getDay()===0||dt.getDay()===6;
+    let cls='ore-calday';
+    if(tot>0){if(tot===480)cls+=' g';else if(tot<480)cls+=' y';else cls+=' r';}
+    if(isWeekend)cls+=' weekend';
+    if(ORE.calSel===key)cls+=' sel';
+    cells+=`<div class="${cls}" onclick="oreCalSelDay('${key}')"><div class="dnum">${d}</div>${tot?`<div class="dtot">${fmtDur(tot)}</div>`:''}</div>`;
+  }
+  const giorniSel=ORE.calSel?rows.filter(v=>v.data===ORE.calSel):[];
+  return `<div class="ore-tablewrap" style="padding:16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <button class="btn btn-sm" onclick="oreCalPrevMonth()">←</button>
+      <b>${esc(ORE.calMonth.toLocaleDateString('it-IT',{month:'long',year:'numeric'}))}</b>
+      <button class="btn btn-sm" onclick="oreCalNextMonth()">→</button>
+      <span style="margin-left:auto;font-size:11px;color:var(--t2)">🟩 =8h · 🟨 &lt;8h · 🟥 &gt;8h</span>
+    </div>
+    <div class="ore-calgrid">${['LUN','MAR','MER','GIO','VEN','SAB','DOM'].map(d=>`<div class="ore-calhd">${d}</div>`).join('')}${cells}</div>
+  </div>
+  ${ORE.calSel?`<div class="ore-tablewrap"><div style="padding:10px 14px;display:flex;align-items:center;gap:10px">
+    <div style="font-weight:800;font-size:12px;flex:1">${esc(ORE.calSel)}${giorniSel.length?'':' — nessuna registrazione'}</div>
+    <button class="btn btn-sm" onclick="oreApriNuovaVoce('${ORE.calSel}')">+ Aggiungi voce</button>
+  </div>${giorniSel.length?oreTableHtml(giorniSel):''}</div>`:''}`;
+}
+function oreCalSelDay(key){ORE.calSel=ORE.calSel===key?null:key;renderOreVoci();}
+function oreCalPrevMonth(){const y=ORE.calMonth.getFullYear(),m=ORE.calMonth.getMonth();ORE.calMonth=new Date(y,m-1,1);ORE.calSel=null;renderOreVoci();}
+function oreCalNextMonth(){const y=ORE.calMonth.getFullYear(),m=ORE.calMonth.getMonth();ORE.calMonth=new Date(y,m+1,1);ORE.calSel=null;renderOreVoci();}
+
+/* ── modale nuova/modifica voce ── */
+function oreModalSetTipo(t){
+  ORE._modalTipo=t;
+  document.getElementById('oveFieldsLavoro').style.display=t==='lavoro'?'':'none';
+  document.getElementById('oveFieldsAssenza').style.display=t==='assenza'?'':'none';
+  document.getElementById('oveTipoLavoroBtn').classList.toggle('on',t==='lavoro');
+  document.getElementById('oveTipoAssenzaBtn').classList.toggle('on',t==='assenza');
+}
+function oreApriNuovaVoce(data){
+  ORE.editId=null;
+  ORE._voceCtx='mie';
+  document.getElementById('mOreVoceTit').textContent='Nuova registrazione';
+  document.getElementById('oveTipoToggle').style.display='';
+  document.getElementById('oveId').value='';
+  document.getElementById('oveData').value=data||oreFmtDate(new Date());
+  document.getElementById('oveAssenzaTipo').innerHTML=(ORE.assenzeTipi||[]).map(a=>`<option value="${a.id}">${esc(a.codice)} — ${esc(a.nome)}</option>`).join('');
+  const disp=oreCommesseOptions();
+  const c0=disp.length?disp[0].id:null;
+  document.getElementById('oveCommessa').innerHTML=oreOptsCommesse(c0);
+  document.getElementById('oveGruppo').innerHTML=oreOptsGruppi(c0,null);
+  document.getElementById('oveFase').innerHTML=oreOptsFasi(oreVal('oveGruppo'),null);
+  document.getElementById('oveOreH').value=1;
+  document.getElementById('oveOreM').innerHTML=oreOptsMinuti(0);
+  document.getElementById('oveNota').value='';
+  oreModalSetTipo('lavoro');
+  mOpen('mOreVoce');
+}
+function oreApriModifica(id,ctx){
+  ctx=ctx||'mie';
+  const src=ctx==='team'?ORE.teamRows:ORE.voci;
+  const v=(src||[]).find(x=>x.id===id);
+  if(!v)return;
+  ORE.editId=id;
+  ORE._voceCtx=ctx;
+  document.getElementById('mOreVoceTit').textContent='Modifica registrazione — '+v.data;
+  document.getElementById('oveTipoToggle').style.display='none';
+  document.getElementById('oveId').value=v.id;
+  document.getElementById('oveData').value=v.data;
+  document.getElementById('oveAssenzaTipo').innerHTML=(ORE.assenzeTipi||[]).map(a=>`<option value="${a.id}" ${a.id===v.assenza_tipo_id?'selected':''}>${esc(a.codice)} — ${esc(a.nome)}</option>`).join('');
+  document.getElementById('oveCommessa').innerHTML=oreOptsCommesse(v.commessa_id);
+  document.getElementById('oveGruppo').innerHTML=oreOptsGruppi(v.commessa_id,v.gruppo_id);
+  document.getElementById('oveFase').innerHTML=oreOptsFasi(v.gruppo_id,v.fase_id);
+  const h=Math.floor(v.minuti/60),m=v.minuti%60;
+  document.getElementById('oveOreH').value=h;
+  document.getElementById('oveOreM').innerHTML=oreOptsMinuti(m);
+  document.getElementById('oveNota').value=v.nota||'';
+  oreModalSetTipo(v.tipo);
+  mOpen('mOreVoce');
+}
+async function oreSalvaVoceModal(){
+  const h=parseInt(oreVal('oveOreH'))||0,m=parseInt(oreVal('oveOreM'))||0;
+  const minuti=h*60+m;
+  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
+  const data=oreVal('oveData');
+  const nota=oreVal('oveNota');
+  const tipo=ORE._modalTipo;
+  const id=ORE.editId;
+  let body;
+  if(tipo==='assenza'){
+    const assenza_tipo_id=parseInt(oreVal('oveAssenzaTipo'));
+    body=id?{minuti,nota,assenza_tipo_id}:{tipo:'assenza',data,minuti,nota,modalita:'manuale',assenza_tipo_id};
+  }else{
+    const commessa_id=oreCidVal('oveCommessa');
+    const gruppo_id=parseInt(oreVal('oveGruppo')),fase_id=parseInt(oreVal('oveFase'));
+    if(!gruppo_id||!fase_id){toast('Seleziona gruppo e fase',true);return;}
+    body=id?{minuti,nota,commessa_id,gruppo_id,fase_id}:{tipo:'lavoro',data,minuti,nota,modalita:'manuale',commessa_id,gruppo_id,fase_id};
+  }
+  try{
+    const r=id
+      ?await fetch(API+'/api/ore/voci/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      :await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){mClose('mOreVoce');toast(id?'Modifica salvata':'Registrazione aggiunta','ok');
+      if(ORE._voceCtx==='team')await oreLoadTeam();else await oreLoadVoci();
+    }else toast('Errore salvataggio',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelVoce(id,ctx){
+  if(!confirm('Eliminare questa registrazione?'))return;
+  try{
+    const r=await fetch(API+'/api/ore/voci/'+id,{method:'DELETE'});
+    if(r.ok||r.status===204){toast('Eliminata','ok');if(ctx==='team')await oreLoadTeam();else await oreLoadVoci();}else toast('Errore eliminazione',true);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── EXPORT .xlsx (server-side, endpoint reale — niente xlsx generato client-side) ── */
+function oreExpDefault(){const now=new Date();const da=new Date(now.getTime()-30*86400000);return {da:oreFmtDate(da),a:oreFmtDate(now)};}
+function oreExpState(scope){if(!ORE.exp)ORE.exp={};if(!ORE.exp[scope])ORE.exp[scope]=oreExpDefault();return ORE.exp[scope];}
+function oreExportBarHtml(scope){
+  const e=oreExpState(scope);
+  return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+    <input class="fld" type="date" value="${e.da}" style="width:130px" onchange="oreExpState('${scope}').da=this.value">
+    <span style="font-size:11px;color:var(--t2)">→</span>
+    <input class="fld" type="date" value="${e.a}" style="width:130px" onchange="oreExpState('${scope}').a=this.value">
+    <button class="btn btn-go btn-sm" onclick="oreDoExport('${scope}')">⬇️ Esporta</button>
+  </div>`;
+}
+function oreDoExport(scope){
+  const e=oreExpState(scope);
+  let url=API+'/api/ore/export.xlsx?scope='+encodeURIComponent(scope)+'&da='+encodeURIComponent(e.da)+'&a='+encodeURIComponent(e.a);
+  if(scope==='team'&&ORE.team.utente)url+='&utente_id='+encodeURIComponent(ORE.team.utente);
+  if(scope==='rimborsi-team'&&ORE.rimTeam.utente)url+='&utente_id='+encodeURIComponent(ORE.rimTeam.utente);
+  window.open(url,'_blank');
+}
+
+/* ── RIMBORSO SPESE: nuova richiesta km + storico personale ── */
+function oreOptsCommesseRimborso(sel){
+  const list=oreCommesseAssegnabili();
+  let h='<option value="">— nessuna commessa / generico —</option>';
+  h+=list.map(c=>`<option value="${c.id}" ${String(sel)===String(c.id)?'selected':''}>${esc((c.codice?c.codice+' — ':'')+c.nome)}</option>`).join('');
+  return h;
+}
+async function oreLoadSpese(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico rimborsi…</div>';
+  if(!ORE.oreConfig){try{const rc=await fetch(API+'/api/ore/config');ORE.oreConfig=rc.ok?await rc.json():{tariffa_km:0};}catch{ORE.oreConfig={tariffa_km:0};}}
+  try{const r=await fetch(API+'/api/ore/rimborsi');ORE.spese=r.ok?await r.json():[];}catch{ORE.spese=[];}
+  renderOreSpese();
+}
+function renderOreSpese(){
+  const el=document.getElementById('oreBody');
+  const tariffa=(ORE.oreConfig&&ORE.oreConfig.tariffa_km)||0;
+  el.innerHTML=`<div class="card ore-timercard" style="max-width:640px">
+    <div style="font-weight:800;font-size:12.5px;margin-bottom:10px">🚗 Nuova richiesta di rimborso chilometrico</div>
+    <div class="ore-pickrow">
+      <input class="fld" type="date" id="sData" value="${oreFmtDate(new Date())}" style="flex:1">
+      <select class="fld" id="sCommessa" style="flex:1">${oreOptsCommesseRimborso('')}</select>
+    </div>
+    <div class="ore-pickrow">
+      <input class="fld" id="sPartenza" placeholder="Partenza (es. Sede IB Motion)" style="flex:1">
+      <input class="fld" id="sDestinazione" placeholder="Destinazione (es. Cliente — Verona)" style="flex:1">
+    </div>
+    <div class="ore-pickrow" style="align-items:center">
+      <input class="fld" type="number" id="sKm" min="0" step="0.1" placeholder="Km (tratta singola)" style="flex:1" oninput="oreAggiornaPreviewRimborso()">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--t2);white-space:nowrap"><input type="checkbox" id="sAR" onchange="oreAggiornaPreviewRimborso()"> andata e ritorno</label>
+    </div>
+    <div style="text-align:right;font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px" id="sPreview">${tariffa?`Tariffa attuale: € ${tariffa.toFixed(2)}/km`:'Tariffa km non ancora configurata'}</div>
+    <input class="fld" id="sNota" placeholder="Motivo (facoltativo)">
+    <div style="margin-top:12px"><button class="btn btn-go" onclick="oreSalvaRimborso()">+ Invia richiesta</button></div>
+  </div>
+  <div style="margin-top:16px">${oreExportBarHtml('rimborsi-mie')}</div>
+  ${oreRimborsoTableHtml(ORE.spese||[],true)}`;
+}
+function oreAggiornaPreviewRimborso(){
+  const km=parseFloat(oreVal('sKm'))||0;
+  const arEl=document.getElementById('sAR');
+  const ar=arEl&&arEl.checked;
+  const tariffa=(ORE.oreConfig&&ORE.oreConfig.tariffa_km)||0;
+  const kmTot=ar?km*2:km;
+  const el=document.getElementById('sPreview');
+  if(!el)return;
+  el.textContent=tariffa?`${kmTot.toFixed(1)} km → stima: € ${(kmTot*tariffa).toFixed(2)} (il totale definitivo è calcolato dal server al salvataggio)`:'Tariffa km non ancora configurata';
+}
+async function oreSalvaRimborso(){
+  const km=parseFloat(oreVal('sKm'))||0;
+  const arEl=document.getElementById('sAR');
+  const ar=!!(arEl&&arEl.checked);
+  const partenza=oreVal('sPartenza').trim();
+  const destinazione=oreVal('sDestinazione').trim();
+  if(km<=0||!partenza||!destinazione){toast('Inserisci almeno partenza, destinazione e i km percorsi',true);return;}
+  const body={data:oreVal('sData'),commessa_id:oreCidVal('sCommessa'),partenza,destinazione,andata_ritorno:ar,km,nota:oreVal('sNota')};
+  try{
+    const r=await fetch(API+'/api/ore/rimborsi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){toast('Richiesta inviata','ok');await oreLoadSpese();}else toast('Errore salvataggio',true);
+  }catch{toast('Errore di rete',true);}
+}
+function oreRimborsoTableHtml(rows,mine){
+  rows=rows.slice().sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
+  const totEuro=rows.reduce((s,r)=>s+(r.totale||0),0),totKm=rows.reduce((s,r)=>s+(r.km_tot||0),0);
+  return `<div class="ore-kpirow" style="margin-top:16px">
+    <div class="ore-kpi"><div class="v">${totKm.toFixed(1)} km</div><div class="l">Km totali</div></div>
+    <div class="ore-kpi"><div class="v">€ ${totEuro.toFixed(2)}</div><div class="l">Totale da rimborsare</div></div>
+    <div class="ore-kpi"><div class="v">${rows.length}</div><div class="l">Richieste</div></div></div>
+  <div class="ore-tablewrap"><table>
+    <thead><tr><th>Data</th>${mine?'':'<th>Persona</th>'}<th>Commessa</th><th>Percorso</th><th style="text-align:right">Km</th><th style="text-align:right">Tariffa</th><th style="text-align:right">Totale</th><th>Nota</th><th></th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td>${esc(r.data)}</td>${mine?'':'<td>'+esc(r.utente_nome||r.utente_email||('Utente #'+r.utente_ore_id))+'</td>'}
+      <td>${r.commessa_nome?esc(r.commessa_nome):'<span style="color:var(--t3)">—</span>'}</td>
+      <td>${esc(r.partenza)} → ${esc(r.destinazione)}${r.andata_ritorno?' <span class="ore-pill man">A/R</span>':''}</td>
+      <td class="num">${(r.km_tot||0).toFixed(1)}</td>
+      <td class="num">€ ${(r.tariffa||0).toFixed(2)}</td>
+      <td class="num">€ ${(r.totale||0).toFixed(2)}</td>
+      <td style="color:var(--t3)">${esc(r.nota)||'—'}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="oreDelRimborso(${r.id})" title="Elimina">🗑</button></td>
+    </tr>`).join('')||`<tr><td colspan="${mine?8:9}" style="text-align:center;padding:30px;color:var(--t3)">Nessuna richiesta</td></tr>`}</tbody>
+  </table></div>`;
+}
+async function oreDelRimborso(id){
+  if(!confirm('Eliminare questa richiesta di rimborso?'))return;
+  try{
+    const r=await fetch(API+'/api/ore/rimborsi/'+id,{method:'DELETE'});
+    if(r.ok||r.status===204){toast('Eliminata','ok');if(ORE.tab==='rimteam')await oreLoadRimTeam();else await oreLoadSpese();}
+    else toast('Errore eliminazione',true);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── RIMBORSI DEL TEAM (solo amministratore) — stesso pattern di "Ore del team" ── */
+async function oreLoadRimTeam(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico rimborsi del team…</div>';
+  try{const r=await fetch(API+'/api/ore/rimborsi/team');ORE.rimTeamRows=r.ok?await r.json():[];}catch{ORE.rimTeamRows=[];}
+  renderOreRimTeam();
+}
+function oreRimTeamPersone(){
+  const m={};(ORE.rimTeamRows||[]).forEach(r=>{if(r.utente_ore_id!=null)m[r.utente_ore_id]=r.utente_nome||r.utente_email||('Utente #'+r.utente_ore_id);});
+  return Object.entries(m).sort((a,b)=>a[1].localeCompare(b[1]));
+}
+function oreRimTeamFilteredRows(){
+  let rows=(ORE.rimTeamRows||[]).slice();
+  if(ORE.rimTeam.giorni!==9999){const soglia=new Date(Date.now()-ORE.rimTeam.giorni*86400000);rows=rows.filter(r=>new Date(r.data)>=soglia);}
+  if(ORE.rimTeam.utente)rows=rows.filter(r=>String(r.utente_ore_id)===String(ORE.rimTeam.utente));
+  return rows;
+}
+function renderOreRimTeam(){
+  const el=document.getElementById('oreBody');
+  const persone=oreRimTeamPersone();
+  let html=`<div class="ore-toolbar">
+    <select onchange="ORE.rimTeam.utente=this.value;renderOreRimTeam()"><option value="">Tutte le persone</option>${persone.map(([id,nome])=>`<option value="${id}" ${String(ORE.rimTeam.utente)===String(id)?'selected':''}>${esc(nome)}</option>`).join('')}</select>
+    <select onchange="ORE.rimTeam.giorni=parseInt(this.value);renderOreRimTeam()">
+      <option value="7" ${ORE.rimTeam.giorni===7?'selected':''}>Ultimi 7 giorni</option>
+      <option value="30" ${ORE.rimTeam.giorni===30?'selected':''}>Ultimi 30 giorni</option>
+      <option value="9999" ${ORE.rimTeam.giorni===9999?'selected':''}>Da sempre</option>
+    </select>
+    <div style="margin-left:auto">${oreExportBarHtml('rimborsi-team')}</div>
+  </div>`;
+  html+=oreRimborsoTableHtml(oreRimTeamFilteredRows(),false);
+  el.innerHTML=html;
+}
+
+/* ── primitive grafici (portate dal mockup approvato — barre/torta/andamento, nessuna libreria esterna) ── */
+const ORE_PALETTE=['var(--series-1)','var(--series-2)','var(--series-3)','var(--series-4)','var(--series-5)'];
+function oreGroupSumMin(rows,keyFn){const m={};rows.forEach(r=>{const k=keyFn(r);m[k]=(m[k]||0)+r.minuti;});return Object.entries(m).sort((a,b)=>b[1]-a[1]);}
+function oreVLabelCommessa(v){return v.commessa_id==null?'Attività interne':(v.commessa_nome||('Commessa #'+v.commessa_id));}
+function oreVLabelAssenza(v){return v.assenza_tipo_nome||('Assenza #'+v.assenza_tipo_id);}
+function oreShowTip(evt,html){const tip=document.getElementById('oreViztip');if(!tip)return;tip.innerHTML=html;tip.style.left=evt.clientX+'px';tip.style.top=evt.clientY+'px';tip.classList.add('show');}
+function oreHideTip(){const tip=document.getElementById('oreViztip');if(tip)tip.classList.remove('show');}
+function oreHbarChart(el,data,colorFn,legendItems){
+  if(!el)return;
+  const max=Math.max(...data.map(d=>d[1]),1);
+  let html=legendItems?`<div class="ore-legend">${legendItems.map(([l,c])=>`<span class="lk"><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('')}</div>`:'';
+  html+=data.map(([label,val],i)=>{
+    const pct=Math.round((val/max)*100);
+    return `<div class="ore-hbar-row">
+      <div class="lbl" title="${esc(label)}">${esc(label)}</div>
+      <div class="ore-hbar-track" onmousemove="oreShowTip(event,'<b>${esc(label)}</b><br>${fmtDur(val)}')" onmouseleave="oreHideTip()"><div class="ore-hbar-fill" style="width:${pct}%;background:${colorFn(label,i)}"></div></div>
+      <div class="val">${fmtDur(val)}</div>
+    </div>`;
+  }).join('')||'<div style="color:var(--t3);padding:10px 0">Nessun dato nel periodo</div>';
+  el.innerHTML=html;
+}
+function oreFoldOther(data){
+  if(data.length<=3)return data;
+  const top=data.slice(0,3);
+  const restSum=data.slice(3).reduce((s,d)=>s+d[1],0);
+  return [...top,['Altro',restSum]];
+}
+function orePolarToCartesian(cx,cy,r,angleDeg){const a=(angleDeg-90)*Math.PI/180;return {x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};}
+function oreArcPath(cx,cy,r,startAngle,endAngle){
+  const start=orePolarToCartesian(cx,cy,r,endAngle),end=orePolarToCartesian(cx,cy,r,startAngle);
+  const large=endAngle-startAngle<=180?'0':'1';
+  return `M ${cx} ${cy} L ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${large} 0 ${end.x.toFixed(2)} ${end.y.toFixed(2)} Z`;
+}
+function orePieChart(el,dataFull,colorFn,legendItems){
+  if(!el)return;
+  const data=oreFoldOther(dataFull);
+  const total=data.reduce((s,d)=>s+d[1],0)||1;
+  let angle=0,paths='';
+  data.forEach(([label,val],i)=>{
+    const slice=val/total*360;
+    const color=label==='Altro'?'var(--t3)':colorFn(label,i);
+    paths+=`<path d="${oreArcPath(80,80,74,angle,angle+slice)}" fill="${color}" stroke="var(--surf)" stroke-width="2"
+      onmousemove="oreShowTip(event,'<b>${esc(label)}</b><br>${fmtDur(val)} (${Math.round(val/total*100)}%)')" onmouseleave="oreHideTip()"></path>`;
+    angle+=slice;
+  });
+  const legend=legendItems||data.map(([l],i)=>[l,l==='Altro'?'var(--t3)':colorFn(l,i)]);
+  el.innerHTML=`<div class="ore-pie-wrap">
+    <svg width="160" height="160" viewBox="0 0 160 160">${paths}</svg>
+    <div class="ore-legend" style="flex-direction:column;gap:8px">${legend.map(([l,c])=>`<span class="lk"><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('')}</div>
+  </div>`;
+}
+function oreDrawTrend(rows,elId){
+  const el=document.getElementById(elId);if(!el)return;
+  const byDay={};rows.forEach(r=>{byDay[r.data]=(byDay[r.data]||0)+r.minuti;});
+  const days=Object.keys(byDay).sort().slice(-21);
+  if(!days.length){el.innerHTML='<div style="color:var(--t3)">Nessun dato</div>';return;}
+  const max=Math.max(...days.map(d=>byDay[d]),1);
+  const w=680,h=140,pad=8;
+  const stepX=(w-2*pad)/Math.max(1,days.length-1);
+  const pts=days.map((d,i)=>{const x=pad+i*stepX,y=h-pad-((byDay[d]/max)*(h-2*pad));return [x,y,d,byDay[d]];});
+  const path=pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const areaPath=path+` L${pts[pts.length-1][0].toFixed(1)},${h-pad} L${pts[0][0].toFixed(1)},${h-pad} Z`;
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:100%">
+    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="var(--t3)" stroke-width="1"/>
+    <path d="${areaPath}" fill="var(--series-1)" opacity="0.12"/>
+    <path d="${path}" fill="none" stroke="var(--series-1)" stroke-width="2"/>
+    ${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="var(--series-1)"
+      onmousemove="oreShowTip(event,'<b>${esc(p[2])}</b><br>${fmtDur(p[3])}')" onmouseleave="oreHideTip()" style="cursor:pointer"/>`).join('')}
+  </svg>`;
+}
+
+/* ── REPORT (personale) ── */
+function oreVociQueryDa(giorni){if(giorni===9999)return null;return oreFmtDate(new Date(Date.now()-giorni*86400000));}
+function oreChartCardShellRep(key,title,sub){
+  const cv=ORE.rep.cv[key];
+  return `<div class="ore-chartcard">
+    <div class="ore-chartcard-hd"><div><h3>${esc(title)}</h3><div class="ore-cs">${esc(sub)}</div></div>
+      <div class="cx-toggle" style="margin-bottom:0">
+        <button class="${cv==='bar'?'on':''}" onclick="ORE.rep.cv['${key}']='bar';oreDrawReportMie()">📊 Barre</button>
+        <button class="${cv==='pie'?'on':''}" onclick="ORE.rep.cv['${key}']='pie';oreDrawReportMie()">🥧 Torta</button>
+      </div></div>
+    <div id="ch_${key}"></div>
+  </div>`;
+}
+async function oreLoadReport(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico report…</div>';
+  const da=oreVociQueryDa(ORE.rep.giorni);
+  const qs=[];if(da)qs.push('da='+encodeURIComponent(da));
+  const self=oreSelfId();if(self!=null)qs.push('utente_id='+encodeURIComponent(self));
+  const url=API+'/api/ore/voci'+(qs.length?('?'+qs.join('&')):'');
+  try{const r=await fetch(url);ORE.repRows=r.ok?await r.json():[];}catch{ORE.repRows=[];}
+  renderOreReport();
+}
+function renderOreReport(){
+  const el=document.getElementById('oreBody');
+  const rows=ORE.repRows||[];
+  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
+  el.innerHTML=`<div class="ore-toolbar">
+    <select onchange="ORE.rep.giorni=parseInt(this.value);oreLoadReport()">
+      <option value="7" ${ORE.rep.giorni===7?'selected':''}>Ultimi 7 giorni</option>
+      <option value="30" ${ORE.rep.giorni===30?'selected':''}>Ultimi 30 giorni</option>
+      <option value="9999" ${ORE.rep.giorni===9999?'selected':''}>Da sempre</option>
+    </select>
+  </div>
+  <div class="ore-kpirow">
+    <div class="ore-kpi"><div class="v">${fmtDur(lavoro.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore lavorate</div></div>
+    <div class="ore-kpi"><div class="v">${fmtDur(assenze.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore di assenza</div></div>
+  </div>
+  ${oreChartCardShellRep('commessa','Ore per commessa','Le tue ore nel periodo selezionato, per commessa')}
+  ${oreChartCardShellRep('gruppo','Ore per gruppo','Come distribuisci il tuo tempo tra i gruppi di lavorazione')}
+  ${oreChartCardShellRep('assenze','Assenze per tipo','Le tue ferie, permessi, malattia e le altre voci, nel periodo selezionato')}
+  <div class="ore-chartcard"><h3>Andamento ore/giorno</h3><div class="ore-cs">Le tue ore lavorate registrate per giorno, ultimi giorni del periodo</div><div class="ore-linewrap" id="chTrend"></div></div>`;
+  requestAnimationFrame(oreDrawReportMie);
+}
+function oreDrawReportMie(){
+  const rows=ORE.repRows||[];
+  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
+  const byCommessa=oreGroupSumMin(lavoro,oreVLabelCommessa);
+  const byGruppo=oreGroupSumMin(lavoro,v=>v.gruppo_nome||'—');
+  const byAssenza=oreGroupSumMin(assenze,oreVLabelAssenza);
+  const gruppiUnici=[...new Set(lavoro.map(v=>v.gruppo_nome||'—'))];
+  const grpColors={};gruppiUnici.forEach((g,i)=>grpColors[g]=ORE_PALETTE[i%ORE_PALETTE.length]);
+  const assUnici=[...new Set(assenze.map(oreVLabelAssenza))];
+  const assColors={};assUnici.forEach((a,i)=>assColors[a]=ORE_PALETTE[i%ORE_PALETTE.length]);
+  const elC=document.getElementById('ch_commessa');
+  if(elC){if(ORE.rep.cv.commessa==='bar')oreHbarChart(elC,byCommessa,()=>'var(--series-1)',null);else orePieChart(elC,byCommessa,(l,i)=>ORE_PALETTE[i%ORE_PALETTE.length],null);}
+  const elG=document.getElementById('ch_gruppo');
+  if(elG){if(ORE.rep.cv.gruppo==='bar')oreHbarChart(elG,byGruppo,(l)=>grpColors[l],gruppiUnici.map(g=>[g,grpColors[g]]));else orePieChart(elG,byGruppo,(l)=>grpColors[l]||'var(--t3)',null);}
+  const elA=document.getElementById('ch_assenze');
+  if(elA){if(!byAssenza.length)elA.innerHTML='<div style="color:var(--t3);padding:10px 0">Nessuna assenza nel periodo</div>';
+    else if(ORE.rep.cv.assenze==='bar')oreHbarChart(elA,byAssenza,(l)=>assColors[l],assUnici.map(a=>[a,assColors[a]]));
+    else orePieChart(elA,byAssenza,(l)=>assColors[l]||'var(--t3)',null);}
+  oreDrawTrend(lavoro,'chTrend');
+}
+
+/* ── ORE DEL TEAM (solo amministratore) ── */
+function oreChartCardShellTeam(key,title,sub){
+  const cv=ORE.team.cv[key];
+  return `<div class="ore-chartcard">
+    <div class="ore-chartcard-hd"><div><h3>${esc(title)}</h3><div class="ore-cs">${esc(sub)}</div></div>
+      <div class="cx-toggle" style="margin-bottom:0">
+        <button class="${cv==='bar'?'on':''}" onclick="ORE.team.cv['${key}']='bar';oreDrawReportTeam()">📊 Barre</button>
+        <button class="${cv==='pie'?'on':''}" onclick="ORE.team.cv['${key}']='pie';oreDrawReportTeam()">🥧 Torta</button>
+      </div></div>
+    <div id="cht_${key}"></div>
+  </div>`;
+}
+async function oreLoadTeam(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico ore del team…</div>';
+  const da=oreVociQueryDa(ORE.team.giorni);
+  const url=API+'/api/ore/voci'+(da?('?da='+encodeURIComponent(da)):'');
+  try{const r=await fetch(url);ORE.teamRows=r.ok?await r.json():[];}catch{ORE.teamRows=[];}
+  renderOreTeam();
+}
+function oreTeamPersone(){
+  const m={};(ORE.teamRows||[]).forEach(v=>{const id=oreVUtenteId(v);if(id!=null)m[id]=oreVUtenteNome(v);});
+  return Object.entries(m).sort((a,b)=>a[1].localeCompare(b[1]));
+}
+function oreTeamFilteredRows(){
+  let rows=(ORE.teamRows||[]).slice();
+  if(ORE.team.utente)rows=rows.filter(v=>String(oreVUtenteId(v))===String(ORE.team.utente));
+  return rows;
+}
+function renderOreTeam(){
+  const el=document.getElementById('oreBody');
+  const rows=oreTeamFilteredRows();
+  const persone=oreTeamPersone();
+  let html=`<div class="ore-toolbar">
+    <select onchange="ORE.team.utente=this.value;renderOreTeam()"><option value="">Tutte le persone</option>${persone.map(([id,nome])=>`<option value="${id}" ${String(ORE.team.utente)===String(id)?'selected':''}>${esc(nome)}</option>`).join('')}</select>
+    <select onchange="ORE.team.giorni=parseInt(this.value);oreLoadTeam()">
+      <option value="7" ${ORE.team.giorni===7?'selected':''}>Ultimi 7 giorni</option>
+      <option value="30" ${ORE.team.giorni===30?'selected':''}>Ultimi 30 giorni</option>
+      <option value="9999" ${ORE.team.giorni===9999?'selected':''}>Da sempre</option>
+    </select>
+    <div style="margin-left:auto">${oreExportBarHtml('team')}</div>
+  </div>`;
+  html+=oreTableHtml(rows,{persona:true,ctx:'team'});
+  html+=oreStatisticheGlobaliHtml(ORE.teamRows);
+  el.innerHTML=html;
+  requestAnimationFrame(oreDrawReportTeam);
+}
+function oreStatisticheGlobaliHtml(rows){
+  rows=rows||[];
+  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
+  return `<h3 style="margin:22px 0 10px;font-size:14px;font-weight:800">📊 Statistiche globali (tutti gli utenti)</h3>
+  <div class="ore-kpirow">
+    <div class="ore-kpi"><div class="v">${fmtDur(lavoro.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore lavorate (tutti)</div></div>
+    <div class="ore-kpi"><div class="v">${fmtDur(assenze.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore di assenza (tutti)</div></div>
+  </div>
+  ${oreChartCardShellTeam('persona','Ore per persona','Totale ore LAVORATE nel periodo, per persona (le assenze non sono incluse qui)')}
+  ${oreChartCardShellTeam('commessa','Ore per commessa','Totale ore nel periodo selezionato, per commessa (tutti gli utenti)')}
+  ${oreChartCardShellTeam('gruppo','Ore per gruppo','Come si distribuisce il tempo tra i gruppi di lavorazione (tutti gli utenti)')}
+  ${oreChartCardShellTeam('assenze','Assenze per tipo','Ferie, permessi, malattia e le altre voci, nel periodo selezionato (tutti gli utenti)')}
+  <div class="ore-chartcard"><h3>Andamento ore/giorno</h3><div class="ore-cs">Totale ore LAVORATE registrate per giorno, ultimi giorni del periodo (tutti gli utenti)</div><div class="ore-linewrap" id="chTrend_team"></div></div>`;
+}
+function oreDrawReportTeam(){
+  const rows=ORE.teamRows||[];
+  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
+  const byPersona=oreGroupSumMin(lavoro,oreVUtenteNome);
+  const byCommessa=oreGroupSumMin(lavoro,oreVLabelCommessa);
+  const byGruppo=oreGroupSumMin(lavoro,v=>v.gruppo_nome||'—');
+  const byAssenza=oreGroupSumMin(assenze,oreVLabelAssenza);
+  const personeUniche=[...new Set(lavoro.map(oreVUtenteNome))];
+  const personaColors={};personeUniche.forEach((p,i)=>personaColors[p]=ORE_PALETTE[i%ORE_PALETTE.length]);
+  const gruppiUnici=[...new Set(lavoro.map(v=>v.gruppo_nome||'—'))];
+  const grpColors={};gruppiUnici.forEach((g,i)=>grpColors[g]=ORE_PALETTE[i%ORE_PALETTE.length]);
+  const assUnici=[...new Set(assenze.map(oreVLabelAssenza))];
+  const assColors={};assUnici.forEach((a,i)=>assColors[a]=ORE_PALETTE[i%ORE_PALETTE.length]);
+
+  const elP=document.getElementById('cht_persona');
+  if(elP){if(ORE.team.cv.persona==='bar')oreHbarChart(elP,byPersona,(l)=>personaColors[l],personeUniche.map(p=>[p,personaColors[p]]));
+    else orePieChart(elP,byPersona,(l)=>personaColors[l],personeUniche.map(p=>[p,personaColors[p]]));}
+  const elC=document.getElementById('cht_commessa');
+  if(elC){if(ORE.team.cv.commessa==='bar')oreHbarChart(elC,byCommessa,()=>'var(--series-1)',null);else orePieChart(elC,byCommessa,(l,i)=>ORE_PALETTE[i%ORE_PALETTE.length],null);}
+  const elG=document.getElementById('cht_gruppo');
+  if(elG){if(ORE.team.cv.gruppo==='bar')oreHbarChart(elG,byGruppo,(l)=>grpColors[l],gruppiUnici.map(g=>[g,grpColors[g]]));else orePieChart(elG,byGruppo,(l)=>grpColors[l]||'var(--t3)',null);}
+  const elA=document.getElementById('cht_assenze');
+  if(elA){if(!byAssenza.length)elA.innerHTML='<div style="color:var(--t3);padding:10px 0">Nessuna assenza nel periodo</div>';
+    else if(ORE.team.cv.assenze==='bar')oreHbarChart(elA,byAssenza,(l)=>assColors[l],assUnici.map(a=>[a,assColors[a]]));
+    else orePieChart(elA,byAssenza,(l)=>assColors[l]||'var(--t3)',null);}
+  oreDrawTrend(lavoro,'chTrend_team');
+}
+
+/* ── IMPOSTAZIONI (solo amministratore): utenti/ruoli/commesse, team, cataloghi fasi/assenze, commesse&gruppi, tariffa km ── */
+async function oreLoadSettings(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico impostazioni…</div>';
+  try{
+    const [ru,rt,rf,rg,ra,rc]=await Promise.all([
+      fetch(API+'/api/ore/utenti'),fetch(API+'/api/ore/team'),
+      fetch(API+'/api/ore/fasi'),fetch(API+'/api/ore/gruppi'),
+      fetch(API+'/api/ore/assenze-tipi'),fetch(API+'/api/ore/config')
+    ]);
+    ORE.set.utenti=ru.ok?await ru.json():[];
+    ORE.set.team=rt.ok?await rt.json():[];
+    ORE.fasi=rf.ok?await rf.json():[];
+    ORE.gruppi=rg.ok?await rg.json():[];
+    ORE.assenzeTipi=ra.ok?await ra.json():[];
+    ORE.oreConfig=rc.ok?await rc.json():{tariffa_km:0};
+  }catch{ORE.set.utenti=ORE.set.utenti||[];ORE.set.team=ORE.set.team||[];}
+  renderOreSettings();
+}
+function renderOreSettings(){
+  const el=document.getElementById('oreBody');
+  el.innerHTML=`
+    <div class="ore-note">👤 <b>Utenti:</b> l'elenco arriva da chi ha già aperto almeno una volta "Raccolta ore" con il proprio accesso Microsoft — non è possibile pre-aggiungere una persona che non ha ancora effettuato il primo accesso.</div>
+    ${oreSetUtentiHtml()}
+    ${oreSetTeamHtml()}
+    ${oreSetFasiHtml()}
+    ${oreSetAssenzeHtml()}
+    ${oreSetCommesseHtml()}
+    ${oreSetTariffaHtml()}
+  `;
+}
+
+/* -- 1. utenti, ruoli, commesse assegnate -- */
+function oreSetUtentiHtml(){
+  const utenti=ORE.set.utenti||[];
+  return `<div class="ore-setsec"><h3>👤 Utenti, ruoli e commesse assegnate</h3>
+    <div class="ore-cs">In base all'assegnazione, un utente può inserire ore solo sulle commesse a cui è assegnato (l'amministratore le vede/gestisce tutte).</div>
+    ${utenti.length?utenti.map(u=>`<div class="ore-setrow">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><b>${esc(u.nome||u.email)}</b><div style="color:var(--t3);font-size:11px">${esc(u.email)}</div></div>
+        <select onchange="oreSetRuolo(${u.id},this.value)">
+          <option value="utente" ${u.ruolo==='utente'?'selected':''}>Utente</option>
+          <option value="amministratore" ${u.ruolo==='amministratore'?'selected':''}>Amministratore</option>
+        </select>
+      </div>
+      <div class="ore-chipsel">${commesse.map(c=>`<label><input type="checkbox" ${(u.commesse_ids||[]).includes(c.id)?'checked':''} onchange="oreToggleCommessaUtente(${u.id},${c.id},this.checked)">${esc((c.codice?c.codice+' — ':'')+c.nome)}</label>`).join('')||'<span class="fmuted" style="font-size:11px">Nessuna commessa disponibile.</span>'}</div>
+    </div>`).join(''):'<div class="fmuted" style="font-size:11.5px;padding:8px 0">Nessun utente ha ancora effettuato il primo accesso.</div>'}
+  </div>`;
+}
+async function oreSetRuolo(id,ruolo){
+  const u=(ORE.set.utenti||[]).find(x=>x.id===id);const prev=u?u.ruolo:null;
+  if(u)u.ruolo=ruolo;
+  try{const r=await fetch(API+'/api/ore/utenti/'+id+'/ruolo',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ruolo})});
+    if(r.ok)toast('Ruolo aggiornato','ok');else{if(u)u.ruolo=prev;toast('Errore aggiornamento ruolo',true);renderOreSettings();}
+  }catch{if(u)u.ruolo=prev;toast('Errore di rete',true);renderOreSettings();}
+}
+async function oreToggleCommessaUtente(uid,cid,checked){
+  const u=(ORE.set.utenti||[]).find(x=>x.id===uid);if(!u)return;
+  u.commesse_ids=u.commesse_ids||[];
+  const prev=u.commesse_ids.slice();
+  if(checked){if(!u.commesse_ids.includes(cid))u.commesse_ids.push(cid);}
+  else u.commesse_ids=u.commesse_ids.filter(x=>x!==cid);
+  try{const r=await fetch(API+'/api/ore/utenti/'+uid+'/commesse',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:u.commesse_ids})});
+    if(!r.ok){u.commesse_ids=prev;toast('Errore aggiornamento commesse',true);renderOreSettings();}
+  }catch{u.commesse_ids=prev;toast('Errore di rete',true);renderOreSettings();}
+}
+
+/* -- 2. team -- */
+function oreSetTeamHtml(){
+  const teams=ORE.set.team||[],utenti=ORE.set.utenti||[];
+  return `<div class="ore-setsec"><h3>🧑‍🤝‍🧑 Team</h3>
+    <div class="ore-cs">Raggruppamenti liberi di utenti, usati come filtro in "Ore del team" — non legati a reparti fissi.</div>
+    ${teams.map(t=>`<div class="ore-setrow">
+      <div style="display:flex;align-items:center;gap:8px">
+        <input value="${esc(t.nome)}" onchange="oreRenameTeam(${t.id},this.value)" style="font-weight:800;border:1px solid transparent;border-radius:6px;padding:4px 6px;flex:1;font:inherit" onfocus="this.style.borderColor='var(--bd2)'" onblur="this.style.borderColor='transparent'">
+        <button class="btn btn-danger btn-sm" onclick="oreDelTeam(${t.id})">🗑 Elimina</button>
+      </div>
+      <div class="ore-chipsel">${utenti.map(u=>`<label><input type="checkbox" ${(t.membri_ids||[]).includes(u.id)?'checked':''} onchange="oreToggleMembro(${t.id},${u.id},this.checked)">${esc(u.nome||u.email)}</label>`).join('')||'<span class="fmuted" style="font-size:11px">Nessun utente disponibile.</span>'}</div>
+    </div>`).join('')}
+    <div class="ore-addf"><input id="oreNewTeamNome" placeholder="Nome nuovo team (es. Officina)"><button class="btn btn-go btn-sm" onclick="oreNuovoTeam()">+ Nuovo team</button></div>
+  </div>`;
+}
+async function oreRenameTeam(id,nome){
+  nome=(nome||'').trim();if(!nome)return;
+  try{const r=await fetch(API+'/api/ore/team/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
+    if(r.ok){const t=(ORE.set.team||[]).find(x=>x.id===id);if(t)t.nome=nome;toast('Team rinominato','ok');}else toast('Errore rinomina team',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelTeam(id){
+  if(!confirm('Eliminare questo team? (gli utenti non vengono toccati, solo il raggruppamento)'))return;
+  try{const r=await fetch(API+'/api/ore/team/'+id,{method:'DELETE'});
+    if(r.ok||r.status===204){ORE.set.team=(ORE.set.team||[]).filter(t=>t.id!==id);toast('Team eliminato','ok');renderOreSettings();}else toast('Errore eliminazione team',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreNuovoTeam(){
+  const inp=document.getElementById('oreNewTeamNome');const nome=(inp&&inp.value||'').trim();
+  if(!nome){toast('Inserisci un nome',true);return;}
+  try{const r=await fetch(API+'/api/ore/team',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
+    if(r.ok){const t=await r.json();ORE.set.team=ORE.set.team||[];ORE.set.team.push(t);toast('Team creato','ok');renderOreSettings();}else toast('Errore creazione team',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreToggleMembro(teamId,utenteId,checked){
+  const t=(ORE.set.team||[]).find(x=>x.id===teamId);if(!t)return;
+  t.membri_ids=t.membri_ids||[];
+  const prev=t.membri_ids.slice();
+  if(checked){if(!t.membri_ids.includes(utenteId))t.membri_ids.push(utenteId);}else t.membri_ids=t.membri_ids.filter(x=>x!==utenteId);
+  try{
+    const r=checked
+      ?await fetch(API+'/api/ore/team/'+teamId+'/membri',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({utente_ore_id:utenteId})})
+      :await fetch(API+'/api/ore/team/'+teamId+'/membri/'+utenteId,{method:'DELETE'});
+    if(!r.ok&&r.status!==204){t.membri_ids=prev;toast('Errore aggiornamento membri',true);renderOreSettings();}
+  }catch{t.membri_ids=prev;toast('Errore di rete',true);renderOreSettings();}
+}
+
+/* -- 3/4. cataloghi fasi e tipi assenza (stesso pattern, codice auto lato server) -- */
+function oreSetCatalogHtml(title,sub,items,addId,addFn,delFn){
+  return `<div class="ore-setsec"><h3>${title}</h3>
+    <div class="ore-cs">${sub}</div>
+    <div class="ore-taglist">${items.map(x=>`<span class="chip-x"><span class="ore-codechip">${esc(x.codice)}</span>${esc(x.nome)}<button onclick="${delFn}(${x.id})">×</button></span>`).join('')||'<span class="fmuted" style="font-size:11px">Nessuna voce.</span>'}</div>
+    <div class="ore-addf"><input id="${addId}" placeholder="Nuova voce"><button class="btn btn-go btn-sm" onclick="${addFn}()">+ aggiungi (codice auto)</button></div>
+  </div>`;
+}
+function oreSetFasiHtml(){
+  return oreSetCatalogHtml('🔧 Fasi di lavoro (catalogo globale)',`Elenco globale, indipendente dalle commesse: ogni fase ha un codice auto-assegnato (usato negli export Excel/report). Si scelgono dentro ai Gruppi di ogni commessa qui sotto.`,ORE.fasi||[],'oreNewFaseGlobale','oreAddFaseGlobale','oreDelFaseGlobale');
+}
+async function oreAddFaseGlobale(){
+  const inp=document.getElementById('oreNewFaseGlobale');const nome=(inp&&inp.value||'').trim();if(!nome)return;
+  try{const r=await fetch(API+'/api/ore/fasi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
+    if(r.ok){const f=await r.json();ORE.fasi=ORE.fasi||[];ORE.fasi.push(f);toast('Fase aggiunta','ok');renderOreSettings();}else toast('Errore aggiunta fase',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelFaseGlobale(id){
+  if(!confirm('Eliminare questa fase dal catalogo? Resterà nei gruppi che la usano già solo come riferimento storico.'))return;
+  try{const r=await fetch(API+'/api/ore/fasi/'+id,{method:'DELETE'});
+    if(r.ok||r.status===204){ORE.fasi=(ORE.fasi||[]).filter(f=>f.id!==id);toast('Fase eliminata','ok');renderOreSettings();}else toast('Errore eliminazione fase',true);
+  }catch{toast('Errore di rete',true);}
+}
+function oreSetAssenzeHtml(){
+  return oreSetCatalogHtml('🌴 Tipi di assenza',`Ferie, permessi e le classiche voci da busta paga — stesso principio delle Fasi: codice auto-assegnato per l'export, elenco personalizzabile.`,ORE.assenzeTipi||[],'oreNewAssenzaTipo','oreAddAssenzaTipo','oreDelAssenzaTipo');
+}
+async function oreAddAssenzaTipo(){
+  const inp=document.getElementById('oreNewAssenzaTipo');const nome=(inp&&inp.value||'').trim();if(!nome)return;
+  try{const r=await fetch(API+'/api/ore/assenze-tipi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
+    if(r.ok){const a=await r.json();ORE.assenzeTipi=ORE.assenzeTipi||[];ORE.assenzeTipi.push(a);toast('Voce aggiunta','ok');renderOreSettings();}else toast('Errore aggiunta voce',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelAssenzaTipo(id){
+  if(!confirm('Eliminare questa voce dal catalogo?'))return;
+  try{const r=await fetch(API+'/api/ore/assenze-tipi/'+id,{method:'DELETE'});
+    if(r.ok||r.status===204){ORE.assenzeTipi=(ORE.assenzeTipi||[]).filter(a=>a.id!==id);toast('Voce eliminata','ok');renderOreSettings();}else toast('Errore eliminazione',true);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* -- 5. commesse e gruppi (client-filtering di ORE.gruppi per commessa_id, stesso pattern di oreGruppiByCommessa usato in Inserimento ore) -- */
+function oreSetCommesseHtml(){
+  const sel=ORE.set.commessaSel;
+  return `<div class="ore-setsec"><h3>📁 Commesse e gruppi</h3>
+    <div class="ore-cs">Le commesse "da progetto" arrivano da Gestione Progetto. Clicca una voce per gestirne i gruppi e le fasi assegnate.</div>
+    ${sel===undefined?oreSetCommesseListHtml():oreSetCommessaDetailHtml(sel)}
+  </div>`;
+}
+function oreSetCommesseListHtml(){
+  let html=commesse.map(c=>`<div class="ore-commrow" onclick="oreSetCommessaSel(${c.id})">
+      <div class="nm">${esc((c.codice?c.codice+' — ':'')+c.nome)}</div>
+      <span class="ore-pill man">${oreGruppiByCommessa(c.id).length} gruppi</span>
+    </div>`).join('');
+  html+=`<div class="ore-commrow" onclick="oreSetCommessaSel('ATT')">
+      <div class="nm">Attività interne</div>
+      <span class="ore-pill man">${oreGruppiByCommessa(null).length} gruppi</span>
+    </div>`;
+  return html;
+}
+function oreSetCommessaSel(v){ORE.set.commessaSel=v==='ATT'?'ATT':Number(v);renderOreSettings();}
+function oreSetCommessaBack(){ORE.set.commessaSel=undefined;renderOreSettings();}
+function oreSetCommessaDetailHtml(sel){
+  const cid=sel==='ATT'?null:sel;
+  const c=sel==='ATT'?null:commesse.find(x=>x.id===sel);
+  const titolo=sel==='ATT'?'Attività interne':(c?((c.codice?c.codice+' — ':'')+c.nome):'Commessa');
+  const gruppi=oreGruppiByCommessa(cid);
+  return `<button class="btn btn-ghost btn-sm" onclick="oreSetCommessaBack()">← tutte le commesse</button>
+    <h3 style="margin:12px 0">${esc(titolo)}</h3>
+    ${gruppi.map(g=>`<div class="ore-grpbox">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <b>${esc(g.nome)}</b>
+        <button class="btn btn-danger btn-sm" onclick="oreDelGruppo(${g.id})">🗑 elimina gruppo</button>
+      </div>
+      <div class="ore-taglist">${(g.fasi||[]).map(f=>`<span class="chip-x"><span class="ore-codechip">${esc(f.codice)}</span>${esc(f.nome)}<button onclick="oreRimuoviFaseDaGruppo(${g.id},${f.id})">×</button></span>`).join('')||'<span class="fmuted" style="font-size:11px">Nessuna fase assegnata.</span>'}</div>
+      <div class="ore-addf">
+        <select id="oreAddFase_${g.id}" style="flex:1">${(ORE.fasi||[]).filter(f=>!(g.fasi||[]).some(x=>x.id===f.id)).map(f=>`<option value="${f.id}">${esc(f.codice)} — ${esc(f.nome)}</option>`).join('')||'<option value="">(tutte le fasi già assegnate)</option>'}</select>
+        <button class="btn btn-go btn-sm" onclick="oreAggiungiFaseAGruppo(${g.id})">+ assegna fase</button>
+      </div>
+    </div>`).join('')||'<div class="fmuted" style="font-size:11.5px;padding:8px 0">Nessun gruppo ancora.</div>'}
+    <div class="ore-addf"><input id="oreNewGruppoNome" placeholder="Nuovo gruppo (es. VERNICIATURA)"><button class="btn btn-go btn-sm" onclick="oreAddGruppo(${cid==null?'null':cid})">+ nuovo gruppo</button></div>`;
+}
+async function oreAddGruppo(cid){
+  const inp=document.getElementById('oreNewGruppoNome');const nome=(inp&&inp.value||'').trim();if(!nome)return;
+  try{const r=await fetch(API+'/api/ore/gruppi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,commessa_id:cid})});
+    if(r.ok){const g=await r.json();ORE.gruppi=ORE.gruppi||[];ORE.gruppi.push(g);toast('Gruppo creato','ok');renderOreSettings();}else toast('Errore creazione gruppo',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelGruppo(id){
+  if(!confirm('Eliminare questo gruppo?'))return;
+  try{const r=await fetch(API+'/api/ore/gruppi/'+id,{method:'DELETE'});
+    if(r.ok||r.status===204){ORE.gruppi=(ORE.gruppi||[]).filter(g=>g.id!==id);toast('Gruppo eliminato','ok');renderOreSettings();}else toast('Errore eliminazione gruppo',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreAggiungiFaseAGruppo(gid){
+  const sel=document.getElementById('oreAddFase_'+gid);const faseId=sel?parseInt(sel.value):NaN;if(!faseId)return;
+  try{const r=await fetch(API+'/api/ore/gruppi/'+gid+'/fasi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fase_id:faseId})});
+    if(r.ok){const g=(ORE.gruppi||[]).find(x=>x.id===gid);const f=(ORE.fasi||[]).find(x=>x.id===faseId);if(g&&f){g.fasi=g.fasi||[];g.fasi.push(f);}toast('Fase assegnata','ok');renderOreSettings();}else toast('Errore assegnazione fase',true);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreRimuoviFaseDaGruppo(gid,faseId){
+  try{const r=await fetch(API+'/api/ore/gruppi/'+gid+'/fasi/'+faseId,{method:'DELETE'});
+    if(r.ok||r.status===204){const g=(ORE.gruppi||[]).find(x=>x.id===gid);if(g)g.fasi=(g.fasi||[]).filter(f=>f.id!==faseId);toast('Fase rimossa','ok');renderOreSettings();}else toast('Errore rimozione fase',true);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* -- 6. tariffa km (nuovo rispetto al mockup: qui centralizzata, non più editabile per singola richiesta) -- */
+function oreSetTariffaHtml(){
+  const v=(ORE.oreConfig&&ORE.oreConfig.tariffa_km!=null)?ORE.oreConfig.tariffa_km:0;
+  return `<div class="ore-setsec"><h3>💶 Tariffa rimborso chilometrico</h3>
+    <div class="ore-cs">Valore unico usato per calcolare tutti i rimborsi km, sia nuovi che futuri.</div>
+    <div style="display:flex;align-items:center;gap:8px"><input id="oreTariffaKm" type="number" step="0.01" min="0" value="${v}" style="width:110px;border:1.4px solid var(--bd2);border-radius:9px;padding:7px 10px;font:inherit;font-size:12.5px"> €/km
+      <button class="btn btn-go btn-sm" onclick="oreSaveTariffaKm()">Salva</button>
+    </div>
+  </div>`;
+}
+async function oreSaveTariffaKm(){
+  const inp=document.getElementById('oreTariffaKm');const val=parseFloat(inp&&inp.value);if(isNaN(val)||val<0){toast('Valore non valido',true);return;}
+  try{const r=await fetch(API+'/api/ore/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({tariffa_km:val})});
+    if(r.ok){ORE.oreConfig=await r.json();toast('Tariffa aggiornata','ok');}else toast('Errore salvataggio tariffa',true);
+  }catch{toast('Errore di rete',true);}
+}
+
 /* ══ GESTIONE CATEGORIE (cross-ambito Progetto ↔ Costi + sync) ══ */
 let CATMGR={cid:null,data:null,onClose:null};
 function openCatManage(cid,onClose){
@@ -3711,6 +5021,7 @@ function odDrawOrdineBox(){
   else h+=ODORD.ordini.map(x=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f4eee2;font-size:12px">
       <b>${esc(x.numero)}</b><span class="fmuted">${new Date(x.data).toLocaleDateString('it-IT')} · ${eur(x.totale)}</span>
       <a href="${API}/api/ordini/${x.id}/export" target="_blank" class="btn btn-sm btn-ghost" style="margin-left:auto">📄 apri PDF</a>
+      <button class="btn btn-sm btn-ghost" title="Elimina ordine (libera di nuovo la quantità)" onclick="odEliminaOrdine(${x.id})">🗑</button>
     </div>`).join('');
   h+=ODORD.mostraForm?'':'<button class="btn btn-go btn-sm" style="margin-top:8px" onclick="odApriFormOrdine()">+ Genera Ordine</button>';
   if(ODORD.mostraForm){
@@ -3759,6 +5070,17 @@ async function odGeneraOrdine(){
     renderOffDoc();
     await cxReload();
   }catch(e){toast(e.message||'Errore generazione ordine',true);}
+}
+async function odEliminaOrdine(ordineId){
+  if(!confirm('Eliminare questo ordine? La quantità tornerà disponibile per un ordine successivo.'))return;
+  try{
+    const r=await fetch(API+'/api/ordini/'+ordineId,{method:'DELETE'});
+    if(!r.ok)throw 0;
+    toast('Ordine eliminato','ok');
+    const rr=await fetch(API+'/api/offerte/'+DOC.id);if(rr.ok)DOC=await rr.json();
+    renderOffDoc();
+    await cxReload();
+  }catch{toast('Errore eliminazione ordine',true);}
 }
 async function openOfferteList(cid){
   mOpen('mOffList');document.getElementById('olBody').innerHTML='<div class="fmuted" style="font-size:11px;padding:8px">Carico…</div>';
@@ -5024,6 +6346,490 @@ function ddExport(fmt){
     const url=API+`/api/commesse/${cid}/rdo/${fid}/export?fmt=${fmt}&_=`+Date.now();
     if(w&&!w.closed)w.location=url;else window.open(url,'_blank');
   });
+}
+
+/* ── MAGAZZINO ── */
+let MAG={tab:'cat',categorieLoaded:false,categorie:[],articoli:null,articoliAll:null,_catsList:['all'],
+  qcat:'',filtCat:'all',filtRiord:false,
+  richieste:null,newReq:null,
+  pronte:null,pickActive:null,scan:null,
+  notifiche:null};
+let MAG_SEARCH_T=null;
+
+async function magEnter(){
+  if(!MAG.categorieLoaded){
+    try{const r=await fetch(API+'/api/magazzino/articoli/categorie');MAG.categorie=r.ok?await r.json():[];}
+    catch{MAG.categorie=[];}
+    MAG.categorieLoaded=true;
+  }
+  magGoTab(MAG.tab||'cat');
+}
+function magGoTab(t){
+  MAG.tab=t;
+  renderMagTabs();
+  if(t==='cat')magLoadCatalogo();
+  else if(t==='req')magLoadRichieste();
+  else if(t==='pick')magLoadPronte();
+  else if(t==='reorder')magLoadNotifiche();
+}
+function renderMagTabs(){
+  const el=document.getElementById('magTabs');if(!el)return;
+  const tabs=[['cat','📋','Catalogo e giacenze'],['req','📥','Richieste da commesse'],['pick','📱','Prelievo'],['reorder','🔔','Riordino']];
+  el.innerHTML=tabs.map(([k,ic,l])=>`<button class="${MAG.tab===k?'on':''}" onclick="magGoTab('${k}')">${ic} ${esc(l)}</button>`).join('');
+}
+async function magEnsureArticoliAll(){
+  if(MAG.articoliAll)return;
+  try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoliAll=r.ok?await r.json():[];}
+  catch{MAG.articoliAll=[];}
+}
+function magArticoloFull(id){return (MAG.articoliAll||[]).find(a=>a.id===id);}
+
+/* ── CATALOGO E GIACENZE ── */
+async function magLoadCatalogo(){
+  const el=document.getElementById('magBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico catalogo…</div>';
+  const params=new URLSearchParams();
+  if(MAG.qcat)params.set('q',MAG.qcat);
+  if(MAG.filtCat&&MAG.filtCat!=='all')params.set('categoria',MAG.filtCat);
+  if(MAG.filtRiord)params.set('solo_da_riordinare','true');
+  try{const r=await fetch(API+'/api/magazzino/articoli?'+params.toString());MAG.articoli=r.ok?await r.json():[];}
+  catch{MAG.articoli=[];}
+  renderMagCatalogo();
+}
+function magKpi(cls,v,l){return `<div class="m ${cls}"><div class="mn">${v}</div><div class="ml">${esc(l)}</div></div>`;}
+function renderMagCatalogo(){
+  const el=document.getElementById('magBody');
+  const rows=MAG.articoli||[];
+  const tot=rows.length;
+  const pezzi=rows.reduce((s,x)=>s+(x.giacenza||0),0);
+  const impegnati=rows.reduce((s,x)=>s+(x.impegnato||0),0);
+  const daRiord=rows.filter(x=>x.da_riordinare).length;
+  const cats=['all',...(MAG.categorie||[])];
+  MAG._catsList=cats;
+  el.innerHTML=`
+    <div class="metrics">
+      ${magKpi('mb',tot,'Articoli')}
+      ${magKpi('mt',pezzi,'Pezzi totali')}
+      ${magKpi('mo',impegnati,'Pezzi impegnati')}
+      ${magKpi('mr',daRiord,'Da riordinare')}
+    </div>
+    <div class="mg-toolbar">
+      <div class="mg-search">🔎 <input id="magQCat" placeholder="Cerca…" value="${esc(MAG.qcat)}" oninput="magOnSearchCat(this.value)"></div>
+      <div class="mg-chips" id="magChipsCat"></div>
+      <div class="mg-chips"><div class="mg-chip${MAG.filtRiord?' on':''}" onclick="magToggleRiord()">⚠ Solo da riordinare</div></div>
+      <button class="btn btn-go" onclick="magAddArticolo()">+ Riga</button>
+    </div>
+    <div class="mg-tablewrap"><table>
+      <thead><tr>
+        <th>Codice</th><th>Categoria</th><th>Normativa</th><th>Denominazione</th><th>Dimensione</th><th>Materiale</th><th>Unità</th>
+        <th style="text-align:right">Giacenza</th><th style="text-align:right">Impegnato</th><th style="text-align:right">Disponibile</th><th style="text-align:right">Minima</th><th style="text-align:right">In arrivo</th><th></th><th></th>
+      </tr></thead>
+      <tbody id="magRowsCat"></tbody>
+    </table></div>`;
+  document.getElementById('magChipsCat').innerHTML=cats.map((c,i)=>`<div class="mg-chip${MAG.filtCat===c?' on':''}" onclick="magSetFiltCatIdx(${i})">${c==='all'?'Tutte':esc(c)}</div>`).join('');
+  const txtCell=(a,field,ph)=>`<td><input class="mg-cell" value="${esc((a[field]||'').toString())}" placeholder="${ph||''}" onchange="magSetArticolo(${a.id},'${field}',this.value)"></td>`;
+  document.getElementById('magRowsCat').innerHTML=rows.map(a=>`<tr>
+    <td style="padding:8px 9px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--t3);font-weight:700;white-space:nowrap">${esc(a.codice||'')}</td>
+    <td><input class="mg-cell" value="${esc(a.categoria||'')}" onchange="magSetArticolo(${a.id},'categoria',this.value)" style="min-width:110px"></td>
+    ${txtCell(a,'normativa','—')}
+    ${txtCell(a,'denominazione')}
+    ${txtCell(a,'dimensione','—')}
+    ${txtCell(a,'materiale','—')}
+    <td><input class="mg-cell" value="${esc(a.unita||'')}" onchange="magSetArticolo(${a.id},'unita',this.value)" style="width:60px"></td>
+    <td class="num"><input class="mg-cellnum" value="${a.giacenza}" onchange="magSetArticolo(${a.id},'giacenza',this.value,true)"></td>
+    <td class="num">${a.impegnato}</td>
+    <td class="num" style="font-weight:800;${a.da_riordinare?'color:var(--red)':''}">${a.disponibile}</td>
+    <td class="num"><input class="mg-cellnum" value="${a.scorta_minima==null?'':a.scorta_minima}" placeholder="—" onchange="magSetArticolo(${a.id},'scorta_minima',this.value,true)"></td>
+    <td class="num">${a.in_arrivo?('+'+a.in_arrivo):'—'}</td>
+    <td class="act">${a.da_riordinare?'<span class="chip cr">⚠</span>':'<span class="chip cg">ok</span>'}</td>
+    <td class="act"><button class="mg-delbtn" onclick="magDelArticolo(${a.id})" title="Elimina">🗑</button></td>
+  </tr>`).join('')||'<tr><td colspan="14"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
+}
+function magOnSearchCat(v){MAG.qcat=v;clearTimeout(MAG_SEARCH_T);MAG_SEARCH_T=setTimeout(()=>magLoadCatalogo(),300);}
+function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];magLoadCatalogo();}
+function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;magLoadCatalogo();}
+async function magSetArticolo(id,field,val,numeric){
+  const body={};
+  body[field]=numeric?(val===''?null:Math.max(0,Math.round(Number(val.toString().replace(',','.'))||0))):val;
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok){toast('Errore salvataggio',true);return;}
+    const upd=await r.json();
+    const idx=(MAG.articoli||[]).findIndex(x=>x.id===id);
+    if(idx>-1)MAG.articoli[idx]=upd;
+    renderMagCatalogo();
+  }catch{toast('Errore di rete',true);}
+}
+async function magAddArticolo(){
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({denominazione:'Nuovo articolo',unita:'pz'})});
+    if(!r.ok){toast('Errore creazione',true);return;}
+    await magLoadCatalogo();
+  }catch{toast('Errore di rete',true);}
+}
+function magDelArticolo(id){
+  if(!confirm('Eliminare questa riga?'))return;
+  fetch(API+'/api/magazzino/articoli/'+id,{method:'DELETE'}).then(r=>{
+    if(r.ok||r.status===204)magLoadCatalogo();else toast('Errore eliminazione',true);
+  }).catch(()=>toast('Errore di rete',true));
+}
+
+/* ── RICHIESTE DA COMMESSE ── */
+async function magLoadRichieste(){
+  const el=document.getElementById('magBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico richieste…</div>';
+  try{const r=await fetch(API+'/api/magazzino/richieste');MAG.richieste=r.ok?await r.json():[];}
+  catch{MAG.richieste=[];}
+  renderMagRichieste();
+}
+function magStBadge(s){
+  const m={attesa:['co','⏳ in attesa'],autorizzata:['cb','✅ autorizzata'],in_prelievo:['cb','📱 in prelievo'],completata:['cg','✔ completata'],annullata:['cr','✕ annullata']};
+  const [c,l]=m[s]||['cgr',s];
+  return `<span class="chip ${c}">${esc(l)}</span>`;
+}
+async function magApriNuovaRichiesta(){
+  if(!MAG.articoliAll){
+    try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoliAll=r.ok?await r.json():[];}
+    catch{MAG.articoliAll=[];}
+  }
+  const first=(MAG.articoliAll||[])[0];
+  MAG.newReq={commessa_id:commesse.length?commesse[0].id:null,righe:[{articolo_id:first?first.id:null,richiesta:1}]};
+  renderMagRichieste();
+}
+function magChiudiNuovaRichiesta(){MAG.newReq=null;renderMagRichieste();}
+function magAggiungiRigaRichiesta(){
+  const first=(MAG.articoliAll||[])[0];
+  MAG.newReq.righe.push({articolo_id:first?first.id:null,richiesta:1});
+  renderMagRigheForm();
+}
+function magRimuoviRigaRichiesta(i){MAG.newReq.righe.splice(i,1);renderMagRigheForm();}
+function magSetRigaArticolo(i,v){MAG.newReq.righe[i].articolo_id=parseInt(v)||null;}
+function magSetRigaQta(i,v){MAG.newReq.righe[i].richiesta=Math.max(1,parseInt(v)||1);}
+function magSetNewReqCommessa(v){MAG.newReq.commessa_id=v===''?null:parseInt(v);}
+function magOptsCommesse(sel){
+  if(!commesse.length)return '<option value="">— nessuna commessa —</option>';
+  return commesse.map(c=>`<option value="${c.id}" ${String(sel)===String(c.id)?'selected':''}>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</option>`).join('');
+}
+function magOptsArticoli(sel){
+  const list=MAG.articoliAll||[];
+  if(!list.length)return '<option value="">— nessun articolo —</option>';
+  return list.map(a=>`<option value="${a.id}" ${String(sel)===String(a.id)?'selected':''}>${esc(a.denominazione+' '+(a.dimensione||'')+' ('+a.codice+')')}</option>`).join('');
+}
+function renderMagRigheForm(){
+  const el=document.getElementById('magReqLines');if(!el)return;
+  el.innerHTML=MAG.newReq.righe.map((rg,i)=>`<div class="mg-rline">
+    <select class="fld" onchange="magSetRigaArticolo(${i},this.value)">${magOptsArticoli(rg.articolo_id)}</select>
+    <input class="fld" type="number" min="1" value="${rg.richiesta}" onchange="magSetRigaQta(${i},this.value)">
+    <button class="mg-delbtn" onclick="magRimuoviRigaRichiesta(${i})">🗑</button>
+  </div>`).join('');
+}
+async function magSalvaNuovaRichiesta(){
+  if(!MAG.newReq||!MAG.newReq.righe.length){toast('Aggiungi almeno un articolo',true);return;}
+  if(MAG.newReq.commessa_id==null){toast('Seleziona una commessa',true);return;}
+  const body={commessa_id:MAG.newReq.commessa_id,righe:MAG.newReq.righe.map(rg=>({articolo_id:rg.articolo_id,richiesta:rg.richiesta}))};
+  try{
+    const r=await fetch(API+'/api/magazzino/richieste',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok){toast('Errore invio richiesta',true);return;}
+    MAG.newReq=null;
+    await magLoadRichieste();
+  }catch{toast('Errore di rete',true);}
+}
+async function magAutorizzaRichiesta(id){
+  try{const r=await fetch(API+`/api/magazzino/richieste/${id}/autorizza`,{method:'POST'});
+    if(!r.ok){toast('Errore autorizzazione',true);return;}
+    await magLoadRichieste();
+  }catch{toast('Errore di rete',true);}
+}
+async function magAnnullaRichiesta(id){
+  try{const r=await fetch(API+`/api/magazzino/richieste/${id}/annulla`,{method:'POST'});
+    if(!r.ok){toast('Errore annullamento',true);return;}
+    await magLoadRichieste();
+  }catch{toast('Errore di rete',true);}
+}
+function renderMagRichieste(){
+  const el=document.getElementById('magBody');
+  let html=`<div class="mg-toolbar"><span style="flex:1"></span><button class="btn btn-go" onclick="magApriNuovaRichiesta()">+ Simula richiesta</button></div>`;
+  if(MAG.newReq){
+    html+=`<div class="mg-formbox">
+      <div style="margin-bottom:8px"><select class="fld" id="magReqCommessa" onchange="magSetNewReqCommessa(this.value)">${magOptsCommesse(MAG.newReq.commessa_id)}</select></div>
+      <div id="magReqLines"></div>
+      <button class="btn btn-ghost btn-sm" onclick="magAggiungiRigaRichiesta()">+ articolo</button>
+      <div class="mg-card-ft"><button class="btn btn-go" onclick="magSalvaNuovaRichiesta()">Invia richiesta</button><button class="btn btn-ghost" onclick="magChiudiNuovaRichiesta()">Annulla</button></div>
+    </div>`;
+  }
+  html+='<div class="mg-cards" id="magReqCards"></div>';
+  el.innerHTML=html;
+  if(MAG.newReq)renderMagRigheForm();
+  const list=MAG.richieste||[];
+  document.getElementById('magReqCards').innerHTML=list.map(r=>{
+    const righe=(r.righe||[]).map(rg=>`<div class="mg-cardrow"><span class="nm">${esc(rg.articolo_denominazione||'')} ${esc(rg.articolo_dimensione||'')}</span><span class="q">${rg.prelevata!=null?rg.prelevata+' prelevati':rg.richiesta+' richiesti'}</span></div>`).join('');
+    let actions='';
+    if(r.stato==='attesa')actions=`<button class="btn btn-go btn-sm" onclick="magAutorizzaRichiesta(${r.id})">✅ Autorizza</button><button class="btn btn-ghost btn-sm" onclick="magAnnullaRichiesta(${r.id})">Annulla</button>`;
+    else if(r.stato==='autorizzata'||r.stato==='in_prelievo')actions=`<button class="btn btn-ghost btn-sm" onclick="MAG.pickActive=${r.id};magGoTab('pick')">📱 ${r.stato==='in_prelievo'?'Continua prelievo':'Vai al prelievo'}</button>`;
+    return `<div class="card"><div class="mg-card-hd"><b>${esc(r.commessa_nome||'')}</b><span class="sp"></span>${magStBadge(r.stato)}</div>
+      <div class="mg-card-sub">${esc(r.creata_at||'')}</div>
+      <div class="mg-card-rows">${righe}</div>
+      ${actions?`<div class="mg-card-ft">${actions}</div>`:''}
+    </div>`;
+  }).join('')||'<div class="empty">Nessuna richiesta ancora.</div>';
+}
+
+/* ── PRELIEVO (TABLET) ── */
+async function magLoadPronte(){
+  const el=document.getElementById('magBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico richieste pronte…</div>';
+  try{const r=await fetch(API+'/api/magazzino/richieste/pronte');MAG.pronte=r.ok?await r.json():[];}
+  catch{MAG.pronte=[];}
+  await magEnsureArticoliAll();
+  renderMagPrelievo();
+}
+function renderMagPrelievo(){
+  const el=document.getElementById('magBody');
+  const list=MAG.pronte||[];
+  if(MAG.pickActive==null){
+    if(!list.length){
+      el.innerHTML='<div class="empty"><div style="font-size:32px;margin-bottom:8px">📱</div><div class="ed">Nessuna richiesta autorizzata da prelevare.<br>Autorizzane una dalla scheda "Richieste".</div></div>';
+      return;
+    }
+    el.innerHTML=`<div class="mg-cards">${list.map(r=>`
+      <div class="card" style="cursor:pointer" onclick="magIniziaPrelievo(${r.id})">
+        <div class="mg-card-hd"><b>${esc(r.commessa_nome||'')}</b><span class="sp"></span>${magStBadge(r.stato)}</div>
+        <div class="mg-card-sub">${(r.righe||[]).length} articoli</div>
+        <button class="btn btn-go" style="width:100%;margin-top:8px" onclick="event.stopPropagation();magIniziaPrelievo(${r.id})">▶ Inizia prelievo</button>
+      </div>`).join('')}</div>`;
+    return;
+  }
+  const r=list.find(x=>x.id===MAG.pickActive);
+  if(!r){MAG.pickActive=null;renderMagPrelievo();return;}
+  const tutto=(r.righe||[]).length>0 && r.righe.every(rg=>rg.prelevata!=null);
+  el.innerHTML=`
+    <button class="btn btn-ghost btn-sm" onclick="MAG.pickActive=null;renderMagPrelievo()">← torna all'elenco</button>
+    <div style="margin:12px 0 4px;font-size:15px;font-weight:800">${esc(r.commessa_nome||'')}</div>
+    <div style="margin-bottom:12px">${magStBadge(r.stato)}</div>
+    <div class="mg-cards">
+      ${r.righe.map(rg=>{
+        const full=magArticoloFull(rg.articolo_id);
+        const sub=[full&&full.normativa,rg.articolo_dimensione,full&&full.materiale].filter(Boolean).join(' · ');
+        const done=rg.prelevata!=null;
+        return `<div class="card">
+          <div style="font-weight:800">${esc(rg.articolo_denominazione||'')}</div>
+          <div class="mg-card-sub">${esc(sub)}</div>
+          <div style="margin:6px 0">Richiesti <b>${rg.richiesta}</b>${done?` — <b style="color:#1A7A2E">prelevati ${rg.prelevata}</b>`:''}</div>
+          ${done?'':`<button class="btn btn-go" style="width:100%" onclick="magApriScan(${r.id},${rg.id})">📷 Scansiona QR e preleva</button>`}
+        </div>`;
+      }).join('')}
+    </div>
+    ${tutto?`<button class="btn btn-go" style="width:100%;margin-top:12px" onclick="magCompletaPrelievo(${r.id})">✅ Completa prelievo</button>`:''}
+  `;
+}
+async function magIniziaPrelievo(id){
+  try{
+    const r=await fetch(API+`/api/magazzino/richieste/${id}/inizia-prelievo`,{method:'POST'});
+    if(!r.ok){toast('Errore avvio prelievo',true);return;}
+    const upd=await r.json();
+    const idx=(MAG.pronte||[]).findIndex(x=>x.id===id);
+    if(idx>-1)MAG.pronte[idx]=upd;else(MAG.pronte=MAG.pronte||[]).push(upd);
+    MAG.pickActive=id;
+    await magEnsureArticoliAll();
+    renderMagPrelievo();
+  }catch{toast('Errore di rete',true);}
+}
+async function magCompletaPrelievo(reqId){
+  try{
+    const r=await fetch(API+`/api/magazzino/richieste/${reqId}/completa`,{method:'POST'});
+    if(!r.ok){toast('Errore completamento prelievo',true);return;}
+    MAG.pickActive=null;
+    await magLoadPronte();
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── PRELIEVO: scansione QR (fotocamera reale + fallback testo manuale) ── */
+function magApriScan(reqId,rigaId){
+  const r=(MAG.pronte||[]).find(x=>x.id===reqId);
+  const rg=r&&(r.righe||[]).find(x=>x.id===rigaId);
+  if(!rg)return;
+  MAG.scan={reqId,rigaId,richiesta:rg.richiesta,supported:null,stream:null,loopId:null,
+    cameraError:null,manualError:null,resolving:false,matched:null,qty:rg.richiesta};
+  mOpen('mScanQr');
+  renderMagScanModal();
+  magAvviaCamera();
+}
+function magOvCloseScan(e){if(e.target.id==='mScanQr')magChiudiScanModal();}
+function magChiudiScanModal(){magFermaCamera();MAG.scan=null;mClose('mScanQr');}
+function magFermaCamera(){
+  const s=MAG.scan;if(!s)return;
+  if(s.loopId){clearInterval(s.loopId);s.loopId=null;}
+  if(s.stream){try{s.stream.getTracks().forEach(t=>t.stop());}catch(e){}s.stream=null;}
+}
+async function magAvviaCamera(){
+  const s=MAG.scan;if(!s)return;
+  if(!('BarcodeDetector' in window)||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    s.supported=false;renderMagScanModal();return;
+  }
+  s.supported=true;
+  let stream;
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+  }catch(e){
+    if(!MAG.scan)return;
+    s.cameraError='Fotocamera non disponibile — usa il campo di testo qui sotto.';
+    renderMagScanModal();
+    return;
+  }
+  if(!MAG.scan){try{stream.getTracks().forEach(t=>t.stop());}catch(e){}return;}
+  s.stream=stream;
+  renderMagScanModal();
+  const videoEl=document.getElementById('magScanVideo');
+  if(videoEl){videoEl.srcObject=stream;try{await videoEl.play();}catch(e){}}
+  let detector;
+  try{detector=new BarcodeDetector({formats:['qr_code']});}
+  catch(e){
+    s.cameraError='Rilevatore QR non disponibile — usa il campo di testo qui sotto.';
+    magFermaCamera();renderMagScanModal();return;
+  }
+  s.loopId=setInterval(async()=>{
+    const cur=MAG.scan;
+    if(!cur||!cur.stream)return;
+    const vEl=document.getElementById('magScanVideo');
+    if(!vEl)return;
+    try{
+      const codes=await detector.detect(vEl);
+      if(codes&&codes.length){
+        const text=codes[0].rawValue;
+        magFermaCamera();
+        magScanRisolvi(text);
+      }
+    }catch(e){/* frame non pronto o errore transitorio: continua a provare */}
+  },450);
+}
+function magScanManualSubmit(){
+  const inp=document.getElementById('magScanManualInput');
+  if(!inp)return;
+  const v=(inp.value||'').trim();
+  if(!v)return;
+  magScanRisolvi(v);
+}
+async function magScanRisolvi(testo){
+  const s=MAG.scan;if(!s)return;
+  s.manualError=null;s.resolving=true;renderMagScanModal();
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli/cerca-qr?testo='+encodeURIComponent(testo));
+    if(!MAG.scan)return;
+    if(r.status===404){s.resolving=false;s.manualError="QR non riconosciuto — controlla l'etichetta o riprova.";renderMagScanModal();return;}
+    if(!r.ok){s.resolving=false;s.manualError='Errore di ricerca — riprova.';renderMagScanModal();return;}
+    const art=await r.json();
+    if(!MAG.scan)return;
+    s.resolving=false;s.matched=art;magFermaCamera();renderMagScanModal();
+  }catch(e){
+    if(!MAG.scan)return;
+    s.resolving=false;s.manualError='Errore di rete — riprova.';renderMagScanModal();
+  }
+}
+function magScanQty(d){
+  const inp=document.getElementById('magScanQtyInp');if(!inp)return;
+  inp.value=Math.max(0,(parseInt(inp.value)||0)+d);
+}
+async function magScanConferma(){
+  const s=MAG.scan;if(!s||!s.matched)return;
+  const inp=document.getElementById('magScanQtyInp');
+  const qty=Math.max(0,parseInt(inp&&inp.value)||0);
+  try{
+    const r=await fetch(API+`/api/magazzino/richieste/${s.reqId}/righe/${s.rigaId}/preleva`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prelevata:qty})});
+    if(!r.ok){toast('Errore salvataggio prelievo',true);return;}
+    const upd=await r.json();
+    const req=(MAG.pronte||[]).find(x=>x.id===s.reqId);
+    if(req){const idx=(req.righe||[]).findIndex(x=>x.id===s.rigaId);if(idx>-1)req.righe[idx]=upd;}
+    magChiudiScanModal();
+    renderMagPrelievo();
+  }catch{toast('Errore di rete',true);}
+}
+function renderMagScanModal(){
+  const root=document.getElementById('mScanQrBody');
+  const ftRoot=document.getElementById('mScanQrFt');
+  if(!root)return;
+  const s=MAG.scan;
+  if(!s){root.innerHTML='';if(ftRoot)ftRoot.innerHTML='';return;}
+  if(s.matched){
+    const a=s.matched;
+    const sub=[a.normativa,a.dimensione,a.materiale].filter(Boolean).join(' · ');
+    root.innerHTML=`
+      <div style="font-weight:800;font-size:14px">${esc(a.denominazione||'')}</div>
+      <div class="fmuted" style="font-size:12px;margin:4px 0 12px">${esc(sub)}</div>
+      <div class="fmuted" style="font-size:12px;margin-bottom:6px">Quantità effettivamente prelevata (richiesti: ${s.richiesta})</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="magScanQty(-1)">−</button>
+        <input id="magScanQtyInp" type="number" min="0" value="${s.qty}" style="width:80px;text-align:center;font-size:15px;font-weight:800;padding:8px;border:1.4px solid var(--bd2);border-radius:8px">
+        <button class="btn btn-ghost btn-sm" onclick="magScanQty(1)">+</button>
+      </div>`;
+    if(ftRoot)ftRoot.innerHTML=`<div class="mft-r"><button class="btn btn-ghost" onclick="magChiudiScanModal()">Annulla</button><button class="btn btn-go" onclick="magScanConferma()">✔ Conferma prelievo</button></div>`;
+    return;
+  }
+  let camHtml='';
+  if(s.supported===false){
+    camHtml='<div class="fmuted" style="font-size:12px;margin-bottom:8px">Fotocamera non supportata su questo dispositivo/browser.</div>';
+  }else if(s.cameraError){
+    camHtml=`<div class="fmuted" style="font-size:12px;margin-bottom:8px">${esc(s.cameraError)}</div>`;
+  }else if(s.supported===true){
+    camHtml=`<div style="border-radius:10px;overflow:hidden;background:#000;margin-bottom:8px"><video id="magScanVideo" autoplay playsinline muted style="width:100%;display:block;max-height:280px;object-fit:cover"></video></div>
+      <div class="fmuted" style="font-size:11px;margin-bottom:10px">Inquadra il QR sull'etichetta della scatola…</div>`;
+  }else{
+    camHtml='<div class="fmuted" style="font-size:12px;margin-bottom:8px">Avvio fotocamera…</div>';
+  }
+  root.innerHTML=`
+    ${camHtml}
+    ${s.manualError?`<div style="font-size:12px;color:var(--red);margin-bottom:8px">⚠ ${esc(s.manualError)}</div>`:''}
+    <div class="fmuted" style="font-size:11px;margin-bottom:4px">${s.supported===true?'…oppure inserisci il testo a mano:':'Inserisci il testo scansionato / codice etichetta:'}</div>
+    <div style="display:flex;gap:8px">
+      <input id="magScanManualInput" placeholder="Testo QR" style="flex:1;padding:8px 10px;border:1.4px solid var(--bd2);border-radius:8px;font:inherit" onkeydown="if(event.key==='Enter'){event.preventDefault();magScanManualSubmit();}">
+      <button class="btn btn-go btn-sm" ${s.resolving?'disabled':''} onclick="magScanManualSubmit()">${s.resolving?'Cerco…':'Cerca'}</button>
+    </div>`;
+  if(ftRoot)ftRoot.innerHTML=`<div class="mft-r"><button class="btn btn-ghost" onclick="magChiudiScanModal()">Annulla</button></div>`;
+  if(s.stream){
+    const v=document.getElementById('magScanVideo');
+    if(v&&v.srcObject!==s.stream){v.srcObject=s.stream;v.play().catch(()=>{});}
+  }
+}
+
+/* ── RIORDINO ── */
+async function magLoadNotifiche(){
+  const el=document.getElementById('magBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico notifiche…</div>';
+  try{const r=await fetch(API+'/api/magazzino/notifiche?solo_attive=true');MAG.notifiche=r.ok?await r.json():[];}
+  catch{MAG.notifiche=[];}
+  await magEnsureArticoliAll();
+  renderMagRiordino();
+}
+function renderMagRiordino(){
+  const el=document.getElementById('magBody');
+  const list=MAG.notifiche||[];
+  if(!list.length){
+    el.innerHTML='<div class="empty"><div class="ed">Nessuna notifica di riordino al momento.</div></div>';
+    return;
+  }
+  el.innerHTML=`<div class="mg-cards">${list.map(n=>{
+    const full=magArticoloFull(n.articolo_id);
+    const sub=[full&&full.normativa,full&&full.materiale].filter(Boolean).join(' · ');
+    return `<div class="card">
+      <div class="mg-card-hd"><b>⚠ ${esc(n.articolo_denominazione||'')} ${esc(n.articolo_dimensione||'')}</b><span class="sp"></span><span class="chip co">da riordinare</span></div>
+      <div class="mg-card-sub">${sub?esc(sub)+' · ':''}generata ${esc(n.creata_at||'')}</div>
+      <div class="mg-card-rows">
+        ${full?`<div class="mg-cardrow"><span class="nm">Disponibile attuale</span><span class="q">${full.disponibile}</span></div>
+        <div class="mg-cardrow"><span class="nm">Scorta minima</span><span class="q">${full.scorta_minima==null?'—':full.scorta_minima}</span></div>`:''}
+        <div class="mg-cardrow"><span class="nm">Quantità suggerita da ordinare</span><span class="q" style="color:var(--red)">${n.suggerito}</span></div>
+      </div>
+      <div class="mg-card-ft">
+        <button class="btn btn-go btn-sm" onclick="alert('Collegamento concettuale al modulo Ordine Fornitore già costruito — qui è solo un mockup, non genera nulla di reale.')">📄 Genera Ordine Fornitore</button>
+        <button class="btn btn-ghost btn-sm" onclick="magRisolviNotifica(${n.id})">✔ Segna come risolta</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+async function magRisolviNotifica(id){
+  try{
+    const r=await fetch(API+`/api/magazzino/notifiche/${id}/risolvi`,{method:'POST'});
+    if(!r.ok){toast('Errore aggiornamento notifica',true);return;}
+    await magLoadNotifiche();
+  }catch{toast('Errore di rete',true);}
 }
 
 /* ── TEMPLATE MAIL ── */
