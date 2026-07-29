@@ -855,6 +855,24 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .mg-cell:focus{outline:0;border-color:var(--go-d);background:#fff}
 .mg-cellnum{width:64px;text-align:right;border:1.4px solid var(--bd2);background:var(--surf);padding:5px 7px;font:inherit;font-size:12px;color:var(--t1);border-radius:6px}
 .mg-delbtn{border:0;background:transparent;color:var(--t3);cursor:pointer;font-size:13px;padding:3px 6px;border-radius:6px}
+.mg-th{display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none}
+.mg-th.num{justify-content:flex-end}
+.mg-th:hover{color:var(--go)}
+.mg-sort-ic{font-size:8px;opacity:.45;flex-shrink:0}
+.mg-sort-ic.on{opacity:1;color:var(--go)}
+.mg-filter-ic{flex-shrink:0;cursor:pointer;opacity:.55;font-size:9px;padding:2px;border-radius:4px}
+.mg-filter-ic:hover{opacity:1;background:rgba(255,255,255,.15)}
+.mg-filter-ic.on{opacity:1;color:var(--go)}
+.mg-filterdd{position:fixed;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);box-shadow:var(--shl);z-index:300;width:220px;display:none;text-transform:none;letter-spacing:0;font-weight:400}
+.mg-filterdd-srch{padding:8px;border-bottom:1px solid var(--bd)}
+.mg-filterdd-srch input{width:100%;border:1.4px solid var(--bd2);border-radius:6px;padding:6px 8px;font:inherit;font-size:12px;color:var(--t1)}
+.mg-filterdd-actions{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid var(--bd);font-size:10.5px}
+.mg-filterdd-actions a{color:var(--go-d);cursor:pointer;font-weight:700}
+.mg-filterdd-list{max-height:220px;overflow-y:auto;padding:4px 0}
+.mg-filterdd-opt{display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:12px;color:var(--t1);cursor:pointer}
+.mg-filterdd-opt:hover{background:var(--bg)}
+.mg-filterdd-foot{display:flex;gap:6px;padding:8px;border-top:1px solid var(--bd)}
+.mg-filterdd-foot button{flex:1;font-size:11.5px}
 .mg-delbtn:hover{color:var(--red);background:rgba(255,59,48,.08)}
 .mg-formbox{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}
 .mg-rline{display:flex;gap:8px;align-items:center;margin-bottom:6px}
@@ -1559,6 +1577,7 @@ textarea.fld{resize:vertical;min-height:60px}
 </div>
 
 <div class="add" id="add"></div>
+<div class="mg-filterdd" id="magFilterDD"></div>
 
 <!-- Anteprima al passaggio del mouse -->
 <div id="prevcard"><div id="previmg"></div><div class="pv-cap" id="prevcap"></div></div>
@@ -6267,11 +6286,14 @@ function ddExport(fmt){
 
 /* ── MAGAZZINO ── */
 let MAG={tab:'cat',categorieLoaded:false,categorie:[],articoli:null,articoliAll:null,_catsList:['all'],
-  qcat:'',filtCat:'all',filtRiord:false,
+  qcat:'',filtCat:'all',filtRiord:false,sortCol:null,sortDir:'asc',colFiltri:{},
   richieste:null,newReq:null,
   pronte:null,pickActive:null,scan:null,
   notifiche:null};
 let MAG_SEARCH_T=null;
+const MAG_COLS=[['codice','Codice'],['categoria','Categoria'],['normativa','Normativa'],['denominazione','Denominazione'],['dimensione','Dimensione'],['materiale','Materiale'],['unita','Unità'],
+  ['giacenza','Giacenza',true],['impegnato','Impegnato',true],['disponibile','Disponibile',true],['scorta_minima','Minima',true],['in_arrivo','In arrivo',true]];
+let MAG_FILTER_FIELD=null,MAG_FILTER_TEMP=null,MAG_FILTER_Q='';
 
 async function magEnter(){
   if(!MAG.categorieLoaded){
@@ -6314,9 +6336,49 @@ async function magLoadCatalogo(){
   renderMagCatalogo();
 }
 function magKpi(cls,v,l){return `<div class="m ${cls}"><div class="mn">${v}</div><div class="ml">${esc(l)}</div></div>`;}
+function magColValori(field){
+  const seen=new Map();
+  (MAG.articoli||[]).forEach(a=>{
+    const raw=a[field];
+    const v=(raw===null||raw===undefined||raw==='')?'(vuoto)':raw.toString();
+    if(!seen.has(v))seen.set(v,raw);
+  });
+  return [...seen.entries()].sort((a,b)=>a[0].localeCompare(b[0],'it',{numeric:true,sensitivity:'base'}));
+}
+function magApplyColFiltri(rows){
+  const attivi=Object.entries(MAG.colFiltri).filter(([,set])=>set&&set.size);
+  if(!attivi.length)return rows;
+  return rows.filter(a=>attivi.every(([field,set])=>{
+    const raw=a[field];
+    const v=(raw===null||raw===undefined||raw==='')?'(vuoto)':raw.toString();
+    return set.has(v);
+  }));
+}
+function magApplySort(rows){
+  if(!MAG.sortCol)return rows;
+  const col=MAG.sortCol,dir=MAG.sortDir==='desc'?-1:1;
+  const numerica=MAG_COLS.find(c=>c[0]===col)?.[2];
+  return [...rows].sort((a,b)=>{
+    const x=a[col],y=b[col];
+    if(numerica){const nx=x==null?-Infinity:Number(x),ny=y==null?-Infinity:Number(y);return (nx-ny)*dir;}
+    return (x||'').toString().localeCompare((y||'').toString(),'it',{numeric:true,sensitivity:'base'})*dir;
+  });
+}
+function magColTh(field,label,numeric){
+  const filtroAttivo=MAG.colFiltri[field]&&MAG.colFiltri[field].size>0;
+  const sortIc=MAG.sortCol===field?(MAG.sortDir==='desc'?'▼':'▲'):'▲▼';
+  return `<th${numeric?' style="text-align:right"':''}>
+    <div class="mg-th${numeric?' num':''}">
+      ${numeric?'':`<span onclick="magToggleSort('${field}')" style="flex:1">${esc(label)}</span><span class="mg-sort-ic${MAG.sortCol===field?' on':''}" onclick="magToggleSort('${field}')">${sortIc}</span>`}
+      ${numeric?`<span class="mg-sort-ic${MAG.sortCol===field?' on':''}" onclick="magToggleSort('${field}')">${sortIc}</span><span onclick="magToggleSort('${field}')" style="flex:1;text-align:right">${esc(label)}</span>`:''}
+      <span class="mg-filter-ic${filtroAttivo?' on':''}" onclick="event.stopPropagation();magOpenColFilter(event,'${field}')" title="Filtra">⏷</span>
+    </div>
+  </th>`;
+}
 function renderMagCatalogo(){
   const el=document.getElementById('magBody');
-  const rows=MAG.articoli||[];
+  const base=MAG.articoli||[];
+  const rows=magApplySort(magApplyColFiltri(base));
   const tot=rows.length;
   const pezzi=rows.reduce((s,x)=>s+(x.giacenza||0),0);
   const impegnati=rows.reduce((s,x)=>s+(x.impegnato||0),0);
@@ -6338,8 +6400,7 @@ function renderMagCatalogo(){
     </div>
     <div class="mg-tablewrap"><table>
       <thead><tr>
-        <th>Codice</th><th>Categoria</th><th>Normativa</th><th>Denominazione</th><th>Dimensione</th><th>Materiale</th><th>Unità</th>
-        <th style="text-align:right">Giacenza</th><th style="text-align:right">Impegnato</th><th style="text-align:right">Disponibile</th><th style="text-align:right">Minima</th><th style="text-align:right">In arrivo</th><th></th><th></th>
+        ${MAG_COLS.map(([f,l,n])=>magColTh(f,l,n)).join('')}<th></th><th></th>
       </tr></thead>
       <tbody id="magRowsCat"></tbody>
     </table></div>`;
@@ -6362,6 +6423,55 @@ function renderMagCatalogo(){
     <td class="act"><button class="mg-delbtn" onclick="magDelArticolo(${a.id})" title="Elimina">🗑</button></td>
   </tr>`).join('')||'<tr><td colspan="14"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
 }
+function magToggleSort(field){
+  if(MAG.sortCol!==field){MAG.sortCol=field;MAG.sortDir='asc';}
+  else if(MAG.sortDir==='asc'){MAG.sortDir='desc';}
+  else{MAG.sortCol=null;}
+  renderMagCatalogo();
+}
+function magOpenColFilter(evt,field){
+  if(MAG_FILTER_FIELD===field){magCloseColFilter();return;}
+  MAG_FILTER_FIELD=field;MAG_FILTER_Q='';
+  const valori=magColValori(field);
+  const attivo=MAG.colFiltri[field];
+  MAG_FILTER_TEMP=attivo&&attivo.size?new Set(attivo):new Set(valori.map(([v])=>v));
+  const d=document.getElementById('magFilterDD');
+  const r=evt.currentTarget.getBoundingClientRect();
+  let left=Math.min(r.left,window.innerWidth-230);
+  let top=r.bottom+4;
+  if(top+320>window.innerHeight)top=Math.max(8,r.top-324);
+  d.style.cssText=`display:block;top:${top}px;left:${Math.max(8,left)}px`;
+  magRenderColFilter();
+}
+function magCloseColFilter(){MAG_FILTER_FIELD=null;const d=document.getElementById('magFilterDD');if(d)d.style.display='none';}
+function magRenderColFilter(){
+  const field=MAG_FILTER_FIELD;if(!field)return;
+  const d=document.getElementById('magFilterDD');
+  const tuttiValori=magColValori(field);
+  const q=MAG_FILTER_Q.toLowerCase();
+  const valori=q?tuttiValori.filter(([v])=>v.toLowerCase().includes(q)):tuttiValori;
+  d.innerHTML=`
+    <div class="mg-filterdd-srch"><input placeholder="Cerca valore…" value="${esc(MAG_FILTER_Q)}" oninput="magFilterDDSearch(this.value)"></div>
+    <div class="mg-filterdd-actions"><a onclick="magFilterDDAll(true)">Seleziona tutto</a><a onclick="magFilterDDAll(false)">Deseleziona tutto</a></div>
+    <div class="mg-filterdd-list">${valori.map(([v])=>`<label class="mg-filterdd-opt"><input type="checkbox" ${MAG_FILTER_TEMP.has(v)?'checked':''} onchange="magFilterDDToggle('${jsq(v)}',this.checked)">${esc(v)}</label>`).join('')||'<div class="fmuted" style="padding:8px 12px;font-size:11.5px">Nessun valore</div>'}</div>
+    <div class="mg-filterdd-foot"><button class="btn btn-sm" onclick="magCloseColFilter()">Annulla</button><button class="btn btn-go btn-sm" onclick="magApplyColFilter()">OK</button></div>`;
+}
+function magFilterDDSearch(v){MAG_FILTER_Q=v;magRenderColFilter();}
+function magFilterDDToggle(v,checked){if(checked)MAG_FILTER_TEMP.add(v);else MAG_FILTER_TEMP.delete(v);}
+function magFilterDDAll(sel){
+  const tuttiValori=magColValori(MAG_FILTER_FIELD).map(([v])=>v);
+  MAG_FILTER_TEMP=sel?new Set(tuttiValori):new Set();
+  magRenderColFilter();
+}
+function magApplyColFilter(){
+  const field=MAG_FILTER_FIELD;
+  const tuttiValori=magColValori(field).map(([v])=>v);
+  if(MAG_FILTER_TEMP.size>=tuttiValori.length)delete MAG.colFiltri[field];
+  else MAG.colFiltri[field]=new Set(MAG_FILTER_TEMP);
+  magCloseColFilter();
+  renderMagCatalogo();
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#magFilterDD')&&!e.target.closest('.mg-filter-ic'))magCloseColFilter();});
 function magOnSearchCat(v){MAG.qcat=v;clearTimeout(MAG_SEARCH_T);MAG_SEARCH_T=setTimeout(()=>magLoadCatalogo(),300);}
 function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];magLoadCatalogo();}
 function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;magLoadCatalogo();}
