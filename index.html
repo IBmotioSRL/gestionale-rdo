@@ -105,12 +105,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .mb .mico{background:rgba(0,122,255,.1);color:var(--blue)}.mb .mn{color:var(--blue)}
 .mt .mico{background:rgba(90,200,250,.13);color:var(--teal)}.mt .mn{color:var(--teal)}
 .mg .mico{background:rgba(52,199,89,.1);color:var(--green)}.mg .mn{color:var(--green)}
-.dash-2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.forn-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
-.fav{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
-.fi2{flex:1;min-width:0}.fn2{font-size:11.5px;font-weight:600;color:var(--t1)}.fs2{font-size:9.5px;color:var(--t2)}
-.fnn{font-size:13px;font-weight:700;color:var(--t1);min-width:16px;text-align:right}
-
 /* ── PROGETTI GRID ── */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:9px}
 .pcard{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);cursor:pointer;transition:transform .15s,box-shadow .15s;overflow:hidden}
@@ -1301,7 +1295,6 @@ textarea.fld{resize:vertical;min-height:60px}
   .glancep{width:auto!important;max-height:320px}
   .calp{display:none}
   .metrics{grid-template-columns:1fr 1fr}
-  .dash-2{grid-template-columns:1fr}
   .fab{left:50%}
 }
 /* tablet in verticale / schermi medi: impila il dettaglio progetto e rendi
@@ -1332,7 +1325,6 @@ textarea.fld{resize:vertical;min-height:60px}
   <nav class="sb-nav">
     <div class="sb-sec">Principale</div>
     <div class="ni on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</div>
-    <div class="ni" data-v="dash" onclick="go('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
     <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
     <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Comunicazioni</div>
     <div class="ni" data-v="ore" onclick="go('ore')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Raccolta Ore</div>
@@ -1380,28 +1372,6 @@ textarea.fld{resize:vertical;min-height:60px}
           <div style="font-weight:800;font-size:14px">Raccolta Ore</div>
           <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Timbrature, ore e presenze</div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════ DASHBOARD ════ -->
-  <div id="v-dash" class="view">
-    <div class="vtop"><div class="vtop-row">
-      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div><div class="h1">Gestionale <em>RDO</em></div><div class="vsub" id="dashSub">Panoramica</div></div></div>
-      <button class="btn btn-go" onclick="openNuovo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuovo progetto</button>
-    </div></div>
-    <div class="vscroll">
-      <div class="sl">Stato globale</div>
-      <div class="metrics" id="dashMetrics"></div>
-      <div class="dash-2" style="margin-top:8px">
-        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Carico per fornitore <span class="fmuted" style="font-weight:600">· pezzi assegnati</span></div><div id="dashForn"></div></div>
-        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Progetti</div><div id="dashProj"></div></div>
-      </div>
-      <div class="sl" style="margin-top:14px">Statistiche fornitori</div>
-      <div class="dash-2" style="margin-top:8px">
-        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Composizione rubrica</div><div id="dashComp"></div></div>
-        <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Tempi di risposta RDO</div><div id="dashResp"></div></div>
       </div>
     </div>
   </div>
@@ -1999,7 +1969,6 @@ function go(v,pid){
   if(v==='pdet'){openProgetto(pid);return;}
   hideFAB();
   document.getElementById('v-'+v).classList.add('on');
-  if(v==='dash')renderDash();
   if(v==='proj')renderProjGrid();
   if(v==='rdo')rdoEnter();
   if(v==='ore')oreEnter();
@@ -2028,58 +1997,6 @@ function statoBucket(p){
   return 'daInviare';
 }
 function projStats(c){const s={tot:0,daSmistare:0,daInviare:0,inAttesa:0,confermata:0};flatParti(c).forEach(p=>{if(p.escluso)return;s.tot++;s[statoBucket(p)]++;});return s;}
-
-/* ── DASHBOARD ── */
-function renderDash(){
-  const tot={daSmistare:0,daInviare:0,inAttesa:0,confermata:0,tot:0};
-  commesse.forEach(c=>{const s=projStats(c);['daSmistare','daInviare','inAttesa','confermata','tot'].forEach(k=>tot[k]+=s[k]);});
-  document.getElementById('dashSub').textContent=`${commesse.length} progetti · ${tot.tot} pezzi`;
-  document.getElementById('dashMetrics').innerHTML=`
-    ${metric('mo','clock',tot.daSmistare,'Da smistare','Senza fornitore')}
-    ${metric('mb','send',tot.daInviare,'Da inviare','Fornitore assegnato')}
-    ${metric('mt','phone',tot.inAttesa,'In attesa','RDO inviate')}
-    ${metric('mg','check',tot.confermata,'Confermate',tot.tot?Math.round(tot.confermata/tot.tot*100)+'% del totale':'')}`;
-  // carico per fornitore
-  const byF={};
-  commesse.forEach(c=>flatParti(c).forEach(p=>{if(p.fornitore_id&&!p.escluso){byF[p.fornitore_id]=(byF[p.fornitore_id]||0)+1;}}));
-  const top=Object.entries(byF).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const maxN=top.length?top[0][1]:1;
-  const rows=top.map(([fid,n])=>{
-    const f=fornitori.find(x=>x.id==fid);if(!f)return '';
-    const w=Math.round(n/maxN*100);
-    return `<div class="forn-row"><div class="fav" style="background:${avc(f.nome)}">${ini(f.nome)}</div><div class="fi2"><div class="fn2">${esc(f.nome)}</div><div class="bar-bg"><div class="bar-fl" style="width:${w}%;background:${f.tipo==='terzista'?'#5856D6':'var(--go)'}"></div></div></div><div class="fnn">${n}</div></div>`;
-  }).join('');
-  document.getElementById('dashForn').innerHTML=rows||'<div class="fmuted" style="font-size:11px">Nessuna parte assegnata</div>';
-  renderDashStats(byF);
-  document.getElementById('dashProj').innerHTML=commesse.map(c=>{const s=projStats(c);const pct=s.tot?Math.round((s.tot-s.daSmistare)/s.tot*100):0;
-    return `<div class="forn-row" style="cursor:pointer" onclick="go('pdet',${c.id})"><div class="fi2"><div class="fn2">${esc(c.codice)} · ${esc(c.nome)}</div><div class="pcbb" style="margin-top:4px"><div class="pcbf${pct===100?' done':''}" style="width:${pct}%"></div></div></div><div class="fnn">${pct}%</div></div>`;
-  }).join('')||'<div class="fmuted" style="font-size:11px">Nessun progetto</div>';
-}
-function renderDashStats(byF){
-  // composizione rubrica
-  const att=fornitori.filter(f=>f.attivo&&!f.blacklist);
-  const terz=att.filter(f=>f.tipo==='terzista').length, comm=att.filter(f=>f.tipo==='commerciale').length;
-  const black=fornitori.filter(f=>f.blacklist).length, inatt=fornitori.filter(f=>!f.attivo&&!f.blacklist).length;
-  const usati=Object.keys(byF).length;
-  const barLine=(lbl,n,den,col)=>`<div class="stat-line"><span class="stat-l">${lbl}</span><div class="bar-bg"><div class="bar-fl" style="width:${den?Math.round(n/den*100):0}%;background:${col}"></div></div><span class="stat-n">${n}</span></div>`;
-  const totAtt=Math.max(1,terz+comm);
-  document.getElementById('dashComp').innerHTML=
-    barLine('Terzisti',terz,totAtt,'#5856D6')+
-    barLine('Commerciali',comm,totAtt,'var(--go)')+
-    barLine('Usati (con pezzi)',usati,Math.max(1,att.length),'var(--green)')+
-    `<div class="stat-line" style="margin-top:8px;border-top:1px solid var(--bd);padding-top:8px"><span class="stat-l" style="color:var(--red)">🚫 Lista nera</span><span class="stat-n" style="margin-left:auto;color:var(--red)">${black}</span></div>`+
-    `<div class="stat-line"><span class="stat-l fmuted">Disattivati</span><span class="stat-n fmuted" style="margin-left:auto">${inatt}</span></div>`;
-  // tempi di risposta — predisposto, dati quando l'invio email è attivo
-  document.getElementById('dashResp').innerHTML=
-    `<div class="resp-grid">
-       <div class="resp-c"><div class="resp-n">n/d</div><div class="resp-l">Tempo medio</div></div>
-       <div class="resp-c"><div class="resp-n">n/d</div><div class="resp-l">Più veloce</div></div>
-       <div class="resp-c"><div class="resp-n">n/d</div><div class="resp-l">Più lento</div></div>
-     </div>
-     <div class="fmuted" style="font-size:11px;margin-top:10px;line-height:1.5">⏳ Si popolano quando l'invio email reale sarà attivo (in attesa dell'admin-consent Microsoft): misurano il tempo tra RDO inviata e risposta del fornitore.</div>`;
-}
-function metric(cls,ico,n,l,s){const I={clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',phone:'<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.12 1.22 2 2 0 012.11 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.11 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/>',check:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'}[ico];
-  return `<div class="m ${cls}"><div class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I}</svg></div><div class="mn">${n}</div><div class="ml">${l}</div><div class="ms">${s}</div></div>`;}
 
 /* ── PROGETTI GRID ── */
 function renderProjGrid(){
