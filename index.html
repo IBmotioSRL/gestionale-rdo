@@ -6353,6 +6353,15 @@ function renderMagTabs(){
   const tabs=[['cat','📋','Catalogo e giacenze'],['req','📥','Richieste da commesse'],['pick','📱','Prelievo'],['reorder','🔔','Riordino']];
   el.innerHTML=tabs.map(([k,ic,l])=>`<button class="${MAG.tab===k?'on':''}" onclick="magGoTab('${k}')">${ic} ${esc(l)}</button>`).join('');
 }
+function magFmtData(s){
+  // le date arrivano ISO dal backend: mostrarle grezze ("2026-07-30T08:00:00")
+  // è illeggibile. Include l'ora perché più richieste dello stesso giorno sono
+  // normali e la sola data non le distinguerebbe.
+  if(!s)return '—';
+  const d=new Date(s);
+  if(isNaN(d))return esc(s);
+  return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+}
 async function magEnsureArticoliAll(){
   if(MAG.articoliAll)return;
   try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoliAll=r.ok?await r.json():[];}
@@ -6752,7 +6761,7 @@ function renderMagRichieste(){
     if(r.stato==='attesa')actions=`<button class="btn btn-go btn-sm" onclick="magAutorizzaRichiesta(${r.id})">✅ Autorizza</button><button class="btn btn-ghost btn-sm" onclick="magAnnullaRichiesta(${r.id})">Annulla</button>`;
     else if(r.stato==='autorizzata'||r.stato==='in_prelievo')actions=`<button class="btn btn-ghost btn-sm" onclick="MAG.pickActive=${r.id};magGoTab('pick')">📱 ${r.stato==='in_prelievo'?'Continua prelievo':'Vai al prelievo'}</button>`;
     return `<div class="card"><div class="mg-card-hd"><b>${esc(r.commessa_nome||'')}</b><span class="sp"></span>${magStBadge(r.stato)}</div>
-      <div class="mg-card-sub">${esc(r.creata_at||'')}</div>
+      <div class="mg-card-sub">${esc(r.commessa_codice||'')}${r.commessa_codice?' · ':''}richiesta del ${esc(magFmtData(r.creata_at))}</div>
       <div class="mg-card-rows">${righe}</div>
       ${actions?`<div class="mg-card-ft">${actions}</div>`:''}
     </div>`;
@@ -6779,8 +6788,8 @@ function renderMagPrelievo(){
     el.innerHTML=`<div class="mg-cards">${list.map(r=>`
       <div class="card" style="cursor:pointer" onclick="magIniziaPrelievo(${r.id})">
         <div class="mg-card-hd"><b>${esc(r.commessa_nome||'')}</b><span class="sp"></span>${magStBadge(r.stato)}</div>
-        <div class="mg-card-sub">${(r.righe||[]).length} articoli</div>
-        <button class="btn btn-go" style="width:100%;margin-top:8px" onclick="event.stopPropagation();magIniziaPrelievo(${r.id})">▶ Inizia prelievo</button>
+        <div class="mg-card-sub">${esc(r.commessa_codice||'')}${r.commessa_codice?' · ':''}${(r.righe||[]).length} articoli · richiesta del ${esc(magFmtData(r.creata_at))}</div>
+        <button class="btn btn-go" style="width:100%;margin-top:8px" onclick="event.stopPropagation();magIniziaPrelievo(${r.id})">${r.stato==='in_prelievo'?'▶ Continua prelievo':'▶ Inizia prelievo'}</button>
       </div>`).join('')}</div>`;
     return;
   }
@@ -6996,7 +7005,7 @@ function renderMagRiordino(){
     const sub=[full&&full.normativa,full&&full.materiale].filter(Boolean).join(' · ');
     return `<div class="card">
       <div class="mg-card-hd"><b>⚠ ${esc(n.articolo_denominazione||'')} ${esc(n.articolo_dimensione||'')}</b><span class="sp"></span><span class="chip co">da riordinare</span></div>
-      <div class="mg-card-sub">${sub?esc(sub)+' · ':''}generata ${esc(n.creata_at||'')}</div>
+      <div class="mg-card-sub">${sub?esc(sub)+' · ':''}segnalato il ${esc(magFmtData(n.creata_at))}</div>
       <div class="mg-card-rows">
         ${full?`<div class="mg-cardrow"><span class="nm">Disponibile attuale</span><span class="q">${full.disponibile}</span></div>
         <div class="mg-cardrow"><span class="nm">Scorta minima</span><span class="q">${full.scorta_minima==null?'—':full.scorta_minima}</span></div>`:''}
