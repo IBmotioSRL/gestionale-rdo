@@ -844,6 +844,10 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .mg-chip.on{background:var(--br);color:#fff;border-color:var(--br)}
 .mg-tablewrap{border-radius:var(--r);background:var(--surf);box-shadow:var(--sh);border:1px solid var(--bd);overflow:auto}
 .mg-tablewrap table{width:100%;border-collapse:collapse;font-size:12px}
+/* catalogo: layout fisso + larghezza a contenuto, così trascinare il bordo di
+   una colonna la allarga davvero (e la tabella scorre) invece di rubare spazio
+   alle altre come farebbe il layout automatico */
+.mg-tablewrap table.mg-fixed{table-layout:fixed;width:max-content;min-width:100%}
 .mg-tablewrap thead th{position:sticky;top:0;background:var(--br);color:#fff;text-align:left;padding:8px 9px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;z-index:2}
 .mg-tablewrap tbody td{padding:0;border-bottom:1px solid var(--bd)}
 .mg-tablewrap tbody tr:hover td{background:rgba(245,168,35,.05)}
@@ -873,6 +877,23 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .mg-filterdd-opt:hover{background:var(--bg)}
 .mg-filterdd-foot{display:flex;gap:6px;padding:8px;border-top:1px solid var(--bd)}
 .mg-filterdd-foot button{flex:1;font-size:11.5px}
+.mg-filterdd-actions{gap:6px}
+.mg-filterdd-actions button{flex:1;border:1.4px solid var(--bd2);background:var(--surf);border-radius:6px;padding:5px 8px;font:inherit;font-size:10.5px;font-weight:700;color:var(--go-d);cursor:pointer}
+.mg-filterdd-actions button:hover{background:var(--bg);border-color:var(--go-d)}
+/* righe di sola lettura: le proprietà si cambiano dalla scheda, non in tabella */
+.mg-tablewrap tbody tr{cursor:pointer}
+.mg-tablewrap td.ro{padding:8px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mg-th-wrap{position:relative}
+.mg-colrz{position:absolute;top:0;right:0;width:7px;height:100%;cursor:col-resize;z-index:3;user-select:none}
+.mg-colrz:hover{background:rgba(245,168,35,.5)}
+body.mg-resizing{cursor:col-resize;user-select:none}
+.mg-art-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.mg-art-grid .full{grid-column:1/-1}
+.mg-art-qr{background:var(--bg);border:1px dashed var(--bd2);border-radius:var(--rs);padding:9px 11px;font-size:11px;color:var(--t2);line-height:1.5}
+.mg-art-qr b{font-family:ui-monospace,Menlo,monospace;color:var(--t1);font-size:11.5px}
+.mg-art-calc{display:flex;gap:14px;flex-wrap:wrap;background:var(--bg);border-radius:var(--rs);padding:9px 11px;margin-bottom:14px}
+.mg-art-calc div{font-size:11px;color:var(--t2)}
+.mg-art-calc b{display:block;font-size:16px;font-weight:800;color:var(--t1);font-variant-numeric:tabular-nums}
 .mg-delbtn:hover{color:var(--red);background:rgba(255,59,48,.08)}
 .mg-formbox{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}
 .mg-rline{display:flex;gap:8px;align-items:center;margin-bottom:6px}
@@ -1896,6 +1917,18 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">Nota</label><input class="fld" id="oveNota" placeholder="Nota (facoltativa)"></div>
     </div>
     <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreVoce')">Annulla</button><button class="btn btn-go" onclick="oreSalvaVoceModal()">💾 Salva</button></div></div>
+  </div>
+</div>
+
+<div class="mov" id="mMagArt" onclick="magOvCloseArt(event)">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd">
+      <div class="mico2">🔧</div>
+      <div><div class="mtit" id="mMagArtTit">Scheda articolo</div><div class="msub" id="mMagArtSub">—</div></div>
+      <button class="mx" onclick="mClose('mMagArt')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd" id="mMagArtBody" style="max-height:70vh"></div>
+    <div class="mft" id="mMagArtFt"></div>
   </div>
 </div>
 
@@ -6286,16 +6319,20 @@ function ddExport(fmt){
 
 /* ── MAGAZZINO ── */
 let MAG={tab:'cat',categorieLoaded:false,categorie:[],articoli:null,articoliAll:null,_catsList:['all'],
-  qcat:'',filtCat:'all',filtRiord:false,sortCol:null,sortDir:'asc',colFiltri:{},
+  qcat:'',filtCat:'all',filtRiord:false,sortCol:null,sortDir:'asc',colFiltri:{},colW:{},art:null,
   richieste:null,newReq:null,
   pronte:null,pickActive:null,scan:null,
   notifiche:null};
 let MAG_SEARCH_T=null;
-const MAG_COLS=[['codice','Codice'],['categoria','Categoria'],['normativa','Normativa'],['denominazione','Denominazione'],['dimensione','Dimensione'],['materiale','Materiale'],['unita','Unità'],
-  ['giacenza','Giacenza',true],['impegnato','Impegnato',true],['disponibile','Disponibile',true],['scorta_minima','Minima',true],['in_arrivo','In arrivo',true]];
+// [campo, etichetta, numerica, larghezza predefinita in px]. La larghezza serve
+// perché la tabella usa table-layout:fixed (necessario perché il trascinamento
+// del bordo colonna abbia effetto reale, come in Excel).
+const MAG_COLS=[['codice','Codice',false,86],['categoria','Categoria',false,150],['normativa','Normativa',false,110],['denominazione','Denominazione',false,210],['dimensione','Dimensione',false,150],['materiale','Materiale',false,200],['unita','Unità',false,70],
+  ['giacenza','Giacenza',true,96],['impegnato','Impegnato',true,104],['disponibile','Disponibile',true,110],['scorta_minima','Minima',true,90],['in_arrivo','In arrivo',true,96]];
 let MAG_FILTER_FIELD=null,MAG_FILTER_TEMP=null,MAG_FILTER_Q='';
 
 async function magEnter(){
+  MAG.colW=magLoadColW();
   if(!MAG.categorieLoaded){
     try{const r=await fetch(API+'/api/magazzino/articoli/categorie');MAG.categorie=r.ok?await r.json():[];}
     catch{MAG.categorie=[];}
@@ -6367,13 +6404,39 @@ function magApplySort(rows){
 function magColTh(field,label,numeric){
   const filtroAttivo=MAG.colFiltri[field]&&MAG.colFiltri[field].size>0;
   const sortIc=MAG.sortCol===field?(MAG.sortDir==='desc'?'▼':'▲'):'▲▼';
-  return `<th${numeric?' style="text-align:right"':''}>
+  const def=(MAG_COLS.find(c=>c[0]===field)||[])[3]||120;
+  const w=MAG.colW[field]||def;
+  const style=`${numeric?'text-align:right;':''}width:${w}px;`;
+  const nome=`<span onclick="magToggleSort('${field}')" style="flex:1${numeric?';text-align:right':''}">${esc(label)}</span>`;
+  const sort=`<span class="mg-sort-ic${MAG.sortCol===field?' on':''}" onclick="magToggleSort('${field}')">${sortIc}</span>`;
+  return `<th class="mg-th-wrap"${style?` style="${style}"`:''}>
     <div class="mg-th${numeric?' num':''}">
-      ${numeric?'':`<span onclick="magToggleSort('${field}')" style="flex:1">${esc(label)}</span><span class="mg-sort-ic${MAG.sortCol===field?' on':''}" onclick="magToggleSort('${field}')">${sortIc}</span>`}
-      ${numeric?`<span class="mg-sort-ic${MAG.sortCol===field?' on':''}" onclick="magToggleSort('${field}')">${sortIc}</span><span onclick="magToggleSort('${field}')" style="flex:1;text-align:right">${esc(label)}</span>`:''}
+      ${numeric?sort+nome:nome+sort}
       <span class="mg-filter-ic${filtroAttivo?' on':''}" onclick="event.stopPropagation();magOpenColFilter(event,'${field}')" title="Filtra">⏷</span>
     </div>
+    <div class="mg-colrz" onmousedown="magColResizeStart(event,'${field}')" onclick="event.stopPropagation()" title="Trascina per ridimensionare"></div>
   </th>`;
+}
+/* ── larghezza colonne trascinabile (persistita) ── */
+function magLoadColW(){try{return JSON.parse(localStorage.getItem('mag_colw')||'{}')||{};}catch{return {};}}
+function magSaveColW(){try{localStorage.setItem('mag_colw',JSON.stringify(MAG.colW));}catch{}}
+function magColResizeStart(e,field){
+  e.preventDefault();e.stopPropagation();
+  const th=e.target.closest('th');
+  const startX=e.clientX,startW=th.getBoundingClientRect().width;
+  document.body.classList.add('mg-resizing');
+  const onMove=ev=>{
+    const w=Math.max(48,Math.round(startW+(ev.clientX-startX)));
+    MAG.colW[field]=w;th.style.width=w+'px';
+  };
+  const onUp=()=>{
+    document.body.classList.remove('mg-resizing');
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    magSaveColW();
+  };
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
 }
 function renderMagCatalogo(){
   const el=document.getElementById('magBody');
@@ -6396,32 +6459,153 @@ function renderMagCatalogo(){
       <div class="mg-search">🔎 <input id="magQCat" placeholder="Cerca…" value="${esc(MAG.qcat)}" oninput="magOnSearchCat(this.value)"></div>
       <div class="mg-chips" id="magChipsCat"></div>
       <div class="mg-chips"><div class="mg-chip${MAG.filtRiord?' on':''}" onclick="magToggleRiord()">⚠ Solo da riordinare</div></div>
-      <button class="btn btn-go" onclick="magAddArticolo()">+ Riga</button>
+      <button class="btn btn-go" onclick="magNuovoArticolo()">+ Nuovo articolo</button>
     </div>
-    <div class="mg-tablewrap"><table>
+    <div class="fmuted" style="font-size:11px;margin:-6px 0 8px">Clic su una riga per aprire la scheda e modificarne le proprietà.</div>
+    <div class="mg-tablewrap"><table class="mg-fixed">
       <thead><tr>
-        ${MAG_COLS.map(([f,l,n])=>magColTh(f,l,n)).join('')}<th></th><th></th>
+        ${MAG_COLS.map(([f,l,n])=>magColTh(f,l,n)).join('')}<th style="width:52px"></th>
       </tr></thead>
       <tbody id="magRowsCat"></tbody>
     </table></div>`;
   document.getElementById('magChipsCat').innerHTML=cats.map((c,i)=>`<div class="mg-chip${MAG.filtCat===c?' on':''}" onclick="magSetFiltCatIdx(${i})">${c==='all'?'Tutte':esc(c)}</div>`).join('');
-  const txtCell=(a,field,ph)=>`<td><input class="mg-cell" value="${esc((a[field]||'').toString())}" placeholder="${ph||''}" onchange="magSetArticolo(${a.id},'${field}',this.value)"></td>`;
-  document.getElementById('magRowsCat').innerHTML=rows.map(a=>`<tr>
-    <td style="padding:8px 9px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--t3);font-weight:700;white-space:nowrap">${esc(a.codice||'')}</td>
-    <td><input class="mg-cell" value="${esc(a.categoria||'')}" onchange="magSetArticolo(${a.id},'categoria',this.value)" style="min-width:110px"></td>
-    ${txtCell(a,'normativa','—')}
-    ${txtCell(a,'denominazione')}
-    ${txtCell(a,'dimensione','—')}
-    ${txtCell(a,'materiale','—')}
-    <td><input class="mg-cell" value="${esc(a.unita||'')}" onchange="magSetArticolo(${a.id},'unita',this.value)" style="width:60px"></td>
-    <td class="num"><input class="mg-cellnum" value="${a.giacenza}" onchange="magSetArticolo(${a.id},'giacenza',this.value,true)"></td>
+  const roCell=(a,field,ph)=>`<td class="ro" title="${esc((a[field]||'').toString())}">${esc((a[field]||'').toString())||`<span class="fmuted">${ph||'—'}</span>`}</td>`;
+  document.getElementById('magRowsCat').innerHTML=rows.map(a=>`<tr onclick="magApriScheda(${a.id})">
+    <td class="ro" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--t3);font-weight:700">${esc(a.codice||'')}</td>
+    ${roCell(a,'categoria')}
+    ${roCell(a,'normativa')}
+    ${roCell(a,'denominazione')}
+    ${roCell(a,'dimensione')}
+    ${roCell(a,'materiale')}
+    ${roCell(a,'unita')}
+    <td class="num">${a.giacenza}</td>
     <td class="num">${a.impegnato}</td>
     <td class="num" style="font-weight:800;${a.da_riordinare?'color:var(--red)':''}">${a.disponibile}</td>
-    <td class="num"><input class="mg-cellnum" value="${a.scorta_minima==null?'':a.scorta_minima}" placeholder="—" onchange="magSetArticolo(${a.id},'scorta_minima',this.value,true)"></td>
-    <td class="num">${a.in_arrivo?('+'+a.in_arrivo):'—'}</td>
+    <td class="num">${a.scorta_minima==null?'<span class="fmuted">—</span>':a.scorta_minima}</td>
+    <td class="num">${a.in_arrivo?('+'+a.in_arrivo):'<span class="fmuted">—</span>'}</td>
     <td class="act">${a.da_riordinare?'<span class="chip cr">⚠</span>':'<span class="chip cg">ok</span>'}</td>
-    <td class="act"><button class="mg-delbtn" onclick="magDelArticolo(${a.id})" title="Elimina">🗑</button></td>
-  </tr>`).join('')||'<tr><td colspan="14"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
+  </tr>`).join('')||'<tr><td colspan="13"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
+}
+
+/* ── SCHEDA ARTICOLO (crea / modifica / duplica / elimina) ── */
+function magOvCloseArt(e){if(e.target.id==='mMagArt')mClose('mMagArt');}
+function magNuovoArticolo(){
+  MAG.art={nuovo:true,dati:{categoria:'',normativa:'',denominazione:'',dimensione:'',materiale:'',unita:'pz',note:'',giacenza:0,scorta_minima:'',in_arrivo:0}};
+  renderMagScheda();
+  mOpen('mMagArt');
+}
+function magApriScheda(id,articolo){
+  // `articolo` esplicito per i casi in cui la riga non è nella lista corrente
+  // (es. subito dopo un duplica, se i filtri attivi la escludono)
+  const a=articolo||(MAG.articoli||[]).find(x=>x.id===id);
+  if(!a){toast('Articolo non trovato',true);return;}
+  MAG.art={nuovo:false,id:a.id,codice:a.codice,calc:a,dati:{
+    categoria:a.categoria||'',normativa:a.normativa||'',denominazione:a.denominazione||'',
+    dimensione:a.dimensione||'',materiale:a.materiale||'',unita:a.unita||'pz',note:a.note||'',
+    giacenza:a.giacenza,scorta_minima:a.scorta_minima==null?'':a.scorta_minima,in_arrivo:a.in_arrivo,
+  }};
+  renderMagScheda();
+  mOpen('mMagArt');
+}
+function magSchedaQrTesto(d){
+  return [d.normativa,d.materiale,d.dimensione].map(x=>(x||'').trim()).filter(x=>x).join(' - ');
+}
+function renderMagScheda(){
+  const s=MAG.art;if(!s)return;
+  document.getElementById('mMagArtTit').textContent=s.nuovo?'Nuovo articolo':`Scheda ${s.codice}`;
+  document.getElementById('mMagArtSub').textContent=s.nuovo
+    ?'Il codice MG viene assegnato al salvataggio'
+    :(s.calc.famiglia_materiale?`Famiglia materiale: ${s.calc.famiglia_materiale}`:'Modifica le proprietà dell\'articolo');
+  const d=s.dati;
+  const fld=(k,label,ph,extra)=>`<div class="fg"><label class="fl">${esc(label)}</label><input class="fld" value="${esc((d[k]??'').toString())}" placeholder="${ph||''}" ${extra||''} oninput="MAG.art.dati['${k}']=this.value;magSchedaRefreshQr()"></div>`;
+  const num=(k,label,ph)=>`<div class="fg"><label class="fl">${esc(label)}</label><input class="fld" type="number" min="0" value="${d[k]===''||d[k]==null?'':d[k]}" placeholder="${ph||''}" oninput="MAG.art.dati['${k}']=this.value"></div>`;
+  const calc=s.nuovo?'':`<div class="mg-art-calc">
+      <div>Impegnato<b>${s.calc.impegnato}</b></div>
+      <div>Disponibile<b style="${s.calc.da_riordinare?'color:var(--red)':''}">${s.calc.disponibile}</b></div>
+      <div>Stato<b>${s.calc.da_riordinare?'⚠ da riordinare':'✔ ok'}</b></div>
+    </div>`;
+  document.getElementById('mMagArtBody').innerHTML=`${calc}
+    <div class="mg-art-grid">
+      ${fld('denominazione','Denominazione','Es. Vite TCEI')}
+      ${fld('categoria','Categoria','Es. vite')}
+      ${fld('normativa','Normativa','Es. DIN 912')}
+      ${fld('dimensione','Dimensione','Es. M6x20')}
+      ${fld('materiale','Materiale','Es. AISI 304')}
+      ${fld('unita','Unità','pz')}
+      ${num('giacenza','Giacenza')}
+      ${num('scorta_minima','Scorta minima','nessuna')}
+      ${num('in_arrivo','In arrivo')}
+      <div class="fg full"><label class="fl">Note</label><textarea class="fld" placeholder="Note (facoltative)" oninput="MAG.art.dati.note=this.value">${esc(d.note||'')}</textarea></div>
+      <div class="fg full"><div class="mg-art-qr">Testo dell'etichetta QR: <b id="magSchedaQr">${esc(magSchedaQrTesto(d))||'—'}</b><br>Normativa · materiale · dimensione: è il testo che il tablet legge dalla scatola. Sigle inox diverse (AISI 302, A2-70…) sono riconosciute come equivalenti.</div></div>
+    </div>`;
+  document.getElementById('mMagArtFt').innerHTML=s.nuovo
+    ?`<div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mMagArt')">Annulla</button><button class="btn btn-go" onclick="magSalvaScheda()">💾 Crea articolo</button></div>`
+    :`<button class="btn btn-sm" onclick="magDuplicaScheda()">⧉ Duplica</button>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="magEliminaScheda()">🗑 Elimina</button>
+      <div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mMagArt')">Annulla</button><button class="btn btn-go" onclick="magSalvaScheda()">💾 Salva</button></div>`;
+}
+function magSchedaRefreshQr(){
+  const el=document.getElementById('magSchedaQr');
+  if(el)el.textContent=magSchedaQrTesto(MAG.art.dati)||'—';
+}
+function magSchedaPayload(){
+  const d=MAG.art.dati;
+  const n=v=>{const x=Number((v??'').toString().replace(',','.'));return isNaN(x)?0:Math.max(0,Math.round(x));};
+  return {
+    categoria:(d.categoria||'').trim(),normativa:(d.normativa||'').trim(),
+    denominazione:(d.denominazione||'').trim(),dimensione:(d.dimensione||'').trim(),
+    materiale:(d.materiale||'').trim(),unita:(d.unita||'pz').trim()||'pz',
+    note:(d.note||'').trim(),giacenza:n(d.giacenza),in_arrivo:n(d.in_arrivo),
+    scorta_minima:(d.scorta_minima===''||d.scorta_minima==null)?null:n(d.scorta_minima),
+  };
+}
+async function magSalvaScheda(){
+  const s=MAG.art;const body=magSchedaPayload();
+  if(!body.denominazione){toast('La denominazione è obbligatoria',true);return;}
+  try{
+    const r=s.nuovo
+      ?await fetch(API+'/api/magazzino/articoli',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      :await fetch(API+'/api/magazzino/articoli/'+s.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok){toast(await magErrDetail(r,'Errore salvataggio'),true);return;}
+    const salvato=await r.json();
+    mClose('mMagArt');
+    toast(s.nuovo?`Creato ${salvato.codice}`:`${salvato.codice} salvato`);
+    MAG.articoliAll=null;
+    // una categoria digitata a mano può essere nuova: ricarica i chip
+    if(salvato.categoria&&!(MAG.categorie||[]).includes(salvato.categoria))await magRicaricaCategorie();
+    await magLoadCatalogo();
+  }catch{toast('Errore di rete',true);}
+}
+async function magRicaricaCategorie(){
+  try{const r=await fetch(API+'/api/magazzino/articoli/categorie');if(r.ok)MAG.categorie=await r.json();}catch{}
+}
+async function magDuplicaScheda(){
+  const s=MAG.art;
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli/'+s.id+'/duplica',{method:'POST'});
+    if(!r.ok){toast(await magErrDetail(r,'Errore duplicazione'),true);return;}
+    const copia=await r.json();
+    MAG.articoliAll=null;
+    await magLoadCatalogo();
+    toast(`Duplicato in ${copia.codice} — stampa una nuova etichetta QR`);
+    magApriScheda(copia.id,copia);
+  }catch{toast('Errore di rete',true);}
+}
+async function magEliminaScheda(){
+  const s=MAG.art;
+  if(!confirm(`Eliminare definitivamente ${s.codice}?\n\nL'etichetta QR già stampata per questo codice non funzionerà più, e il numero ${s.codice} non verrà riassegnato ad altri articoli.`))return;
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli/'+s.id,{method:'DELETE'});
+    if(!(r.ok||r.status===204)){toast(await magErrDetail(r,'Errore eliminazione'),true);return;}
+    mClose('mMagArt');
+    toast(`${s.codice} eliminato`);
+    MAG.articoliAll=null;
+    await magRicaricaCategorie();
+    await magLoadCatalogo();
+  }catch{toast('Errore di rete',true);}
+}
+async function magErrDetail(r,fallback){
+  try{const j=await r.json();return j.detail||fallback;}catch{return fallback;}
 }
 function magToggleSort(field){
   if(MAG.sortCol!==field){MAG.sortCol=field;MAG.sortDir='asc';}
@@ -6452,7 +6636,7 @@ function magRenderColFilter(){
   const valori=q?tuttiValori.filter(([v])=>v.toLowerCase().includes(q)):tuttiValori;
   d.innerHTML=`
     <div class="mg-filterdd-srch"><input placeholder="Cerca valore…" value="${esc(MAG_FILTER_Q)}" oninput="magFilterDDSearch(this.value)"></div>
-    <div class="mg-filterdd-actions"><a onclick="magFilterDDAll(true)">Seleziona tutto</a><a onclick="magFilterDDAll(false)">Deseleziona tutto</a></div>
+    <div class="mg-filterdd-actions"><button type="button" onclick="magFilterDDAll(true)">✓ Seleziona tutto</button><button type="button" onclick="magFilterDDAll(false)">✕ Deseleziona tutto</button></div>
     <div class="mg-filterdd-list">${valori.map(([v])=>`<label class="mg-filterdd-opt"><input type="checkbox" ${MAG_FILTER_TEMP.has(v)?'checked':''} onchange="magFilterDDToggle('${jsq(v)}',this.checked)">${esc(v)}</label>`).join('')||'<div class="fmuted" style="padding:8px 12px;font-size:11.5px">Nessun valore</div>'}</div>
     <div class="mg-filterdd-foot"><button class="btn btn-sm" onclick="magCloseColFilter()">Annulla</button><button class="btn btn-go btn-sm" onclick="magApplyColFilter()">OK</button></div>`;
 }
@@ -6475,32 +6659,6 @@ document.addEventListener('click',e=>{if(!e.target.closest('#magFilterDD')&&!e.t
 function magOnSearchCat(v){MAG.qcat=v;clearTimeout(MAG_SEARCH_T);MAG_SEARCH_T=setTimeout(()=>magLoadCatalogo(),300);}
 function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];magLoadCatalogo();}
 function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;magLoadCatalogo();}
-async function magSetArticolo(id,field,val,numeric){
-  const body={};
-  body[field]=numeric?(val===''?null:Math.max(0,Math.round(Number(val.toString().replace(',','.'))||0))):val;
-  try{
-    const r=await fetch(API+'/api/magazzino/articoli/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok){toast('Errore salvataggio',true);return;}
-    const upd=await r.json();
-    const idx=(MAG.articoli||[]).findIndex(x=>x.id===id);
-    if(idx>-1)MAG.articoli[idx]=upd;
-    renderMagCatalogo();
-  }catch{toast('Errore di rete',true);}
-}
-async function magAddArticolo(){
-  try{
-    const r=await fetch(API+'/api/magazzino/articoli',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({denominazione:'Nuovo articolo',unita:'pz'})});
-    if(!r.ok){toast('Errore creazione',true);return;}
-    await magLoadCatalogo();
-  }catch{toast('Errore di rete',true);}
-}
-function magDelArticolo(id){
-  if(!confirm('Eliminare questa riga?'))return;
-  fetch(API+'/api/magazzino/articoli/'+id,{method:'DELETE'}).then(r=>{
-    if(r.ok||r.status===204)magLoadCatalogo();else toast('Errore eliminazione',true);
-  }).catch(()=>toast('Errore di rete',true));
-}
-
 /* ── RICHIESTE DA COMMESSE ── */
 async function magLoadRichieste(){
   const el=document.getElementById('magBody');
