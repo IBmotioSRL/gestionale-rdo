@@ -2080,9 +2080,16 @@ async function openProgetto(pid){
   setView('albero');
   try{
     const [ra,rc]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/files')]);
-    S.albero=ra.ok?await ra.json():null;
-    S.cal=rc.ok?await rc.json():{files:[]};
+    const a=ra.ok?await ra.json():null;
+    // rete di sicurezza: tutto il workspace presuppone albero.categorie array.
+    // Con una risposta di forma inattesa il render morirebbe a metà lasciando
+    // «Caricamento…» per sempre; meglio trattarla come "albero assente", che i
+    // render sanno già gestire (allParti/renderTreeCat controllano S.albero).
+    S.albero=(a&&typeof a==='object'&&Array.isArray(a.categorie))?a:null;
+    const cal=rc.ok?await rc.json():null;
+    S.cal=(cal&&typeof cal==='object'&&Array.isArray(cal.files))?cal:{files:[]};
   }catch{S.albero=null;S.cal={files:[]};}
+  if(!S.albero)toast('Struttura del progetto non caricata: riprova o controlla il collegamento al server',true);
   // categorie COMPRESSE di default (nota Elia 03/07): si aprono col clic o con «Espandi»
   if(S.albero)S.albero.categorie.forEach(cat=>{if(!(cat.categoria in S.openCat))S.openCat[cat.categoria]=false;});
   renderProgress();renderTree();renderGlance();renderFiltri();renderFileTable();updateFAB();loadRevisioni();fillPropDatalists();
@@ -3328,13 +3335,40 @@ async function renderCosti(){
   renderCxList();
 }
 
+/* Rete di sicurezza: il resto della vista Costi presuppone d.pezzi array e
+   d.prezzi_corpo oggetto. Se la risposta non ha quella forma (endpoint che
+   cambia, proxy che restituisce altro, errore servito con 200) senza questo
+   controllo la vista muore su un'eccezione e resta bloccata su "Calcolo
+   costi…". Ritorna null quando i dati non sono usabili. */
+function cxDatiValidi(d){
+  if(!d||typeof d!=='object'||Array.isArray(d))return null;
+  if(!Array.isArray(d.pezzi))return null;
+  if(!d.prezzi_corpo||typeof d.prezzi_corpo!=='object')d.prezzi_corpo={};
+  return d;
+}
+function cxErroreHtml(msg,azione,etichetta){
+  return `<div class="empty" style="padding:40px 20px">
+    <div style="font-size:30px;margin-bottom:8px">⚠</div>
+    <div class="et">Costi non disponibili</div>
+    <div class="ed">${esc(msg)}</div>
+    <button class="btn btn-go" onclick="${azione||'renderCxList()'}">${esc(etichetta||'Riprova')}</button></div>`;
+}
 async function renderCxList(){
   CX.mode='list';
   const el=document.getElementById('costiBody');
   el.innerHTML='<div class="fmuted" style="font-size:11px">Calcolo costi…</div>';
-  const datas=await Promise.all(commesse.map(async c=>{
-    try{const r=await fetch(API+'/api/commesse/'+c.id+'/costi');return r.ok?await r.json():null;}catch{return null;}
-  }));
+  let datas;
+  try{
+    datas=await Promise.all(commesse.map(async c=>{
+      try{const r=await fetch(API+'/api/commesse/'+c.id+'/costi');return r.ok?cxDatiValidi(await r.json()):null;}catch{return null;}
+    }));
+  }catch(e){
+    el.innerHTML=cxErroreHtml('Non è stato possibile contattare il server.');return;
+  }
+  const nonLetti=datas.filter(d=>!d).length;
+  if(commesse.length&&nonLetti===commesse.length){
+    el.innerHTML=cxErroreHtml('Il server non ha restituito dati di costo utilizzabili per nessuna commessa.');return;
+  }
   let gTot=0,gPz=0,gPrz=0;
   const cards=datas.map((d,i)=>{
     const c=commesse[i]; if(!d)return '';
@@ -3355,7 +3389,7 @@ async function renderCxList(){
        <div class="cost-tile"><div class="v">${gPrz}/${gPz}</div><div class="l">Pezzi prezzati</div></div>
        <div class="cost-tile"><div class="v">${pct}%</div><div class="l">Copertura prezzi</div></div>
      </div>
-     <div class="fmuted" style="font-size:10.5px;margin-bottom:10px">Netto IVA, esclusi costi accessori. Entra in una commessa per il dettaglio per tipologia.</div>`+
+     <div class="fmuted" style="font-size:10.5px;margin-bottom:10px">Netto IVA, esclusi costi accessori. Entra in una commessa per il dettaglio per tipologia.${nonLetti?` <b style="color:var(--red)">${nonLetti} commesse escluse: dati di costo non leggibili.</b>`:''}</div>`+
     (cards.join('')||'<div class="fmuted">Nessuna commessa.</div>');
 }
 
@@ -3363,7 +3397,7 @@ async function cxOpen(cid){
   CX.mode='detail';CX.cid=cid;CX.closed={};
   const el=document.getElementById('costiBody');
   el.innerHTML='<div class="fmuted" style="font-size:11px">Carico costi commessa…</div>';
-  try{const r=await fetch(API+'/api/commesse/'+cid+'/costi');CX.data=r.ok?await r.json():null;}catch{CX.data=null;}
+  try{const r=await fetch(API+'/api/commesse/'+cid+'/costi');CX.data=r.ok?cxDatiValidi(await r.json()):null;}catch{CX.data=null;}
   renderCxDetail();
 }
 function cxBackList(){CX.mode='list';CX.cid=null;CX.data=null;renderCxList();}
@@ -3460,7 +3494,7 @@ function cxSection(name,rows){
 
 function renderCxDetail(){
   const el=document.getElementById('costiBody');
-  if(!CX.data){el.innerHTML='<div class="fmuted">Errore nel caricamento. <a onclick="cxBackList()">Torna</a></div>';return;}
+  if(!CX.data){el.innerHTML=cxErroreHtml('Il server non ha restituito dati di costo utilizzabili per questa commessa.','cxBackList()',"Torna all'elenco");return;}
   const d=CX.data,g=cxGroups(),keys=cxKeys(g);
   let tot=0,prz=0,npz=d.pezzi.length;
   d.pezzi.forEach(p=>{const im=cxImp(p);if(im!=null){tot+=im;prz++;}});
