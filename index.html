@@ -2389,9 +2389,25 @@ function showPrev(pid){
   const pdf=firstPdf(p);
   document.getElementById('prevcap').textContent=p.numero_parte+' · '+(p.denominazione||'');
   const img=document.getElementById('previmg');
-  if(pdf){img.innerHTML=`<img class="pv-img" src="${thumbUrl(pdf,440)}" alt="" onerror="this.outerHTML='<div class=\\'pv-ph\\'>anteprima non disponibile</div>'">`;}
+  if(pdf){img.innerHTML=prevImgHtml(pdf);}
   else{img.innerHTML='<div class="pv-ph">nessun PDF collegato</div>';}
   PREV.style.display='block';
+}
+/* Se la miniatura non arriva, chiede al server il motivo e lo mostra al posto
+   del generico "non disponibile": senza questo, un problema di accesso alla
+   cartella di rete è indistinguibile da un PDF corrotto. */
+function prevImgHtml(pdf){
+  return `<img class="pv-img" src="${thumbUrl(pdf,440)}" alt="" onerror="prevThumbFallita(this,'${jsq(pdf)}')">`;
+}
+async function prevThumbFallita(img,pdf){
+  const ph=document.createElement('div');
+  ph.className='pv-ph';
+  ph.textContent='anteprima non disponibile';
+  img.replaceWith(ph);
+  try{
+    const r=await fetch(thumbUrl(pdf,440));
+    if(!r.ok)ph.textContent=await srvErrDetail(r,'anteprima non disponibile');
+  }catch{ph.textContent='server non raggiungibile';}
 }
 function hidePrev(){PREV.style.display='none';prevPid=null;}
 // REGOLA: ovunque si passi sopra un file con disegno/datasheet PDF, mostra SEMPRE l'anteprima.
@@ -2399,7 +2415,7 @@ function hidePrev(){PREV.style.display='none';prevPid=null;}
 function showPrevPath(pdf,cap){
   if(!pdf)return;
   document.getElementById('prevcap').textContent=cap||'';
-  document.getElementById('previmg').innerHTML=`<img class="pv-img" src="${thumbUrl(pdf,440)}" alt="" onerror="this.outerHTML='<div class=\\'pv-ph\\'>anteprima non disponibile</div>'">`;
+  document.getElementById('previmg').innerHTML=prevImgHtml(pdf);
   PREV.style.display='block';
 }
 document.addEventListener('mouseover',e=>{const el=e.target.closest('[data-prevpdf]');if(el)showPrevPath(el.getAttribute('data-prevpdf'),el.getAttribute('data-prevcap'));});
@@ -2745,11 +2761,30 @@ function openFileView(path,el){
   document.querySelectorAll('#pdBody .fileitem').forEach(x=>x.classList.remove('act'));if(el)el.classList.add('act');
   renderViewer(path);
 }
-function renderViewer(path){
+async function renderViewer(path){
   const slot=document.getElementById('pdViewerSlot');if(!slot)return;
   const ext=fileExt(path);
-  if(ext==='pdf'){slot.innerHTML=`<div class="pd-viewer"><iframe src="${fileUrl(path)}#toolbar=1"></iframe></div>`;}
-  else{slot.innerHTML=`<div class="pd-ext">Il formato <b>.${ext}</b> non è visualizzabile nel browser.<br><a class="btn btn-go" style="margin-top:8px;display:inline-block" href="${fileUrl(path)}" target="_blank" rel="noopener">Apri / scarica ↗</a></div>`;}
+  if(ext!=='pdf'){
+    slot.innerHTML=`<div class="pd-ext">Il formato <b>.${ext}</b> non è visualizzabile nel browser.<br><a class="btn btn-go" style="margin-top:8px;display:inline-block" href="${fileUrl(path)}" target="_blank" rel="noopener">Apri / scarica ↗</a></div>`;
+    return;
+  }
+  // Un <iframe> che riceve un errore resta bianco senza dire perché: prima si
+  // chiede al server il primo byte, così se il file non è raggiungibile si può
+  // mostrare il motivo reale invece di un riquadro vuoto.
+  slot.innerHTML='<div class="pd-ext">Apertura del PDF…</div>';
+  const url=fileUrl(path);
+  let motivo=null;
+  try{
+    const r=await fetch(url,{headers:{Range:'bytes=0-0'}});
+    if(!r.ok)motivo=await srvErrDetail(r,'Il server non ha potuto servire il file (codice '+r.status+')');
+  }catch{motivo='Server non raggiungibile.';}
+  if(motivo){
+    slot.innerHTML=`<div class="pd-ext"><div style="font-size:26px;margin-bottom:6px">⚠</div>
+      <b>PDF non apribile</b><br>${esc(motivo)}<br>
+      <a class="btn btn-go" style="margin-top:8px;display:inline-block" href="${url}" target="_blank" rel="noopener">Prova ad aprirlo in una scheda ↗</a></div>`;
+    return;
+  }
+  slot.innerHTML=`<div class="pd-viewer"><iframe src="${url}#toolbar=1"></iframe></div>`;
 }
 
 /* ── MENU TASTO DESTRO ── */
@@ -6609,7 +6644,7 @@ async function magSalvaScheda(){
     const r=s.nuovo
       ?await fetch(API+'/api/magazzino/articoli',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
       :await fetch(API+'/api/magazzino/articoli/'+s.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok){toast(await magErrDetail(r,'Errore salvataggio'),true);return;}
+    if(!r.ok){toast(await srvErrDetail(r,'Errore salvataggio'),true);return;}
     const salvato=await r.json();
     mClose('mMagArt');
     toast(s.nuovo?`Creato ${salvato.codice}`:`${salvato.codice} salvato`);
@@ -6626,7 +6661,7 @@ async function magDuplicaScheda(){
   const s=MAG.art;
   try{
     const r=await fetch(API+'/api/magazzino/articoli/'+s.id+'/duplica',{method:'POST'});
-    if(!r.ok){toast(await magErrDetail(r,'Errore duplicazione'),true);return;}
+    if(!r.ok){toast(await srvErrDetail(r,'Errore duplicazione'),true);return;}
     const copia=await r.json();
     MAG.articoliAll=null;
     await magLoadCatalogo();
@@ -6639,7 +6674,7 @@ async function magEliminaScheda(){
   if(!confirm(`Eliminare definitivamente ${s.codice}?\n\nL'etichetta QR già stampata per questo codice non funzionerà più, e il numero ${s.codice} non verrà riassegnato ad altri articoli.`))return;
   try{
     const r=await fetch(API+'/api/magazzino/articoli/'+s.id,{method:'DELETE'});
-    if(!(r.ok||r.status===204)){toast(await magErrDetail(r,'Errore eliminazione'),true);return;}
+    if(!(r.ok||r.status===204)){toast(await srvErrDetail(r,'Errore eliminazione'),true);return;}
     mClose('mMagArt');
     toast(`${s.codice} eliminato`);
     MAG.articoliAll=null;
@@ -6647,7 +6682,7 @@ async function magEliminaScheda(){
     await magLoadCatalogo();
   }catch{toast('Errore di rete',true);}
 }
-async function magErrDetail(r,fallback){
+async function srvErrDetail(r,fallback){
   try{const j=await r.json();return j.detail||fallback;}catch{return fallback;}
 }
 function magToggleSort(field){
