@@ -2818,7 +2818,17 @@ function ctxPart(e,pid){
 }
 function hideCtx(){CTX.style.display='none';}
 function ctxAssign(pid){const r=document.querySelector('.tr-part[data-pid="'+pid+'"]');setTimeout(()=>showDD({stopPropagation(){},currentTarget:r||document.body},{t:'BULK'}),0);}
-function ctxRelease(){const ids=[...S.rows];Promise.all(ids.map(id=>fetch(API+'/api/parti/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fornitore_id:null,stato:'da_smistare'})}))).then(()=>{toast&&toast('Rilasciati','ok');refreshDetail();});}
+async function ctxRelease(){
+  const ids=[...S.rows];if(!ids.length)return;
+  // una sola chiamata invece di una PATCH per riga (vedi ddConfirm/BULK).
+  // In più l'endpoint in blocco tocca lo stato solo se era "da inviare",
+  // così un pezzo già confermato non viene retrocesso per errore.
+  try{
+    const r=await fetch(API+'/api/parti/bulk-fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:ids,ids:[]})});
+    if(!r.ok){toast(await srvErrDetail(r,'Errore rilascio'),true);return;}
+    S.rows.clear();toast('Rilasciati','ok');await refreshDetail();
+  }catch{toast('Errore rilascio',true);}
+}
 document.addEventListener('click',()=>hideCtx());
 document.addEventListener('scroll',()=>hideCtx(),true);
 
@@ -3010,7 +3020,10 @@ function ddRelease(){DDSEL=new Set();ddConfirm();}  // «Rilascia» = conferma a
 async function bulkRelease(){
   const ids=[...S.rows];if(!ids.length){toast('Seleziona dei pezzi');return;}
   if(!confirm(`Togliere il fornitore da ${ids.length} pezzi selezionati?`))return;
-  try{await Promise.all(ids.map(id=>fetch(API+'/api/parti/'+id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:[]})})));
+  try{
+    // una sola chiamata, non una per riga (vedi ddConfirm/BULK)
+    const r=await fetch(API+'/api/parti/bulk-fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:ids,ids:[]})});
+    if(!r.ok){toast(await srvErrDetail(r,'Errore rilascio'),true);return;}
     S.rows.clear();toast('Fornitori rilasciati','ok');await refreshDetail();
   }catch{toast('Errore rilascio',true);}
 }
@@ -3029,8 +3042,10 @@ async function ddConfirm(){
       const r=await fetch(API+'/api/parti/'+t.id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
       if(!r.ok)throw 0;
     } else if(t.t==='BULK'){
-      const list=[...S.rows];
-      await Promise.all(list.map(id=>fetch(API+'/api/parti/'+id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})})));
+      // UNA sola chiamata per tutta la selezione: una PUT per riga, su selezioni
+      // ampie, esauriva il pool di connessioni del backend e lo bloccava.
+      const r=await fetch(API+'/api/parti/bulk-fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:[...S.rows],ids})});
+      if(!r.ok)throw 0;
       S.rows.clear();
     } else { // branch: CAT/LAV/TIPO/FORN/FORNNOME
       if(!ids.length){toast('Per rilasciare un gruppo usa i singoli pezzi',true);return;}
