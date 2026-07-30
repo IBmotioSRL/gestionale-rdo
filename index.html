@@ -3042,6 +3042,10 @@ async function ddConfirm(){
       const r=await fetch(API+'/api/parti/'+t.id+'/fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
       if(!r.ok)throw 0;
     } else if(t.t==='BULK'){
+      // confermare SENZA fornitori selezionati significa rilasciare: su una
+      // selezione ampia cancellerebbe in silenzio il lavoro di assegnazione,
+      // quindi va chiesto esplicitamente (il rilascio dal pulsante lo fa già).
+      if(!ids.length&&!confirm(`Nessun fornitore selezionato: vuoi TOGLIERE il fornitore da ${S.rows.size} pezzi?`))return;
       // UNA sola chiamata per tutta la selezione: una PUT per riga, su selezioni
       // ampie, esauriva il pool di connessioni del backend e lo bloccava.
       const r=await fetch(API+'/api/parti/bulk-fornitori',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte_ids:[...S.rows],ids})});
