@@ -268,6 +268,8 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .rdo-alleg input{accent-color:var(--go)}
 .rdo-alleg .akind{margin-left:auto;font-size:8.5px;font-weight:800;padding:1px 6px;border-radius:4px;background:rgba(44,21,6,.06);color:var(--t2);text-transform:uppercase}
 .rdo-alleg .akind.distinta{background:rgba(52,199,89,.14);color:#1A7A2E}
+/* il PDF di un commerciale e' la sua scheda tecnica, non un disegno */
+.rdo-alleg .akind.datasheet{background:rgba(88,86,214,.12);color:#4b48b0}
 .rdo-pezzi{display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto}
 .rdo-pezzi .rp{font-size:9.5px;font-weight:700;font-family:ui-monospace,monospace;background:rgba(44,21,6,.05);border:1px solid var(--bd);border-radius:5px;padding:2px 6px;color:var(--br)}
 .rdo-preview{margin-top:12px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
@@ -3635,7 +3637,7 @@ async function openRdoMail(cid,fid){
   document.getElementById('rdoAllCnt').textContent='('+m.allegati.length+')';
   document.getElementById('rdoPzCnt').textContent='('+m.parti.length+')';
   document.getElementById('rdoAlleg').innerHTML=m.allegati.map((a,i)=>
-    `<label><input type="checkbox" ${a.incluso?'checked':''} onchange="RDO_MAIL.allegati[${i}].incluso=this.checked"><span>${esc(a.nome)}</span><span class="akind ${a.kind==='distinta'?'distinta':''}">${a.kind}</span></label>`).join('');
+    `<label><input type="checkbox" ${a.incluso?'checked':''} onchange="RDO_MAIL.allegati[${i}].incluso=this.checked"><span>${esc(a.nome)}</span><span class="akind ${esc(a.kind||'')}">${esc(a.kind||'')}</span></label>`).join('');
   document.getElementById('rdoPezzi').innerHTML=m.parti.map(p=>`<span class="rp" title="${esc(p.denominazione||'')}">${esc(p.numero_parte)}</span>`).join('');
   document.getElementById('rdoPreview').style.display='none';
   document.getElementById('rdoPrevBtn').textContent='👁 Anteprima';
