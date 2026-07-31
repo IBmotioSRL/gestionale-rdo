@@ -579,6 +579,12 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .dist-cand-d{font-size:11px;color:var(--t2);margin-bottom:6px}
 .dist-mot{margin:0 0 8px;padding-left:16px;font-size:11px;color:var(--t2)}
 .dist-mot li{margin-bottom:1px}
+/* nomi fornitore orfani */
+.fnom-act{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fnom-sel{width:auto;min-width:190px;font-size:11px;padding:4px 8px}
+.fnom-ok{margin-top:6px;border-top:1px solid var(--bd);padding-top:10px;font-size:11px;color:var(--t2)}
+.fnom-ok b{display:block;margin-bottom:5px;color:var(--t1);font-size:11.5px}
+.fnom-okr{display:flex;gap:8px;justify-content:space-between;padding:2px 0}
 /* confronto fra due revisioni */
 .cmp-g{display:grid;grid-template-columns:104px repeat(var(--cmp-n,2),1fr);font-size:11.5px}
 .cmp-g>div{padding:7px 10px;border-bottom:1px solid rgba(0,0,0,.05)}
@@ -1870,6 +1876,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mFornNomi" onclick="ovClose(event,'mFornNomi')">
+  <div class="modal" style="max-width:640px">
+    <div class="mhd"><div class="mico2">🏭</div><div><div class="mtit">Nomi fornitore della distinta</div><div class="msub" id="fnomSub"></div></div><button class="mx" onclick="mClose('mFornNomi')">✕</button></div>
+    <div class="mbd" id="fnomBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Il nome collegato vale per tutte le commesse, da qui in avanti.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mFornNomi')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mDistinta" onclick="ovClose(event,'mDistinta')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">📑</div><div><div class="mtit">Qual è la distinta?</div><div class="msub" id="distSub"></div></div><button class="mx" onclick="mClose('mDistinta')">✕</button></div>
@@ -2295,6 +2309,81 @@ async function distintaImposta(codice){
   }catch{toast('Non sono riuscito a salvare',true);}
 }
 
+// ── nomi fornitore della distinta che non stanno in rubrica ──────────────────
+// In distinta si scrive il marchio («SKF», «FAR.BO»), in rubrica c'è la ragione
+// sociale. L'aggancio passa dai nomi alternativi del fornitore: finché un nome
+// resta orfano, nessuna assegnazione automatica potrà sistemare quelle righe.
+function fornOrfaniBanner(){
+  const orfani=(S.albero&&S.albero.fornitori_orfani)||[];
+  if(!orfani.length)return '';
+  const q=orfani.length;
+  return `<div class="dist-bar">
+    <span class="dist-ic">🏭</span>
+    <span>${q===1?'Un nome fornitore della distinta non è':`${q} nomi fornitore della distinta non sono`} in rubrica: <b>${esc(orfani.slice(0,3).join(', '))}</b>${q>3?` e altri ${q-3}`:''}</span>
+    <button class="btn-mini" onclick="fornOrfaniApri()">Sistema…</button>
+  </div>`;
+}
+async function fornOrfaniApri(){
+  const body=document.getElementById('fnomBody');
+  document.getElementById('fnomSub').textContent=S.albero?(S.albero.codice||''):'';
+  body.innerHTML='<div class="fmuted" style="padding:14px">Carico…</div>';
+  mOpen('mFornNomi');
+  let righe=[];
+  try{
+    const r=await fetch(API+`/api/commesse/${S.projId}/nomi-fornitore`);
+    righe=r.ok?await r.json():[];
+  }catch{body.innerHTML='<div class="av-empty">Server non raggiungibile.</div>';return;}
+  const orfani=righe.filter(r=>!r.fornitore_id);
+  const ok=righe.filter(r=>r.fornitore_id);
+  let html='';
+  if(!orfani.length){
+    html+=`<div class="av-empty">Tutti i nomi della distinta sono riconosciuti. Niente da sistemare.</div>`;
+  }
+  html+=orfani.map(r=>{
+    const sug=r.suggeriti.map(s=>
+      `<button class="btn-mini" onclick="fornCollega(${s.id},'${jsq(r.nome)}')">${esc(s.nome)} <span class="dist-score">${Math.round(s.somiglianza*100)}%</span></button>`
+    ).join(' ');
+    return `<div class="dist-cand">
+      <div class="dist-cand-h"><b>${esc(r.nome)}</b>
+        <span class="dist-score">${r.righe} ${r.righe===1?'riga':'righe'}</span>
+        ${r.ambiguo?'<span class="dist-tag" style="background:#C0151E">ambiguo</span>':''}</div>
+      <div class="dist-cand-d">${sug?'Forse è uno di questi:':'Nessun fornitore somigliante in rubrica: va aggiunto, oppure collegalo a mano da qui.'}</div>
+      <div class="fnom-act">${sug}
+        <select class="fld fnom-sel" id="fnomsel_${esc(r.nome).replace(/\W/g,'_')}">
+          <option value="">— scegli un fornitore —</option>
+          ${fornitori.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).map(f=>`<option value="${f.id}">${esc(f.nome)}</option>`).join('')}
+        </select>
+        <button class="btn-mini g" onclick="fornCollegaScelto('${jsq(r.nome)}')">Collega</button>
+      </div>
+    </div>`;
+  }).join('');
+  if(ok.length){
+    html+=`<div class="fnom-ok"><b>Già riconosciuti (${ok.length})</b>${ok.map(r=>
+      `<div class="fnom-okr"><span>${esc(r.nome)}</span><span class="fmuted">→ ${esc(r.fornitore_nome)} · ${r.righe} ${r.righe===1?'riga':'righe'}</span></div>`).join('')}</div>`;
+  }
+  body.innerHTML=html;
+}
+function fornCollegaScelto(nome){
+  const sel=document.getElementById('fnomsel_'+nome.replace(/\W/g,'_'));
+  if(!sel||!sel.value){toast('Scegli prima un fornitore',true);return;}
+  fornCollega(parseInt(sel.value,10),nome);
+}
+async function fornCollega(fid,nome){
+  try{
+    const r=await fetch(API+`/api/fornitori/${fid}/nomi-distinta`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome})});
+    if(!r.ok){
+      const msg=await srvErrDetail(r,'Non sono riuscito a collegare il nome');
+      toast(msg,true);return;
+    }
+    toast(`«${nome}» collegato`,'ok');
+    await loadFornitori();
+    await openProgetto();
+    fornOrfaniApri();
+  }catch{toast('Server non raggiungibile',true);}
+}
+
 // ── confronto affiancato fra due o più pezzi ─────────────────────────────────
 // Usato dall'avviso «due revisioni convivono» e a mano, selezionando le righe.
 const CMP_CAMPI=[
@@ -2400,7 +2489,7 @@ function renderTree(){
     ${S.treeMode==='cat'?`<button class="btn btn-sm" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button>`:''}
     ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
   </div>`;
-  const dist=distintaBanner();
+  const dist=distintaBanner()+fornOrfaniBanner();
   if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=dist+bar+renderTreeCat();return;}
   let html=dist+bar;
   let prevComm=false;
