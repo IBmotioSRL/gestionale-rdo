@@ -563,6 +563,20 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 /* pezzo presente in distinta in più revisioni contemporaneamente */
 .tr-duptag{font-size:8px;font-weight:800;color:#fff;background:#C0151E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap;cursor:pointer}
 .tr-duptag:hover{background:#9c1119}
+/* percorso del pezzo: la catena di tappe */
+.perc-vuoto{border:1px dashed var(--bd2);border-radius:10px;padding:11px 13px;font-size:11.5px;color:var(--t2);background:rgba(0,0,0,.015)}
+.perc-t{border:1px solid var(--bd);border-left:3px solid var(--go);border-radius:9px;padding:7px 9px;margin-bottom:6px;background:var(--surf)}
+.perc-r1{display:flex;align-items:center;gap:6px}
+.perc-r2{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;padding-left:26px}
+.perc-n{width:20px;height:20px;border-radius:50%;background:var(--go);color:#3a2400;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.perc-sel,.perc-in{border:1px solid var(--bd2);border-radius:7px;padding:4px 7px;font-size:11.5px;font-family:inherit;background:var(--surf);color:var(--t1)}
+.perc-in{flex:1;min-width:90px}
+.perc-sel.sm,.perc-in.sm{font-size:11px;padding:3px 6px}
+.perc-btns{display:flex;gap:3px;flex-shrink:0}
+.perc-b{border:1px solid var(--bd2);background:var(--surf);border-radius:6px;width:23px;height:23px;font-size:11px;cursor:pointer;color:var(--t2);padding:0}
+.perc-b:disabled{opacity:.3;cursor:default}
+.perc-b.del:hover{color:#b04632;border-color:#e9c4ba}
+.perc-ck{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);white-space:nowrap}
 /* banner "qual è la distinta" sopra l'albero */
 .dist-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:7px 12px;font-size:11.5px;
   background:#fff6ec;border-bottom:1px solid #f0d7af;color:#8a5a13}
@@ -2245,6 +2259,105 @@ function calcRevCoesistenti(){
     arr.forEach(p=>{S.revDup[p.id]=b;});
   });
 }
+// ── il percorso del pezzo: la catena di tappe ────────────────────────────────
+// Un pezzo non ha *un* fornitore: attraversa una sequenza di tappe, ognuna con
+// un responsabile diverso. Per ora il percorso si vede e basta: non tocca
+// l'assegnazione del pezzo, né le RDO.
+const TIPI_TAPPA=[
+  ['acquisto','🛒 Acquisto'],['lavorazione','⚙️ Lavorazione'],['trattamento','🧪 Trattamento'],
+  ['montaggio','🔩 Montaggio'],['controllo','📐 Controllo'],['logistica','🚚 Logistica'],
+];
+let PERC={pid:null,tappe:[]};
+
+async function caricaPercorso(pid){
+  const el=document.getElementById('pdPercorso');if(!el)return;
+  el.innerHTML='<div class="fmuted" style="padding:8px 2px;font-size:11px">Carico…</div>';
+  try{
+    const r=await fetch(API+`/api/parti/${pid}/percorso`);
+    if(!r.ok)throw 0;
+    const perc=await r.json();
+    PERC={pid,tappe:perc.tappe||[]};
+    renderPercorso();
+  }catch{el.innerHTML='<div class="fmuted" style="padding:8px 2px;font-size:11px">Percorso non caricato.</div>';}
+}
+function renderPercorso(){
+  const el=document.getElementById('pdPercorso');if(!el)return;
+  const pid=PERC.pid,tappe=PERC.tappe;
+  const opzForn=f=>fornitori.slice().sort((a,b)=>a.nome.localeCompare(b.nome))
+    .map(x=>`<option value="${x.id}"${f===x.id?' selected':''}>${esc(x.nome)}</option>`).join('');
+  if(!tappe.length){
+    el.innerHTML=`<div class="perc-vuoto">
+      <div>Nessuna tappa. Il pezzo risulta comprato o fatto fare in un colpo solo.</div>
+      <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn-mini" onclick="percorsoProponi(${pid})">✨ Proponi dalle proprietà</button>
+        <button class="btn-mini g" onclick="percorsoAggiungi(${pid})">+ Aggiungi tappa</button>
+      </div></div>`;
+    return;
+  }
+  el.innerHTML=tappe.map((t,i)=>`
+    <div class="perc-t">
+      <div class="perc-r1">
+        <span class="perc-n">${t.ordine}</span>
+        <select class="perc-sel" onchange="percorsoSalva(${t.id},{tipo:this.value})">
+          ${TIPI_TAPPA.map(([v,l])=>`<option value="${v}"${t.tipo===v?' selected':''}>${l}</option>`).join('')}
+        </select>
+        <input class="perc-in" value="${esc(t.descrizione||'')}" placeholder="che cosa si fa"
+               onblur="percorsoSalva(${t.id},{descrizione:this.value})">
+        <span class="perc-btns">
+          <button class="perc-b" title="Su" ${i===0?'disabled':''} onclick="percorsoSposta(${i},-1)">↑</button>
+          <button class="perc-b" title="Giù" ${i===tappe.length-1?'disabled':''} onclick="percorsoSposta(${i},1)">↓</button>
+          <button class="perc-b del" title="Elimina" onclick="percorsoElimina(${t.id})">🗑</button>
+        </span>
+      </div>
+      <div class="perc-r2">
+        <label class="perc-ck"><input type="checkbox" ${t.interna?'checked':''}
+          onchange="percorsoSalva(${t.id},{interna:this.checked})"> la facciamo noi</label>
+        ${t.interna?'':`<select class="perc-sel sm" onchange="percorsoSalva(${t.id},{fornitore_id:this.value?parseInt(this.value,10):null})">
+          <option value="">— fornitore da decidere —</option>${opzForn(t.fornitore_id)}</select>`}
+        <label class="perc-ck"><input type="checkbox" ${t.cambia_codice?'checked':''}
+          onchange="percorsoSalva(${t.id},{cambia_codice:this.checked})"> cambia codice</label>
+        ${t.cambia_codice?`<input class="perc-in sm" value="${esc(t.codice_prodotto||'')}" placeholder="codice prodotto"
+          onblur="percorsoSalva(${t.id},{codice_prodotto:this.value})">`:''}
+        ${t.interna?'':`<select class="perc-sel sm" onchange="percorsoSalva(${t.id},{prezzo_a_corpo:this.value==='1'})">
+          <option value="0"${t.prezzo_a_corpo?'':' selected'}>prezzo al pezzo</option>
+          <option value="1"${t.prezzo_a_corpo?' selected':''}>prezzo a corpo</option></select>`}
+      </div>
+    </div>`).join('')+
+    `<div style="margin-top:7px"><button class="btn-mini g" onclick="percorsoAggiungi(${pid})">+ Aggiungi tappa</button></div>`;
+}
+async function percorsoChiama(url,opz){
+  try{
+    const r=await fetch(API+url,opz);
+    if(!r.ok){toast(await srvErrDetail(r,'Non sono riuscito a salvare la tappa'),true);return null;}
+    const perc=await r.json();
+    PERC.tappe=perc.tappe||[];
+    renderPercorso();
+    return perc;
+  }catch{toast('Server non raggiungibile',true);return null;}
+}
+const JSONH={'Content-Type':'application/json'};
+function percorsoSalva(tid,campi){
+  return percorsoChiama(`/api/percorso/tappe/${tid}`,{method:'PATCH',headers:JSONH,body:JSON.stringify(campi)});
+}
+function percorsoAggiungi(pid){
+  return percorsoChiama(`/api/parti/${pid}/percorso/tappe`,{method:'POST',headers:JSONH,
+    body:JSON.stringify({tipo:'lavorazione',descrizione:''})});
+}
+function percorsoElimina(tid){
+  return percorsoChiama(`/api/percorso/tappe/${tid}`,{method:'DELETE'});
+}
+function percorsoProponi(pid){
+  return percorsoChiama(`/api/parti/${pid}/percorso/proponi`,{method:'POST'});
+}
+function percorsoSposta(i,dir){
+  const ids=PERC.tappe.map(t=>t.id);
+  const j=i+dir;
+  if(j<0||j>=ids.length)return;
+  [ids[i],ids[j]]=[ids[j],ids[i]];
+  return percorsoChiama(`/api/parti/${PERC.pid}/percorso/ordine`,{method:'PUT',headers:JSONH,
+    body:JSON.stringify({ids})});
+}
+
 // ── la distinta: quale riga è la distinta stessa ─────────────────────────────
 // Una distinta generale contiene anche la riga dell'assieme da cui è stata
 // estratta. Non è un pezzo. Il server propone i candidati, la scelta è tua.
@@ -2799,7 +2912,10 @@ function openDraw(pid){
   const prezzoInfo=p.prezzo!=null?`<span class="pd-tag ok" title="prezzo scelto">${eur(p.prezzo)}</span>`:'';
   const versBtn=`<button class="btn-mini" onclick="openVersioni(${pid})" title="Archivio delle versioni precedenti di questo articolo">🗂 Versioni <span id="pdVersN"></span></button>`;
   document.getElementById('pdBody').innerHTML=
-    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}${p.custom?'<span class="pd-tag" style="background:#efe9f8;color:#6b4ea8">custom</span>':''}${prezzoInfo}<span id="pdModRev"></span><span style="flex:1"></span>${customBtns}${versBtn}${offBtn}${exclBtn}</div>${ph}<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+    `<div class="pd-dh-row" style="margin-top:0;margin-bottom:10px">${p.escluso?'<span class="tr-excltag">⊘ articolo escluso</span>':''}${p.custom?'<span class="pd-tag" style="background:#efe9f8;color:#6b4ea8">custom</span>':''}${prezzoInfo}<span id="pdModRev"></span><span style="flex:1"></span>${customBtns}${versBtn}${offBtn}${exclBtn}</div>${ph}`+
+    `<div class="pd-dh-row"><div class="pd-dh">Percorso</div><span class="fmuted" style="font-size:10.5px">le tappe che questo pezzo attraversa</span></div><div id="pdPercorso"></div>`+
+    `<div class="pd-dh">Disegni & Datasheet</div>${fh}<div id="pdViewerSlot"></div>`;
+  caricaPercorso(pid);
   // n° modifiche (versioni archiviate) → badge «mod. vN» accanto al titolo
   fetch(API+'/api/parti/'+pid+'/versioni').then(r=>r.ok?r.json():null).then(v=>{
     if(!v||!v.n_versioni)return;
