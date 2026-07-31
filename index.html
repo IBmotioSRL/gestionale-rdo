@@ -558,6 +558,19 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .tr-part.excl .tr-pdesc{text-decoration:line-through}
 .tr-excltag{font-size:8px;font-weight:800;color:#fff;background:#7A6050;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
 .tr-revtag{font-size:8px;font-weight:800;color:#fff;background:#1A7A2E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
+/* pezzo presente in distinta in più revisioni contemporaneamente */
+.tr-duptag{font-size:8px;font-weight:800;color:#fff;background:#C0151E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap;cursor:pointer}
+.tr-duptag:hover{background:#9c1119}
+/* confronto fra due revisioni */
+.cmp-g{display:grid;grid-template-columns:104px repeat(var(--cmp-n,2),1fr);font-size:11.5px}
+.cmp-g>div{padding:7px 10px;border-bottom:1px solid rgba(0,0,0,.05)}
+.cmp-g .lb{color:var(--t3);font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.cmp-g .hd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:800;color:var(--t1);background:rgba(0,0,0,.025);border-bottom:1.4px solid var(--bd2);word-break:break-all}
+.cmp-g .vl{color:var(--t2)}
+.cmp-g .diff{background:#fff6ec;color:#a85a13;font-weight:800}
+.cmp-nota{padding:10px 12px;font-size:11.5px;font-weight:700;line-height:1.5}
+.cmp-nota.uguali{color:#a85a13;background:#fff6ec}
+.cmp-nota.diversi{color:#1A7A2E;background:rgba(52,199,89,.1)}
 /* modale revisioni pezzo (preview riscansione) */
 .rs-row{border:1px solid #e6dccd;border-radius:10px;padding:10px 12px;margin-bottom:10px;background:#fffdf8}
 .rs-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;font-size:13px}
@@ -1829,6 +1842,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mCmpRev" onclick="ovClose(event,'mCmpRev')">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd"><div class="mico2">⚖</div><div><div class="mtit" id="cmpRevTit">Confronto</div><div class="msub" id="cmpRevSub"></div></div><button class="mx" onclick="mClose('mCmpRev')">✕</button></div>
+    <div class="mbd" id="cmpRevBody" style="max-height:66vh;overflow:auto;padding:0"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Comanda sempre la distinta: qui non si modifica niente.</div><div class="mft-r"><button class="btn btn-ghost btn-sm" id="cmpRevDwg" onclick="cmpRevApriDisegni()">👁 Apri i disegni</button><button class="btn btn-go" onclick="mClose('mCmpRev')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mVers" onclick="ovClose(event,'mVers')">
   <div class="modal" style="max-width:560px">
     <div class="mhd"><div class="mico2">🗂</div><div><div class="mtit" id="mVersTit">Versioni articolo</div><div class="msub" id="mVersSub"></div></div><button class="mx" onclick="mClose('mVers')">✕</button></div>
@@ -2139,14 +2160,93 @@ function partRow(p){
   const modTag=p.proprieta_modificata?`<span class="tr-modtag" title="Proprietà modificate a mano — da allineare in SolidWorks">✎ mod</span>`:'';
   const exclTag=p.escluso?`<span class="tr-excltag" title="Articolo escluso dal progetto (disattivato)">⊘ escluso</span>`:'';
   const revTag=isRevisionato(p.revisione)?`<span class="tr-revtag" title="Pezzo revisionato (revisione ${esc(p.revisione)}) — è la revisione corrente, sostituisce la rev 00">⟳ ${esc(revLabelPart(p.revisione))}</span>`:'';
+  const dupBase=S.revDup?S.revDup[p.id]:null;
+  const dupTag=dupBase?`<span class="tr-duptag" title="Questo pezzo è in distinta in ${S.revGrp[dupBase].length} revisioni contemporaneamente — clic per confrontarle" onclick="event.stopPropagation();openConfrontoRev('${jsq(dupBase)}')">⚠ ${S.revGrp[dupBase].length} revisioni</span>`:'';
   return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
       <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
-      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}${revTag}${modTag}${exclTag}</span>
+      <span class="tr-pdesc" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}${revTag}${dupTag}${modTag}${exclTag}</span>
       <span class="tr-pqty">${esc(p.quantita)}<small> pz</small></span>
       <div class="tr-pfiles">${fileTags(p.files)}</div>
       <div class="pforn">${chips}</div></div>`;
+}
+// ── revisioni che convivono nella stessa distinta ────────────────────────────
+// Stessa regola del server (app/codici.py): si toglie il suffisso .REV<n> e si
+// guarda il codice base. Si segnala solo se ci sono almeno due revisioni
+// DIVERSE: lo stesso codice ripetuto senza revisioni (lo stesso dado a catalogo
+// in due materiali) è una variante, non una revisione, e resta muto.
+const RE_REV=/[\s._-]*REV\s*(\d+)\s*$/i;
+function codBase(np){return String(np||'').trim().replace(RE_REV,'').trim();}
+function revNum(np){const m=String(np||'').trim().match(RE_REV);return m?parseInt(m[1],10):0;}
+function calcRevCoesistenti(){
+  S.revDup={};   // parte_id  → codice base
+  S.revGrp={};   // codice base → parti, dalla revisione più vecchia alla più recente
+  const g={};
+  allParti().forEach(p=>{const b=codBase(p.numero_parte);(g[b]=g[b]||[]).push(p);});
+  Object.keys(g).forEach(b=>{
+    const arr=g[b];
+    if(arr.length<2)return;
+    if(new Set(arr.map(p=>revNum(p.numero_parte))).size<2)return;
+    arr.sort((x,y)=>revNum(x.numero_parte)-revNum(y.numero_parte));
+    S.revGrp[b]=arr;
+    arr.forEach(p=>{S.revDup[p.id]=b;});
+  });
+}
+// ── confronto affiancato fra due o più pezzi ─────────────────────────────────
+// Usato dall'avviso «due revisioni convivono» e a mano, selezionando le righe.
+const CMP_CAMPI=[
+  ['Revisione',     p=>{const n=revNum(p.numero_parte);return n?('Rev '+String(n).padStart(2,'0')):(String(p.revisione||'').trim()?('Rev '+String(p.revisione).trim()):'—');}],
+  ['Denominazione', p=>p.denominazione||'—'],
+  ['Quantità',      p=>String(p.quantita??'—')],
+  ['Massa',         p=>p.massa?(p.massa+' kg'):'—'],
+  ['Materiale',     p=>p.materiale||'—'],
+  ['Categoria',     p=>p.categoria||'—'],
+  ['Lavorazione',   p=>p.lav_meccanica||'—'],
+  ['Trattamento',   p=>pProps(p)['TRATTAMENTO SUPERFICIALE']||'—'],
+  ['Fornitore',     p=>{const f=fornById(p.fornitore_id);return f?f.nome:'—';}],
+  ['Disegni',       p=>{const n=pFiles(p).length;return n?(n+' file'):'—';}],
+];
+let CMPREV=[];
+function openConfrontoRev(base){
+  const arr=(S.revGrp&&S.revGrp[base])||[];
+  if(arr.length<2){toast('Non trovo le revisioni di questo pezzo: riapri il progetto',true);return;}
+  renderConfronto(arr,base,'Stesso codice base, revisioni diverse');
+}
+function confrontaSelezione(){
+  const arr=[...S.rows].map(id=>S.pmap[id]).filter(Boolean);
+  if(arr.length<2){toast('Seleziona almeno due righe da confrontare',true);return;}
+  if(arr.length>4){toast('Massimo 4 pezzi alla volta',true);return;}
+  renderConfronto(arr,arr.map(p=>p.numero_parte).join('  ·  '),'Confronto richiesto a mano');
+}
+function renderConfronto(arr,titolo,sottotitolo){
+  CMPREV=arr;
+  document.getElementById('cmpRevTit').textContent=titolo;
+  document.getElementById('cmpRevSub').textContent=sottotitolo;
+  const righe=CMP_CAMPI.map(([lb,leggi])=>{
+    const vals=arr.map(p=>String(leggi(p)));
+    const diverso=new Set(vals).size>1;
+    return `<div class="lb">${esc(lb)}</div>`+
+      vals.map(v=>`<div class="vl${diverso?' diff':''}">${esc(v)}</div>`).join('');
+  }).join('');
+  // quali campi cambiano, a parte codice e revisione
+  const diffs=CMP_CAMPI.filter(([lb,leggi])=>lb!=='Revisione'&&new Set(arr.map(p=>String(leggi(p)))).size>1).map(([lb])=>lb.toLowerCase());
+  const nota=diffs.length
+    ? `<div class="cmp-nota diversi">✓ Differiscono per: ${esc(diffs.join(', '))}.</div>`
+    : `<div class="cmp-nota uguali">⚠ Identici in tutto tranne il numero di revisione. Se sono lo stesso pezzo, così ne compri ${esc(String(arr.reduce((s,p)=>s+(Number(p.quantita)||0),0)))} invece di ${esc(String(Number(arr[0].quantita)||0))}.</div>`;
+  document.getElementById('cmpRevBody').innerHTML=
+    `<div class="cmp-g" style="--cmp-n:${arr.length}">`+
+    `<div class="lb"></div>`+arr.map(p=>`<div class="hd">${esc(p.numero_parte)}</div>`).join('')+
+    righe+`</div>`+nota;
+  const btn=document.getElementById('cmpRevDwg');
+  if(btn)btn.style.display=arr.some(p=>pFiles(p).length)?'':'none';
+  mOpen('mCmpRev');
+}
+function cmpRevApriDisegni(){
+  const p=CMPREV.find(x=>pFiles(x).length);
+  if(!p){toast('Nessun disegno collegato a questi pezzi',true);return;}
+  mClose('mCmpRev');
+  try{jumpPart(p.id);openDraw(p.id);}catch{}
 }
 // un pezzo è "revisionato" se la proprietà revisione è valorizzata e diversa da 00
 function isRevisionato(v){const s=String(v||'').trim().toUpperCase();return !!s&&s!=='00'&&s!=='0'&&s!=='REV00'&&s!=='REV0';}
@@ -2190,6 +2290,7 @@ function offertePezzo(pid){openOfferte(pid,()=>refreshDetail());}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   S.pmap={};
+  calcRevCoesistenti();
   // barra: toggle albero/categorie-mie + aggiungi elemento + azione su selezione
   const bar=`<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)">
     <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Categorie mie</button></div>
@@ -2681,6 +2782,8 @@ async function abilitaNotifichePush(){
   }catch{toast('Errore',true);}
 }
 function avDate(s){if(!s)return'';try{return new Date(s+(/[zZ]|[+-]\d\d:\d\d$/.test(s)?'':'Z')).toLocaleString('it-IT');}catch{return s;}}
+// icona per tipo di avviso (il tipo arriva dal server)
+const AV_ICO={solidworks_sync:'🔧',revisioni_coesistenti:'⟳',_:'🔔'};
 async function renderAvvisi(){
   await loadNotifiche(false);
   const el=document.getElementById('avvisiList');if(!el)return;
@@ -2692,7 +2795,7 @@ async function renderAvvisi(){
   el.innerHTML=ns.map(n=>{
     const goP=(n.commessa_id&&n.parte_id)?`<button class="btn-mini g" onclick="goToNotifica(${n.commessa_id},${n.parte_id})">↗ Vai al pezzo</button>`:'';
     return `<div class="av-card${n.letta?'':' unread'}">
-      <div class="av-ic">🔧</div>
+      <div class="av-ic">${AV_ICO[n.tipo]||AV_ICO._}</div>
       <div class="av-bd"><div class="av-tit">${esc(n.titolo)}</div><div class="av-msg">${esc(n.messaggio)}</div><div class="av-meta">${n.commessa_codice?esc(n.commessa_codice)+' · ':''}${avDate(n.creato_at)}</div></div>
       <div class="av-act">${goP}${n.letta?'':`<button class="btn-mini" onclick="segnaLetta(${n.id})">✓ Letta</button>`}<button class="btn-mini g" onclick="eliminaNotifica(${n.id})">🗑</button></div></div>`;
   }).join('');
@@ -2803,6 +2906,8 @@ function ctxPart(e,pid){
     mi('👤 Assegna a fornitore…',`ctxAssign(${pid})`)+
     (p.fornitore_id!=null?mi('↩ Rilascia (togli fornitore)',`ctxRelease()`):'')+
     `<div class="sep"></div>`+
+    (n>=2?mi(`⚖ Confronta i ${n} pezzi selezionati`,`confrontaSelezione()`,n<=4?'':'dis'):'')+
+    (n<2&&S.revDup&&S.revDup[pid]?mi('⚖ Confronta le revisioni',`openConfrontoRev('${jsq(S.revDup[pid])}')`):'')+
     mi('📄 Apri dettaglio / disegni',`openDraw(${pid})`,files.length?'':'dis')+
     (pdf?mi('🖼 Apri PDF in scheda nuova',`window.open('${jsq(fileUrl(pdf))}','_blank')`):'')+
     mi('📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(p.numero_parte)}');toast&&toast('Codice copiato','ok')`)+
