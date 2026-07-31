@@ -561,6 +561,24 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 /* pezzo presente in distinta in più revisioni contemporaneamente */
 .tr-duptag{font-size:8px;font-weight:800;color:#fff;background:#C0151E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap;cursor:pointer}
 .tr-duptag:hover{background:#9c1119}
+/* banner "qual è la distinta" sopra l'albero */
+.dist-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:7px 12px;font-size:11.5px;
+  background:#fff6ec;border-bottom:1px solid #f0d7af;color:#8a5a13}
+.dist-bar.ok{background:rgba(52,199,89,.08);border-bottom-color:#bfe6cd;color:#1A7A2E}
+.dist-bar .dist-ic{font-size:14px;flex-shrink:0}
+.dist-bar button{margin-left:auto}
+.dist-bar.ok button{margin-left:0}
+.dist-bar.ok button:first-of-type{margin-left:auto}
+/* proposte nel modale */
+.dist-cand{border:1px solid var(--bd);border-radius:11px;padding:11px 13px;margin-bottom:10px;background:var(--surf)}
+.dist-cand.sel{border-color:var(--green);background:rgba(52,199,89,.05)}
+.dist-cand-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;margin-bottom:3px}
+.dist-cand-h b{font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+.dist-score{font-size:9px;font-weight:800;background:rgba(0,0,0,.06);color:var(--t2);padding:1px 7px;border-radius:9px}
+.dist-tag{font-size:9px;font-weight:800;color:#fff;background:#1A7A2E;padding:1px 6px;border-radius:4px}
+.dist-cand-d{font-size:11px;color:var(--t2);margin-bottom:6px}
+.dist-mot{margin:0 0 8px;padding-left:16px;font-size:11px;color:var(--t2)}
+.dist-mot li{margin-bottom:1px}
 /* confronto fra due revisioni */
 .cmp-g{display:grid;grid-template-columns:104px repeat(var(--cmp-n,2),1fr);font-size:11.5px}
 .cmp-g>div{padding:7px 10px;border-bottom:1px solid rgba(0,0,0,.05)}
@@ -1852,6 +1870,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mDistinta" onclick="ovClose(event,'mDistinta')">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd"><div class="mico2">📑</div><div><div class="mtit">Qual è la distinta?</div><div class="msub" id="distSub"></div></div><button class="mx" onclick="mClose('mDistinta')">✕</button></div>
+    <div class="mbd" id="distBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">La riga dichiarata smette di essere un pezzo: esce dall'albero e da ogni RDO.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mDistinta')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mCmpRev" onclick="ovClose(event,'mCmpRev')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">⚖</div><div><div class="mtit" id="cmpRevTit">Confronto</div><div class="msub" id="cmpRevSub"></div></div><button class="mx" onclick="mClose('mCmpRev')">✕</button></div>
@@ -2203,6 +2229,72 @@ function calcRevCoesistenti(){
     arr.forEach(p=>{S.revDup[p.id]=b;});
   });
 }
+// ── la distinta: quale riga è la distinta stessa ─────────────────────────────
+// Una distinta generale contiene anche la riga dell'assieme da cui è stata
+// estratta. Non è un pezzo. Il server propone i candidati, la scelta è tua.
+function distintaBanner(){
+  if(!S.albero)return '';
+  const cod=S.albero.distinta_codice||'';
+  if(cod){
+    const files=S.albero.distinta_files||[];
+    const pdf=files.find(f=>/\.pdf$/i.test(f));
+    return `<div class="dist-bar ok">
+      <span class="dist-ic">📑</span>
+      <span>Distinta della commessa: <b>${esc(cod)}</b> — non conta come pezzo</span>
+      ${pdf?`<button class="btn-mini g" onclick="window.open('${jsq(fileUrl(pdf))}','_blank')">👁 Apri</button>`:''}
+      <button class="btn-mini g" onclick="distintaApri()">Cambia</button>
+    </div>`;
+  }
+  return `<div class="dist-bar">
+    <span class="dist-ic">📑</span>
+    <span>Nessuna riga è dichiarata come distinta: se c'è, ora è contata fra i pezzi.</span>
+    <button class="btn-mini" onclick="distintaApri()">Individua la distinta…</button>
+  </div>`;
+}
+async function distintaApri(){
+  const body=document.getElementById('distBody');
+  document.getElementById('distSub').textContent=S.albero?(S.albero.codice||''):'';
+  body.innerHTML='<div class="fmuted" style="padding:14px">Cerco…</div>';
+  mOpen('mDistinta');
+  let props=[];
+  try{
+    const r=await fetch(API+`/api/commesse/${S.projId}/distinta/candidati`);
+    props=r.ok?await r.json():[];
+  }catch{body.innerHTML='<div class="av-empty">Server non raggiungibile.</div>';return;}
+  const attuale=S.albero?(S.albero.distinta_codice||''):'';
+  let html='';
+  if(!props.length){
+    html+=`<div class="av-empty">Nessuna riga sospetta.<br>Se la distinta c'è comunque, aprila dall'albero e dichiarala da lì.</div>`;
+  }else{
+    html+=props.map(p=>{
+      const scelta=p.numero_parte===attuale;
+      return `<div class="dist-cand${scelta?' sel':''}">
+        <div class="dist-cand-h">
+          <b>${esc(p.numero_parte)}</b>
+          <span class="dist-score" title="Quanti segnali combaciano">${p.punteggio} segnali</span>
+          ${scelta?'<span class="dist-tag">dichiarata</span>':''}
+        </div>
+        <div class="dist-cand-d">${esc(p.denominazione||'—')} · ${esc(p.categoria||'—')} · q ${esc(p.quantita||'—')} · ${esc(p.massa||'—')} kg · ${p.files.length} file</div>
+        <ul class="dist-mot">${p.motivi.map(m=>`<li>${esc(m)}</li>`).join('')}</ul>
+        ${scelta?'':`<button class="btn-mini" onclick="distintaImposta('${jsq(p.numero_parte)}')">È questa la distinta</button>`}
+      </div>`;
+    }).join('');
+  }
+  if(attuale)html+=`<div style="padding:10px 4px"><button class="btn-mini g" onclick="distintaImposta(null)">↩ Nessuna: rimettila fra i pezzi</button></div>`;
+  body.innerHTML=html;
+}
+async function distintaImposta(codice){
+  try{
+    const r=await fetch(API+`/api/commesse/${S.projId}/distinta`,{
+      method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({numero_parte:codice})});
+    if(!r.ok)throw 0;
+    mClose('mDistinta');
+    toast(codice?'Distinta dichiarata':'Distinta rimossa','ok');
+    await openProgetto();
+  }catch{toast('Non sono riuscito a salvare',true);}
+}
+
 // ── confronto affiancato fra due o più pezzi ─────────────────────────────────
 // Usato dall'avviso «due revisioni convivono» e a mano, selezionando le righe.
 const CMP_CAMPI=[
@@ -2308,8 +2400,9 @@ function renderTree(){
     ${S.treeMode==='cat'?`<button class="btn btn-sm" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button>`:''}
     ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
   </div>`;
-  if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=bar+renderTreeCat();return;}
-  let html=bar;
+  const dist=distintaBanner();
+  if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=dist+bar+renderTreeCat();return;}
+  let html=dist+bar;
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
     const catOpen=S.openCat[cat.categoria]!==false;
