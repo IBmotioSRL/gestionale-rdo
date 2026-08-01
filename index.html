@@ -578,6 +578,11 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .perc-b{border:1px solid var(--bd2);background:var(--surf);border-radius:6px;width:23px;height:23px;font-size:11px;cursor:pointer;color:var(--t2);padding:0}
 .perc-b:disabled{opacity:.3;cursor:default}
 .perc-b.del:hover{color:#b04632;border-color:#e9c4ba}
+.perc-st{display:flex;gap:2px;flex-shrink:0}
+.perc-sb{border:1px solid var(--bd2);background:var(--surf);border-radius:6px;width:22px;height:23px;font-size:11px;cursor:pointer;color:var(--t3);padding:0}
+.perc-sb.on{background:var(--go);border-color:var(--go-d);color:#3a2400;font-weight:800}
+.perc-t.fatta{opacity:.62}
+.perc-t.fatta .perc-n{background:var(--green)}
 .perc-ck{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);white-space:nowrap}
 /* banner "qual è la distinta" sopra l'albero */
 .dist-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:7px 12px;font-size:11.5px;
@@ -602,6 +607,7 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .fnom-sel{width:auto;min-width:190px;font-size:11px;padding:4px 8px}
 .fnom-ok{margin-top:6px;border-top:1px solid var(--bd);padding-top:10px;font-size:11px;color:var(--t2)}
 .fnom-ok b{display:block;margin-bottom:5px;color:var(--t1);font-size:11.5px}
+.voc-chiusa{opacity:.6}
 .fnom-okr{display:flex;gap:8px;justify-content:space-between;padding:2px 0}
 /* confronto fra due revisioni */
 .cmp-g{display:grid;grid-template-columns:104px repeat(var(--cmp-n,2),1fr);font-size:11.5px}
@@ -1894,6 +1900,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mVoci" onclick="ovClose(event,'mVoci')">
+  <div class="modal" style="max-width:660px">
+    <div class="mhd"><div class="mico2">🧾</div><div><div class="mtit">Voci di commessa</div><div class="msub" id="vocSub"></div></div><button class="mx" onclick="mClose('mVoci')">✕</button></div>
+    <div class="mbd" id="vocBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Non passano da nessuna richiesta d'offerta: le apri e le chiudi tu.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mVoci')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mTratt" onclick="ovClose(event,'mTratt')">
   <div class="modal" style="max-width:660px">
     <div class="mhd"><div class="mico2">🧪</div><div><div class="mtit">Trattamenti da commissionare</div><div class="msub" id="trtSub"></div></div><button class="mx" onclick="mClose('mTratt')">✕</button></div>
@@ -2269,6 +2283,82 @@ function calcRevCoesistenti(){
     arr.forEach(p=>{S.revDup[p.id]=b;});
   });
 }
+// ── voci extra di commessa ──────────────────────────────────────────────────
+// Trasferte, collaudi, supervisioni, sopralluoghi, spedizioni straordinarie.
+// Non sono passaggi di un pezzo: stanno sulla commessa, non hanno RDO, e le
+// apri e chiudi tu. Il ciclo della commessa e' piu' lungo di quello dei pezzi.
+const TIPI_VOCE=[['trasferta','🚗 Trasferta'],['collaudo','📋 Collaudo'],
+  ['supervisione','👁 Supervisione'],['spedizione','🚚 Spedizione'],['altro','• Altro']];
+let VOCICOM=[];
+function vociBanner(){
+  const ap=VOCICOM.filter(v=>!v.chiusa).length;
+  return `<div class="dist-bar${ap?'':' ok'}">
+    <span class="dist-ic">🧾</span>
+    <span>${VOCICOM.length?`${VOCICOM.length} ${VOCICOM.length===1?'voce':'voci'} di commessa${ap?` · <b>${ap} ${ap===1?'aperta':'aperte'}</b>`:' · tutte chiuse'}`:'Trasferte, collaudi, supervisioni, spedizioni: niente ancora'}</span>
+    <button class="btn-mini" onclick="vociApri()">Voci di commessa</button>
+  </div>`;
+}
+async function vociCarica(){
+  try{const r=await fetch(API+`/api/commesse/${S.projId}/voci`);VOCICOM=r.ok?await r.json():[];}
+  catch{VOCICOM=[];}
+}
+async function vociApri(){
+  const body=document.getElementById('vocBody');
+  document.getElementById('vocSub').textContent=S.albero?(S.albero.codice||''):'';
+  body.innerHTML='<div class="fmuted" style="padding:14px">Carico…</div>';
+  mOpen('mVoci');
+  await vociCarica();
+  renderVoci();
+}
+function renderVoci(){
+  const body=document.getElementById('vocBody');if(!body)return;
+  const opz=(sel)=>fornitori.slice().sort((a,b)=>a.nome.localeCompare(b.nome))
+    .map(f=>`<option value="${f.id}"${sel===f.id?' selected':''}>${esc(f.nome)}</option>`).join('');
+  const nuova=`<div class="dist-cand" style="border-style:dashed">
+    <div class="fnom-act">
+      <select class="fld fnom-sel" id="vocTipo" style="min-width:150px">${TIPI_VOCE.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>
+      <input class="fld" id="vocDesc" placeholder="che cos'è" style="flex:1;min-width:170px">
+      <input class="fld" id="vocImp" placeholder="€" style="width:80px">
+      <button class="btn-mini" onclick="vociCrea()">+ Apri voce</button>
+    </div></div>`;
+  if(!VOCICOM.length){body.innerHTML=nuova+`<div class="av-empty">Nessuna voce. Qui va quello che fai e che non passa da una richiesta d&rsquo;offerta.</div>`;return;}
+  body.innerHTML=nuova+VOCICOM.map(v=>`
+    <div class="dist-cand${v.chiusa?' voc-chiusa':''}">
+      <div class="dist-cand-h">
+        <b style="font-family:inherit">${esc(v.descrizione||'(senza descrizione)')}</b>
+        <span class="dist-score">${esc((TIPI_VOCE.find(x=>x[0]===v.tipo)||['','—'])[1])}</span>
+        ${v.chiusa?'<span class="dist-tag" style="background:#7A6050">chiusa</span>':'<span class="dist-tag" style="background:#b8801f">aperta</span>'}
+        ${v.importo!=null?`<span class="dist-score">${eur(v.importo)}</span>`:''}
+      </div>
+      ${v.fornitore_nome?`<div class="dist-cand-d">${esc(v.fornitore_nome)}</div>`:''}
+      <div class="fnom-act">
+        <select class="fld fnom-sel" onchange="vociSalva(${v.id},{fornitore_id:this.value?parseInt(this.value,10):null})">
+          <option value="">— nessun fornitore —</option>${opz(v.fornitore_id)}</select>
+        <input class="fld" style="width:90px" value="${v.importo!=null?v.importo:''}" placeholder="€"
+               onblur="vociSalva(${v.id},{importo:this.value===''?null:parseFloat(this.value)})">
+        <button class="btn-mini${v.chiusa?' g':''}" onclick="vociSalva(${v.id},{chiusa:${v.chiusa?'false':'true'}})">${v.chiusa?'↺ Riapri':'✓ Chiudi'}</button>
+        <button class="btn-mini g" onclick="vociElimina(${v.id})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+async function vociCrea(){
+  const d=(document.getElementById('vocDesc').value||'').trim();
+  if(!d){toast('Scrivi che cos&rsquo;è',true);return;}
+  const imp=(document.getElementById('vocImp').value||'').trim();
+  await vociChiama(`/api/commesse/${S.projId}/voci`,{method:'POST',headers:JSONH,
+    body:JSON.stringify({tipo:document.getElementById('vocTipo').value,descrizione:d,
+      importo:imp===''?null:parseFloat(imp)})});
+}
+function vociSalva(id,campi){return vociChiama(`/api/voci/${id}`,{method:'PATCH',headers:JSONH,body:JSON.stringify(campi)});}
+function vociElimina(id){return vociChiama(`/api/voci/${id}`,{method:'DELETE'});}
+async function vociChiama(url,opz){
+  try{
+    const r=await fetch(API+url,opz);
+    if(!r.ok&&r.status!==204){toast(await srvErrDetail(r,'Non sono riuscito a salvare'),true);return;}
+    await vociCarica();renderVoci();renderTree();
+  }catch{toast('Server non raggiungibile',true);}
+}
+
 // ── i trattamenti della commessa ─────────────────────────────────────────────
 // Un trattamento non si commissiona pezzo per pezzo: si commissiona a gruppi
 // («questi undici vanno tutti dallo stesso nichelatore»). Qui si vede il lavoro
@@ -2409,7 +2499,7 @@ function renderPercorso(){
     return;
   }
   el.innerHTML=testa+tappe.map((t,i)=>`
-    <div class="perc-t">
+    <div class="perc-t${t.stato==='fatta'?' fatta':''}">
       <div class="perc-r1">
         <span class="perc-n">${t.ordine}</span>
         <select class="perc-sel" onchange="percorsoSalva(${t.id},{tipo:this.value})">
@@ -2417,6 +2507,11 @@ function renderPercorso(){
         </select>
         <input class="perc-in" value="${esc(t.descrizione||'')}" placeholder="che cosa si fa"
                onblur="percorsoSalva(${t.id},{descrizione:this.value})">
+        <span class="perc-st">
+          ${[['da_fare','○','Da fare'],['in_corso','◐','Mandato / in corso'],['fatta','●','Fatta']]
+            .map(([v,ic,ti])=>`<button class="perc-sb${t.stato===v?' on':''}" title="${ti}"
+              onclick="percorsoSalva(${t.id},{stato:'${v}'})">${ic}</button>`).join('')}
+        </span>
         <span class="perc-btns">
           <button class="perc-b" title="Su" ${i===0?'disabled':''} onclick="percorsoSposta(${i},-1)">↑</button>
           <button class="perc-b" title="Giù" ${i===tappe.length-1?'disabled':''} onclick="percorsoSposta(${i},1)">↓</button>
@@ -2713,6 +2808,7 @@ function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
   S.pmap={};
   calcRevCoesistenti();
+  if(!VOCICOM.length&&S.projId&&!S._vociCaricate){S._vociCaricate=true;vociCarica().then(()=>renderTree());}
   // barra: toggle albero/categorie-mie + aggiungi elemento + azione su selezione
   const bar=`<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)">
     <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Categorie mie</button></div>
@@ -2720,7 +2816,7 @@ function renderTree(){
     ${S.treeMode==='cat'?`<button class="btn btn-sm" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button>`:''}
     ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
   </div>`;
-  const dist=distintaBanner()+fornOrfaniBanner()+trattamentiBanner();
+  const dist=distintaBanner()+fornOrfaniBanner()+trattamentiBanner()+vociBanner();
   if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=dist+bar+renderTreeCat();return;}
   let html=dist+bar;
   let prevComm=false;
@@ -3785,7 +3881,7 @@ function qnum(q){const n=parseFloat(String(q==null?'':q).replace(',','.'));retur
 function rdoFornBlock(c,fid,ps){
   const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—',modalita_ordine:'rdo',url_shop:''};
   const online=f.modalita_ordine==='online';
-  const voci=VOCI[c.id+':'+fid]||[];
+  const voci=VOCICOM[c.id+':'+fid]||[];
   const sub=ps.reduce((s,p)=>s+(p.prezzo||0)*qnum(p.quantita),0);
   const vsum=voci.reduce((s,v)=>s+(v.importo||0),0);
   const tot=sub+vsum;
@@ -3817,7 +3913,7 @@ async function loadVoci(cid){
   const c=commesse.find(x=>x.id===cid);if(!c)return;
   const fids=[...new Set(flatParti(c).filter(p=>p.fornitore_id).map(p=>p.fornitore_id))];
   await Promise.all(fids.map(async fid=>{
-    try{const r=await fetch(API+'/api/commesse/'+cid+'/fornitori/'+fid+'/voci');if(r.ok)VOCI[cid+':'+fid]=await r.json();}catch{}
+    try{const r=await fetch(API+'/api/commesse/'+cid+'/fornitori/'+fid+'/voci');if(r.ok)VOCICOM[cid+':'+fid]=await r.json();}catch{}
   }));
 }
 function togglePx(cid,fid){const k=cid+':'+fid;RDO_PX[k]=!RDO_PX[k];renderRDO();}
