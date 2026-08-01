@@ -1892,6 +1892,14 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<div class="mov" id="mTratt" onclick="ovClose(event,'mTratt')">
+  <div class="modal" style="max-width:660px">
+    <div class="mhd"><div class="mico2">🧪</div><div><div class="mtit">Trattamenti da commissionare</div><div class="msub" id="trtSub"></div></div><button class="mx" onclick="mClose('mTratt')">✕</button></div>
+    <div class="mbd" id="trtBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Il fornitore si applica a tutte le tappe di quel trattamento. Non cambia chi produce il pezzo.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mTratt')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mFornNomi" onclick="ovClose(event,'mFornNomi')">
   <div class="modal" style="max-width:640px">
     <div class="mhd"><div class="mico2">🏭</div><div><div class="mtit">Nomi fornitore della distinta</div><div class="msub" id="fnomSub"></div></div><button class="mx" onclick="mClose('mFornNomi')">✕</button></div>
@@ -2259,6 +2267,91 @@ function calcRevCoesistenti(){
     arr.forEach(p=>{S.revDup[p.id]=b;});
   });
 }
+// ── i trattamenti della commessa ─────────────────────────────────────────────
+// Un trattamento non si commissiona pezzo per pezzo: si commissiona a gruppi
+// («questi undici vanno tutti dallo stesso nichelatore»). Qui si vede il lavoro
+// da mandare fuori e, soprattutto, quello che nessuno in rubrica sa fare.
+function trattamentiBanner(){
+  if(!S.albero)return '';
+  const nt=S.albero.n_tappe||0, tot=S.albero.trattamenti_totali||0, sco=S.albero.trattamenti_scoperti||0;
+  if(!nt){
+    return `<div class="dist-bar">
+      <span class="dist-ic">⚙️</span>
+      <span>Nessun percorso: i pezzi risultano comprati o fatti fare in un colpo solo.</span>
+      <button class="btn-mini" onclick="percorsiProponiCommessa()">✨ Proponi i percorsi</button>
+    </div>`;
+  }
+  if(!tot)return '';
+  return `<div class="dist-bar${sco?'':' ok'}">
+    <span class="dist-ic">🧪</span>
+    <span>${tot===1?'Un trattamento da commissionare':`${tot} trattamenti da commissionare`}${sco?` · <b>${sco} che nessuno in rubrica sa fare</b>`:''}</span>
+    <button class="btn-mini" onclick="trattamentiApri()">Vedi i trattamenti</button>
+  </div>`;
+}
+async function percorsiProponiCommessa(){
+  if(!confirm('Creo il percorso di partenza per i pezzi che non ce l\'hanno ancora.\n\nChi ha già un percorso resta intoccato, e le tappe si possono correggere una per una.'))return;
+  try{
+    const r=await fetch(API+`/api/commesse/${S.projId}/percorso/proponi`,{method:'POST'});
+    if(!r.ok){toast(await srvErrDetail(r,'Non sono riuscito a creare i percorsi'),true);return;}
+    const e=await r.json();
+    toast(`${e.tappe_create} tappe su ${e.pezzi_con_percorso_nuovo} pezzi`,'ok');
+    await openProgetto();
+  }catch{toast('Server non raggiungibile',true);}
+}
+async function trattamentiApri(){
+  const body=document.getElementById('trtBody');
+  document.getElementById('trtSub').textContent=S.albero?(S.albero.codice||''):'';
+  body.innerHTML='<div class="fmuted" style="padding:14px">Carico…</div>';
+  mOpen('mTratt');
+  try{
+    const r=await fetch(API+`/api/commesse/${S.projId}/trattamenti`);
+    renderTrattamenti(r.ok?await r.json():[]);
+  }catch{body.innerHTML='<div class="av-empty">Server non raggiungibile.</div>';}
+}
+function renderTrattamenti(gruppi){
+  const body=document.getElementById('trtBody');
+  if(!gruppi.length){body.innerHTML='<div class="av-empty">Nessuna tappa di trattamento in questa commessa.</div>';return;}
+  const opz=(sel)=>fornitori.slice().sort((a,b)=>a.nome.localeCompare(b.nome))
+    .map(f=>`<option value="${f.id}"${sel===f.id?' selected':''}>${esc(f.nome)}</option>`).join('');
+  body.innerHTML=gruppi.map(g=>{
+    const ass=g.fornitori_assegnati.length===1?g.fornitori_assegnati[0]:null;
+    const stato=g.fornitori_assegnati.length
+      ? `<span class="dist-tag">assegnato</span>`
+      : (g.scoperto?`<span class="dist-tag" style="background:#C0151E">nessuno lo fa</span>`
+                   :`<span class="dist-tag" style="background:#b8801f">da assegnare</span>`);
+    const cand=g.candidati.length
+      ? g.candidati.map(c=>`<button class="btn-mini" onclick="trattAssegna('${jsq(g.chiave)}',${c.id})">${esc(c.nome)}</button>`).join(' ')
+      : `<span class="fmuted" style="font-size:11px">Nessun fornitore in rubrica dichiara questo mestiere. Aggiungilo, oppure scegli qui sotto a mano.</span>`;
+    return `<div class="dist-cand${g.scoperto?'':''}">
+      <div class="dist-cand-h"><b style="font-family:inherit">${esc(g.etichetta)}</b>
+        <span class="dist-score">${g.n_tappe} ${g.n_tappe===1?'tappa':'tappe'} · ${g.n_pezzi} ${g.n_pezzi===1?'pezzo':'pezzi'}</span>
+        ${stato}</div>
+      <div class="dist-cand-d">${esc(g.pezzi.slice(0,8).join(', '))}${g.n_pezzi>8?` e altri ${g.n_pezzi-8}`:''}</div>
+      <div class="fnom-act">${cand}</div>
+      <div class="fnom-act" style="margin-top:6px">
+        <select class="fld fnom-sel" onchange="trattAssegna('${jsq(g.chiave)}',this.value?parseInt(this.value,10):null)">
+          <option value="">— nessun fornitore —</option>${opz(ass)}
+        </select>
+        <select class="fld fnom-sel" style="min-width:150px" onchange="trattPrezzo('${jsq(g.chiave)}',this.value==='1')">
+          <option value="0"${g.a_corpo?'':' selected'}>prezzo al pezzo</option>
+          <option value="1"${g.a_corpo?' selected':''}>prezzo a corpo</option>
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function trattChiama(corpo){
+  try{
+    const r=await fetch(API+`/api/commesse/${S.projId}/trattamenti/fornitore`,{
+      method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});
+    if(!r.ok){toast(await srvErrDetail(r,'Non sono riuscito a salvare'),true);return;}
+    renderTrattamenti(await r.json());
+    openProgetto();
+  }catch{toast('Server non raggiungibile',true);}
+}
+function trattAssegna(chiave,fid){return trattChiama({chiave,fornitore_id:fid});}
+function trattPrezzo(chiave,aCorpo){return trattChiama({chiave,prezzo_a_corpo:aCorpo});}
+
 // ── il percorso del pezzo: la catena di tappe ────────────────────────────────
 // Un pezzo non ha *un* fornitore: attraversa una sequenza di tappe, ognuna con
 // un responsabile diverso. Per ora il percorso si vede e basta: non tocca
@@ -2604,7 +2697,7 @@ function renderTree(){
     ${S.treeMode==='cat'?`<button class="btn btn-sm" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button>`:''}
     ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
   </div>`;
-  const dist=distintaBanner()+fornOrfaniBanner();
+  const dist=distintaBanner()+fornOrfaniBanner()+trattamentiBanner();
   if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=dist+bar+renderTreeCat();return;}
   let html=dist+bar;
   let prevComm=false;
