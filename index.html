@@ -565,6 +565,8 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .tr-duptag:hover{background:#9c1119}
 /* percorso del pezzo: la catena di tappe */
 .perc-vuoto{border:1px dashed var(--bd2);border-radius:10px;padding:11px 13px;font-size:11.5px;color:var(--t2);background:rgba(0,0,0,.015)}
+.perc-prod{border-left-color:var(--bd2)!important;background:rgba(0,0,0,.02)}
+.perc-prod .perc-n{background:var(--bd2);color:var(--t2)}
 .perc-t{border:1px solid var(--bd);border-left:3px solid var(--go);border-radius:9px;padding:7px 9px;margin-bottom:6px;background:var(--surf)}
 .perc-r1{display:flex;align-items:center;gap:6px}
 .perc-r2{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;padding-left:26px}
@@ -2277,7 +2279,7 @@ function trattamentiBanner(){
   if(!nt){
     return `<div class="dist-bar">
       <span class="dist-ic">⚙️</span>
-      <span>Nessun percorso: i pezzi risultano comprati o fatti fare in un colpo solo.</span>
+      <span>I passaggi dopo la produzione non sono ancora stati messi giù (trattamenti, controlli, spedizioni).</span>
       <button class="btn-mini" onclick="percorsiProponiCommessa()">✨ Proponi i percorsi</button>
     </div>`;
   }
@@ -2315,19 +2317,28 @@ function renderTrattamenti(gruppi){
     .map(f=>`<option value="${f.id}"${sel===f.id?' selected':''}>${esc(f.nome)}</option>`).join('');
   body.innerHTML=gruppi.map(g=>{
     const ass=g.fornitori_assegnati.length===1?g.fornitori_assegnati[0]:null;
-    const stato=g.fornitori_assegnati.length
-      ? `<span class="dist-tag">assegnato</span>`
-      : (g.scoperto?`<span class="dist-tag" style="background:#C0151E">nessuno lo fa</span>`
-                   :`<span class="dist-tag" style="background:#b8801f">da assegnare</span>`);
-    const cand=g.candidati.length
+    const tuttoIncluso=g.incluse===g.n_tappe;
+    const stato=tuttoIncluso
+      ? `<span class="dist-tag" style="background:#1A7A2E">nel ciclo di chi produce</span>`
+      : (g.fornitori_assegnati.length
+        ? `<span class="dist-tag">fornitore a parte</span>`
+        : (g.scoperto?`<span class="dist-tag" style="background:#C0151E">nessuno lo fa</span>`
+                     :`<span class="dist-tag" style="background:#b8801f">da assegnare</span>`));
+    const cand=(!tuttoIncluso&&g.candidati.length)
       ? g.candidati.map(c=>`<button class="btn-mini" onclick="trattAssegna('${jsq(g.chiave)}',${c.id})">${esc(c.nome)}</button>`).join(' ')
-      : `<span class="fmuted" style="font-size:11px">Nessun fornitore in rubrica dichiara questo mestiere. Aggiungilo, oppure scegli qui sotto a mano.</span>`;
-    return `<div class="dist-cand${g.scoperto?'':''}">
+      : (tuttoIncluso?'':`<span class="fmuted" style="font-size:11px">Nessun fornitore in rubrica dichiara questo mestiere. Aggiungilo, oppure scegli qui sotto a mano.</span>`);
+    return `<div class="dist-cand">
       <div class="dist-cand-h"><b style="font-family:inherit">${esc(g.etichetta)}</b>
         <span class="dist-score">${g.n_tappe} ${g.n_tappe===1?'tappa':'tappe'} · ${g.n_pezzi} ${g.n_pezzi===1?'pezzo':'pezzi'}</span>
         ${stato}</div>
       <div class="dist-cand-d">${esc(g.pezzi.slice(0,8).join(', '))}${g.n_pezzi>8?` e altri ${g.n_pezzi-8}`:''}</div>
-      <div class="fnom-act">${cand}</div>
+      <div class="fnom-act" style="margin-bottom:6px">
+        <label class="perc-ck"><input type="radio" name="tr_${esc(g.chiave).replace(/\W/g,'_')}" ${tuttoIncluso?'checked':''}
+          onchange="trattIncluso('${jsq(g.chiave)}',true)"> lo fa chi produce il pezzo</label>
+        <label class="perc-ck"><input type="radio" name="tr_${esc(g.chiave).replace(/\W/g,'_')}" ${tuttoIncluso?'':'checked'}
+          onchange="trattIncluso('${jsq(g.chiave)}',false)"> è una fornitura a parte</label>
+      </div>
+      ${tuttoIncluso?'':`<div class="fnom-act">${cand}</div>
       <div class="fnom-act" style="margin-top:6px">
         <select class="fld fnom-sel" onchange="trattAssegna('${jsq(g.chiave)}',this.value?parseInt(this.value,10):null)">
           <option value="">— nessun fornitore —</option>${opz(ass)}
@@ -2336,7 +2347,7 @@ function renderTrattamenti(gruppi){
           <option value="0"${g.a_corpo?'':' selected'}>prezzo al pezzo</option>
           <option value="1"${g.a_corpo?' selected':''}>prezzo a corpo</option>
         </select>
-      </div>
+      </div>`}
     </div>`;
   }).join('');
 }
@@ -2351,6 +2362,7 @@ async function trattChiama(corpo){
 }
 function trattAssegna(chiave,fid){return trattChiama({chiave,fornitore_id:fid});}
 function trattPrezzo(chiave,aCorpo){return trattChiama({chiave,prezzo_a_corpo:aCorpo});}
+function trattIncluso(chiave,incluso){return trattChiama({chiave,inclusa:incluso});}
 
 // ── il percorso del pezzo: la catena di tappe ────────────────────────────────
 // Un pezzo non ha *un* fornitore: attraversa una sequenza di tappe, ognuna con
@@ -2378,16 +2390,25 @@ function renderPercorso(){
   const pid=PERC.pid,tappe=PERC.tappe;
   const opzForn=f=>fornitori.slice().sort((a,b)=>a.nome.localeCompare(b.nome))
     .map(x=>`<option value="${x.id}"${f===x.id?' selected':''}>${esc(x.nome)}</option>`).join('');
+  // La produzione non si compila: è l'assegnazione del pezzo, e sta già altrove.
+  // Qui si mostra soltanto, come punto di partenza della catena.
+  const p=S.pmap[pid], f=p?fornitori.find(x=>x.id===p.fornitore_id):null;
+  const testa=`<div class="perc-t perc-prod">
+    <div class="perc-r1">
+      <span class="perc-n">·</span>
+      <span style="font-size:11.5px">Lo produce <b>${f?esc(f.nome):'— nessun fornitore assegnato —'}</b></span>
+      <span class="fmuted" style="font-size:10.5px;margin-left:auto">si cambia assegnando il pezzo</span>
+    </div></div>`;
   if(!tappe.length){
-    el.innerHTML=`<div class="perc-vuoto">
-      <div>Nessuna tappa. Il pezzo risulta comprato o fatto fare in un colpo solo.</div>
+    el.innerHTML=testa+`<div class="perc-vuoto">
+      <div>Nessun passaggio dopo la produzione: il pezzo arriva finito da chi lo fa.</div>
       <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn-mini" onclick="percorsoProponi(${pid})">✨ Proponi dalle proprietà</button>
-        <button class="btn-mini g" onclick="percorsoAggiungi(${pid})">+ Aggiungi tappa</button>
+        <button class="btn-mini g" onclick="percorsoAggiungi(${pid})">+ Aggiungi passaggio</button>
       </div></div>`;
     return;
   }
-  el.innerHTML=tappe.map((t,i)=>`
+  el.innerHTML=testa+tappe.map((t,i)=>`
     <div class="perc-t">
       <div class="perc-r1">
         <span class="perc-n">${t.ordine}</span>
@@ -2403,15 +2424,17 @@ function renderPercorso(){
         </span>
       </div>
       <div class="perc-r2">
-        <label class="perc-ck"><input type="checkbox" ${t.interna?'checked':''}
-          onchange="percorsoSalva(${t.id},{interna:this.checked})"> la facciamo noi</label>
-        ${t.interna?'':`<select class="perc-sel sm" onchange="percorsoSalva(${t.id},{fornitore_id:this.value?parseInt(this.value,10):null})">
+        <label class="perc-ck"><input type="checkbox" ${t.inclusa?'checked':''}
+          onchange="percorsoSalva(${t.id},{inclusa:this.checked})"> compreso in chi produce</label>
+        ${t.inclusa?'':`<label class="perc-ck"><input type="checkbox" ${t.interna?'checked':''}
+          onchange="percorsoSalva(${t.id},{interna:this.checked})"> la facciamo noi</label>`}
+        ${(t.interna||t.inclusa)?'':`<select class="perc-sel sm" onchange="percorsoSalva(${t.id},{fornitore_id:this.value?parseInt(this.value,10):null})">
           <option value="">— fornitore da decidere —</option>${opzForn(t.fornitore_id)}</select>`}
         <label class="perc-ck"><input type="checkbox" ${t.cambia_codice?'checked':''}
           onchange="percorsoSalva(${t.id},{cambia_codice:this.checked})"> cambia codice</label>
         ${t.cambia_codice?`<input class="perc-in sm" value="${esc(t.codice_prodotto||'')}" placeholder="codice prodotto"
           onblur="percorsoSalva(${t.id},{codice_prodotto:this.value})">`:''}
-        ${t.interna?'':`<select class="perc-sel sm" onchange="percorsoSalva(${t.id},{prezzo_a_corpo:this.value==='1'})">
+        ${(t.interna||t.inclusa)?'':`<select class="perc-sel sm" onchange="percorsoSalva(${t.id},{prezzo_a_corpo:this.value==='1'})">
           <option value="0"${t.prezzo_a_corpo?'':' selected'}>prezzo al pezzo</option>
           <option value="1"${t.prezzo_a_corpo?' selected':''}>prezzo a corpo</option></select>`}
       </div>
