@@ -1417,6 +1417,105 @@ textarea.fld{resize:vertical;min-height:60px}
 .chip-sugg div{padding:6px 10px;font-size:12px;cursor:pointer}
 .chip-sugg div:hover,.chip-sugg div.act{background:rgba(245,168,35,.1);color:var(--go-d)}
 
+/* ── FINESTRA IN BASSO: Gantt + gerarchia ──
+   Vive sopra tutto il software (non solo dentro un progetto), perché la domanda
+   «a che punto siamo» non appartiene a una sezione sola. Sta fuori da .app così
+   il resto del layout non la deve sapere; in Magazzino e Raccolta Ore non si fa
+   vedere — là non serve. */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:300;height:var(--dockh,320px);
+  background:var(--surf);border-top:1px solid var(--bd2);box-shadow:0 -6px 24px rgba(44,21,6,.10);
+  display:none;flex-direction:column;overflow:hidden}
+.dock.on{display:flex}
+.dock.ridotto{height:auto!important}
+.dock.ridotto .dock-bd{display:none}
+.dock.pieno{top:0;height:auto!important}
+.dock-rz{height:7px;margin-top:-4px;cursor:row-resize;flex-shrink:0}
+.dock-rz:hover,.dock-rz.drag{background:rgba(199,154,59,.30)}
+.dock.pieno .dock-rz,.dock.ridotto .dock-rz{visibility:hidden}
+.dock-hd{display:flex;align-items:center;gap:8px;padding:5px 11px;border-bottom:1px solid var(--bd);
+  background:var(--bg);flex-shrink:0;flex-wrap:wrap}
+.dock-tabs{display:flex;background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.dock-tabs button{border:0;background:transparent;padding:4px 11px;font:inherit;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer}
+.dock-tabs button.on{background:var(--go);color:#3a2406}
+.dock-hd select{font-size:11px;border:1px solid var(--bd);border-radius:6px;padding:3px 7px;background:var(--surf);max-width:230px}
+.dock-info{font-size:10.5px;color:var(--t2)}
+.dock-info b{color:var(--t1)}
+.dock-rit{font-size:9.5px;font-weight:800;color:#fff;background:#C0151E;border-radius:10px;padding:1px 7px}
+.dock-bd{flex:1;min-height:0;display:flex;overflow:hidden}
+.dock-pane{flex:1;min-width:0;overflow:auto;position:relative}
+.dock-pane+.dock-pane{border-left:1px solid var(--bd)}
+.dock-apri{position:fixed;right:16px;bottom:0;z-index:299;border:1px solid var(--bd2);border-bottom:0;
+  border-radius:9px 9px 0 0;background:var(--surf);color:var(--t1);font:inherit;font-size:11px;font-weight:700;
+  padding:5px 13px;cursor:pointer;box-shadow:0 -3px 12px rgba(44,21,6,.10);display:none}
+.dock-apri.on{display:block}
+.dock-apri:hover{background:var(--go);color:#3a2406}
+.ico-btn{border:1px solid var(--bd);background:var(--surf);color:var(--t2);border-radius:6px;
+  width:23px;height:21px;font-size:11px;line-height:1;cursor:pointer;flex-shrink:0}
+.ico-btn:hover{border-color:var(--go);color:var(--go-d)}
+
+/* GANTT */
+.gt{min-width:100%;font-size:11px;position:relative}
+.gt-vuoto{padding:26px 16px;text-align:center;font-size:11.5px;color:var(--t2);line-height:1.6}
+.gt-testa{display:flex;position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid var(--bd)}
+.gt-nomi{width:var(--gtnomi,230px);flex-shrink:0;border-right:1px solid var(--bd);padding:5px 9px;
+  font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)}
+.gt-scala{flex:1;position:relative;height:26px;overflow:hidden}
+.gt-tick{position:absolute;top:0;bottom:0;border-left:1px solid var(--bd);padding-left:4px;
+  font-size:9px;color:var(--t3);white-space:nowrap;font-weight:700}
+.gt-riga{display:flex;border-bottom:1px solid rgba(0,0,0,.04);min-height:25px;align-items:stretch}
+.gt-riga:hover{background:rgba(245,168,35,.05)}
+.gt-riga.gruppo{background:rgba(248,244,239,.85);font-weight:800}
+.gt-et{width:var(--gtnomi,230px);flex-shrink:0;border-right:1px solid var(--bd);padding:4px 9px;
+  display:flex;align-items:center;gap:6px;min-width:0;cursor:pointer;user-select:none}
+.gt-et .c{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:9.5px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gt-et .d{font-size:10px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.gt-pista{flex:1;position:relative;min-height:25px}
+.gt-barra{position:absolute;top:5px;height:14px;border-radius:4px;background:var(--blue);cursor:pointer;
+  overflow:hidden;min-width:3px;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.gt-barra:hover{filter:brightness(1.1);outline:2px solid var(--go)}
+.gt-barra.fatta{background:var(--green)}
+.gt-barra.ritardo{background:#C0151E}
+.gt-barra.voce{background:#7A56B2}
+.gt-barra.interna{background:#8a7a64}
+.gt-barra .av{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.38)}
+.gt-barra .tx{position:absolute;inset:0;padding:0 5px;font-size:9px;font-weight:700;color:#fff;
+  line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gt-aperta{position:absolute;top:5px;height:14px;border-radius:4px;border:1px dashed var(--t3);
+  background:repeating-linear-gradient(45deg,rgba(0,0,0,.05) 0 4px,transparent 4px 8px);cursor:pointer}
+.gt-oggi{position:absolute;top:0;bottom:0;width:2px;background:#C0151E;z-index:3;pointer-events:none}
+.gt-oggi::before{content:"";position:absolute;top:-3px;left:-3px;width:8px;height:8px;border-radius:50%;background:#C0151E}
+.gt-fine{position:absolute;top:0;bottom:0;width:2px;background:rgba(26,122,46,.55);z-index:2;pointer-events:none}
+.gt-oltre{position:absolute;top:0;bottom:0;background:rgba(192,21,30,.05);z-index:0;pointer-events:none}
+.gt-nodate{border-top:2px dashed rgba(44,21,6,.14);margin-top:6px}
+.gt-nodate-h{padding:6px 10px;font-size:10px;font-weight:800;color:#B36A00;background:rgba(255,149,0,.06)}
+
+/* dettaglio di una barra */
+.gt-det{position:absolute;right:10px;top:10px;width:290px;max-height:calc(100% - 20px);overflow:auto;
+  background:var(--surf);border:1px solid var(--bd2);border-radius:11px;box-shadow:var(--shl);z-index:8;padding:12px 14px}
+.gt-det h4{font-size:12.5px;margin-bottom:2px}
+.gt-det .sub{font-size:10.5px;color:var(--t2);margin-bottom:9px}
+.gt-det dl{display:grid;grid-template-columns:auto 1fr;gap:3px 9px;font-size:11px}
+.gt-det dt{color:var(--t2);white-space:nowrap}
+.gt-det dd{font-weight:600;text-align:right}
+.gt-det .chiudi{position:absolute;right:8px;top:7px;border:0;background:transparent;cursor:pointer;color:var(--t3);font-size:13px}
+
+/* ALBERO GERARCHIA (stile PDM) */
+.gr{padding:5px 0;font-size:11.5px}
+.gr-vuoto{padding:26px 16px;text-align:center;font-size:11.5px;color:var(--t2);line-height:1.6}
+.gr-riga{display:flex;align-items:center;gap:6px;padding:3px 10px;cursor:pointer;white-space:nowrap}
+.gr-riga:hover{background:rgba(245,168,35,.06)}
+.gr-riga.sel{background:rgba(0,122,255,.08)}
+.gr-ar{width:11px;font-size:9px;color:var(--t3);flex-shrink:0}
+.gr-ic{font-size:11px;flex-shrink:0}
+.gr-cod{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;font-weight:700}
+.gr-den{color:var(--t2);font-size:10.5px;overflow:hidden;text-overflow:ellipsis}
+.gr-rip{font-size:8px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.1);border-radius:4px;padding:1px 5px}
+.gr-grz{display:flex;align-items:center;gap:6px;padding:2px 10px;font-size:10px;color:#8a6a2f;
+  background:rgba(245,168,35,.05);white-space:nowrap}
+.gr-grz .m{font-family:ui-monospace,monospace;font-size:9px;color:var(--t3)}
+.gr-orfani{margin-top:8px;border-top:1px dashed var(--bd2);padding:7px 10px;font-size:10px;color:var(--t2);white-space:normal}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);z-index:500;background:var(--t1);color:#fff;padding:11px 18px;border-radius:var(--rs);font-size:12.5px;box-shadow:var(--shl);opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -1583,6 +1682,8 @@ textarea.fld{resize:vertical;min-height:60px}
                 <div class="fg"><label class="fl">Nome progetto *</label><input class="fld" id="spNome" placeholder="Es: Carro LEM"><div class="ferr" id="spNomeErr">Campo obbligatorio</div></div>
                 <div class="fg"><label class="fl">Cliente</label><input class="fld" id="spCliente" placeholder="Es: Fibbi"></div>
                 <div class="fg"><label class="fl">Brand (logo distinte e RDO)</label><select class="fld" id="spBrand"><option value="IB">IB Motion</option><option value="YS">YuBe Solutions</option></select></div>
+                <div class="fg"><label class="fl">Inizio commessa</label><input class="fld" id="spDaData" type="date"><div class="fhint">È l&rsquo;inizio dell&rsquo;asse del Gantt.</div></div>
+                <div class="fg"><label class="fl">Consegna prevista</label><input class="fld" id="spAData" type="date"><div class="fhint">Quello che sfora questa data è ritardo.</div></div>
               </div>
               <div class="fg"><label class="fl">Percorso cartella (distinta base) *</label><input class="fld" id="spCartella" placeholder="\\SERVER01\lavoro\…\NOME COMMESSA"><div class="ferr" id="spCartellaErr">Campo obbligatorio</div><div class="fhint">Cartella della commessa. Comanda la distinta generale Excel (.xlsx) al suo interno; i disegni/datasheet nelle sottocartelle finiscono nella ricerca file.</div></div>
               <div class="fg"><label class="fl">Note</label><textarea class="fld" id="spNote" placeholder="Priorità, scadenze…"></textarea></div>
@@ -2151,6 +2252,31 @@ textarea.fld{resize:vertical;min-height:60px}
 </div>
 
 <div class="ore-viztip" id="oreViztip"></div>
+<!-- ════ FINESTRA IN BASSO: Gantt e gerarchia ════
+     Sta fuori da .app di proposito: si vede da qualsiasi sezione, perché «a che
+     punto siamo» non è una domanda che appartiene a una schermata sola. -->
+<div class="dock" id="dock">
+  <div class="dock-rz" id="dockRz" title="Trascina per cambiare altezza"></div>
+  <div class="dock-hd">
+    <div class="dock-tabs">
+      <button id="dkGantt" onclick="dockVista('gantt')">📊 Gantt</button>
+      <button id="dkAlbero" onclick="dockVista('albero')">🌳 Gerarchia</button>
+      <button id="dkDue" onclick="dockVista('due')">⧉ Tutte e due</button>
+    </div>
+    <select id="dockComm" onchange="dockSetComm(this.value)" title="Di quale commessa"></select>
+    <span class="dock-info" id="dockInfo"></span>
+    <span style="flex:1"></span>
+    <button class="ico-btn" onclick="dockRiduci()" id="dockBtnRid" title="Riduci a barra">▁</button>
+    <button class="ico-btn" onclick="dockPieno()" id="dockBtnPieno" title="A tutta finestra">⛶</button>
+    <button class="ico-btn" onclick="dockChiudi()" title="Chiudi">✕</button>
+  </div>
+  <div class="dock-bd">
+    <div class="dock-pane" id="dockPaneGantt"></div>
+    <div class="dock-pane" id="dockPaneAlbero" style="display:none"></div>
+  </div>
+</div>
+<button class="dock-apri" id="dockApri" onclick="dockApri()">📊 Gantt e gerarchia</button>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2181,7 +2307,7 @@ const S={v:'home',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('home');
+async function init(){await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('home');dockApplica();
   await loadNotifiche(false);(NOTIF.notifiche||[]).forEach(n=>NOTIF_SEEN.add(n.id));startNotifPolling();}
 async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}fillPropDatalists();}
 // tendine personalizzabili (datalist) per le proprietà note
@@ -2228,8 +2354,14 @@ function go(v,pid){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.ni[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===v||(v==='pdet'&&x.dataset.v==='proj')));
   S.v=v;
-  if(v==='pdet'){openProgetto(pid);return;}
+  if(v==='pdet'){
+    // aprendo un progetto la finestra in basso lo segue; poi si può cambiare
+    // commessa da lì senza uscire dalla sezione in cui si sta lavorando
+    if(pid!=null&&pid!==DOCK.commessa){DOCK.commessa=pid;DOCK.gantt=DOCK.albero=null;DOCK.sel=null;}
+    openProgetto(pid);dockApplica();return;
+  }
   hideFAB();
+  dockApplica();   // la finestra in basso c'è dovunque tranne Magazzino e Ore
   document.getElementById('v-'+v).classList.add('on');
   if(v==='proj')renderProjGrid();
   if(v==='rdo')rdoEnter();
@@ -3760,7 +3892,7 @@ function setView(v){
   document.getElementById('tabImp').classList.toggle('on',v==='imp');
   applyGlance();   // il pannello vive solo accanto all'albero
   if(v==='file'){renderFiltri();renderFileTable();}
-  if(v==='imp')renderImpostazioni();
+  if(v==='imp')renderImpProgetto();
 }
 
 /* ── IMPOSTAZIONI PROGETTO ──
@@ -3777,12 +3909,17 @@ function impTab(k){
   });
   if(S.impTab==='fornitori')caricaPref();
 }
-function renderImpostazioni(){
+// NB: «renderImpostazioni» è già preso dalle Impostazioni dell'applicazione
+// (menu di sinistra). Queste sono quelle DEL PROGETTO: nome diverso, o la
+// seconda definizione zittisce la prima e la sezione generale smette di andare.
+function renderImpProgetto(){
   const c=commesse.find(x=>x.id===S.projId);
   if(c){
     const g=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
     g('spCodice',c.codice);g('spNome',c.nome);g('spCliente',c.cliente||'');
     g('spCartella',c.percorso_cartella||'');g('spNote',c.note||'');g('spBrand',c.brand||'IB');
+    const iso=v=>v?String(v).slice(0,10):'';
+    g('spDaData',iso(c.data_inizio));g('spAData',iso(c.data_fine));
   }
   impTab(S.impTab||'modifica');
   const box=document.getElementById('impStruttura');
@@ -3813,10 +3950,15 @@ async function salvaImpProgetto(){
   try{
     const r=await fetch(API+'/api/commesse/'+S.projId,{method:'PATCH',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({codice,nome,cliente:gv('spCliente'),note:gv('spNote'),percorso_cartella:cartella,
-        brand:document.getElementById('spBrand').value})});
+        brand:document.getElementById('spBrand').value,
+        // il campo date dà 'AAAA-MM-GG': la fine si porta a fine giornata, così
+        // consegnare il 30 alle 17 non risulta in ritardo
+        data_inizio:gv('spDaData')?gv('spDaData')+'T00:00:00':null,
+        data_fine:gv('spAData')?gv('spAData')+'T23:59:59':null})});
     if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a salvare'));
     toast('Progetto aggiornato','ok');
     await loadCommesse();await openProgetto(S.projId);setView('imp');
+    DOCK.gantt=null;if(DOCK.stato!=='chiuso')dockCarica(true);
   }catch(e){toast(e.message||'Errore',true);}
   finally{btn.disabled=false;btn.textContent=old;}
 }
@@ -8641,6 +8783,409 @@ function toggleGlance(){
   function mv(e){if(!st)return;const d=e.clientX-st.x;let w=st.dir==='r'?st.w+d:st.w-d;w=Math.min(st.max,Math.max(st.min,w));document.documentElement.style.setProperty(st.vr,w+'px');}
   function up(){if(!st)return;st.s.classList.remove('drag');try{localStorage.setItem(st.key,parseInt(getComputedStyle(document.documentElement).getPropertyValue(st.vr))||st.w);}catch{}document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);st=null;}
 })();
+/* ════════════════════════════════════════════════════════════════════════════
+   FINESTRA IN BASSO — Gantt e gerarchia
+   ════════════════════════════════════════════════════════════════════════════
+   Vive su tutto il software, non solo dentro un progetto: «a che punto siamo»
+   non è una domanda di una schermata sola. In Magazzino e Raccolta Ore non si
+   fa vedere — là la commessa non c'entra.
+
+   Quattro stati: chiusa (resta solo la linguetta in basso a destra), aperta con
+   l'altezza che decidi tu trascinando il bordo, ridotta a barra, a tutta
+   finestra. Lo stato si ricorda.
+
+   La commessa la sceglie il pannello, non la sezione: si può guardare il Gantt
+   dei Carri mentre si è dentro Comunicazioni.
+*/
+const SEZIONI_SENZA_DOCK=['mag','ore'];
+const DOCK={stato:'chiuso',vista:'gantt',commessa:null,gantt:null,albero:null,
+  caricando:false,sel:null,raggr:'pezzo',flt:{},aperti:{},orologio:null};
+
+function dockStatoSalva(){
+  try{localStorage.setItem('rdo_dock',JSON.stringify(
+    {stato:DOCK.stato,vista:DOCK.vista,raggr:DOCK.raggr,h:parseInt(getComputedStyle(document.documentElement).getPropertyValue('--dockh'))||320}));}catch{}
+}
+function dockStatoLeggi(){
+  try{
+    const s=JSON.parse(localStorage.getItem('rdo_dock')||'{}');
+    if(s.stato)DOCK.stato=s.stato;
+    if(s.vista)DOCK.vista=s.vista;
+    if(s.raggr)DOCK.raggr=s.raggr;
+    if(s.h)document.documentElement.style.setProperty('--dockh',s.h+'px');
+  }catch{}
+}
+// la finestra c'è dovunque tranne dove la commessa non c'entra
+function dockAmmesso(){return !SEZIONI_SENZA_DOCK.includes(S.v);}
+function dockApplica(){
+  const d=document.getElementById('dock'),lin=document.getElementById('dockApri');
+  if(!d)return;
+  const ammesso=dockAmmesso();
+  const aperto=ammesso&&DOCK.stato!=='chiuso';
+  d.classList.toggle('on',aperto);
+  d.classList.toggle('ridotto',DOCK.stato==='ridotto');
+  d.classList.toggle('pieno',DOCK.stato==='pieno');
+  lin.classList.toggle('on',ammesso&&DOCK.stato==='chiuso');
+  document.getElementById('dockBtnRid').textContent=DOCK.stato==='ridotto'?'▔':'▁';
+  document.getElementById('dockBtnRid').title=DOCK.stato==='ridotto'?'Riapri':'Riduci a barra';
+  ['gantt','albero','due'].forEach(v=>{
+    const b=document.getElementById('dk'+v[0].toUpperCase()+v.slice(1));
+    if(b)b.classList.toggle('on',DOCK.vista===v);
+  });
+  document.getElementById('dockPaneGantt').style.display=(DOCK.vista==='albero')?'none':'block';
+  document.getElementById('dockPaneAlbero').style.display=(DOCK.vista==='gantt')?'none':'block';
+  if(aperto&&DOCK.stato!=='ridotto')dockCarica();
+  dockOrologio(aperto&&DOCK.stato!=='ridotto');
+  dockStatoSalva();
+}
+function dockApri(){DOCK.stato='aperto';if(!DOCK.commessa&&S.projId)DOCK.commessa=S.projId;dockApplica();}
+function dockChiudi(){DOCK.stato='chiuso';dockApplica();}
+function dockRiduci(){DOCK.stato=DOCK.stato==='ridotto'?'aperto':'ridotto';dockApplica();}
+function dockPieno(){DOCK.stato=DOCK.stato==='pieno'?'aperto':'pieno';dockApplica();}
+function dockVista(v){DOCK.vista=v;dockApplica();dockDisegna();}
+function dockSetComm(id){DOCK.commessa=id?parseInt(id,10):null;DOCK.gantt=DOCK.albero=null;DOCK.sel=null;dockCarica(true);}
+
+// la linea del presente si muove da sola: precisione all'ora, quindi basta
+// ridisegnare ogni minuto — non serve un timer al secondo che scalda il portatile
+function dockOrologio(acceso){
+  if(DOCK.orologio){clearInterval(DOCK.orologio);DOCK.orologio=null;}
+  if(acceso)DOCK.orologio=setInterval(()=>{if(DOCK.gantt)dockDisegnaGantt();},60000);
+}
+function dockCommOpts(){
+  const sel=document.getElementById('dockComm');if(!sel)return;
+  const attuale=DOCK.commessa;
+  sel.innerHTML=commesse.length
+    ?commesse.map(c=>`<option value="${c.id}"${c.id===attuale?' selected':''}>${esc(c.codice)} — ${esc((c.nome||'').slice(0,38))}</option>`).join('')
+    :'<option value="">nessun progetto</option>';
+}
+async function dockCarica(forza){
+  if(!DOCK.commessa&&S.projId)DOCK.commessa=S.projId;
+  if(!DOCK.commessa&&commesse.length)DOCK.commessa=commesse[0].id;
+  dockCommOpts();
+  if(!DOCK.commessa){dockDisegna();return;}
+  if(DOCK.caricando)return;
+  if(!forza&&DOCK.gantt&&DOCK.gantt.commessa_id===DOCK.commessa&&DOCK.albero)return dockDisegna();
+  DOCK.caricando=true;
+  document.getElementById('dockInfo').textContent='carico…';
+  try{
+    const [rg,ra]=await Promise.all([
+      fetch(API+`/api/commesse/${DOCK.commessa}/gantt`),
+      fetch(API+`/api/commesse/${DOCK.commessa}/gerarchia`)]);
+    DOCK.gantt=rg.ok?await rg.json():null;
+    DOCK.albero=ra.ok?await ra.json():null;
+  }catch{DOCK.gantt=DOCK.albero=null;}
+  finally{DOCK.caricando=false;}
+  dockDisegna();
+}
+function dockDisegna(){
+  const g=DOCK.gantt;
+  const info=document.getElementById('dockInfo');
+  if(info)info.innerHTML=g
+    ?`<b>${g.barre.length}</b> barre`
+      +(g.in_ritardo?` <span class="dock-rit">${g.in_ritardo} in ritardo</span>`:'')
+      +(g.senza_date?` · ${g.senza_date} senza date`:'')
+      +(DOCK.albero&&DOCK.albero.n_legami?` · <b>${DOCK.albero.n_legami}</b> legami`:'')
+    :'';
+  if(DOCK.vista!=='albero')dockDisegnaGantt();
+  if(DOCK.vista!=='gantt')dockDisegnaAlbero();
+}
+(function setupDock(){
+  dockStatoLeggi();
+  const rz=document.getElementById('dockRz');const d=document.getElementById('dock');
+  if(!rz||!d)return;
+  let y0=0,h0=0;
+  const mv=e=>{
+    const h=Math.min(window.innerHeight-90,Math.max(120,h0+(y0-e.clientY)));
+    document.documentElement.style.setProperty('--dockh',h+'px');
+  };
+  const up=()=>{rz.classList.remove('drag');document.removeEventListener('pointermove',mv);
+    document.removeEventListener('pointerup',up);dockStatoSalva();dockDisegna();};
+  rz.addEventListener('pointerdown',e=>{
+    e.preventDefault();y0=e.clientY;h0=d.getBoundingClientRect().height;
+    rz.classList.add('drag');document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);
+  });
+})();
+
+/* ── IL GANTT ──
+   Asse X = il tempo, fra l'inizio e la fine della commessa (date messe a mano).
+   Asse Y = le barre, raggruppate per pezzo o per fornitore, a scelta.
+   Le voci ausiliarie ci sono sempre: non sono pezzi e non si filtrano via.
+   Quello che sfora la fine della commessa è ritardo, e si vede colorato. */
+const GT_MS=86400000;
+function dtOr(v){return v?new Date(v):null;}
+function dockFinestra(g){
+  // se le date della commessa non ci sono, l'asse si stringe su quello che c'è
+  const date=[];
+  g.barre.forEach(b=>{[b.inizio,b.fine,b.fine_effettiva].forEach(x=>{if(x)date.push(new Date(x));});});
+  const adesso=new Date(g.adesso);
+  date.push(adesso);
+  let da=dtOr(g.data_inizio)||new Date(Math.min(...date));
+  let a=dtOr(g.data_fine)||new Date(Math.max(...date));
+  if(!(a>da))a=new Date(da.getTime()+30*GT_MS);
+  const respiro=Math.max(GT_MS,(a-da)*0.03);
+  return {da:new Date(da.getTime()-respiro),a:new Date(a.getTime()+respiro),
+          fineComm:dtOr(g.data_fine),adesso};
+}
+function gtBarreVisibili(){
+  const g=DOCK.gantt;if(!g)return [];
+  return g.barre.filter(b=>{
+    if(b.tipo==='voce')return true;              // le ausiliarie ci sono sempre
+    const f=DOCK.flt||{};
+    if(f.forn&&String(b.fornitore_id||'')!==f.forn)return false;
+    if(f.cat&&b.categoria!==f.cat)return false;
+    if(f.lav&&b.lav_meccanica!==f.lav)return false;
+    if(f.mat&&b.materiale!==f.mat)return false;
+    if(f.tt&&b.tipo_tappa!==f.tt)return false;
+    if(f.rit==='1'&&!b.in_ritardo)return false;
+    const q=(f.q||'').trim().toLowerCase();
+    if(q&&![b.codice,b.denominazione,b.etichetta,b.fornitore_nome].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+function gtGruppi(barre){
+  // per PEZZO: una riga per codice · per FORNITORE: una riga per fornitore.
+  // Le voci ausiliarie fanno riga a sé, sempre, in fondo.
+  const g={},voci=[];
+  barre.forEach(b=>{
+    if(b.tipo==='voce'){voci.push(b);return;}
+    const k=DOCK.raggr==='fornitore'
+      ?(b.fornitore_id!=null?'f'+b.fornitore_id:'f0')
+      :'p'+(b.codice||b.parte_id);
+    const et=DOCK.raggr==='fornitore'
+      ?(b.fornitore_nome||'(nessun fornitore)')
+      :(b.codice||'');
+    (g[k]=g[k]||{chiave:k,etichetta:et,sotto:b.denominazione||'',barre:[]}).barre.push(b);
+  });
+  const righe=Object.values(g).sort((a,b)=>a.etichetta.localeCompare(b.etichetta));
+  if(voci.length)righe.push({chiave:'voci',etichetta:'⬦ Voci di commessa',
+    sotto:'trasferte, collaudi, spedizioni',barre:voci,ausiliarie:true});
+  return righe;
+}
+function gtFiltri(){
+  const g=DOCK.gantt;if(!g)return '';
+  const val=(k,get)=>[...new Set(g.barre.map(get).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+  const sel=(k,lbl,valori,etichetta)=>{
+    if(!valori.length)return '';
+    return `<select class="${(DOCK.flt[k])?'act':''}" onchange="gtFlt('${k}',this.value)"><option value="">${lbl}: tutti</option>`
+      +valori.map(v=>`<option value="${esc(String(v))}"${DOCK.flt[k]===String(v)?' selected':''}>${esc(etichetta?etichetta(v):String(v))}</option>`).join('')+'</select>';
+  };
+  const forn=[...new Set(g.barre.map(b=>b.fornitore_id).filter(x=>x!=null))]
+    .sort((a,b)=>(fornById(a)||{nome:''}).nome.localeCompare((fornById(b)||{nome:''}).nome));
+  return `<div class="flt-bar">
+    <div class="cx-toggle" style="margin:0"><button class="${DOCK.raggr==='pezzo'?'on':''}" onclick="gtRaggr('pezzo')">Per pezzo</button><button class="${DOCK.raggr==='fornitore'?'on':''}" onclick="gtRaggr('fornitore')">Per fornitore</button></div>
+    ${sel('forn','Fornitore',forn,v=>(fornById(v)||{nome:'#'+v}).nome)}
+    ${sel('cat','Categoria',val('cat',b=>b.categoria))}
+    ${sel('lav','Lavorazione',val('lav',b=>b.lav_meccanica))}
+    ${sel('mat','Materiale',val('mat',b=>b.materiale))}
+    ${sel('tt','Passaggio',val('tt',b=>b.tipo_tappa))}
+    <select class="${DOCK.flt.rit?'act':''}" onchange="gtFlt('rit',this.value)"><option value="">Tutte</option><option value="1"${DOCK.flt.rit==='1'?' selected':''}>Solo in ritardo</option></select>
+    <input type="text" placeholder="cerca…" value="${esc(DOCK.flt.q||'')}" oninput="gtFlt('q',this.value)">
+    ${Object.values(DOCK.flt).some(Boolean)?'<span class="flt-x" onclick="gtFltAzzera()">✕ togli i filtri</span>':''}
+  </div>`;
+}
+function gtFlt(k,v){
+  DOCK.flt[k]=v;
+  const mantieni=k==='q';const y=document.getElementById('dockPaneGantt').scrollTop;
+  dockDisegnaGantt();
+  document.getElementById('dockPaneGantt').scrollTop=y;
+  if(mantieni){const i=document.querySelector('#dockPaneGantt .flt-bar input[type=text]');
+    if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}}
+}
+function gtFltAzzera(){DOCK.flt={};dockDisegnaGantt();}
+function gtRaggr(m){DOCK.raggr=m;dockStatoSalva();dockDisegnaGantt();}
+function gtTacche(da,a,largo){
+  // passo scelto sulla durata: giorni se è corta, settimane, mesi se è lunga
+  const giorni=(a-da)/GT_MS;
+  const passo=giorni<=21?1:giorni<=120?7:giorni<=550?30:90;
+  const out=[];const d=new Date(da);d.setHours(0,0,0,0);
+  let guardia=0;
+  while(d<=a&&guardia++<400){
+    const x=(d-da)/(a-da)*100;
+    if(x>=0&&x<=100){
+      const lab=passo===1?d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'})
+        :passo<=7?d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'})
+        :d.toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
+      out.push(`<div class="gt-tick" style="left:${x}%">${esc(lab)}</div>`);
+    }
+    d.setDate(d.getDate()+passo);
+  }
+  return out.join('');
+}
+function dockDisegnaGantt(){
+  const el=document.getElementById('dockPaneGantt');if(!el)return;
+  const g=DOCK.gantt;
+  if(!g){el.innerHTML='<div class="gt-vuoto">Nessun dato: scegli un progetto qui sopra.</div>';return;}
+  if(!g.barre.length){
+    el.innerHTML=gtFiltri()+`<div class="gt-vuoto">Questa commessa non ha ancora né passaggi né voci.<br>
+      Il Gantt si riempie da solo quando i pezzi hanno un percorso — dal progetto, «✨ Proponi i percorsi».</div>`;
+    return;
+  }
+  const f=dockFinestra(g);
+  const durata=f.a-f.da;
+  const pos=d=>Math.max(0,Math.min(100,(new Date(d)-f.da)/durata*100));
+  const barre=gtBarreVisibili();
+  const conDate=barre.filter(b=>b.inizio||b.fine);
+  const senza=barre.filter(b=>!b.inizio&&!b.fine);
+  const righe=gtGruppi(conDate);
+
+  const xOggi=pos(f.adesso);
+  const xFine=f.fineComm?pos(f.fineComm):null;
+  const sfondo=(xFine!=null&&xFine<100)?`<div class="gt-oltre" style="left:${xFine}%;right:0"></div>`:'';
+
+  const disegnaBarra=b=>{
+    const ini=b.inizio?new Date(b.inizio):null;
+    const fin=b.fine_effettiva?new Date(b.fine_effettiva):(b.fine?new Date(b.fine):null);
+    const cls=b.in_ritardo?'ritardo':(b.stato==='fatta'?'fatta':(b.tipo==='voce'?'voce':(b.interna?'interna':'')));
+    const tit=`${b.etichetta}${b.fornitore_nome?' · '+b.fornitore_nome:''}`;
+    if(ini&&fin&&fin>ini){
+      const x=pos(ini),w=Math.max(0.4,pos(fin)-x);
+      return `<div class="gt-barra ${cls}" style="left:${x}%;width:${w}%" title="${esc(tit)}" onclick="event.stopPropagation();gtSel('${jsq(b.id)}')">
+        ${b.avanzamento?`<div class="av" style="width:${b.avanzamento*100}%"></div>`:''}
+        <div class="tx">${esc(b.etichetta)}</div></div>`;
+    }
+    // solo l'inizio: barra aperta a destra, tratteggiata — la consegna non c'è
+    if(ini)return `<div class="gt-aperta" style="left:${pos(ini)}%;width:${Math.max(1,(xOggi-pos(ini)))}%"
+      title="${esc(tit)} — senza data di consegna" onclick="event.stopPropagation();gtSel('${jsq(b.id)}')"></div>`;
+    return `<div class="gt-barra ${cls}" style="left:${Math.max(0,pos(fin)-1)}%;width:1.2%" title="${esc(tit)}"
+      onclick="event.stopPropagation();gtSel('${jsq(b.id)}')"></div>`;
+  };
+
+  let html=gtFiltri()+`<div class="gt">
+    <div class="gt-testa"><div class="gt-nomi">${DOCK.raggr==='fornitore'?'Fornitore':'Pezzo'} · ${righe.length}</div>
+      <div class="gt-scala">${gtTacche(f.da,f.a,100)}</div></div>`;
+  righe.forEach(r=>{
+    const aperto=DOCK.aperti[r.chiave]===true;
+    const rit=r.barre.filter(b=>b.in_ritardo).length;
+    html+=`<div class="gt-riga gruppo">
+      <div class="gt-et" onclick="gtApri('${jsq(r.chiave)}')" title="${esc(r.etichetta+(r.sotto?' · '+r.sotto:''))}">
+        <span class="tr-arrow">${aperto?'▾':'▸'}</span>
+        <span class="c">${esc(r.etichetta)}</span><span class="d">${esc(r.sotto)}</span>
+        ${rit?`<span class="dock-rit">${rit}</span>`:''}</div>
+      <div class="gt-pista">${sfondo}${r.barre.map(disegnaBarra).join('')}
+        ${xFine!=null?`<div class="gt-fine" style="left:${xFine}%"></div>`:''}
+        <div class="gt-oggi" style="left:${xOggi}%"></div></div></div>`;
+    if(aperto)r.barre.forEach(b=>{
+      html+=`<div class="gt-riga">
+        <div class="gt-et" style="padding-left:24px" onclick="gtSel('${jsq(b.id)}')" title="${esc(b.etichetta)}">
+          <span class="d">${esc(b.etichetta)}</span>${b.fornitore_nome?`<span class="c">${esc(b.fornitore_nome.split(' ')[0])}</span>`:''}</div>
+        <div class="gt-pista">${sfondo}${disegnaBarra(b)}
+          ${xFine!=null?`<div class="gt-fine" style="left:${xFine}%"></div>`:''}
+          <div class="gt-oggi" style="left:${xOggi}%"></div></div></div>`;
+    });
+  });
+  html+='</div>';
+  if(senza.length){
+    html+=`<div class="gt-nodate"><div class="gt-nodate-h">${senza.length} ${senza.length===1?'passaggio senza date':'passaggi senza date'} — non si possono disegnare</div>`
+      +senza.slice(0,40).map(b=>`<div class="gt-riga"><div class="gt-et" style="width:100%" onclick="gtSel('${jsq(b.id)}')">
+        <span class="c">${esc(b.codice||'—')}</span><span class="d">${esc(b.etichetta)}</span></div></div>`).join('')
+      +(senza.length>40?`<div class="ck-altri">e altri ${senza.length-40}…</div>`:'')+'</div>';
+  }
+  el.innerHTML=html+gtDettaglio();
+}
+function gtApri(k){DOCK.aperti[k]=!DOCK.aperti[k];const y=document.getElementById('dockPaneGantt').scrollTop;dockDisegnaGantt();document.getElementById('dockPaneGantt').scrollTop=y;}
+function gtSel(id){DOCK.sel=DOCK.sel===id?null:id;dockDisegnaGantt();}
+function gtChiudiDet(){DOCK.sel=null;dockDisegnaGantt();}
+const _dt=v=>v?new Date(v).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+function gtDettaglio(){
+  if(!DOCK.sel||!DOCK.gantt)return '';
+  const b=DOCK.gantt.barre.find(x=>x.id===DOCK.sel);if(!b)return '';
+  const giorni=(b.inizio&&b.fine)?Math.round((new Date(b.fine)-new Date(b.inizio))/GT_MS):null;
+  const ritGiorni=b.in_ritardo?Math.round((new Date(DOCK.gantt.adesso)-new Date(b.fine))/GT_MS):0;
+  const r=[
+    ['inizio',_dt(b.inizio)+(b.inizio_dedotto?' <span class="fmuted">(deduzione)</span>':'')],
+    ['fine prevista',b.fine?_dt(b.fine):'<span class="fmuted">non ancora detta</span>'],
+    ['fine effettiva',_dt(b.fine_effettiva)],
+    ['durata',giorni!=null?giorni+' gg':'—'],
+    ['stato',esc(b.stato)],
+    ['avanzamento',Math.round(b.avanzamento*100)+'%'],
+    ['chi lo fa',b.interna?'interno':(esc(b.fornitore_nome)||'<span class="fmuted">da scegliere</span>')],
+    ['tipo',esc(b.tipo_tappa||b.tipo)],
+  ];
+  if(b.codice)r.unshift(['pezzo',esc(b.codice)+(b.denominazione?' · '+esc(b.denominazione):'')]);
+  if(b.categoria)r.push(['categoria',esc(b.categoria)]);
+  if(b.lav_meccanica)r.push(['lavorazione',esc(b.lav_meccanica)]);
+  if(b.materiale)r.push(['materiale',esc(b.materiale)]);
+  if(b.inclusa)r.push(['','<span class="fmuted">compreso nel ciclo di chi produce</span>']);
+  return `<div class="gt-det">
+    <button class="chiudi" onclick="gtChiudiDet()">✕</button>
+    <h4>${esc(b.etichetta)}</h4>
+    <div class="sub">${b.in_ritardo?`<b style="color:#C0151E">in ritardo di ${ritGiorni} ${ritGiorni===1?'giorno':'giorni'}</b>`:(b.stato==='fatta'?'<b style="color:#1A7A2E">finito</b>':'in corso')}</div>
+    <dl>${r.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
+    ${b.note?`<div class="fmuted" style="font-size:10.5px;margin-top:8px">${esc(b.note)}</div>`:''}
+    ${b.parte_id?`<div style="margin-top:10px"><button class="btn-mini g" onclick="gtVaiAlPezzo(${b.parte_id})">Apri la scheda del pezzo →</button></div>`:''}
+  </div>`;
+}
+function gtVaiAlPezzo(pid){
+  if(DOCK.commessa&&DOCK.commessa!==S.projId){go('pdet',DOCK.commessa);setTimeout(()=>{try{jumpPart(pid);openDraw(pid);}catch{}},700);return;}
+  if(S.v!=='pdet')go('pdet',DOCK.commessa||S.projId);
+  try{jumpPart(pid);openDraw(pid);}catch{}
+}
+
+/* ── L'ALBERO DELLA GERARCHIA ──
+   Stile PDM: chi sta dentro chi, e basta. Non comanda niente — comanda sempre
+   la distinta. Ci sono solo i codici a disegno, con sotto i grezzi di taglio
+   letti dal disegno del saldato (i tubolari che in distinta non ci sono). */
+function dockDisegnaAlbero(){
+  const el=document.getElementById('dockPaneAlbero');if(!el)return;
+  const a=DOCK.albero;
+  if(!a){el.innerHTML='<div class="gr-vuoto">Nessun dato: scegli un progetto qui sopra.</div>';return;}
+  if(!a.radici.length){
+    el.innerHTML=`<div class="gr-vuoto">La gerarchia non è ancora stata letta.<br>
+      Sta scritta solo nella tabella dei componenti stampata sui disegni d&rsquo;assieme: va letta una volta,
+      e poi solo quando i disegni cambiano.<br><br>
+      <button class="btn btn-go btn-sm" onclick="grLeggi()">🔎 Leggi la gerarchia dai disegni</button></div>`;
+    return;
+  }
+  let html='<div class="gr">';
+  a.radici.forEach(n=>{html+=grNodo(n,0);});
+  html+='</div>';
+  if(a.orfani.length)html+=`<div class="gr-orfani"><b>${a.orfani.length} codici con un file ma fuori da ogni assieme</b>
+     (quasi sempre commerciali con la scheda tecnica): ${a.orfani.slice(0,14).map(esc).join(' · ')}${a.orfani.length>14?' …':''}</div>`;
+  html+=`<div style="padding:8px 10px"><button class="btn-mini g" onclick="grLeggi()">🔎 Rileggi dai disegni</button>
+     <span class="fmuted" style="font-size:10px;margin-left:8px">${a.n_legami} legami · ${a.n_grezzi} righe di taglio</span></div>`;
+  el.innerHTML=html;
+}
+function grNodo(n,liv,percorso){
+  const via=(percorso||'')+'/'+n.codice;
+  const haFigli=n.figli.length||n.grezzi.length;
+  const aperto=DOCK.aperti[via]===true||liv===0;
+  const ic=n.figli.length?(aperto?'📂':'📁'):'📄';
+  let h=`<div class="gr-riga${DOCK.sel==='n'+via?' sel':''}" style="padding-left:${10+liv*15}px" onclick="grClic('${jsq(via)}',${n.parte_id||'null'})">
+    <span class="gr-ar">${haFigli?(aperto?'▾':'▸'):''}</span>
+    <span class="gr-ic">${ic}</span>
+    <span class="gr-cod">${esc(n.codice)}</span>
+    <span class="gr-den">${esc(n.denominazione||'')}</span>
+    ${n.ripetuto?'<span class="gr-rip">anche altrove</span>':''}</div>`;
+  if(!aperto)return h;
+  n.grezzi.forEach(g=>{
+    h+=`<div class="gr-grz" style="padding-left:${25+liv*15}px" title="riga di taglio letta dal disegno — in distinta non c'è">
+      ✂ ${esc(g.descrizione)}</div>`;
+  });
+  n.figli.forEach(f=>{h+=grNodo(f,liv+1,via);});
+  return h;
+}
+function grClic(via,pid){
+  DOCK.aperti[via]=!DOCK.aperti[via];
+  DOCK.sel='n'+via;
+  const y=document.getElementById('dockPaneAlbero').scrollTop;
+  dockDisegnaAlbero();
+  document.getElementById('dockPaneAlbero').scrollTop=y;
+  // le proprietà del codice: è tutto quello che questo albero deve fare
+  if(pid)gtVaiAlPezzo(pid);
+}
+async function grLeggi(){
+  if(!DOCK.commessa)return;
+  if(!confirm('Rileggo la tabella dei componenti da tutti i disegni della commessa.\n\nCi vuole qualche secondo. I codici letti che in distinta non ci sono NON entrano: comanda la distinta.'))return;
+  document.getElementById('dockPaneAlbero').innerHTML='<div class="gr-vuoto">Leggo i disegni…</div>';
+  try{
+    const r=await fetch(API+`/api/commesse/${DOCK.commessa}/gerarchia/leggi`,{method:'POST'});
+    if(!r.ok){toast(await srvErrDetail(r,'Non sono riuscito a leggere i disegni'),true);dockDisegnaAlbero();return;}
+    const e=await r.json();
+    toast(`${e.legami} legami da ${e.assiemi_con_figli} assiemi · ${e.grezzi} righe di taglio`,'ok');
+    if(e.codici_fuori_distinta.length)
+      toast(`${e.codici_fuori_distinta.length} codici letti dai disegni non sono in distinta: lasciati fuori`,true);
+    DOCK.albero=null;await dockCarica(true);
+  }catch{toast('Server non raggiungibile',true);dockDisegnaAlbero();}
+}
 // ── resize colonne stile Excel su table.rzcols (larghezze salvate per tabella+colonna) ──
 (function setupColResize(){
   const kf=(t,i)=>'rzc_'+(t.dataset.rzk||t.id||'t')+'_'+i;

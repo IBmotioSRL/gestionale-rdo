@@ -115,6 +115,23 @@ Il modale `mProg` serve solo a **creare** un progetto nuovo.
 - `"revisione RDO + blocco (inviata = immodificabile)"`
 - `"pannello unico di spedizione"`
 
+**Finestra in basso — Gantt e gerarchia** (`"FINESTRA IN BASSO"`, in fondo)
+
+Sta **fuori da `.app`**, `position:fixed`, e si vede da ogni sezione tranne
+Magazzino e Raccolta Ore (`SEZIONI_SENZA_DOCK`). Stato in `DOCK`, salvato in
+`localStorage.rdo_dock`; quattro stati: `chiuso` / `aperto` / `ridotto` /
+`pieno`. `dockApplica()` è l'unico posto che decide cosa si vede — va chiamata
+da `go()` a ogni cambio sezione.
+
+- `controlliInvio`-style: `dockCarica()` prende `/gantt` e `/gerarchia` insieme
+- `dockDisegnaGantt()` — asse tempo, barre per pezzo o per fornitore
+  (`DOCK.raggr`), filtri in `DOCK.flt`. **Le voci ausiliarie non si filtrano
+  mai via**: `gtBarreVisibili` le lascia sempre passare.
+- una barra senza fine prevista si disegna **tratteggiata e aperta**: la fine
+  non si inventa (vedi `app/gantt.py`)
+- `dockDisegnaAlbero()` / `grNodo()` — albero PDM, solo codici a disegno, con
+  le righe di taglio dei grezzi. `grLeggi()` rilegge i PDF.
+
 **Altro**
 
 - `"MAGAZZINO"` → `"CATALOGO E GIACENZE"`, `"SCHEDA ARTICOLO"`, `"PRELIEVO (TABLET)"`, `"RIORDINO"`
