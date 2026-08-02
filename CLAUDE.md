@@ -84,6 +84,15 @@ Il modale `mProg` serve solo a **creare** un progetto nuovo.
 - `"«Trattamenti termici e superficiali»"` — `trattTree()`, blocco trasversale in
   fondo all'albero: gli stessi pezzi compaiono anche nella loro categoria
 - `"SELEZIONE + FAB"` — `partClick` (Ctrl/Shift stile Windows), `ckGruppo`/`paintSel`
+- `"PANNELLO «COSA MANCA»"` — `controlliInvio()` + `renderGlance()`: il pannello
+  laterale non riepiloga più chi ha cosa, elenca gli ostacoli all'invio delle
+  RDO. Per aggiungere un controllo basta una riga `add(...)` in `controlliInvio`
+  (livello `blocca` o `guarda`, più l'azione che lo risolve).
+- `apriConfronto(pid)` / `renderConfrontoPrezzi` — il confronto prezzi, uscito dal
+  pannello, ora è il modale `mCmpPrezzi`. È l'**unico** modo di chiudere un
+  confronto scegliendo il vincitore: `POST /api/parti/{id}/scegli/{fid}` cambia
+  il fornitore primario, mentre scegliere un'offerta (`_applica_scelta` in
+  `costi.py`) assegna un fornitore solo se il pezzo non ne ha ancora uno.
 - `"albero commerciali: TIPO → gruppo fornitore → pezzi"`
 - `"DRAWER DETTAGLIO PARTICOLARE"` — `openDraw(pid)`, la scheda del pezzo
 - `"il percorso del pezzo: la catena di tappe"` — `caricaPercorso` · `renderPercorso`

@@ -877,33 +877,37 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .gp-rl .k{font-size:10px;color:var(--t2);font-weight:700}
 .gp-rl.acc{background:linear-gradient(135deg,rgba(88,86,214,.1),rgba(88,86,214,.03));border-color:rgba(88,86,214,.2)}
 .gp-rl.acc .v{color:var(--purple)}
-.gp-seg{display:flex;background:var(--surf);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
-.gp-seg button{flex:1;border:0;background:transparent;padding:8px;font:inherit;font-size:11.5px;font-weight:800;color:var(--t2);cursor:pointer}
-.gp-seg button.on{background:var(--go);color:#3a2406}
+/* ── «Cosa manca»: gli ostacoli fra qui e l'invio delle RDO ── */
+.ck-item{background:var(--surf);border:1px solid var(--bd);border-left:3px solid var(--bd2);border-radius:10px;box-shadow:var(--sh);margin-bottom:8px;overflow:hidden}
+.ck-item.blocca{border-left-color:#C0151E}
+.ck-item.guarda{border-left-color:#D48A0F}
+.ck-h{display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:pointer;user-select:none}
+.ck-h:hover{background:rgba(245,168,35,.05)}
+.ck-n{font-size:15px;font-weight:800;min-width:22px;text-align:center;flex-shrink:0}
+.ck-item.blocca .ck-n{color:#C0151E}
+.ck-item.guarda .ck-n{color:#B36A00}
+.ck-t{flex:1;min-width:0}
+.ck-t b{display:block;font-size:11.5px;font-weight:700;color:var(--t1);line-height:1.3}
+.ck-t span{display:block;font-size:10px;color:var(--t2);line-height:1.35;margin-top:1px}
+.ck-chev{font-size:10px;color:var(--t3);flex-shrink:0;transition:transform .12s}
+.ck-item.open .ck-chev{transform:rotate(90deg)}
+.ck-b{display:none;border-top:1px solid var(--bd);max-height:230px;overflow-y:auto}
+.ck-item.open .ck-b{display:block}
+.ck-r{display:flex;align-items:center;gap:7px;padding:5px 11px;font-size:10.5px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.03)}
+.ck-r:hover{background:rgba(245,168,35,.07)}
+.ck-r .c{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:9.5px;font-weight:700;color:var(--t1);white-space:nowrap}
+.ck-r .d{flex:1;min-width:0;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ck-fix{font-size:9px;font-weight:800;color:var(--go-d);background:rgba(245,168,35,.1);border:1px solid rgba(245,168,35,.25);border-radius:5px;padding:2px 7px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.ck-fix:hover{background:var(--go);color:#3a2406;border-color:transparent}
+.ck-altri{padding:6px 11px;font-size:10px;color:var(--t3);font-style:italic}
+.ck-ok{background:linear-gradient(135deg,rgba(52,199,89,.12),rgba(52,199,89,.03));border:1px solid rgba(52,199,89,.28);border-radius:11px;padding:15px 13px;text-align:center}
+.ck-ok .big{font-size:24px;line-height:1}
+.ck-ok b{display:block;font-size:12.5px;margin:7px 0 3px;color:#1A7A2E}
+.ck-ok span{font-size:11px;color:var(--t2);line-height:1.45}
+.ck-ok button{margin-top:11px}
+.ck-vuoto{font-size:11.5px;color:var(--t2);text-align:center;padding:24px 10px;line-height:1.5}
 .gp-empty{text-align:center;font-size:11px;color:var(--t3);padding:24px 8px}
-/* card fornitore */
-.gfc{background:var(--surf);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
-.gfc-h{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
-.gfc-h:hover{background:rgba(245,168,35,.04)}
-.gfc-av{width:30px;height:30px;border-radius:9px;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.gfc-h .nm{font-weight:800;font-size:13px}
-.gfc-h .tp{font-size:10.5px;color:var(--t2)}
-.gfc-h .meta{margin-left:auto;text-align:right;flex-shrink:0}
-.gfc-h .cnt{font-weight:800;font-size:13px}
-.gfc-h .cnt small{font-weight:600;color:var(--t3);font-size:10px}
-.gfc-h .shb{font-size:10px;font-weight:800;color:var(--purple);background:rgba(88,86,214,.1);padding:1px 7px;border-radius:20px;margin-top:2px;display:inline-block}
-.gfc-b{border-top:1px solid var(--bd);padding:4px 0;display:none}
-.gfc.open .gfc-b{display:block}
-.gfc.open .gfc-h{background:rgba(248,244,239,.6)}
-.gfl{display:grid;grid-template-columns:84px 1fr auto;gap:8px;align-items:center;padding:6px 12px;font-size:11.5px;cursor:pointer}
-.gfl:hover{background:rgba(245,168,35,.05)}
-.gfl .c{font-family:ui-monospace,monospace;font-weight:700;color:var(--br);overflow:hidden;text-overflow:ellipsis}
-.gfl .d{color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gfl .s{font-size:9.5px;font-weight:800;color:var(--purple);white-space:nowrap}
-.gfl .s.solo{color:var(--t3)}
-.gchev{transition:transform .15s;color:var(--t3);font-size:10px}
-.gfc.open .gchev{transform:rotate(90deg)}
-/* confronto prezzi */
+/* confronto prezzi (adesso nel modale mCmpPrezzi) */
 .gcmp{background:var(--surf);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
 .gcmp-h{padding:9px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;cursor:pointer}
 .gcmp-h:hover{background:rgba(245,168,35,.04)}
@@ -1546,8 +1550,8 @@ textarea.fld{resize:vertical;min-height:60px}
       </div>
       <div class="glancep" id="viewGlance">
         <div class="gp-rz" id="gpRz" title="Trascina per ridimensionare"></div>
-        <div class="gp-h"><span style="font-size:15px">👁</span><h2>Colpo d'occhio</h2></div>
-        <div class="gp-sub">Chi ha cosa, cosa è in confronto e con chi.</div>
+        <div class="gp-h"><span style="font-size:15px">🚦</span><h2>Cosa manca</h2></div>
+        <div class="gp-sub">Quello che sta fra qui e l&rsquo;invio delle richieste d&rsquo;offerta.</div>
         <div id="glanceBody"></div>
       </div>
       <div class="filep" id="viewFile" style="display:none;flex:1">
@@ -2029,6 +2033,18 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<!-- MODAL: confronto prezzi fra i fornitori di uno stesso pezzo.
+     Era una scheda del pannello laterale; è l'unico posto dove si chiude un
+     confronto scegliendo il vincitore, quindi è diventato un modale invece di
+     sparire con la vecchia versione del pannello. -->
+<div class="mov" id="mCmpPrezzi" onclick="ovClose(event,'mCmpPrezzi')">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd"><div class="mico2">🔀</div><div><div class="mtit">Confronto prezzi</div><div class="msub" id="cmpPrezziSub"></div></div><button class="mx" onclick="mClose('mCmpPrezzi')">✕</button></div>
+    <div class="mbd" id="cmpPrezziBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Scegliere il vincitore chiude il confronto: gli altri fornitori vengono scartati.</div><div class="mft-r"><button class="btn btn-ghost btn-sm" onclick="CMPPID=null;renderConfrontoPrezzi()">Vedi tutti</button><button class="btn btn-go" onclick="mClose('mCmpPrezzi')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mVers" onclick="ovClose(event,'mVers')">
   <div class="modal" style="max-width:560px">
     <div class="mhd"><div class="mico2">🗂</div><div><div class="mtit" id="mVersTit">Versioni articolo</div><div class="msub" id="mVersSub"></div></div><button class="mx" onclick="mClose('mVers')">✕</button></div>
@@ -2324,7 +2340,7 @@ function partRow(p){
   const dot=n>=2?'cmp':(n===1?'ok':'no');
   const dotT=n>=2?('In confronto · '+n+' fornitori'):(n===1?'Assegnato':'Da assegnare');
   let chips='';
-  if(n>=2)chips+=`<span class="pcmpbadge" title="In confronto tra ${n} fornitori — clic per gestire">🔀 ${n}</span>`;
+  if(n>=2)chips+=`<span class="pcmpbadge" style="cursor:pointer" title="In confronto tra ${n} fornitori — clic per i prezzi e per scegliere il vincitore" onclick="event.stopPropagation();apriConfronto(${p.id})">🔀 ${n}</span>`;
   forns.forEach((fid,i)=>{
     const f=fornById(fid);if(!f)return;
     const auto=i===0&&p.assegnazione_auto&&n===1;
@@ -2978,7 +2994,7 @@ function renderTree(){
     <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
     <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
     <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
-    <button class="tbtn" onclick="toggleGlance()" id="btnGlance">👁 Pannello</button>
+    <button class="tbtn" onclick="toggleGlance()" id="btnGlance">🚦 Cosa manca</button>
     <span id="selAct" style="margin-left:auto;display:${S.rows.size?'flex':'none'};align-items:center;gap:6px">
       <b style="font-size:11px" id="selN">${S.rows.size?S.rows.size+' selez.':''}</b>
       <button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button>
@@ -4105,47 +4121,127 @@ function openRevHistory(){
   mOpen('mRev');
 }
 
-/* ── PANNELLO "COLPO D'OCCHIO" ── */
-let GTAB=0; const GFOPEN=new Set();
-function gtab(i){GTAB=i;renderGlance();}
-function gfToggle(fid){GFOPEN.has(fid)?GFOPEN.delete(fid):GFOPEN.add(fid);renderGlance();}
+/* ── PANNELLO «COSA MANCA» ──
+   Non è più un riepilogo di chi ha cosa (quello lo dicono già l'albero e il
+   workspace di Comunicazioni). Qui c'è solo quello che sta fra te e l'invio
+   delle richieste d'offerta: la lista degli ostacoli, dal più grave, ognuno
+   con la strada per toglierlo di mezzo.
+
+   Due livelli. «blocca» = una RDO così non si manda (manca il fornitore, non
+   ha una mail, il pezzo non ha il disegno). «guarda» = si manda, ma è meglio
+   sapere prima che c'è (revisioni doppie, trattamenti scoperti, confronti
+   ancora aperti). */
+const CKOPEN=new Set();
+function ckToggle(k){CKOPEN.has(k)?CKOPEN.delete(k):CKOPEN.add(k);renderGlance();}
 function jumpPart(pid){const p=S.pmap[pid];if(!p)return;S.sel=p.numero_parte;renderTree();const el=document.querySelector('.tr-part[data-pid="'+pid+'"]');if(el)el.scrollIntoView({block:'center',behavior:'smooth'});}
+const _comm=p=>(p.categoria||'').toUpperCase().startsWith('COMMERC');
+// un fornitore è raggiungibile se ha almeno un indirizzo; per gli shop online
+// la mail non serve, l'ordine si fa dal sito
+function fornSenzaRecapito(f){
+  if(!f||f.modalita_ordine==='online')return false;
+  return !((f.emails_to&&f.emails_to.length)||f.email);
+}
+function controlliInvio(){
+  const all=allParti().filter(p=>!p.escluso);
+  const fidsUsati=[...new Set(all.flatMap(pForns))];
+  const rigaPezzo=p=>({cod:p.numero_parte,txt:p.denominazione||'—',go:`jumpPart(${p.id});openDraw(${p.id})`});
+  const rigaForn=f=>({cod:f.nome,txt:f.tipo||'',go:`openForn(${f.id})`,fix:'Apri scheda'});
+  const c=[];
+  const add=(k,liv,tit,sub,righe,azione)=>{if(righe.length)c.push({k,liv,tit,sub,righe,azione});};
+
+  // ── blocca ──
+  add('forn','blocca','senza fornitore',
+    'Nessuno a cui chiedere: questi pezzi non entrano in nessuna RDO.',
+    all.filter(p=>!pForns(p).length).map(rigaPezzo));
+  add('mail','blocca','senza indirizzo mail',
+    'Fornitori assegnati a cui la richiesta non si può spedire.',
+    fidsUsati.map(fornById).filter(f=>fornSenzaRecapito(f)).map(rigaForn));
+  add('nera','blocca','in lista nera',
+    'Assegnati a dei pezzi, ma segnati come da non usare.',
+    fidsUsati.map(fornById).filter(f=>f&&f.blacklist).map(rigaForn));
+  // gli elementi aggiunti a mano (impianto elettrico, manodopera, trasporto) un
+  // disegno non ce l'hanno e non ce l'avranno mai: qui sarebbero solo rumore
+  add('dis','blocca','senza disegno',
+    'Pezzi costruttivi senza nessun file allegato: il fornitore non saprebbe cosa fare.',
+    all.filter(p=>!_comm(p)&&!p.custom&&!pFiles(p).length).map(rigaPezzo));
+
+  // ── da guardare ──
+  add('cmp','guarda','in confronto fra più fornitori',
+    'La richiesta si manda lo stesso; è la conferma d’ordine che aspetta il vincitore.',
+    all.filter(p=>pForns(p).length>=2).map(p=>({cod:p.numero_parte,txt:pForns(p).map(fornFirst).join(' · '),
+      go:`apriConfronto(${p.id})`,fix:'Confronta'})));
+  const basi=Object.keys(S.revGrp||{});
+  add('rev','guarda','revisioni che convivono',
+    'Lo stesso codice è in distinta in più revisioni: rischi di ordinare quella vecchia.',
+    basi.map(b=>({cod:b,txt:`${S.revGrp[b].length} revisioni`,go:`openConfrontoRev('${jsq(b)}')`,fix:'Confronta'})));
+  const sco=(S.albero&&S.albero.trattamenti_scoperti)||0;
+  if(sco)c.push({k:'trt',liv:'guarda',tit:'trattamenti che nessuno fa',
+    sub:'Nessun fornitore in rubrica dichiara questo mestiere.',righe:[],
+    azione:['Vedi i trattamenti','trattamentiApri()'],n:sco});
+  const orfani=(S.albero&&S.albero.fornitori_orfani)||[];
+  add('orf','guarda','nomi fornitore fuori rubrica',
+    'Scritti in distinta ma senza una scheda: l’auto-assegnazione non li vede.',
+    orfani.map(n=>({cod:n,txt:'da collegare',go:'fornOrfaniApri()',fix:'Sistema'})),
+    ['Sistema i nomi','fornOrfaniApri()']);
+  add('den','guarda','senza denominazione',
+    'La riga della richiesta uscirebbe con il solo codice.',
+    all.filter(p=>!(p.denominazione||'').trim()).map(rigaPezzo));
+  if(S.albero&&!S.albero.distinta_codice)c.push({k:'dib',liv:'guarda',tit:'distinta non riconosciuta',
+    sub:'Nessuna riga è marcata come distinta della commessa: conta come un pezzo da ordinare.',
+    righe:[],azione:['Indica la distinta','distintaApri()'],n:1});
+  return c;
+}
 function renderGlance(){
   const body=document.getElementById('glanceBody');if(!body)return;
-  const all=allParti();
-  const assigned=all.filter(p=>pForns(p).length>=1).length;
-  const inCmp=all.filter(p=>pForns(p).length>=2).length;
-  let h=`<div class="gp-rollup"><div class="gp-rl"><div class="v">${assigned}</div><div class="k">pezzi assegnati</div></div><div class="gp-rl acc"><div class="v">${inCmp}</div><div class="k">in confronto prezzi</div></div></div>`;
-  h+=`<div class="gp-seg"><button class="${GTAB===0?'on':''}" onclick="gtab(0)">Per fornitore</button><button class="${GTAB===1?'on':''}" onclick="gtab(1)">Confronto prezzi</button></div>`;
-  h+=GTAB===0?glanceByForn(all):glanceCompare(all);
-  body.innerHTML=h;
-}
-function glanceByForn(all){
-  const map={};
-  all.forEach(p=>{pForns(p).forEach(fid=>{(map[fid]=map[fid]||[]).push(p);});});
-  const fids=Object.keys(map).map(Number);
-  if(!fids.length)return '<div class="gp-empty">Nessun pezzo assegnato.<br>Assegna i fornitori nell\'albero a sinistra.</div>';
-  fids.sort((a,b)=>map[b].length-map[a].length);
-  return fids.map(fid=>{
-    const f=fornById(fid);const nome=f?f.nome:('#'+fid);const tipo=f?f.tipo:'';
-    const parts=map[fid].slice().sort((a,b)=>a.numero_parte.localeCompare(b.numero_parte));
-    const shared=parts.filter(p=>pForns(p).length>=2).length;
-    const open=GFOPEN.has(fid);
-    const rows=parts.map(p=>{
-      const others=pForns(p).filter(x=>x!==fid).map(fornFirst);
-      const s=others.length?`<span class="s">anche: ${others.map(esc).join(', ')}</span>`:`<span class="s solo">solo ${esc(fornFirst(fid))}</span>`;
-      return `<div class="gfl" onclick="jumpPart(${p.id})"><span class="c" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span><span class="d" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span>${s}</div>`;
-    }).join('');
-    return `<div class="gfc${open?' open':''}">
-      <div class="gfc-h" onclick="gfToggle(${fid})">
-        <span class="gchev">▸</span>
-        <span class="gfc-av" style="background:${avc(nome)}">${ini(nome)}</span>
-        <div><div class="nm">${esc(nome)}</div><div class="tp">${esc(tipo)}</div></div>
-        <div class="meta"><div class="cnt">${parts.length} <small>${parts.length===1?'pezzo':'pezzi'}</small></div>${shared?`<span class="shb">${shared} condivisi</span>`:''}</div>
-      </div>
-      <div class="gfc-b">${rows}</div>
-    </div>`;
+  if(!S.albero){body.innerHTML='<div class="ck-vuoto">Apri un progetto per vedere cosa manca.</div>';return;}
+  const all=allParti().filter(p=>!p.escluso);
+  if(!all.length){body.innerHTML='<div class="ck-vuoto">Nessun pezzo in questa commessa.</div>';return;}
+  const c=controlliInvio();
+  if(!c.length){
+    const nf=[...new Set(all.flatMap(pForns))].length;
+    body.innerHTML=`<div class="ck-ok"><div class="big">✓</div>
+      <b>Tutto pronto</b>
+      <span>${all.length} ${all.length===1?'pezzo':'pezzi'} su ${nf} ${nf===1?'fornitore':'fornitori'}: non manca niente per mandare le richieste.</span>
+      <button class="btn btn-go btn-sm" onclick="go('rdo')">Vai a Comunicazioni →</button></div>`;
+    return;
+  }
+  const blocca=c.filter(x=>x.liv==='blocca').reduce((s,x)=>s+(x.n||x.righe.length),0);
+  const testa=blocca
+    ? `<div class="gp-rollup" style="grid-template-columns:1fr"><div class="gp-rl" style="border-color:rgba(192,21,30,.3);background:linear-gradient(135deg,rgba(192,21,30,.08),transparent)"><div class="v" style="color:#C0151E">${blocca}</div><div class="k">cose da sistemare prima di inviare</div></div></div>`
+    : `<div class="gp-rollup" style="grid-template-columns:1fr"><div class="gp-rl" style="border-color:rgba(52,199,89,.3)"><div class="v" style="color:#1A7A2E">✓</div><div class="k">niente blocca l’invio — resta qualcosa da guardare</div></div></div>`;
+  body.innerHTML=testa+c.map(x=>{
+    const n=x.n||x.righe.length;
+    const aperto=CKOPEN.has(x.k);
+    const righe=x.righe.slice(0,20).map(r=>`<div class="ck-r" onclick="${r.go}">
+        <span class="c">${esc(r.cod)}</span><span class="d">${esc(r.txt)}</span>
+        <span class="ck-fix">${esc(r.fix||'Vai')}</span></div>`).join('')
+      +(x.righe.length>20?`<div class="ck-altri">e altri ${x.righe.length-20}…</div>`:'');
+    const az=x.azione?`<div class="ck-r" onclick="${x.azione[1]}"><span class="d">${esc(x.azione[0])}</span><span class="ck-fix">Apri</span></div>`:'';
+    return `<div class="ck-item ${x.liv}${aperto?' open':''}">
+      <div class="ck-h" onclick="ckToggle('${x.k}')">
+        <span class="ck-n">${n}</span>
+        <span class="ck-t"><b>${esc(x.tit)}</b><span>${x.sub}</span></span>
+        <span class="ck-chev">▸</span>
+      </div><div class="ck-b">${righe||az||'<div class="ck-altri">—</div>'}${righe&&az?az:''}</div></div>`;
   }).join('');
+}
+/* Il confronto prezzi è uscito dal pannello ma resta l'unico modo di chiudere
+   un confronto scegliendo il vincitore (le Offerte assegnano un fornitore solo
+   se il pezzo non ne ha ancora uno): adesso è un modale, aperto dal chip del
+   pezzo o dalla riga «in confronto» qui a fianco. */
+function apriConfronto(pid){
+  CMPPID=pid!=null?pid:null;
+  mOpen('mCmpPrezzi');
+  renderConfrontoPrezzi();
+}
+let CMPPID=null;
+function renderConfrontoPrezzi(){
+  const body=document.getElementById('cmpPrezziBody');if(!body)return;
+  const all=allParti().filter(p=>pForns(p).length>=2);
+  const items=(CMPPID!=null?all.filter(p=>p.id===CMPPID):all).sort((a,b)=>a.numero_parte.localeCompare(b.numero_parte));
+  document.getElementById('cmpPrezziSub').textContent=all.length?`${all.length} ${all.length===1?'pezzo':'pezzi'} in confronto`:'';
+  body.innerHTML=items.length?glanceCompare(items)
+    :'<div class="gp-empty">Nessun pezzo in confronto.<br>Usa «+ confronta» su un pezzo per inviarlo a più fornitori e comparare i prezzi.</div>';
 }
 function glanceCompare(all){
   const items=all.filter(p=>pForns(p).length>=2).sort((a,b)=>a.numero_parte.localeCompare(b.numero_parte));
@@ -4169,15 +4265,21 @@ function glanceCompare(all){
     return `<div class="gcmp"><div class="gcmp-h"><span class="c">${esc(p.numero_parte)}</span><span class="d" title="${esc(p.denominazione||'')}">${esc(p.denominazione||'—')}</span><span class="q">×${esc(p.quantita)} pz</span></div>${rows}${act}</div>`;
   }).join('');
 }
+// il confronto vive in un modale: dopo ogni modifica va ridisegnato anche lui
+function _cmpAperto(){return document.getElementById('mCmpPrezzi').classList.contains('open');}
 async function setCompPrezzo(pid,fid,val){
   const prezzo=(val===''||val==null)?null:parseFloat(val);
-  try{const r=await fetch(API+'/api/parti/'+pid+'/prezzo-confronto/'+fid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({prezzo})});if(!r.ok)throw 0;await refreshDetail();}catch{toast('Errore prezzo',true);}
+  try{const r=await fetch(API+'/api/parti/'+pid+'/prezzo-confronto/'+fid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({prezzo})});if(!r.ok)throw 0;
+    await refreshDetail();if(_cmpAperto())renderConfrontoPrezzi();}catch{toast('Errore prezzo',true);}
 }
 async function rmComp(pid,fid){
-  try{const r=await fetch(API+'/api/parti/'+pid+'/comparazione/'+fid,{method:'DELETE'});if(!r.ok)throw 0;toast('Rimosso dal confronto','ok');await refreshDetail();}catch{toast('Errore',true);}
+  try{const r=await fetch(API+'/api/parti/'+pid+'/comparazione/'+fid,{method:'DELETE'});if(!r.ok)throw 0;toast('Rimosso dal confronto','ok');
+    await refreshDetail();if(_cmpAperto())renderConfrontoPrezzi();}catch{toast('Errore',true);}
 }
 async function scegliVincitore(pid,fid){
-  try{const r=await fetch(API+'/api/parti/'+pid+'/scegli/'+fid,{method:'POST'});if(!r.ok)throw 0;toast('Vincitore assegnato — confronto chiuso','ok');await refreshDetail();}catch{toast('Errore',true);}
+  try{const r=await fetch(API+'/api/parti/'+pid+'/scegli/'+fid,{method:'POST'});if(!r.ok)throw 0;toast('Vincitore assegnato — confronto chiuso','ok');
+    await refreshDetail();
+    if(_cmpAperto()){CMPPID=null;renderConfrontoPrezzi();}}catch{toast('Errore',true);}
 }
 async function refreshFiles(){
   try{const rc=await fetch(API+'/api/commesse/'+S.projId+'/files');if(rc.ok)S.cal=await rc.json();}catch{}
@@ -7141,7 +7243,7 @@ function renderDdEditor(d){
         <label class="${o.particolari_ib?'on':''}"><input type="checkbox" ${o.particolari_ib?'checked':''}${disAttr} onchange="ddOpt('particolari_ib',this.checked)"><span>Particolari forniti da ${esc(ibName)} come a disegno <b>(conto lavorazione)</b></span></label>
         <label class="${o.materiale_forn?'on':''}"><input type="checkbox" ${o.materiale_forn?'checked':''}${disAttr} onchange="ddOpt('materiale_forn',this.checked)"><span>Fornitura completa del pezzo a carico del fornitore <b>(materiale incluso)</b></span></label>
       </div>${ctReq?'<div class="dd-ctnote">Rilevati particolari costruttivi / commerciali lavorati: possono valere entrambe le voci, ma va indicata almeno una.</div>':''}</div>`;
-  const confHtml=confN?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO si <b>invia regolarmente</b> (così raccogli le offerte). Scegli poi il vincitore (pannello «👁 Colpo d'occhio» → Confronto prezzi) — la <b>conferma d'ordine</b> è bloccata finché ci sono pezzi in comune.</span></div>`:'';
+  const confHtml=confN?`<div class="dd-confwarn">🔀<span><b>${confN} pezzi in confronto</b> tra più fornitori: la RDO si <b>invia regolarmente</b> (così raccogli le offerte). Scegli poi il vincitore (clic sul badge 🔀 del pezzo, o dal pannello «🚦 Cosa manca») — la <b>conferma d'ordine</b> è bloccata finché ci sono pezzi in comune.</span></div>`:'';
   const dwg=ddDisegniFiles(d), dwgLbl=isComm?'Datasheet':'Disegni';
   const dwgHtml=thDwgListHtml(dwg,isComm);
   const pdfUrl=API+`/api/commesse/${d.commessa_id}/rdo/${d.fornitore_id}/export?fmt=pdf&_=`+Date.now();
@@ -8505,7 +8607,7 @@ function applyGlance(){
   ws.classList.toggle('gcol',!!S.glanceCol);
   g.style.display=(S.view==='albero'&&!S.glanceCol)?'flex':'none';
   const b=document.getElementById('btnGlance');
-  if(b){b.classList.toggle('on',!S.glanceCol);b.title=(S.glanceCol?'Mostra':'Nascondi')+' il pannello «Colpo d’occhio»';}
+  if(b){b.classList.toggle('on',!S.glanceCol);b.title=(S.glanceCol?'Mostra':'Nascondi')+' il pannello «Cosa manca»';}
 }
 function toggleGlance(){
   S.glanceCol=!S.glanceCol;
