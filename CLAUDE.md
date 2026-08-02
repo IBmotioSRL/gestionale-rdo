@@ -50,7 +50,7 @@ Una per sezione, tutte già nel markup; il router accende quella giusta.
 |---|---|---|---|
 | `v-home` | Home | — | 1446 |
 | `v-proj` | Progetti (griglia) | `renderProgetti` · `"PROGETTI GRID"` | 1480 |
-| `v-pdet` | **Progetto** (albero + drawer) | `openProgetto` · `renderTree` · `"PROGETTO DETAIL"` | 1490 |
+| `v-pdet` | **Progetto** (albero + drawer + impostazioni) | `openProgetto` · `renderTree` · `"PROGETTO DETAIL"` | 1490 |
 | `v-rdo` | RDO | `"RDO VIEW"` | 1543 |
 | `v-forn` | Fornitori | `renderForn` · `"FORNITORI — lista friendly"` | 1562 |
 | `v-ore` | Raccolta ore | `"RACCOLTA ORE"` | 1585 |
@@ -70,8 +70,20 @@ Cerca la stringa, non la riga.
 
 **Progetto — è qui che si lavora di più**
 
+Tre tab: **Albero parti** (`viewAlbero`), **Ricerca file** (`viewFile`),
+**Impostazioni progetto** (`viewImp`). `setView('albero'|'file'|'imp')` le
+accende; dentro le impostazioni ci sono tre sotto-tab, `impTab('modifica'|
+'fornitori'|'struttura')`. I dati del progetto e i fornitori del progetto NON
+sono più modali: stanno lì (`salvaImpProgetto`, `caricaPref`/`renderPref`).
+Il modale `mProg` serve solo a **creare** un progetto nuovo.
+
 - `"PROGETTO DETAIL"` — `openProgetto()` carica albero, file, voci
+- `"IMPOSTAZIONI PROGETTO"` — `renderImpostazioni` · `impTab` · `salvaImpProgetto`
 - `"vista albero raggruppata per CATEGORIA PROGETTO"` — modalità «Categorie mie»
+- `"FILTRI PER ATTRIBUTO"` — `fltBar`/`fltPassa`/`treeParti`, la barra sopra le righe
+- `"«Trattamenti termici e superficiali»"` — `trattTree()`, blocco trasversale in
+  fondo all'albero: gli stessi pezzi compaiono anche nella loro categoria
+- `"SELEZIONE + FAB"` — `partClick` (Ctrl/Shift stile Windows), `ckGruppo`/`paintSel`
 - `"albero commerciali: TIPO → gruppo fornitore → pezzi"`
 - `"DRAWER DETTAGLIO PARTICOLARE"` — `openDraw(pid)`, la scheda del pezzo
 - `"il percorso del pezzo: la catena di tappe"` — `caricaPercorso` · `renderPercorso`
@@ -112,8 +124,9 @@ Cerca la stringa, non la riga.
 
 - `S.projId`, `S.albero` — commessa aperta e il suo albero
 - `S.pmap` — `{id: parte}`, ricostruita a ogni `renderTree`
-- `S.rows` — `Set` degli id selezionati
+- `S.rows` — `Set` degli id selezionati; `S.ultimaRiga` per lo Shift+clic
 - `S.sel`, `S.treeMode` (`'std'` | `'cat'`)
+- `S.flt` — filtri per attributo; `S.openTratt`, `S.glanceCol`, `S.impTab`
 - `S.revDup` / `S.revGrp` — revisioni che convivono
 - Altri: `fornitori`, `commesse`, `NOTIF`, `PROP` (vocabolario), `PERC`
   (percorso aperto), `VOCICOM` (voci di commessa), `ORE`, `MAG`, `DD`/`RDO_MAIL`
@@ -143,6 +156,13 @@ Lo stile è `.dist-bar` (`.ok` = verde).
 
 **Nomi già presi:** attenzione alle collisioni fra variabili globali — `VOCI` è
 già usato dalle RDO, per questo le voci di commessa si chiamano `VOCICOM`.
+
+**Chi può fare cosa:** il ruolo sta in `ORE.me.ruolo` (`utente` |
+`amministratore`), caricato all'avvio da `loadUtente()`. Helper: `sonoAdmin()`.
+Lato server il cancello è `richiedi_admin(utente_ore_corrente)`.
+
+**Ridipingere la selezione:** `paintSel()`, non `renderTree()` — rifare l'albero
+azzera lo scorrimento. `renderTree` chiama `paintSel` alla fine.
 
 ---
 

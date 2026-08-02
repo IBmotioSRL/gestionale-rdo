@@ -155,6 +155,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tr-cat:hover{background:rgba(245,168,35,.06)}
 .tr-cat.comm{background:linear-gradient(90deg,rgba(245,168,35,.18),rgba(245,168,35,.06));border-left:3px solid var(--go-d)}
 .tr-cat.comm .tr-cat-label{color:var(--go-d)}
+/* trattamenti termici e superficiali: non è una categoria della distinta, è un
+   raccoglitore trasversale — colore suo (viola) per non confonderlo con le altre */
+.tr-cat.tratt{background:linear-gradient(90deg,rgba(122,86,178,.20),rgba(122,86,178,.05));border-left:3px solid #7A56B2}
+.tr-cat.tratt .tr-cat-label{color:#5E3F92}
+.tr-tratt-sub{display:flex;align-items:center;gap:7px;padding:6px 13px 6px 26px;border-bottom:1px solid rgba(0,0,0,.03);cursor:pointer;user-select:none;background:rgba(122,86,178,.045)}
+.tr-tratt-sub:hover{background:rgba(122,86,178,.09)}
+.tr-tratt-sub .tr-lav-label{color:#5E3F92}
+.tr-catck{display:flex;align-items:center;flex-shrink:0}
+.tr-catck input{accent-color:var(--go);cursor:pointer;margin:0}
 .tr-sep{height:0;border-top:2px dashed rgba(44,21,6,.14);margin:3px 0}
 .tr-arrow{font-size:10px;color:var(--t3);width:12px;flex-shrink:0}
 .tr-cat-label{font-size:11px;font-weight:800;color:var(--t1);letter-spacing:.02em;text-transform:uppercase;flex:1}
@@ -170,13 +179,40 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tr-toolbar{display:flex;gap:6px;align-items:center}
 .tbtn{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;border:1px solid var(--bd);background:var(--surf);color:var(--t2);cursor:pointer}
 .tbtn:hover{border-color:var(--go);color:var(--go-d)}
+.tbtn.on{border-color:var(--go);color:var(--go-d);background:rgba(245,168,35,.10)}
+/* filtri sopra le righe (vista «Categorie mie») */
+.flt-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:rgba(248,244,239,.7);border-bottom:1px solid var(--bd)}
+.flt-bar select,.flt-bar input{font-size:10.5px;border:1px solid var(--bd);border-radius:6px;padding:4px 7px;background:var(--surf);color:var(--t1);max-width:170px}
+.flt-bar select.act{border-color:var(--go);color:var(--go-d);font-weight:700}
+.flt-n{font-size:10px;font-weight:700;color:var(--t2);margin-left:auto}
+.flt-x{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;padding:3px 7px;border-radius:5px;border:1px solid rgba(245,168,35,.3);background:rgba(245,168,35,.08)}
+/* pagina IMPOSTAZIONI PROGETTO */
+.impp{display:flex;flex-direction:column;overflow:hidden;background:var(--surf);min-height:0}
+.imp-tabs{display:flex;gap:4px;padding:9px 14px 0;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--bg)}
+.imp-tab{padding:6px 13px;border-radius:7px 7px 0 0;font-size:11.5px;font-weight:700;color:var(--t2);cursor:pointer;border:1px solid transparent;border-bottom:none;user-select:none}
+.imp-tab:hover{background:rgba(44,21,6,.04)}
+.imp-tab.on{background:var(--surf);color:var(--t1);border-color:var(--bd)}
+.imp-scroll{overflow-y:auto;flex:1;min-height:0;padding:16px}
+.imp-pane{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.imp-card{border:1px solid var(--bd);border-radius:var(--r,12px);padding:15px 17px;background:var(--surf)}
+.imp-card.danger{border-color:rgba(176,70,50,.3);background:rgba(176,70,50,.03)}
+.imp-h{font-size:13px;font-weight:800;color:var(--t1);margin-bottom:3px}
+.imp-h span{font-size:10px;font-weight:600;color:var(--t3);margin-left:5px}
+.imp-sub{font-size:11.5px;color:var(--t2);line-height:1.5;margin-bottom:12px}
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.imp-act{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.imp-fatti{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.imp-fatto{border:1px solid var(--bd);border-radius:9px;padding:9px 11px;background:var(--bg)}
+.imp-fatto b{display:block;font-size:17px;font-weight:800;color:var(--t1);line-height:1.2}
+.imp-fatto span{font-size:10.5px;color:var(--t2)}
+@media(max-width:700px){.imp-grid{grid-template-columns:1fr}}
 .tr-lav{display:flex;align-items:center;gap:7px;padding:6px 13px 6px 26px;border-bottom:1px solid rgba(0,0,0,.03);cursor:pointer;user-select:none}
 .tr-lav:hover{background:rgba(245,168,35,.04)}
 .tr-lav-label{font-size:11px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tr-lav-bar{width:48px;height:3px;border-radius:3px;background:rgba(44,21,6,.07);overflow:hidden;flex-shrink:0}
 .tr-lav-barf{height:100%;border-radius:3px}
 .tr-part{display:grid;grid-template-columns:16px 5px 88px 1fr auto auto auto;align-items:center;gap:8px;
-  padding:6px 12px 6px 30px;border-bottom:1px solid rgba(0,0,0,.035);cursor:pointer;position:relative}
+  padding:6px 12px 6px 30px;border-bottom:1px solid rgba(0,0,0,.035);cursor:pointer;position:relative;user-select:none}
 .tr-part:hover{background:rgba(245,168,35,.05)}
 .tr-part.sel{background:rgba(0,122,255,.07)}
 .tr-part.sel::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue)}
@@ -1493,10 +1529,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="wpr">
         <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span><span id="wrev"></span>
         <div class="wact">
-          <button class="btn btn-ghost btn-sm" onclick="openModifica()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifica</button>
-          <button class="btn btn-ghost btn-sm" onclick="openPref()" id="btnPref"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Fornitori progetto</button>
-          <button class="btn btn-ghost btn-sm" onclick="riscansiona()" id="btnRiscan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Riscansiona</button>
-          <button class="btn btn-danger btn-sm" onclick="eliminaProgetto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Elimina</button>
+          <button class="btn btn-ghost btn-sm" onclick="go2imp()" title="Dati del progetto, fornitori, struttura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Impostazioni progetto</button>
         </div>
       </div>
       <div class="wpath" id="wpath"></div>
@@ -1505,17 +1538,10 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="pdet-tabs">
       <div class="pdet-tab on" id="tabAlbero" onclick="setView('albero')">Albero parti</div>
       <div class="pdet-tab" id="tabFile" onclick="setView('file')">Ricerca file <span class="ptc" id="ftot">0</span></div>
+      <div class="pdet-tab" id="tabImp" onclick="setView('imp')">⚙️ Impostazioni progetto</div>
     </div>
     <div class="ws" style="display:flex;min-height:0">
       <div class="treep" id="viewAlbero" style="flex:1">
-        <div class="tph"><div class="tpt">Struttura progetto <span id="tstats"></span></div>
-          <div class="tr-toolbar">
-            <button class="tbtn" onclick="autoAssegna()" id="btnAuto" title="Riassegna i fornitori in base ai tag">✨ Auto-assegna</button>
-            <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
-            <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
-            <button class="tbtn" onclick="toggleGlance()" id="btnGlance" title="Mostra/nascondi il pannello «Colpo d'occhio»">👁 Pannello</button>
-            <label class="tck"><input type="checkbox" id="chkall" onchange="toggleAll(this.checked)"> Tutti</label>
-          </div></div>
         <div class="tscroll" id="tscroll"></div>
       </div>
       <div class="glancep" id="viewGlance">
@@ -1534,6 +1560,69 @@ textarea.fld{resize:vertical;min-height:60px}
           <span class="fcount" id="fcount"></span>
         </div>
         <div class="ftable-wrap" id="ftableWrap"></div>
+      </div>
+      <!-- IMPOSTAZIONI PROGETTO: quello che si regola una volta, non le righe -->
+      <div class="impp" id="viewImp" style="display:none;flex:1">
+        <div class="imp-tabs">
+          <div class="imp-tab on" id="itModifica" onclick="impTab('modifica')">✎ Modifica</div>
+          <div class="imp-tab" id="itFornitori" onclick="impTab('fornitori')">👥 Fornitori progetto</div>
+          <div class="imp-tab" id="itStruttura" onclick="impTab('struttura')">🗂 Struttura progetto</div>
+        </div>
+        <div class="imp-scroll">
+          <!-- ── Modifica: dati del progetto, riscansione, eliminazione ── -->
+          <div class="imp-pane" id="ipModifica">
+            <div class="imp-card">
+              <div class="imp-h">Dati del progetto</div>
+              <div class="imp-sub">Codice, nome e cartella. Se cambi la cartella, poi lancia una riscansione.</div>
+              <div class="imp-grid">
+                <div class="fg"><label class="fl">Codice commessa *</label><input class="fld" id="spCodice" placeholder="Es: IB05.2025"><div class="ferr" id="spCodiceErr">Campo obbligatorio</div></div>
+                <div class="fg"><label class="fl">Nome progetto *</label><input class="fld" id="spNome" placeholder="Es: Carro LEM"><div class="ferr" id="spNomeErr">Campo obbligatorio</div></div>
+                <div class="fg"><label class="fl">Cliente</label><input class="fld" id="spCliente" placeholder="Es: Fibbi"></div>
+                <div class="fg"><label class="fl">Brand (logo distinte e RDO)</label><select class="fld" id="spBrand"><option value="IB">IB Motion</option><option value="YS">YuBe Solutions</option></select></div>
+              </div>
+              <div class="fg"><label class="fl">Percorso cartella (distinta base) *</label><input class="fld" id="spCartella" placeholder="\\SERVER01\lavoro\…\NOME COMMESSA"><div class="ferr" id="spCartellaErr">Campo obbligatorio</div><div class="fhint">Cartella della commessa. Comanda la distinta generale Excel (.xlsx) al suo interno; i disegni/datasheet nelle sottocartelle finiscono nella ricerca file.</div></div>
+              <div class="fg"><label class="fl">Note</label><textarea class="fld" id="spNote" placeholder="Priorità, scadenze…"></textarea></div>
+              <div class="imp-act"><button class="btn btn-go" id="spBtn" onclick="salvaImpProgetto()">Salva modifiche</button></div>
+            </div>
+            <div class="imp-card">
+              <div class="imp-h">Rileggi la cartella</div>
+              <div class="imp-sub">Ripassa la distinta Excel e i file su disco: aggiunge i pezzi nuovi, aggiorna i disegni e archivia le revisioni superate. Quello che hai modificato a mano resta.</div>
+              <div class="imp-act"><button class="btn btn-ghost" onclick="riscansiona()" id="btnRiscan">🔄 Riscansiona</button></div>
+            </div>
+            <div class="imp-card danger">
+              <div class="imp-h">Elimina il progetto</div>
+              <div class="imp-sub">Toglie dal gestionale parti, assegnazioni e percorsi di questa commessa. I file su disco non vengono toccati.</div>
+              <div class="imp-act"><button class="btn btn-danger" onclick="eliminaProgetto()">🗑 Elimina progetto</button></div>
+            </div>
+          </div>
+          <!-- ── Fornitori del progetto ── -->
+          <div class="imp-pane" id="ipFornitori" style="display:none">
+            <div class="imp-card">
+              <div class="imp-h">Fornitori del progetto</div>
+              <div class="imp-sub">Solo i fornitori selezionati vengono usati per l&rsquo;auto-assegnazione di questa commessa.</div>
+              <div id="prefBody"></div>
+              <div class="imp-act"><button class="btn btn-go" onclick="savePref()">Salva fornitori</button></div>
+            </div>
+          </div>
+          <!-- ── Struttura del progetto ── -->
+          <div class="imp-pane" id="ipStruttura" style="display:none">
+            <div class="imp-card">
+              <div class="imp-h">Com&rsquo;è fatto <span id="tstats"></span></div>
+              <div class="imp-sub">Il conto di quello che la distinta ha portato dentro.</div>
+              <div id="impStruttura"></div>
+            </div>
+            <div class="imp-card">
+              <div class="imp-h">Assegnazione automatica</div>
+              <div class="imp-sub">Assegna i fornitori del progetto ai pezzi in base ai tag (lavorazione, tipo, categoria). Non tocca chi hai già scelto a mano.</div>
+              <div class="imp-act"><button class="btn btn-ghost" onclick="autoAssegna()" id="btnAuto">✨ Auto-assegna</button></div>
+            </div>
+            <div class="imp-card">
+              <div class="imp-h">Categorie mie</div>
+              <div class="imp-sub">Raggruppamenti tuoi, indipendenti dalle categorie della distinta. Ognuna può essere legata o slegata dai Costi.</div>
+              <div class="imp-act"><button class="btn btn-ghost" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1745,7 +1834,7 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="fg"><label class="fl">Note</label><textarea class="fld" id="fNote" placeholder="Limiti, tempi, condizioni…"></textarea></div>
       <div class="fg" id="fAttivoGrp" style="display:none"><label class="fmt-c"><input type="checkbox" id="fAttivo"> Fornitore attivo</label><label class="fmt-c" style="color:var(--red)"><input type="checkbox" id="fBlack"> 🚫 Lista nera (non usare più)</label></div>
     </div>
-    <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="eliminaForn()">Disattiva</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
+    <div class="mft"><button class="btn btn-danger btn-sm" id="fDel" style="display:none" onclick="disattivaForn()" title="Lo toglie dalle liste di scelta, ma resta scritto dov'era: assegnazioni, RDO, storico">Disattiva</button><button class="btn btn-danger btn-sm" id="fDelDef" style="display:none" onclick="eliminaForn()" title="Cancella proprio la scheda. Solo per amministratori, e solo se non ha storico">🗑 Elimina scheda</button><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mForn')">Annulla</button><button class="btn btn-go" id="fBtn" onclick="salvaForn()">Salva</button></div></div>
   </div>
 </div>
 
@@ -1983,17 +2072,7 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
-<div class="mov" id="mPref" onclick="ovClose(event,'mPref')">
-  <div class="modal">
-    <div class="mhd">
-      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-      <div><div class="mtit">Fornitori del progetto</div><div class="vsub" style="font-size:11px">Solo i fornitori selezionati vengono usati per l'auto-assegnazione di questa commessa.</div></div>
-      <button class="mx" onclick="mClose('mPref')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="mbd" id="prefBody"></div>
-    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mPref')">Annulla</button><button class="btn btn-go" onclick="savePref()">Salva</button></div></div>
-  </div>
-</div>
+<!-- «Fornitori del progetto» non è più un modale: sta in Impostazioni progetto → Fornitori progetto -->
 
 <!-- MODAL: Raccolta Ore — nuova/modifica registrazione -->
 <div class="mov" id="mOreVoce" onclick="ovClose(event,'mOreVoce')">
@@ -2081,7 +2160,8 @@ function configBackend(){const v=prompt('Indirizzo backend:',API);if(v===null)re
 /* ── STATE ── */
 let commesse=[], fornitori=[];
 const S={v:'home',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new Set(),sq:'',openCat:{},openLav:{},openTipo:{},openGrp:{},
-  view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set(),pmap:{}};
+  view:'albero',fq:'',fTipo:new Set(),fCat:new Set(),fForn:new Set(),pmap:{},
+  flt:{},openTratt:false,ultimaRiga:null,glanceCol:false,impTab:'modifica'};
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
@@ -2110,6 +2190,9 @@ async function loadUtente(){try{const r=await fetch(API+'/auth/utente');if(!r.ok
   document.getElementById('sbUserNome').textContent=nome;
   document.getElementById('sbUserEmail').textContent=u.email||'';
   document.getElementById('sbUserAv').textContent=nome.split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+  // il ruolo serve subito, non solo dentro Raccolta Ore: comanda i pulsanti
+  // riservati (per esempio l'eliminazione di una scheda fornitore)
+  try{const rm=await fetch(API+'/api/ore/me');if(rm.ok)ORE.me=await rm.json();}catch{}
 }catch{}}
 function logout(){location.href=API+'/auth/logout';}
 function userMenu(e){
@@ -2180,6 +2263,7 @@ async function openProgetto(pid){
   if(pid!=null)S.projId=pid;
   S.sel=null;S.rows.clear();S.tab='tutti';S.sq='';S.openCat={};S.openLav={};S.openTipo={};S.openGrp={};
   S.view='albero';S.fq='';S.fTipo=new Set();S.fCat=new Set();S.fForn=new Set();
+  S.flt={};S.openTratt=false;S.ultimaRiga=null;S.impTab='modifica';
   document.getElementById('v-pdet').classList.add('on');
   const c=commesse.find(x=>x.id===S.projId);
   document.getElementById('bcproj').textContent=c?c.codice:'—';
@@ -2252,7 +2336,7 @@ function partRow(p){
   const revTag=isRevisionato(p.revisione)?`<span class="tr-revtag" title="Pezzo revisionato (revisione ${esc(p.revisione)}) — è la revisione corrente, sostituisce la rev 00">⟳ ${esc(revLabelPart(p.revisione))}</span>`:'';
   const dupBase=S.revDup?S.revDup[p.id]:null;
   const dupTag=dupBase?`<span class="tr-duptag" title="Questo pezzo è in distinta in ${S.revGrp[dupBase].length} revisioni contemporaneamente — clic per confrontarle" onclick="event.stopPropagation();openConfrontoRev('${jsq(dupBase)}')">⚠ ${S.revGrp[dupBase].length} revisioni</span>`:'';
-  return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="selPart('${jsq(p.numero_parte)}',${p.id})">
+  return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="partClick(event,'${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
       <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
@@ -2771,23 +2855,101 @@ function revLabelPart(v){const s=String(v||'').trim();const m=s.match(/(\d+)/);r
 // ── vista albero raggruppata per CATEGORIA PROGETTO (categorie personalizzate) ──
 function setTreeMode(m){S.treeMode=m;renderTree();}
 function renderTreeCat(){
-  const all=allParti().filter(p=>!p.escluso);
+  const all=treeParti();
   const cats=(S.albero&&S.albero.categorie_progetto)||[];
   const g={};all.forEach(p=>{const k=p.categoria_progetto||'Da assegnare';(g[k]=g[k]||[]).push(p);});
   const order=[...cats,'Da assegnare'];
   const keys=Object.keys(g).sort((a,b)=>{let ia=order.indexOf(a),ib=order.indexOf(b);ia=ia<0?98:ia;ib=ib<0?98:ib;return ia-ib||a.localeCompare(b);});
-  if(!keys.length)return '<div style="padding:20px;text-align:center;font-size:11px;color:var(--t3)">Nessun elemento.</div>';
+  if(!keys.length)return `<div style="padding:20px;text-align:center;font-size:11px;color:var(--t3)">${fltAttivi()?'Nessuna voce con questi filtri.':'Nessun elemento.'}</div>`;
   let html='';
   keys.forEach(k=>{
     const arr=g[k];const done=arr.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
     const sync=(S.albero&&S.albero.categorie_sync||[]).some(s=>s.toLowerCase()===k.toLowerCase());
     const tag=k!=='Da assegnare'?`<span class="cx-synctag ${sync?'on':'off'}" title="${sync?'sincronizzata coi Costi':'separata dai Costi'}" onclick="event.stopPropagation();projToggleSync('${jsq(k)}',${!sync})">${sync?'🔗 sync':'⛓ sync'}</span>`:'';
-    html+=`<div class="tr-cat" onclick="toggleCatProg('${jsq(k)}')"><span class="tr-arrow">${S.openCatProg&&S.openCatProg[k]===false?'▸':'▾'}</span>
+    html+=`<div class="tr-cat" onclick="toggleCatProg('${jsq(k)}')">
+      ${ckGruppo(arr.map(p=>p.id),null,'Seleziona tutta la categoria')}
+      <span class="tr-arrow">${S.openCatProg&&S.openCatProg[k]===false?'▸':'▾'}</span>
       <span class="tr-cat-label">${esc(k)}</span><span class="tr-cnt ${done===arr.length&&arr.length?'done':''}">${done}/${arr.length}</span>${tag}</div>`;
     if(!(S.openCatProg&&S.openCatProg[k]===false))arr.forEach(p=>{html+=partRow(p);});
   });
   return html;
 }
+
+/* ── FILTRI PER ATTRIBUTO (vista «Categorie mie») ──
+   Sopra le righe, prima di ogni divisione: si sceglie un valore per attributo e
+   restano solo le voci che ce l'hanno. La casella globale della barra sopra
+   seleziona quello che i filtri hanno lasciato. */
+const FLT_DIM=[
+  ['cat','Categoria',   p=>p.categoria],
+  ['lav','Lavorazione', p=>p.lav_meccanica],
+  ['mat','Materiale',   p=>p.materiale],
+  ['tip','Tipo',        p=>p.tipo],
+  ['for','Fornitore',   p=>p.fornitore_id?(fornById(p.fornitore_id)||{}).nome:''],
+  ['trt','Trattamento', p=>(p.trattamenti||[]).join(' · ')],
+];
+function fltAttivi(){return FLT_DIM.some(([k])=>S.flt&&S.flt[k])||!!(S.flt&&S.flt.q);}
+function fltPassa(p){
+  if(!S.flt)return true;
+  for(const [k,,get] of FLT_DIM){
+    const v=S.flt[k];if(!v)continue;
+    const val=String(get(p)||'');
+    if(k==='trt'){if(!val.split(' · ').includes(v))return false;}
+    else if(val!==v)return false;
+  }
+  if(S.flt.stato){
+    const b=statoBucket(p);
+    if(S.flt.stato==='da'&&b!=='daSmistare')return false;
+    if(S.flt.stato==='ass'&&b==='daSmistare')return false;
+  }
+  const q=(S.flt.q||'').trim().toLowerCase();
+  if(q){
+    const testo=[p.numero_parte,p.denominazione,p.materiale,p.lav_meccanica,p.tipo,p.categoria,
+      (p.trattamenti||[]).join(' ')].join(' ').toLowerCase();
+    if(!testo.includes(q))return false;
+  }
+  return true;
+}
+// i pezzi che l'albero sta mostrando adesso: è su questi che agisce la casella globale
+function treeParti(){
+  if(!S.albero)return [];
+  return S.treeMode==='cat'?allParti().filter(p=>!p.escluso&&fltPassa(p)):allParti();
+}
+function fltBar(){
+  const base=allParti().filter(p=>!p.escluso);
+  const opz=(k,get)=>{
+    const vals=[...new Set(base.flatMap(p=>{
+      const v=get(p);return k==='trt'?(p.trattamenti||[]):(v?[String(v)]:[]);
+    }).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    return vals.map(v=>`<option value="${esc(v)}"${(S.flt&&S.flt[k])===v?' selected':''}>${esc(v)}</option>`).join('');
+  };
+  const sel=FLT_DIM.map(([k,lbl,get])=>{
+    const o=opz(k,get);
+    if(!o)return '';
+    return `<select class="${(S.flt&&S.flt[k])?'act':''}" onchange="fltSet('${k}',this.value)"><option value="">${lbl}: tutti</option>${o}</select>`;
+  }).join('');
+  const st=`<select class="${(S.flt&&S.flt.stato)?'act':''}" onchange="fltSet('stato',this.value)">
+    <option value="">Stato: tutti</option>
+    <option value="da"${(S.flt&&S.flt.stato)==='da'?' selected':''}>Da assegnare</option>
+    <option value="ass"${(S.flt&&S.flt.stato)==='ass'?' selected':''}>Assegnati</option></select>`;
+  const n=treeParti().length,tot=base.length;
+  return `<div class="flt-bar">${sel}${st}
+    <input type="text" placeholder="cerca…" value="${esc((S.flt&&S.flt.q)||'')}" oninput="fltSet('q',this.value)">
+    ${fltAttivi()?`<span class="flt-x" onclick="fltAzzera()">✕ togli i filtri</span>`:''}
+    <span class="flt-n">${n===tot?`${tot} voci`:`${n} di ${tot}`}</span></div>`;
+}
+function fltSet(k,v){
+  S.flt=S.flt||{};S.flt[k]=v;
+  if(k==='q'){                       // la ricerca non deve far perdere il fuoco
+    const sc=document.getElementById('tscroll');const y=sc?sc.scrollTop:0;
+    renderTree();
+    const inp=document.querySelector('.flt-bar input[type=text]');
+    if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
+    if(sc)sc.scrollTop=y;
+    return;
+  }
+  renderTree();
+}
+function fltAzzera(){S.flt={};renderTree();}
 function toggleCatProg(k){S.openCatProg=S.openCatProg||{};S.openCatProg[k]=S.openCatProg[k]===false?true:false;renderTree();}
 async function assegnaCatProgetto(){
   const ids=[...S.rows];if(!ids.length)return;
@@ -2809,15 +2971,25 @@ function renderTree(){
   S.pmap={};
   calcRevCoesistenti();
   if(!VOCICOM.length&&S.projId&&!S._vociCaricate){S._vociCaricate=true;vociCarica().then(()=>renderTree());}
-  // barra: toggle albero/categorie-mie + aggiungi elemento + azione su selezione
-  const bar=`<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)">
+  // barra: selezione globale, toggle albero/categorie-mie, controlli di vista
+  const bar=`<div class="flt-bar" style="background:var(--bg)">
+    ${ckGruppo(treeParti().map(p=>p.id),'ckAll','Seleziona tutte le voci mostrate')}
     <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Categorie mie</button></div>
     <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
-    ${S.treeMode==='cat'?`<button class="btn btn-sm" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button>`:''}
-    ${S.rows.size>0?`<span style="margin-left:auto;display:flex;align-items:center;gap:6px"><b style="font-size:11px">${S.rows.size} selez.</b><button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button></span>`:''}
+    <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
+    <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
+    <button class="tbtn" onclick="toggleGlance()" id="btnGlance">👁 Pannello</button>
+    <span id="selAct" style="margin-left:auto;display:${S.rows.size?'flex':'none'};align-items:center;gap:6px">
+      <b style="font-size:11px" id="selN">${S.rows.size?S.rows.size+' selez.':''}</b>
+      <button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button>
+      <button class="btn btn-ghost btn-sm" onclick="S.rows.clear();paintSel()">✕</button>
+    </span>
   </div>`;
   const dist=distintaBanner()+fornOrfaniBanner()+trattamentiBanner()+vociBanner();
-  if(S.treeMode==='cat'){document.getElementById('tscroll').innerHTML=dist+bar+renderTreeCat();return;}
+  if(S.treeMode==='cat'){
+    document.getElementById('tscroll').innerHTML=dist+bar+fltBar()+renderTreeCat();
+    paintSel();return;
+  }
   let html=dist+bar;
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
@@ -2828,6 +3000,7 @@ function renderTree(){
     if(!isComm&&prevComm)html+='<div class="tr-sep"></div>';
     prevComm=isComm;
     html+=`<div class="tr-cat${isComm?' comm':''}" onclick="toggleCat('${jsq(cat.categoria)}')">
+      ${ckGruppo(allP.map(p=>p.id),null,'Seleziona tutta la categoria')}
       <span class="tr-arrow">${catOpen?'▾':'▸'}</span>
       <span class="tr-cat-label">${esc(cat.categoria||'')}</span>
       <span class="tr-cnt ${done===allP.length&&allP.length?'done':''}">${done}/${allP.length}</span>
@@ -2851,6 +3024,7 @@ function renderTree(){
       const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
       const col=lavColor(lav.lav_meccanica);
       html+=`<div class="tr-lav" onclick="toggleLav('${jsq(lk)}')">
+        ${ckGruppo(lav.parti.map(p=>p.id),null,'Seleziona questa lavorazione')}
         <span class="tr-arrow">${lavOpen?'▾':'▸'}</span>
         <span class="tr-lav-label" style="color:${col}">${esc(lav.lav_meccanica||'')}</span>
         <div class="tr-lav-bar"><div class="tr-lav-barf" style="width:${lav.parti.length?Math.round(ld/lav.parti.length*100):0}%;background:${col}"></div></div>
@@ -2862,7 +3036,44 @@ function renderTree(){
       if(lavOpen)lav.parti.forEach(p=>{html+=partRow(p);});
     });
   });
+  html+=trattTree();
   document.getElementById('tscroll').innerHTML=html;
+  paintSel();
+}
+
+/* ── «Trattamenti termici e superficiali» ──
+   Non è una categoria della distinta: i pezzi da nichelare o verniciare restano
+   dove li mette la produzione (carpenteria, meccanica…). Questo è un blocco
+   trasversale che li raccoglie tutti, per vedere a colpo d'occhio quanto lavoro
+   di trattamento c'è dentro la commessa. Gli stessi pezzi, quindi, compaiono
+   due volte: qui e nella loro categoria. Nasce chiuso. */
+function trattTree(){
+  const map={};
+  allParti().forEach(p=>{(p.trattamenti||[]).forEach(t=>{(map[t]=map[t]||[]).push(p);});});
+  const chiavi=Object.keys(map).sort((a,b)=>a.localeCompare(b));
+  if(!chiavi.length)return '';
+  const ids=[...new Set(chiavi.flatMap(t=>map[t].map(p=>p.id)))];
+  const aperto=S.openTratt===true;
+  let html='<div class="tr-sep"></div>'+
+    `<div class="tr-cat tratt" onclick="S.openTratt=!S.openTratt;renderTree()">
+      ${ckGruppo(ids,null,'Seleziona tutti i pezzi da trattare')}
+      <span class="tr-arrow">${aperto?'▾':'▸'}</span>
+      <span class="tr-cat-label">🧪 Trattamenti termici e superficiali</span>
+      <span class="tr-cnt">${ids.length} ${ids.length===1?'pezzo':'pezzi'}</span>
+      <span class="tr-assign-all" onclick="event.stopPropagation();trattamentiApri()">Gestisci</span></div>`;
+  if(!aperto)return html;
+  chiavi.forEach(t=>{
+    const arr=map[t];
+    const tk='tratt||'+t;
+    const aperta=S.openTipo[tk]===true;   // i singoli trattamenti nascono chiusi
+    html+=`<div class="tr-tratt-sub" onclick="toggleTipo('${jsq(tk)}')">
+      ${ckGruppo(arr.map(p=>p.id),null,'Seleziona i pezzi di questo trattamento')}
+      <span class="tr-arrow">${aperta?'▾':'▸'}</span>
+      <span class="tr-lav-label">${esc(t)}</span>
+      <span class="tr-cnt" style="font-size:9px">${arr.length} ${arr.length===1?'pezzo':'pezzi'}</span></div>`;
+    if(aperta)arr.forEach(p=>{html+=partRow(p);});
+  });
+  return html;
 }
 // ── albero commerciali: TIPO → gruppo fornitore → pezzi ──
 function commTree(cat){
@@ -2876,6 +3087,7 @@ function commTree(cat){
       ? `{t:'FORNNOME',cat:'${jsq(cat.categoria)}',nome:'${jsq(g.fornitore_nome)}'}`
       : `{t:'FORN',cat:'${jsq(cat.categoria)}',fid:${g.fornitore_id}}`;
     html+=`<div class="tr-grp" onclick="toggleGrp('${jsq(gk)}')">
+      ${ckGruppo(g.parti.map(p=>p.id),null,'Seleziona i pezzi di questo fornitore')}
       <span class="tr-arrow">${gOpen?'▾':'▸'}</span>
       <span class="tr-grp-ico" style="background:${avc(g.fornitore_nome)}">${ini(g.fornitore_nome)}</span>
       <span class="tr-grp-name">${esc(g.fornitore_nome)}</span>
@@ -2889,6 +3101,7 @@ function commTree(cat){
     const tk=cat.categoria+'|'+t.tipo;
     const tOpen=S.openTipo[tk]===true; // chiusi di default
     html+=`<div class="tr-grp" onclick="toggleTipo('${jsq(tk)}')">
+      ${ckGruppo(t.parti.map(p=>p.id),null,'Seleziona i pezzi di questo tipo')}
       <span class="tr-arrow">${tOpen?'▾':'▸'}</span>
       <span class="tr-grp-ico" style="background:#c9952f">${ini(t.tipo||'?')}</span>
       <span class="tr-grp-name none">${esc(t.tipo||'(senza tipo)')}</span>
@@ -2914,6 +3127,9 @@ function treeAll(open){
     (cat.gruppi||[]).forEach(g=>{S.openGrp[cat.categoria+'|'+(g.fornitore_id===null?'n:'+g.fornitore_nome:g.fornitore_id)]=open;});
     (cat.tipi||[]).forEach(t=>{S.openTipo[cat.categoria+'|'+t.tipo]=open;});
   });
+  S.openTratt=open;
+  allParti().forEach(p=>(p.trattamenti||[]).forEach(t=>{S.openTipo['tratt||'+t]=open;}));
+  Object.keys(S.openCatProg||{}).forEach(k=>{S.openCatProg[k]=open;});
   renderTree();
 }
 async function autoAssegna(){
@@ -2929,11 +3145,13 @@ async function autoAssegna(){
 
 /* ── FORNITORI PREFERITI PER COMMESSA ── */
 let PREF=new Set();
-async function openPref(){
+// non è più un modale: è una tab di Impostazioni progetto
+function openPref(){if(S.projId)go2imp('fornitori');}
+async function caricaPref(){
   if(!S.projId)return;
   PREF=new Set();
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/fornitori-preferiti');if(r.ok)PREF=new Set((await r.json()).ids||[]);}catch{}
-  renderPref();mOpen('mPref');
+  renderPref();
 }
 function renderPref(){
   const att=fornitori.filter(f=>f.attivo&&!f.blacklist);
@@ -2971,7 +3189,7 @@ async function prefCopyFrom(cid){
 }
 async function savePref(){
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/fornitori-preferiti',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:[...PREF]})});if(!r.ok)throw 0;
-    mClose('mPref');toast('Fornitori del progetto salvati','ok');
+    toast('Fornitori del progetto salvati','ok');
   }catch{toast('Errore salvataggio',true);}
 }
 async function assegnaCandidato(cat,lav,fid){
@@ -3098,15 +3316,20 @@ function openDraw(pid){
   }
   // proprietà dalla distinta (tutte le colonne dell'Excel, in ordine)
   const props=Object.assign({},pProps(p));
-  // la REVISIONE deve essere SEMPRE impostabile, anche sui commerciali (che in
-  // distinta hanno la colonna vuota → altrimenti la riga non comparirebbe)
+  // DENOMINAZIONE e REVISIONE devono essere SEMPRE impostabili, anche quando la
+  // distinta ha la cella vuota (succede: P058 non ce l'ha né in distinta né nel
+  // cartiglio del disegno) — altrimenti la riga non comparirebbe e il dato non
+  // si potrebbe scrivere da nessuna parte.
+  if(!Object.keys(props).some(k=>k.toUpperCase()==='DENOMINAZIONE'))props['DENOMINAZIONE']=p.denominazione||'';
   if(!Object.keys(props).some(k=>k.toUpperCase()==='REVISIONE'))props['REVISIONE']=p.revisione||'';
   const pkeys=Object.keys(props);
   const isComm=(p.categoria||'').toUpperCase().startsWith('COMMERC');
-  const keyCols=(isComm?['REVISIONE','FORNITORE','TIPO']:['REVISIONE','MATERIALE','LAV. MECCANICA','FORNITORE']).map(x=>x.toUpperCase());
+  const keyCols=(isComm?['DENOMINAZIONE','REVISIONE','FORNITORE','TIPO']:['DENOMINAZIONE','REVISIONE','MATERIALE','LAV. MECCANICA','FORNITORE']).map(x=>x.toUpperCase());
   // blocco proprietà SEMPRE presente: valori editabili + proprietà AGGIUNGIBILI
   // (da vocabolario o custom, valore o testo libero) su qualsiasi articolo
-  const sorted=[...pkeys].sort((a,b)=>(keyCols.includes(a.toUpperCase())?0:1)-(keyCols.includes(b.toUpperCase())?0:1));
+  // le colonne che contano vanno in cima, nell'ordine in cui le si legge
+  const peso=k=>{const i=keyCols.indexOf(k.toUpperCase());return i<0?99:i;};
+  const sorted=[...pkeys].sort((a,b)=>peso(a)-peso(b));
   const bulkBtn=(S.rows&&S.rows.size>1)?`<button class="btn-mini g" onclick="openPropsEditor()">✎ Modifica ${S.rows.size} selezionati</button>`:'';
   const ph=`<div class="pd-dh-row"><div class="pd-dh">Proprietà · distinta</div>${bulkBtn}<button class="btn-mini" onclick="savePropsDrawer(${pid})">💾 Salva</button></div><div class="pd-props" id="pdProps">`+
      sorted.map(k=>{const kk=keyCols.includes(k.toUpperCase())?' key':'';
@@ -3469,7 +3692,8 @@ document.addEventListener('scroll',()=>hideCtx(),true);
     if(e.target.closest('.tr-cat,.tr-grp,.tr-lav,.tr-tipo,.tr-cand'))return; // i rami restano cliccabili
     on=true;moved=false;sx=e.clientX;sy=e.clientY;
     band.style.left=sx+'px';band.style.top=sy+'px';band.style.width='0';band.style.height='0';
-    if(!e.shiftKey){S.rows.clear();}
+    // Ctrl e Shift aggiungono alla selezione: non si azzera quello che c'è già
+    if(!e.shiftKey&&!e.ctrlKey&&!e.metaKey){S.rows.clear();}
   });
   document.addEventListener('mousemove',e=>{
     if(!on)return;
@@ -3485,7 +3709,7 @@ document.addEventListener('scroll',()=>hideCtx(),true);
   });
   document.addEventListener('mouseup',()=>{
     if(!on)return;on=false;band.style.display='none';
-    if(moved){renderTree();updateFAB();}
+    if(moved)paintSel();
   });
 })();
 
@@ -3513,11 +3737,72 @@ function filesEnriched(){
 function setView(v){
   S.view=v;
   document.getElementById('viewAlbero').style.display=v==='albero'?'flex':'none';
-  document.getElementById('viewGlance').style.display=v==='albero'?'flex':'none';
   document.getElementById('viewFile').style.display=v==='file'?'flex':'none';
+  document.getElementById('viewImp').style.display=v==='imp'?'flex':'none';
   document.getElementById('tabAlbero').classList.toggle('on',v==='albero');
   document.getElementById('tabFile').classList.toggle('on',v==='file');
+  document.getElementById('tabImp').classList.toggle('on',v==='imp');
+  applyGlance();   // il pannello vive solo accanto all'albero
   if(v==='file'){renderFiltri();renderFileTable();}
+  if(v==='imp')renderImpostazioni();
+}
+
+/* ── IMPOSTAZIONI PROGETTO ──
+   Quello che si regola una volta (dati, fornitori, struttura) non deve stare
+   sopra le righe: là sembrava una categoria di voci. */
+const IMP_TABS=['modifica','fornitori','struttura'];
+function go2imp(k){setView('imp');if(k)impTab(k);}
+function impTab(k){
+  S.impTab=IMP_TABS.includes(k)?k:'modifica';
+  IMP_TABS.forEach(t=>{
+    const cap=t[0].toUpperCase()+t.slice(1);
+    document.getElementById('it'+cap).classList.toggle('on',t===S.impTab);
+    document.getElementById('ip'+cap).style.display=t===S.impTab?'flex':'none';
+  });
+  if(S.impTab==='fornitori')caricaPref();
+}
+function renderImpostazioni(){
+  const c=commesse.find(x=>x.id===S.projId);
+  if(c){
+    const g=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+    g('spCodice',c.codice);g('spNome',c.nome);g('spCliente',c.cliente||'');
+    g('spCartella',c.percorso_cartella||'');g('spNote',c.note||'');g('spBrand',c.brand||'IB');
+  }
+  impTab(S.impTab||'modifica');
+  const box=document.getElementById('impStruttura');
+  if(!box)return;
+  if(!S.albero){box.innerHTML='<div class="fmuted" style="font-size:11.5px">Struttura non caricata.</div>';return;}
+  const all=allParti();
+  const nCat=S.albero.categorie.length;
+  const conForn=all.filter(p=>p.fornitore_id!=null).length;
+  const daTrattare=all.filter(p=>(p.trattamenti||[]).length).length;
+  const custom=all.filter(p=>p.custom).length;
+  const esclusi=all.filter(p=>p.escluso).length;
+  const fatti=[[all.length,'pezzi in distinta'],[nCat,nCat===1?'categoria':'categorie'],
+    [conForn,'con un fornitore'],[daTrattare,'da trattare'],
+    [S.albero.n_tappe||0,'tappe di percorso'],[custom,'aggiunti a mano'],[esclusi,'esclusi']];
+  box.innerHTML=`<div class="imp-fatti">${fatti.map(([n,l])=>`<div class="imp-fatto"><b>${n}</b><span>${l}</span></div>`).join('')}</div>`
+    +(S.albero.distinta_codice?`<div class="fmuted" style="font-size:11px;margin-top:10px">Distinta riconosciuta: <b>${esc(S.albero.distinta_codice)}</b></div>`:'');
+}
+async function salvaImpProgetto(){
+  clearErr(['spCodiceErr','spNomeErr','spCartellaErr'],['spCodice','spNome','spCartella']);
+  const gv=id=>document.getElementById(id).value.trim();
+  const codice=gv('spCodice'),nome=gv('spNome'),cartella=gv('spCartella');
+  let ok=true;
+  if(!codice){showErr('spCodiceErr','spCodice');ok=false;}
+  if(!nome){showErr('spNomeErr','spNome');ok=false;}
+  if(!cartella){showErr('spCartellaErr','spCartella');ok=false;}
+  if(!ok)return;
+  const btn=document.getElementById('spBtn');btn.disabled=true;const old=btn.textContent;btn.textContent='Attendi…';
+  try{
+    const r=await fetch(API+'/api/commesse/'+S.projId,{method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({codice,nome,cliente:gv('spCliente'),note:gv('spNote'),percorso_cartella:cartella,
+        brand:document.getElementById('spBrand').value})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a salvare'));
+    toast('Progetto aggiornato','ok');
+    await loadCommesse();await openProgetto(S.projId);setView('imp');
+  }catch(e){toast(e.message||'Errore',true);}
+  finally{btn.disabled=false;btn.textContent=old;}
 }
 function distinct(arr){return [...new Set(arr.filter(x=>x!=null&&x!==''))].sort((a,b)=>String(a).localeCompare(String(b)));}
 function renderFiltri(){
@@ -3599,11 +3884,57 @@ function renderFileTable(){
 }
 function apriFile(path){window.open(API+'/api/commesse/'+S.projId+'/file?path='+encodeURIComponent(path),'_blank');}
 
-/* ── SELEZIONE + FAB ── */
-function toggleRow(id,on){on?S.rows.add(id):S.rows.delete(id);updateFAB();}
-function toggleAll(on){allParti().forEach(p=>on?S.rows.add(p.id):S.rows.delete(p.id));renderTree();updateFAB();}
+/* ── SELEZIONE + FAB ──
+   Regole di Windows: clic normale apre la scheda, Ctrl aggiunge o toglie una
+   riga senza aprire niente, Shift prende tutto da lì all'ultima toccata. */
+function toggleRow(id,on){on?S.rows.add(id):S.rows.delete(id);S.ultimaRiga=id;paintSel();}
+function toggleAll(on){treeParti().forEach(p=>on?S.rows.add(p.id):S.rows.delete(p.id));paintSel();}
+function partClick(ev,cod,pid){
+  if(ev.ctrlKey||ev.metaKey){
+    ev.preventDefault();
+    S.rows.has(pid)?S.rows.delete(pid):S.rows.add(pid);
+    S.ultimaRiga=pid;paintSel();return;
+  }
+  if(ev.shiftKey){ev.preventDefault();selRange(pid);return;}
+  S.ultimaRiga=pid;
+  selPart(cod,pid);
+}
+function selRange(pid){
+  const righe=[...document.querySelectorAll('#tscroll .tr-part')].map(el=>+el.dataset.pid);
+  const a=righe.indexOf(S.ultimaRiga),b=righe.indexOf(pid);
+  if(a<0||b<0){S.rows.add(pid);S.ultimaRiga=pid;paintSel();return;}
+  const da=Math.min(a,b),fino=Math.max(a,b);
+  for(let k=da;k<=fino;k++)S.rows.add(righe[k]);
+  paintSel();
+}
+// casella che comanda un gruppo di righe (categoria, lavorazione, fornitore, tutto)
+function ckGruppo(ids,elId,titolo){
+  const lista=[...new Set(ids)].join(',');
+  return `<span class="tr-catck" onclick="event.stopPropagation()"><input type="checkbox" class="grp-ck"${elId?` id="${elId}"`:''} data-ids="${lista}" title="${esc(titolo||'')}" onchange="ckGruppoSet(this)"></span>`;
+}
+function ckGruppoSet(el){
+  ckIds(el).forEach(id=>el.checked?S.rows.add(id):S.rows.delete(id));
+  paintSel();
+}
+function ckIds(el){return (el.dataset.ids||'').split(',').filter(Boolean).map(Number);}
+// ridipinge la selezione senza rifare l'albero (così non si perde lo scorrimento)
+function paintSel(){
+  document.querySelectorAll('#tscroll .tr-part').forEach(el=>{
+    const on=S.rows.has(+el.dataset.pid);
+    el.classList.toggle('sel',on);
+    const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=on;
+  });
+  document.querySelectorAll('#tscroll .grp-ck').forEach(cb=>{
+    const ids=ckIds(cb),n=ids.filter(id=>S.rows.has(id)).length;
+    cb.checked=ids.length>0&&n===ids.length;
+    cb.indeterminate=n>0&&n<ids.length;
+  });
+  const lbl=document.getElementById('selN');if(lbl)lbl.textContent=S.rows.size?S.rows.size+' selez.':'';
+  const act=document.getElementById('selAct');if(act)act.style.display=S.rows.size?'flex':'none';
+  updateFAB();
+}
 function updateFAB(){const n=S.rows.size,fab=document.getElementById('fab');fab.style.display=(n>0&&S.v==='pdet')?'flex':'none';document.getElementById('fabn').textContent=n;}
-function hideFAB(){S.rows.clear();document.getElementById('fab').style.display='none';const ck=document.getElementById('chkall');if(ck)ck.checked=false;}
+function hideFAB(){S.rows.clear();document.getElementById('fab').style.display='none';paintSel();}
 
 /* ── DROPDOWN ASSEGNA (multi-selezione: 1 fornitore = assegna, 2+ = confronto prezzi) ── */
 let ddTarget=null; let DDSEL=new Set();
@@ -7917,27 +8248,20 @@ function openNuovo(){document.getElementById('mProgTit').textContent='Nuovo prog
   ['pId','pCodice','pNome','pCliente','pCartella','pNote'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pBrand').value='IB';
   document.getElementById('pCartella').disabled=false;clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');setTimeout(()=>document.getElementById('pCodice').focus(),80);}
-function openModifica(){const c=commesse.find(x=>x.id===S.projId);if(!c)return;
-  document.getElementById('mProgTit').textContent='Modifica progetto';document.getElementById('mProgSub').textContent='Aggiorna dati e percorso. Cambiando percorso poi usa Riscansiona.';document.getElementById('pBtn').textContent='Salva modifiche';
-  document.getElementById('pId').value=c.id;document.getElementById('pCodice').value=c.codice;document.getElementById('pNome').value=c.nome;document.getElementById('pCliente').value=c.cliente||'';document.getElementById('pCartella').value=c.percorso_cartella;document.getElementById('pNote').value=c.note||'';
-  document.getElementById('pBrand').value=c.brand||'IB';
-  clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');}
+// i dati del progetto si modificano dalla sua pagina Impostazioni, non da un modale
+function openModifica(){if(S.projId)go2imp('modifica');}
+// il modale serve solo a CREARE: un progetto già aperto si modifica dalla sua
+// pagina Impostazioni progetto → Modifica (salvaImpProgetto)
 async function salvaProgetto(){
   clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);
-  const id=document.getElementById('pId').value;
   const codice=document.getElementById('pCodice').value.trim(),nome=document.getElementById('pNome').value.trim(),cartella=document.getElementById('pCartella').value.trim();
   let ok=true;if(!codice){showErr('pCodiceErr','pCodice');ok=false;}if(!nome){showErr('pNomeErr','pNome');ok=false;}if(!cartella){showErr('pCartellaErr','pCartella');ok=false;}if(!ok)return;
   const btn=document.getElementById('pBtn');btn.disabled=true;const old=btn.textContent;btn.textContent='Attendi…';
   try{
-    if(id){
-      const r=await fetch(API+'/api/commesse/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),note:document.getElementById('pNote').value.trim(),percorso_cartella:cartella,brand:document.getElementById('pBrand').value})});
-      if(!r.ok)throw 0;mClose('mProg');toast('Progetto aggiornato','ok');await loadCommesse();await openProgetto(parseInt(id));
-    } else {
-      const r=await fetch(API+'/api/commesse/importa-excel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),percorso_cartella:cartella,note:document.getElementById('pNote').value.trim(),brand:document.getElementById('pBrand').value})});
-      if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore import');}
-      const c=await r.json();mClose('mProg');const np=c.categorie?c.categorie.reduce((s,x)=>s+x.n_parti,0):'?';toast('Progetto creato — '+np+' parti',(np?'ok':true));
-      await loadCommesse();go('pdet',c.commessa_id);
-    }
+    const r=await fetch(API+'/api/commesse/importa-excel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codice,nome,cliente:document.getElementById('pCliente').value.trim(),percorso_cartella:cartella,note:document.getElementById('pNote').value.trim(),brand:document.getElementById('pBrand').value})});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore import');}
+    const c=await r.json();mClose('mProg');const np=c.categorie?c.categorie.reduce((s,x)=>s+x.n_parti,0):'?';toast('Progetto creato — '+np+' parti',(np?'ok':true));
+    await loadCommesse();go('pdet',c.commessa_id);
   }catch(e){toast(e.message||'Errore',true);}finally{btn.disabled=false;btn.textContent=old;}
 }
 async function riscansiona(){
@@ -8021,6 +8345,8 @@ function openForn(id){
   document.getElementById('fPdf').checked=fmts.includes('PDF');document.getElementById('fDwg').checked=fmts.includes('DWG');document.getElementById('fDxf').checked=fmts.includes('DXF');document.getElementById('fStep').checked=fmts.includes('STEP');
   document.getElementById('fAttivoGrp').style.display=ed?'block':'none';document.getElementById('fAttivo').checked=ed?ed.attivo:true;
   document.getElementById('fDel').style.display=ed?'inline-flex':'none';
+  // l'eliminazione vera la vede solo un amministratore
+  document.getElementById('fDelDef').style.display=(ed&&sonoAdmin())?'inline-flex':'none';
   chipInit('to',ed?(ed.emails_to||[]):[], {validate:isEmail});
   chipInit('cc',ed?(ed.emails_cc||[]):[], {validate:isEmail});
   chipInit('ccn',ed?(ed.emails_ccn||[]):[], {validate:isEmail});
@@ -8065,9 +8391,40 @@ async function salvaForn(){
     mClose('mForn');toast(id?'Fornitore aggiornato':'Fornitore aggiunto','ok');await loadFornitori();renderForn();
   }catch{toast('Errore salvataggio',true);}finally{btn.disabled=false;}
 }
+/* Due gesti diversi, e conviene tenerli diversi:
+   · DISATTIVA — sparisce dalle liste di scelta, ma resta scritto dov'era.
+     È la strada per un fornitore vero con cui non si lavora più.
+   · ELIMINA SCHEDA — la cancella davvero. Solo per gli amministratori, e solo
+     se non ha storico: con una RDO o un'offerta alle spalle il server rifiuta,
+     perché cancellarlo riscriverebbe una commessa passata. */
+async function disattivaForn(){
+  const id=document.getElementById('fId').value;if(!id)return;
+  if(!confirm('Disattivare questo fornitore?\n\nSparisce dalle liste di scelta, ma resta scritto dove l\'hai già usato.'))return;
+  try{const r=await fetch(API+'/api/fornitori/'+id,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;
+    mClose('mForn');toast('Fornitore disattivato','ok');await loadFornitori();renderForn();}catch{toast('Errore',true);}
+}
+function sonoAdmin(){return !!(ORE.me&&ORE.me.ruolo==='amministratore');}
 async function eliminaForn(){
-  const id=document.getElementById('fId').value;if(!id)return;if(!confirm('Disattivare questo fornitore?'))return;
-  try{const r=await fetch(API+'/api/fornitori/'+id,{method:'DELETE'});if(!r.ok&&r.status!==204)throw 0;mClose('mForn');toast('Fornitore disattivato','ok');await loadFornitori();renderForn();}catch{toast('Errore',true);}
+  const id=document.getElementById('fId').value;if(!id)return;
+  const f=fornitori.find(x=>x.id===+id);
+  const nome=f?f.nome:'questo fornitore';
+  let uso=null;
+  try{const r=await fetch(API+'/api/fornitori/'+id+'/impieghi');if(r.ok)uso=await r.json();}catch{}
+  if(uso&&!uso.eliminabile){
+    const dove=Object.entries(uso.storico).map(([k,v])=>`${v} ${k}`).join(', ');
+    alert(`«${nome}» non si può cancellare: ha già dello storico (${dove}).\n\nCancellarlo riscriverebbe commesse passate. Usa «Disattiva».`);
+    return;
+  }
+  const conta=uso?[[uso.pezzi,'pezzi'],[uso.tappe,'tappe'],[uso.voci_commessa,'voci di commessa'],[uso.preferito_in,'progetti']]
+    .filter(([n])=>n).map(([n,l])=>`${n} ${l}`).join(', '):'';
+  if(!confirm(`Eliminare la scheda di «${nome}»?`+(conta?`\n\nResta staccato da: ${conta}. Quei pezzi tornano «da assegnare».`:'')+'\n\nNon si torna indietro.'))return;
+  try{
+    const r=await fetch(API+'/api/fornitori/'+id+'/definitivo',{method:'DELETE'});
+    if(!r.ok){toast(await srvErrDetail(r,'Non sono riuscito a eliminare il fornitore'),true);return;}
+    mClose('mForn');toast('Scheda eliminata','ok');
+    await loadFornitori();renderForn();
+    if(S.projId&&S.v==='pdet')await refreshDetail();
+  }catch{toast('Server non raggiungibile',true);}
 }
 
 /* ── VOCABOLARIO ── */
@@ -8139,12 +8496,27 @@ function toggleSb(){
   try{localStorage.setItem('rdo_sbc',c?'1':'');}catch{}
 }
 try{if(localStorage.getItem('rdo_sbc')==='1')document.querySelector('.app').classList.add('sbc');}catch{}
-// pannello «Colpo d'occhio»: collassa + ridimensiona (trascinando il bordo), stato persistito
-function toggleGlance(){const ws=document.querySelector('.ws');if(!ws)return;const c=ws.classList.toggle('gcol');try{localStorage.setItem('rdo_glance_col',c?'1':'');}catch{}}
+// pannello «Colpo d'occhio»: collassa + ridimensiona (trascinando il bordo), stato persistito.
+// Chi decide se si vede è UNA funzione sola: prima setView scriveva display inline
+// sul pannello e il pulsante non riusciva più a nasconderlo.
+function applyGlance(){
+  const ws=document.querySelector('.ws');const g=document.getElementById('viewGlance');
+  if(!ws||!g)return;
+  ws.classList.toggle('gcol',!!S.glanceCol);
+  g.style.display=(S.view==='albero'&&!S.glanceCol)?'flex':'none';
+  const b=document.getElementById('btnGlance');
+  if(b){b.classList.toggle('on',!S.glanceCol);b.title=(S.glanceCol?'Mostra':'Nascondi')+' il pannello «Colpo d’occhio»';}
+}
+function toggleGlance(){
+  S.glanceCol=!S.glanceCol;
+  try{localStorage.setItem('rdo_glance_col',S.glanceCol?'1':'');}catch{}
+  applyGlance();
+}
 (function setupGlance(){
-  const g=document.getElementById('viewGlance');const ws=document.querySelector('.ws');const rz=document.getElementById('gpRz');
+  const g=document.getElementById('viewGlance');const rz=document.getElementById('gpRz');
   try{const w=localStorage.getItem('rdo_gw');if(w&&g)g.style.width=w+'px';
-      if(localStorage.getItem('rdo_glance_col')==='1'&&ws)ws.classList.add('gcol');}catch{}
+      S.glanceCol=localStorage.getItem('rdo_glance_col')==='1';}catch{}
+  applyGlance();
   if(!rz||!g)return;
   let sx=0,sw=0;
   const onMove=e=>{g.style.width=Math.min(600,Math.max(200,sw+(sx-e.clientX)))+'px';};
