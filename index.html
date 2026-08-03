@@ -1455,6 +1455,13 @@ textarea.fld{resize:vertical;min-height:60px}
 .dock-rit{font-size:9.5px;font-weight:800;color:#fff;background:#C0151E;border-radius:10px;padding:1px 7px}
 .dock-bd{flex:1;min-height:0;display:flex;overflow:hidden}
 .dock-pane{flex:1;min-width:0;overflow:auto;position:relative}
+/* i filtri del Gantt stanno su UNA riga: la finestra è bassa, e tre righe di
+   tendine si mangiavano lo spazio delle barre. Se non ci stanno, si scorre. */
+.dock .flt-bar{flex-wrap:nowrap;overflow-x:auto;position:sticky;top:0;z-index:5;padding:5px 8px;gap:5px}
+.dock .flt-bar::-webkit-scrollbar{height:5px}
+.dock .flt-bar>*{flex-shrink:0}
+.dock .flt-bar select,.dock .flt-bar input{font-size:10px;padding:3px 6px;max-width:130px}
+.dock .flt-n{margin-left:6px}
 .dock-pane+.dock-pane{border-left:1px solid var(--bd)}
 .dock-apri{position:fixed;right:16px;bottom:0;z-index:299;border:1px solid var(--bd2);border-bottom:0;
   border-radius:9px 9px 0 0;background:var(--surf);color:var(--t1);font:inherit;font-size:11px;font-weight:700;
@@ -3163,12 +3170,14 @@ function renderTree(){
       <button class="btn btn-ghost btn-sm" onclick="S.rows.clear();paintSel()">✕</button>
     </span>
   </div>`;
-  const dist=distintaBanner()+fornOrfaniBanner()+trattamentiBanner()+vociBanner();
+  // Le quattro strisce (distinta, fornitori orfani, trattamenti, voci) NON
+  // stanno più qui: sopra le righe sembravano una categoria di pezzi. Vivono in
+  // Impostazioni progetto → Struttura, dentro #impBanner.
   if(S.treeMode==='cat'){
-    document.getElementById('tscroll').innerHTML=dist+bar+fltBar()+renderTreeCat();
+    document.getElementById('tscroll').innerHTML=bar+fltBar()+renderTreeCat();
     paintSel();return;
   }
-  let html=dist+bar;
+  let html=bar;
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
     const catOpen=S.openCat[cat.categoria]!==false;
