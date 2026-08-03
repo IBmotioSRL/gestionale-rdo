@@ -3262,13 +3262,75 @@ function renderTreeCat(){
     const arr=g[k];const done=arr.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
     const sync=(S.albero&&S.albero.categorie_sync||[]).some(s=>s.toLowerCase()===k.toLowerCase());
     const tag=k!=='Da assegnare'?`<span class="cx-synctag ${sync?'on':'off'}" title="${sync?'sincronizzata coi Costi':'separata dai Costi'}" onclick="event.stopPropagation();projToggleSync('${jsq(k)}',${!sync})">${sync?'🔗 sync':'⛓ sync'}</span>`:'';
-    html+=`<div class="tr-cat" onclick="toggleCatProg('${jsq(k)}')">
-      ${ckGruppo(arr.map(p=>p.id),null,'Seleziona tutta la categoria')}
+    html+=`<div class="tr-cat" onclick="toggleCatProg('${jsq(k)}')"${k!=='Da assegnare'?` oncontextmenu="ctxGruppoProg(event,'${jsq(k)}')"`:''}>
+      ${ckGruppo(arr.map(p=>p.id),null,'Seleziona tutto il gruppo')}
       <span class="tr-arrow">${S.openCatProg&&S.openCatProg[k]===false?'▸':'▾'}</span>
       <span class="tr-cat-label">${esc(k)}</span><span class="tr-cnt ${done===arr.length&&arr.length?'done':''}">${done}/${arr.length}</span>${tag}</div>`;
     if(!(S.openCatProg&&S.openCatProg[k]===false))arr.forEach(p=>{html+=partRow(p);});
   });
   return html;
+}
+
+/* menu del gruppo: rinomina e svuota. Un gruppo non è un oggetto a sé — esiste
+   finché almeno un pezzo lo porta — quindi «svuota» equivale a eliminarlo. */
+function ctxGruppoProg(e,nome){
+  const pezzi=treeParti().filter(p=>(p.categoria_progetto||'')===nome);
+  showCtx(e,nome,[
+    ['✎ Rinomina il gruppo',`gruppoProgRinomina('${jsq(nome)}')`],
+    ['◎ Seleziona i suoi pezzi ('+pezzi.length+')',`gruppoProgSeleziona('${jsq(nome)}')`],
+    {sep:1},
+    ['✕ Svuota il gruppo',`gruppoProgSvuota('${jsq(nome)}')`],
+  ]);
+}
+function gruppoProgSeleziona(nome){
+  S.rows=new Set(treeParti().filter(p=>(p.categoria_progetto||'')===nome).map(p=>p.id));
+  paintSel();
+}
+async function gruppoProgAssegna(nome,nuovo){
+  const ids=treeParti().filter(p=>(p.categoria_progetto||'')===nome).map(p=>p.id);
+  if(!ids.length)return toast('Il gruppo è già vuoto',true);
+  try{
+    const r=await fetch(API+'/api/commesse/'+S.projId+'/bulk-categoria',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ids,ambito:'progetto',categoria:nuovo})});
+    if(!r.ok)throw 0;
+    // l'elenco dei gruppi della commessa va tenuto in pari: il vecchio nome se
+    // ne esce, il nuovo entra
+    const cur=(S.albero&&S.albero.categorie_progetto)||[];
+    const agg=cur.filter(c=>c!==nome).concat(nuovo&&!cur.includes(nuovo)?[nuovo]:[]);
+    await fetch(API+'/api/commesse/'+S.projId+'/categorie-progetto',{method:'PUT',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({categorie:agg})});
+    toast(nuovo?`${ids.length} pezzi in «${nuovo}»`:`Gruppo «${nome}» svuotato`,'ok');
+    await openProgetto(S.projId);
+    if(DOCK&&DOCK.commessa===S.projId){DOCK.albero=null;dockCarica(true);}
+  }catch{toast('Non sono riuscito a salvare',true);}
+}
+function gruppoProgRinomina(nome){
+  const n=prompt('Nuovo nome del gruppo:\n(cambia anche nell\'albero della finestra in basso)',nome);
+  if(n===null)return;const v=n.trim();
+  if(!v||v===nome)return;
+  gruppoProgAssegna(nome,v);
+}
+function gruppoProgSvuota(nome){
+  if(!confirm(`Svuoto il gruppo «${nome}»?\n\nI pezzi restano dove sono: perdono solo il gruppo, e il gruppo sparisce perché non lo porta più nessuno.`))return;
+  gruppoProgAssegna(nome,'');
+}
+// crea un gruppo con i pezzi selezionati, o chiede di selezionarli
+async function nuovoGruppoProg(){
+  if(!S.rows||!S.rows.size)
+    return toast('Seleziona prima i pezzi da metterci dentro',true);
+  const n=prompt('Nome del nuovo gruppo:','Gruppo '+(((S.albero&&S.albero.categorie_progetto)||[]).length+1));
+  if(n===null)return;const v=n.trim();if(!v)return;
+  const ids=[...S.rows];
+  try{
+    const r=await fetch(API+'/api/commesse/'+S.projId+'/bulk-categoria',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ids,ambito:'progetto',categoria:v})});
+    if(!r.ok)throw 0;
+    toast(`${ids.length} pezzi in «${v}»`,'ok');
+    S.rows=new Set();await openProgetto(S.projId);
+    if(DOCK&&DOCK.commessa===S.projId){DOCK.albero=null;dockCarica(true);}
+  }catch{toast('Non sono riuscito a creare il gruppo',true);}
 }
 
 /* ── FILTRI PER ATTRIBUTO (vista «Gruppi Custom») ──
@@ -3377,6 +3439,7 @@ function renderTree(){
     ${ckGruppo(treeParti().map(p=>p.id),'ckAll','Seleziona tutte le voci mostrate')}
     <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Gruppi Custom</button></div>
     <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
+    <button class="btn btn-ghost btn-sm" onclick="nuovoGruppoProg()" title="Crea un gruppo coi pezzi selezionati">＋ Gruppo</button>
     <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
     <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
     <span id="selAct" style="margin-left:auto;display:${S.rows.size?'flex':'none'};align-items:center;gap:6px">
@@ -9572,11 +9635,16 @@ function grRiga(n,liv,k,aperto){
 }
 function grVoceDisegni(n,liv,k){
   const kd=k+'#dis', aperto=DOCK.aperti[kd]===true;
-  let h=`<div class="gr-dis" style="padding-left:${25+liv*15}px" onclick="grAnteprima('${jsq(n.codice)}')">
+  const pdf=(n.formati||[]).find(f=>f.fmt==='pdf');
+  // data-prevpdf: la regola globale del gestionale — passandoci sopra col mouse
+  // esce l'anteprima laterale, senza cliccare. Il clic apre la finestra grande.
+  const hov=pdf?` data-prevpdf="${esc(pdf.path)}" data-prevcap="${esc(n.codice+' · '+(n.denominazione||''))}"`:'';
+  let h=`<div class="gr-dis" style="padding-left:${25+liv*15}px" onclick="grAnteprima('${jsq(n.codice)}')"${hov}>
     <span class="gr-ar" onclick="event.stopPropagation();grToggle('${jsq(kd)}')">${aperto?'▾':'▸'}</span>
     <img class="gr-ico" src="drawing.png" alt=""> Disegni <b>×${n.formati.length}</b></div>`;
   if(aperto)n.formati.forEach(f=>{
-    h+=`<div class="gr-fmt" style="padding-left:${45+liv*15}px" onclick="grApriFile('${jsq(f.path)}')">${esc(n.codice)}.${esc(f.fmt)}</div>`;});
+    const hf=f.fmt==='pdf'?` data-prevpdf="${esc(f.path)}" data-prevcap="${esc(n.codice)}"`:'';
+    h+=`<div class="gr-fmt" style="padding-left:${45+liv*15}px" onclick="grApriFile('${jsq(f.path)}')"${hf}>${esc(n.codice)}.${esc(f.fmt)}</div>`;});
   return h;
 }
 
@@ -9610,7 +9678,8 @@ function grVistaRamo(){
     if(o.foglia)return `<g transform="translate(${o.x-BW/2},${o.y})">
       <rect class="bx" width="${BW}" height="${BH-12}" style="fill:#FCFDF9;stroke:#D6E0C2"/>
       <text class="cd" x="9" y="17" style="font-size:9.5px">${esc(o.foglia)}</text></g>`;
-    if(o.dis){const d=GR_OGG.dis;return `<g class="nodo" data-k="${esc(o.k)}" data-cod="${esc(o.cod)}" data-dis="1" transform="translate(${o.x-BW/2},${o.y})">
+    if(o.dis){const d=GR_OGG.dis;const pf=(o.fmt||[]).find(f=>f.fmt==='pdf');
+      return `<g class="nodo" data-k="${esc(o.k)}" data-cod="${esc(o.cod)}" data-dis="1"${pf?` data-prevpdf="${esc(pf.path)}" data-prevcap="${esc(o.cod)}"`:''} transform="translate(${o.x-BW/2},${o.y})">
       <rect class="bx" width="${BW}" height="${BH}" style="fill:${d.f};stroke:${d.b}"/>
       <image href="drawing.png" x="7" y="10" width="16" height="16"/>
       <text class="cd" x="28" y="17" style="font-size:10px">Disegni ×${o.fmt.length}</text>
@@ -9683,11 +9752,11 @@ function grApriFile(path){
 }
 // una modale costruita al volo: le altre del gestionale sono fisse nell'HTML,
 // questa cambia contenuto a ogni pezzo e non ha senso tenerla nel markup
-function grModale(titolo,corpo,azioni){
+function grModale(titolo,corpo,azioni,largo){
   document.getElementById('grMod')?.remove();
   const ov=document.createElement('div');
   ov.className='mov open';ov.id='grMod';
-  ov.innerHTML=`<div class="modal" style="max-width:560px">
+  ov.innerHTML=`<div class="modal" style="max-width:${largo?'94vw':'560px'};width:${largo?'94vw':'auto'};height:${largo?'92vh':'auto'}">
     <div class="mhd"><div><div class="mtit">${titolo}</div></div>
       <button class="mx" onclick="document.getElementById('grMod').remove()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
@@ -9698,22 +9767,29 @@ function grModale(titolo,corpo,azioni){
   ov.querySelectorAll('.mft .btn').forEach(b=>b.onclick=()=>{
     const a=azioni[+b.dataset.i];if(a[1]&&a[1]()===false)return;ov.remove();});
 }
+// il disegno si guarda, quindi prende quasi tutto lo schermo: i formati stanno
+// in una colonna stretta a lato. La nota sulla miniatura 3D compare solo quando
+// un PDF non c'è — lì è l'unica cosa che potremo mostrare.
 function grAnteprima(cod){
   const n=grTuttiNodi().find(x=>x.codice===cod);if(!n)return;
   const ff=n.formati||[];
   const pdf=ff.find(f=>f.fmt==='pdf');
   grModale(`${esc(cod)} — ${esc(n.denominazione||'')}`,
-    `<div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
-       ${pdf?`<iframe src="${API}/api/commesse/${DOCK.commessa}/file?path=${encodeURIComponent(pdf.path)}#toolbar=0"
-              style="width:250px;height:180px;border:1px solid var(--bd2);border-radius:8px;background:#fff"></iframe>`
-            :`<div style="width:250px;height:180px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg);display:grid;place-items:center;color:var(--t3);font-size:11px">nessun PDF da mostrare</div>`}
-       <div style="min-width:170px">
+    `<div style="display:flex;gap:14px;align-items:stretch;height:100%;min-height:0">
+       <div style="flex:1;min-width:0">
+       ${pdf?`<iframe src="${API}/api/commesse/${DOCK.commessa}/file?path=${encodeURIComponent(pdf.path)}#view=FitH"
+              style="width:100%;height:100%;min-height:70vh;border:1px solid var(--bd2);border-radius:8px;background:#fff"></iframe>`
+            :`<div style="width:100%;height:100%;min-height:70vh;border:1px solid var(--bd2);border-radius:8px;background:var(--bg);display:grid;place-items:center;text-align:center;color:var(--t3);font-size:11.5px;padding:20px;line-height:1.5">
+                Per questo codice non c'è un PDF da mostrare.<br><br>
+                <span style="font-size:10.5px">La miniatura 3D arriverà dall&rsquo;archivio di BOM2Excel,<br>accanto ai suoi disegni.</span></div>`}
+       </div>
+       <div style="width:220px;flex:none;overflow:auto">
          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:5px">Formati · clic per aprire</div>
-         ${ff.map(f=>`<div class="gr-fmt" style="padding:3px 0" onclick="grApriFile('${jsq(f.path)}')">${esc(cod)}.${esc(f.fmt)}</div>`).join('')||'<span class="fmuted">nessun file</span>'}
-         ${n.gruppo?`<div style="margin-top:10px;font-size:10.5px">Gruppo: <b style="color:${grTinta(n.gruppo)}">${esc(n.gruppo)}</b></div>`:''}
-         <div style="margin-top:10px;font-size:10px;color:var(--t3);line-height:1.4">La miniatura 3D del pezzo arriverà dall&rsquo;archivio di BOM2Excel, accanto ai suoi disegni.</div>
+         ${ff.map(f=>`<div class="gr-fmt" style="padding:4px 0" onclick="grApriFile('${jsq(f.path)}')">${esc(cod)}.${esc(f.fmt)}</div>`).join('')||'<span class="fmuted">nessun file</span>'}
+         ${n.gruppo?`<div style="margin-top:12px;font-size:10.5px">Gruppo: <b style="color:${grTinta(n.gruppo)}">${esc(n.gruppo)}</b></div>`:''}
+         ${n.categoria?`<div style="margin-top:6px;font-size:10.5px;color:var(--t2)">${esc(n.categoria)}</div>`:''}
        </div></div>`,
-    [['Chiudi',null]]);
+    [['Chiudi',null]],true);
 }
 
 /* ── gruppi = categorie di progetto ── */
