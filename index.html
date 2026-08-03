@@ -181,7 +181,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tbtn:hover{border-color:var(--go);color:var(--go-d)}
 .tbtn.on{border-color:var(--go);color:var(--go-d);background:rgba(245,168,35,.10)}
 .btn.on{border-color:var(--go);color:var(--go-d);background:rgba(245,168,35,.10)}
-/* filtri sopra le righe (vista «Categorie mie») */
+/* filtri sopra le righe (vista «Gruppi Custom») */
 .flt-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:rgba(248,244,239,.7);border-bottom:1px solid var(--bd)}
 .flt-bar select,.flt-bar input{font-size:10.5px;border:1px solid var(--bd);border-radius:6px;padding:4px 7px;background:var(--surf);color:var(--t1);max-width:170px}
 .flt-bar select.act{border-color:var(--go);color:var(--go-d);font-weight:700}
@@ -1832,7 +1832,7 @@ textarea.fld{resize:vertical;min-height:60px}
               <div id="impStruttura"></div>
             </div>
             <div class="imp-card">
-              <div class="imp-h">Categorie mie</div>
+              <div class="imp-h">Gruppi Custom</div>
               <div class="imp-sub">Raggruppamenti tuoi, indipendenti dalle categorie della distinta. Ognuna può essere legata o slegata dai Costi.</div>
               <div class="imp-act"><button class="btn btn-ghost" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button></div>
             </div>
@@ -3271,7 +3271,7 @@ function renderTreeCat(){
   return html;
 }
 
-/* ── FILTRI PER ATTRIBUTO (vista «Categorie mie») ──
+/* ── FILTRI PER ATTRIBUTO (vista «Gruppi Custom») ──
    Sopra le righe, prima di ogni divisione: si sceglie un valore per attributo e
    restano solo le voci che ce l'hanno. La casella globale della barra sopra
    seleziona quello che i filtri hanno lasciato. */
@@ -3375,7 +3375,7 @@ function renderTree(){
   // barra: selezione globale, toggle albero/categorie-mie, controlli di vista
   const bar=`<div class="flt-bar" style="background:var(--bg)">
     ${ckGruppo(treeParti().map(p=>p.id),'ckAll','Seleziona tutte le voci mostrate')}
-    <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Categorie mie</button></div>
+    <div class="cx-toggle" style="margin:0"><button class="${S.treeMode==='cat'?'':'on'}" onclick="setTreeMode('std')">Albero</button><button class="${S.treeMode==='cat'?'on':''}" onclick="setTreeMode('cat')">Gruppi Custom</button></div>
     <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
     <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
     <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
@@ -6269,7 +6269,7 @@ function renderBulkForm(){
     <div class="bp-hint">Carica un'offerta/preventivo del fornitore: l'AI legge il documento e propone i prezzi (cadauno) per i pezzi dell'ambito scelto. Poi controlli e confermi. Carica un file alla volta.</div>
     <div class="of-form" style="margin-top:0"><div class="r">
       <select id="bulkForn" style="flex:1">${fopts}</select>
-      <select id="bulkAmb" onchange="bulkAmbChange()" style="flex:1"><option value="tutti">Tutta la commessa</option>${tipi.length?'<option value="tipologia">Per tipologia…</option>':''}${cats.length?'<option value="categoria">Per categoria mia…</option>':''}</select>
+      <select id="bulkAmb" onchange="bulkAmbChange()" style="flex:1"><option value="tutti">Tutta la commessa</option>${tipi.length?'<option value="tipologia">Per tipologia…</option>':''}${cats.length?'<option value="categoria">Per gruppo custom…</option>':''}</select>
       <select id="bulkAmbVal" style="flex:1;display:none"></select></div></div>
     <input type="file" id="bulkFile" accept=".pdf,.xlsx,.xls,.csv,.eml,.msg" style="display:none" onchange="bulkPreview()">
     <div class="of-up" onclick="document.getElementById('bulkFile').click()">📄 Carica offerta (PDF / Excel / CSV / EML)<br><span class="fmuted" style="font-size:11px">l'AI abbina le voci ai pezzi della commessa</span></div>
@@ -9255,7 +9255,7 @@ function gtBarreVisibili(){
 }
 function gtGruppi(barre){
   // Tre modi di leggere lo stesso Gantt: una riga per PEZZO, una per FORNITORE,
-  // oppure una per GRUPPO TUO (le «categorie mie»). Le voci ausiliarie fanno
+  // oppure una per GRUPPO CUSTOM (i «Gruppi Custom»). Le voci ausiliarie fanno
   // riga a sé, sempre, in fondo.
   const g={},voci=[];
   barre.forEach(b=>{
@@ -9288,8 +9288,8 @@ function gtFiltri(){
   const forn=[...new Set(g.barre.map(b=>b.fornitore_id).filter(x=>x!=null))]
     .sort((a,b)=>(fornById(a)||{nome:''}).nome.localeCompare((fornById(b)||{nome:''}).nome));
   return `<div class="flt-bar">
-    <div class="cx-toggle" style="margin:0"><button class="${DOCK.raggr==='pezzo'?'on':''}" onclick="gtRaggr('pezzo')">Per pezzo</button><button class="${DOCK.raggr==='fornitore'?'on':''}" onclick="gtRaggr('fornitore')">Per fornitore</button><button class="${DOCK.raggr==='gruppo'?'on':''}" onclick="gtRaggr('gruppo')" title="I gruppi che hai fatto tu — «categorie mie»">Per gruppo mio</button></div>
-    ${sel('grp','Gruppo mio',val('grp',b=>b.categoria_progetto))}
+    <div class="cx-toggle" style="margin:0"><button class="${DOCK.raggr==='pezzo'?'on':''}" onclick="gtRaggr('pezzo')">Per pezzo</button><button class="${DOCK.raggr==='fornitore'?'on':''}" onclick="gtRaggr('fornitore')">Per fornitore</button><button class="${DOCK.raggr==='gruppo'?'on':''}" onclick="gtRaggr('gruppo')" title="I gruppi che hai fatto tu — «Gruppi Custom»">Per gruppo custom</button></div>
+    ${sel('grp','Gruppo custom',val('grp',b=>b.categoria_progetto))}
     ${sel('forn','Fornitore',forn,v=>(fornById(v)||{nome:'#'+v}).nome)}
     ${sel('cat','Categoria',val('cat',b=>b.categoria))}
     ${sel('lav','Lavorazione',val('lav',b=>b.lav_meccanica))}
@@ -9368,7 +9368,7 @@ function dockDisegnaGantt(){
   };
 
   let html=gtFiltri()+`<div class="gt">
-    <div class="gt-testa"><div class="gt-nomi">${DOCK.raggr==='fornitore'?'Fornitore':(DOCK.raggr==='gruppo'?'Gruppo mio':'Pezzo')} · ${righe.length}</div>
+    <div class="gt-testa"><div class="gt-nomi">${DOCK.raggr==='fornitore'?'Fornitore':(DOCK.raggr==='gruppo'?'Gruppo custom':'Pezzo')} · ${righe.length}</div>
       <div class="gt-scala">${gtTacche(f.da,f.a,100)}</div></div>`;
   righe.forEach(r=>{
     const aperto=DOCK.aperti[r.chiave]===true;
