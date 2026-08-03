@@ -180,14 +180,24 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .tbtn{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;border:1px solid var(--bd);background:var(--surf);color:var(--t2);cursor:pointer}
 .tbtn:hover{border-color:var(--go);color:var(--go-d)}
 .tbtn.on{border-color:var(--go);color:var(--go-d);background:rgba(245,168,35,.10)}
+.btn.on{border-color:var(--go);color:var(--go-d);background:rgba(245,168,35,.10)}
 /* filtri sopra le righe (vista «Categorie mie») */
 .flt-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:rgba(248,244,239,.7);border-bottom:1px solid var(--bd)}
 .flt-bar select,.flt-bar input{font-size:10.5px;border:1px solid var(--bd);border-radius:6px;padding:4px 7px;background:var(--surf);color:var(--t1);max-width:170px}
 .flt-bar select.act{border-color:var(--go);color:var(--go-d);font-weight:700}
 .flt-n{font-size:10px;font-weight:700;color:var(--t2);margin-left:auto}
 .flt-x{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;padding:3px 7px;border-radius:5px;border:1px solid rgba(245,168,35,.3);background:rgba(245,168,35,.08)}
-/* pagina IMPOSTAZIONI PROGETTO */
-.impp{display:flex;flex-direction:column;overflow:hidden;background:var(--surf);min-height:0}
+/* IMPOSTAZIONI PROGETTO — scheda che si apre dentro la finestra, come quella
+   del fornitore: non è una tab, e non porta via l'albero da sotto gli occhi */
+#impdraw{position:fixed;top:0;right:0;bottom:0;width:var(--impdrawW,620px);max-width:96vw;background:var(--surf);
+  box-shadow:var(--shl);z-index:142;display:flex;flex-direction:column;transform:translateX(102%);
+  transition:transform .22s cubic-bezier(.4,0,.2,1)}
+#impdraw.open{transform:translateX(0)}
+#impdrawOv{position:fixed;inset:0;background:rgba(28,15,7,.18);z-index:141;opacity:0;visibility:hidden;transition:opacity .22s}
+#impdrawOv.open{opacity:1;visibility:visible}
+#impdraw .imp-pane{max-width:none}
+#impdraw .dist-bar{margin:0 0 7px}
+.impp{display:flex;flex-direction:column;overflow:hidden;background:var(--surf);min-height:0;flex:1}
 .imp-tabs{display:flex;gap:4px;padding:9px 14px 0;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--bg)}
 .imp-tab{padding:6px 13px;border-radius:7px 7px 0 0;font-size:11.5px;font-weight:700;color:var(--t2);cursor:pointer;border:1px solid transparent;border-bottom:none;user-select:none}
 .imp-tab:hover{background:rgba(44,21,6,.04)}
@@ -244,7 +254,9 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #prevcard .pv-cap{font-size:10px;color:var(--t2);margin-top:6px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── MENU TASTO DESTRO ── */
-#ctxmenu{position:fixed;z-index:130;display:none;background:#fff;border:1px solid var(--bd2);border-radius:10px;box-shadow:var(--shl);padding:5px;min-width:210px}
+/* sopra a tutto: il tasto destro deve funzionare anche dentro un modale, il
+   cassetto delle impostazioni o la finestra in basso */
+#ctxmenu{position:fixed;z-index:460;display:none;background:#fff;border:1px solid var(--bd2);border-radius:10px;box-shadow:var(--shl);padding:5px;min-width:210px}
 #ctxmenu .mi{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--t1)}
 #ctxmenu .mi:hover{background:rgba(245,168,35,.1);color:var(--go-d)}
 #ctxmenu .mi.danger:hover{background:rgba(255,59,48,.08);color:var(--red)}
@@ -1632,7 +1644,9 @@ textarea.fld{resize:vertical;min-height:60px}
       <div class="wpr">
         <span class="wcod" id="wcod">—</span><span class="wtit" id="wtit">—</span><span class="wcli" id="wcli"></span><span id="wrev"></span>
         <div class="wact">
-          <button class="btn btn-ghost btn-sm" onclick="go2imp()" title="Dati del progetto, fornitori, struttura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Impostazioni progetto</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleGlance()" id="btnGlance" title="Cosa manca per mandare le richieste d&rsquo;offerta">🚦 Cosa manca</button>
+          <button class="btn btn-ghost btn-sm" onclick="autoAssegna()" id="btnAuto" title="Assegna i fornitori del progetto in base ai tag">✨ Auto-assegna</button>
+          <button class="btn btn-ghost btn-sm" onclick="apriImp()" title="Dati del progetto, fornitori, struttura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Impostazioni</button>
         </div>
       </div>
       <div class="wpath" id="wpath"></div>
@@ -1641,7 +1655,6 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="pdet-tabs">
       <div class="pdet-tab on" id="tabAlbero" onclick="setView('albero')">Albero parti</div>
       <div class="pdet-tab" id="tabFile" onclick="setView('file')">Ricerca file <span class="ptc" id="ftot">0</span></div>
-      <div class="pdet-tab" id="tabImp" onclick="setView('imp')">⚙️ Impostazioni progetto</div>
     </div>
     <div class="ws" style="display:flex;min-height:0">
       <div class="treep" id="viewAlbero" style="flex:1">
@@ -1664,12 +1677,26 @@ textarea.fld{resize:vertical;min-height:60px}
         </div>
         <div class="ftable-wrap" id="ftableWrap"></div>
       </div>
-      <!-- IMPOSTAZIONI PROGETTO: quello che si regola una volta, non le righe -->
-      <div class="impp" id="viewImp" style="display:none;flex:1">
+      <!-- il cassetto delle impostazioni sta fuori da .ws: vedi #impdraw -->
+    </div>
+  </div>
+
+  <!-- ════ IMPOSTAZIONI PROGETTO ════
+       Non è una tab dell'albero: è una scheda che si apre dentro la finestra,
+       come quella del fornitore. Quello che si regola una volta non deve stare
+       in mezzo alle righe che si guardano tutto il giorno. -->
+  <div id="impdrawOv" onclick="chiudiImp()"></div>
+  <div id="impdraw">
+      <div class="rz-split abs" data-target="#impdraw" data-dir="l" data-min="380" data-max="1100" data-key="rdo_impdraw" title="Trascina per ridimensionare"></div>
+      <div class="pd-hd">
+        <div><div class="pd-name">Impostazioni progetto</div><div class="pd-cod" id="impCod"></div></div>
+        <button class="mx" onclick="chiudiImp()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="impp" id="viewImp">
         <div class="imp-tabs">
           <div class="imp-tab on" id="itModifica" onclick="impTab('modifica')">✎ Modifica</div>
-          <div class="imp-tab" id="itFornitori" onclick="impTab('fornitori')">👥 Fornitori progetto</div>
-          <div class="imp-tab" id="itStruttura" onclick="impTab('struttura')">🗂 Struttura progetto</div>
+          <div class="imp-tab" id="itFornitori" onclick="impTab('fornitori')">👥 Fornitori</div>
+          <div class="imp-tab" id="itStruttura" onclick="impTab('struttura')">🗂 Struttura</div>
         </div>
         <div class="imp-scroll">
           <!-- ── Modifica: dati del progetto, riscansione, eliminazione ── -->
@@ -1717,19 +1744,18 @@ textarea.fld{resize:vertical;min-height:60px}
               <div id="impStruttura"></div>
             </div>
             <div class="imp-card">
-              <div class="imp-h">Assegnazione automatica</div>
-              <div class="imp-sub">Assegna i fornitori del progetto ai pezzi in base ai tag (lavorazione, tipo, categoria). Non tocca chi hai già scelto a mano.</div>
-              <div class="imp-act"><button class="btn btn-ghost" onclick="autoAssegna()" id="btnAuto">✨ Auto-assegna</button></div>
-            </div>
-            <div class="imp-card">
               <div class="imp-h">Categorie mie</div>
               <div class="imp-sub">Raggruppamenti tuoi, indipendenti dalle categorie della distinta. Ognuna può essere legata o slegata dai Costi.</div>
               <div class="imp-act"><button class="btn btn-ghost" onclick="openCatManage(S.projId,()=>openProgetto())">🗂 Gestisci categorie</button></div>
             </div>
+            <div class="imp-card">
+              <div class="imp-h">Distinta, trattamenti, voci</div>
+              <div class="imp-sub">Roba da sistemare una volta: prima stava sopra le righe dell&rsquo;albero, dove sembrava una categoria di pezzi.</div>
+              <div id="impBanner"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
   <div class="fmenu" id="fmenu"></div>
 
@@ -3116,7 +3142,12 @@ async function projToggleSync(cat,on){
 function offertePezzo(pid){openOfferte(pid,()=>refreshDetail());}
 function renderTree(){
   if(!S.albero||!S.albero.categorie.length){document.getElementById('tscroll').innerHTML='<div style="padding:24px;text-align:center;font-size:11px;color:var(--t3)">Nessuna parte. Verifica che la cartella contenga la distinta Excel, poi usa <b>Riscansiona</b>.</div>';return;}
+  // L'indice dei pezzi si costruisce su TUTTI, non solo sulle righe disegnate:
+  // le categorie nascono chiuse, e prima qui finivano solo i pezzi visibili —
+  // così «Vai», «Apri i disegni» e ogni salto da fuori l'albero non trovavano
+  // il pezzo e non facevano niente, in silenzio.
   S.pmap={};
+  allParti().forEach(p=>{S.pmap[p.id]=p;});
   calcRevCoesistenti();
   if(!VOCICOM.length&&S.projId&&!S._vociCaricate){S._vociCaricate=true;vociCarica().then(()=>renderTree());}
   // barra: selezione globale, toggle albero/categorie-mie, controlli di vista
@@ -3126,7 +3157,6 @@ function renderTree(){
     <button class="btn btn-ghost btn-sm" onclick="openCustom(S.projId,()=>openProgetto())">＋ Elemento</button>
     <button class="tbtn" onclick="treeAll(false)">⊟ Comprimi</button>
     <button class="tbtn" onclick="treeAll(true)">⊞ Espandi</button>
-    <button class="tbtn" onclick="toggleGlance()" id="btnGlance">🚦 Cosa manca</button>
     <span id="selAct" style="margin-left:auto;display:${S.rows.size?'flex':'none'};align-items:center;gap:6px">
       <b style="font-size:11px" id="selN">${S.rows.size?S.rows.size+' selez.':''}</b>
       <button class="btn btn-sm" onclick="assegnaCatProgetto()">Assegna categoria…</button>
@@ -3293,8 +3323,8 @@ async function autoAssegna(){
 
 /* ── FORNITORI PREFERITI PER COMMESSA ── */
 let PREF=new Set();
-// non è più un modale: è una tab di Impostazioni progetto
-function openPref(){if(S.projId)go2imp('fornitori');}
+// non è più un modale: è una scheda di Impostazioni progetto
+function openPref(){apriImp('fornitori');}
 async function caricaPref(){
   if(!S.projId)return;
   PREF=new Set();
@@ -3886,20 +3916,29 @@ function setView(v){
   S.view=v;
   document.getElementById('viewAlbero').style.display=v==='albero'?'flex':'none';
   document.getElementById('viewFile').style.display=v==='file'?'flex':'none';
-  document.getElementById('viewImp').style.display=v==='imp'?'flex':'none';
   document.getElementById('tabAlbero').classList.toggle('on',v==='albero');
   document.getElementById('tabFile').classList.toggle('on',v==='file');
-  document.getElementById('tabImp').classList.toggle('on',v==='imp');
   applyGlance();   // il pannello vive solo accanto all'albero
   if(v==='file'){renderFiltri();renderFileTable();}
-  if(v==='imp')renderImpProgetto();
 }
 
 /* ── IMPOSTAZIONI PROGETTO ──
-   Quello che si regola una volta (dati, fornitori, struttura) non deve stare
-   sopra le righe: là sembrava una categoria di voci. */
+   Una scheda che si apre dentro la finestra, non una tab: quello che si regola
+   una volta non deve occupare il posto delle righe che si guardano sempre. */
 const IMP_TABS=['modifica','fornitori','struttura'];
-function go2imp(k){setView('imp');if(k)impTab(k);}
+function apriImp(k){
+  if(!S.projId)return;
+  document.getElementById('impCod').textContent=(commesse.find(c=>c.id===S.projId)||{}).codice||'';
+  renderImpProgetto();
+  if(k)impTab(k);
+  document.getElementById('impdrawOv').classList.add('open');
+  document.getElementById('impdraw').classList.add('open');
+}
+function chiudiImp(){
+  document.getElementById('impdraw').classList.remove('open');
+  document.getElementById('impdrawOv').classList.remove('open');
+}
+function go2imp(k){apriImp(k);}
 function impTab(k){
   S.impTab=IMP_TABS.includes(k)?k:'modifica';
   IMP_TABS.forEach(t=>{
@@ -3922,6 +3961,9 @@ function renderImpProgetto(){
     g('spDaData',iso(c.data_inizio));g('spAData',iso(c.data_fine));
   }
   impTab(S.impTab||'modifica');
+  // le tre strisce che prima stavano sopra l'albero vivono qui
+  const ban=document.getElementById('impBanner');
+  if(ban)ban.innerHTML=distintaBanner()+fornOrfaniBanner()+trattamentiBanner()+vociBanner();
   const box=document.getElementById('impStruttura');
   if(!box)return;
   if(!S.albero){box.innerHTML='<div class="fmuted" style="font-size:11.5px">Struttura non caricata.</div>';return;}
@@ -3957,7 +3999,8 @@ async function salvaImpProgetto(){
         data_fine:gv('spAData')?gv('spAData')+'T23:59:59':null})});
     if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a salvare'));
     toast('Progetto aggiornato','ok');
-    await loadCommesse();await openProgetto(S.projId);setView('imp');
+    await loadCommesse();await openProgetto(S.projId);
+    renderImpProgetto();   // la scheda resta aperta: si continua a regolare
     DOCK.gantt=null;if(DOCK.stato!=='chiuso')dockCarica(true);
   }catch(e){toast(e.message||'Errore',true);}
   finally{btn.disabled=false;btn.textContent=old;}
@@ -4212,14 +4255,20 @@ async function refreshDetail(){
 /* ── REVISIONI DI PROGETTO ── */
 let REVDATA=null;
 function rev2(n){return (n<10?'0':'')+n;}
+/* REVISIONE DI PROGETTO — sospesa (decisione di Elia, 02/08/2026).
+   Il meccanismo resta tutto: modello, API, storico, diff. Qui si spegne solo
+   l'ingresso, così non occupa spazio in testata finché non serve. Per
+   riaccenderlo basta rimettere REV_ATTIVA a true. */
+const REV_ATTIVA=false;
 async function loadRevisioni(){
+  if(!REV_ATTIVA){REVDATA=null;renderRevBadge();return;}
   if(!S.projId){REVDATA=null;renderRevBadge();return;}
   try{const r=await fetch(API+'/api/commesse/'+S.projId+'/revisioni');REVDATA=r.ok?await r.json():null;}catch{REVDATA=null;}
   renderRevBadge();
 }
 function renderRevBadge(){
   const el=document.getElementById('wrev');if(!el)return;
-  if(!REVDATA){el.innerHTML='';return;}
+  if(!REV_ATTIVA||!REVDATA){el.innerHTML='';return;}
   const rc=REVDATA.revisione_corrente;
   if(rc<0){el.innerHTML='<span class="revbadge none" style="cursor:pointer" onclick="openRevHistory()" title="Revisione di PROGETTO: nasce alla prima spedizione delle RDO (Rev 00). Non ancora inviato nulla."><span class="dot"></span>Rev — · bozza</span>';return;}
   if(REVDATA.in_preparazione){
@@ -4275,7 +4324,27 @@ function openRevHistory(){
    ancora aperti). */
 const CKOPEN=new Set();
 function ckToggle(k){CKOPEN.has(k)?CKOPEN.delete(k):CKOPEN.add(k);renderGlance();}
-function jumpPart(pid){const p=S.pmap[pid];if(!p)return;S.sel=p.numero_parte;renderTree();const el=document.querySelector('.tr-part[data-pid="'+pid+'"]');if(el)el.scrollIntoView({block:'center',behavior:'smooth'});}
+// Porta l'albero sul pezzo: apre i rami che lo contengono (le categorie
+// nascono chiuse, quindi senza questo la riga non esiste e non si può
+// raggiungere), poi ci scorre sopra.
+function jumpPart(pid){
+  const p=S.pmap[pid];if(!p)return;
+  S.sel=p.numero_parte;
+  apriRamiDi(p);
+  renderTree();
+  const el=document.querySelector('.tr-part[data-pid="'+pid+'"]');
+  if(el)el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+function apriRamiDi(p){
+  if(!S.albero)return;
+  if(S.treeMode==='cat'){S.openCatProg=S.openCatProg||{};S.openCatProg[p.categoria_progetto||'Da assegnare']=true;return;}
+  S.openCat[p.categoria]=true;
+  S.openLav[p.categoria+'||'+(p.lav_meccanica||'')]=true;
+  // commerciali: il ramo è il gruppo-fornitore, o il blocco per tipo
+  if(p.fornitore_id!=null)S.openGrp[p.categoria+'|'+p.fornitore_id]=true;
+  else if((p.fornitore_nome||'').trim())S.openGrp[p.categoria+'|n:'+p.fornitore_nome.trim()]=true;
+  else S.openTipo[p.categoria+'|'+(p.tipo||'')]=true;
+}
 const _comm=p=>(p.categoria||'').toUpperCase().startsWith('COMMERC');
 // un fornitore è raggiungibile se ha almeno un indirizzo; per gli shop online
 // la mail non serve, l'ordine si fa dal sito
@@ -8492,8 +8561,8 @@ function openNuovo(){document.getElementById('mProgTit').textContent='Nuovo prog
   ['pId','pCodice','pNome','pCliente','pCartella','pNote'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pBrand').value='IB';
   document.getElementById('pCartella').disabled=false;clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');setTimeout(()=>document.getElementById('pCodice').focus(),80);}
-// i dati del progetto si modificano dalla sua pagina Impostazioni, non da un modale
-function openModifica(){if(S.projId)go2imp('modifica');}
+// i dati del progetto si modificano dalla scheda Impostazioni, non da un modale
+function openModifica(){apriImp('modifica');}
 // il modale serve solo a CREARE: un progetto già aperto si modifica dalla sua
 // pagina Impostazioni progetto → Modifica (salvaImpProgetto)
 async function salvaProgetto(){
@@ -8932,6 +9001,7 @@ function gtBarreVisibili(){
     const f=DOCK.flt||{};
     if(f.forn&&String(b.fornitore_id||'')!==f.forn)return false;
     if(f.cat&&b.categoria!==f.cat)return false;
+    if(f.grp&&(b.categoria_progetto||'')!==f.grp)return false;
     if(f.lav&&b.lav_meccanica!==f.lav)return false;
     if(f.mat&&b.materiale!==f.mat)return false;
     if(f.tt&&b.tipo_tappa!==f.tt)return false;
@@ -8942,18 +9012,23 @@ function gtBarreVisibili(){
   });
 }
 function gtGruppi(barre){
-  // per PEZZO: una riga per codice · per FORNITORE: una riga per fornitore.
-  // Le voci ausiliarie fanno riga a sé, sempre, in fondo.
+  // Tre modi di leggere lo stesso Gantt: una riga per PEZZO, una per FORNITORE,
+  // oppure una per GRUPPO TUO (le «categorie mie»). Le voci ausiliarie fanno
+  // riga a sé, sempre, in fondo.
   const g={},voci=[];
   barre.forEach(b=>{
     if(b.tipo==='voce'){voci.push(b);return;}
-    const k=DOCK.raggr==='fornitore'
-      ?(b.fornitore_id!=null?'f'+b.fornitore_id:'f0')
-      :'p'+(b.codice||b.parte_id);
-    const et=DOCK.raggr==='fornitore'
-      ?(b.fornitore_nome||'(nessun fornitore)')
-      :(b.codice||'');
-    (g[k]=g[k]||{chiave:k,etichetta:et,sotto:b.denominazione||'',barre:[]}).barre.push(b);
+    let k,et,sotto=b.denominazione||'';
+    if(DOCK.raggr==='fornitore'){
+      k=b.fornitore_id!=null?'f'+b.fornitore_id:'f0';
+      et=b.fornitore_nome||'(nessun fornitore)';
+    }else if(DOCK.raggr==='gruppo'){
+      const nome=b.categoria_progetto||'Da assegnare';
+      k='g'+nome;et=nome;sotto='';
+    }else{
+      k='p'+(b.codice||b.parte_id);et=b.codice||'';
+    }
+    (g[k]=g[k]||{chiave:k,etichetta:et,sotto:sotto,barre:[]}).barre.push(b);
   });
   const righe=Object.values(g).sort((a,b)=>a.etichetta.localeCompare(b.etichetta));
   if(voci.length)righe.push({chiave:'voci',etichetta:'⬦ Voci di commessa',
@@ -8971,7 +9046,8 @@ function gtFiltri(){
   const forn=[...new Set(g.barre.map(b=>b.fornitore_id).filter(x=>x!=null))]
     .sort((a,b)=>(fornById(a)||{nome:''}).nome.localeCompare((fornById(b)||{nome:''}).nome));
   return `<div class="flt-bar">
-    <div class="cx-toggle" style="margin:0"><button class="${DOCK.raggr==='pezzo'?'on':''}" onclick="gtRaggr('pezzo')">Per pezzo</button><button class="${DOCK.raggr==='fornitore'?'on':''}" onclick="gtRaggr('fornitore')">Per fornitore</button></div>
+    <div class="cx-toggle" style="margin:0"><button class="${DOCK.raggr==='pezzo'?'on':''}" onclick="gtRaggr('pezzo')">Per pezzo</button><button class="${DOCK.raggr==='fornitore'?'on':''}" onclick="gtRaggr('fornitore')">Per fornitore</button><button class="${DOCK.raggr==='gruppo'?'on':''}" onclick="gtRaggr('gruppo')" title="I gruppi che hai fatto tu — «categorie mie»">Per gruppo mio</button></div>
+    ${sel('grp','Gruppo mio',val('grp',b=>b.categoria_progetto))}
     ${sel('forn','Fornitore',forn,v=>(fornById(v)||{nome:'#'+v}).nome)}
     ${sel('cat','Categoria',val('cat',b=>b.categoria))}
     ${sel('lav','Lavorazione',val('lav',b=>b.lav_meccanica))}
@@ -9050,7 +9126,7 @@ function dockDisegnaGantt(){
   };
 
   let html=gtFiltri()+`<div class="gt">
-    <div class="gt-testa"><div class="gt-nomi">${DOCK.raggr==='fornitore'?'Fornitore':'Pezzo'} · ${righe.length}</div>
+    <div class="gt-testa"><div class="gt-nomi">${DOCK.raggr==='fornitore'?'Fornitore':(DOCK.raggr==='gruppo'?'Gruppo mio':'Pezzo')} · ${righe.length}</div>
       <div class="gt-scala">${gtTacche(f.da,f.a,100)}</div></div>`;
   righe.forEach(r=>{
     const aperto=DOCK.aperti[r.chiave]===true;
@@ -9219,7 +9295,52 @@ async function grLeggi(){
     if(moved){const th=st.th,stop=ev=>{ev.stopPropagation();ev.preventDefault();};th.addEventListener('click',stop,{capture:true,once:true});setTimeout(()=>{try{th.removeEventListener('click',stop,true);}catch{}},60);}
     document.removeEventListener('pointermove',cmv);document.removeEventListener('pointerup',cup);st=null;}
 })();
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();}});
+/* ════ TASTO DESTRO — regola valida in tutto il gestionale ════
+   Il menu del browser non deve MAI comparire. Dove abbiamo un menu nostro si
+   apre quello (i vari ctx*, che chiamano già preventDefault); dove non ce l'
+   abbiamo non succede niente, ma quel menu lì non si vede.
+
+   Unica eccezione utile: dentro un campo di testo il tasto destro serve
+   davvero (copia/incolla), e togliergli il menu senza darne uno lo
+   peggiorerebbe — quindi lì ne diamo uno nostro. */
+document.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  const t=e.target;
+  const scrivibile=t&&(t.matches&&t.matches('input:not([type=checkbox]):not([type=radio]),textarea,[contenteditable=""],[contenteditable=true]'));
+  if(scrivibile&&!t.disabled&&!t.readOnly)ctxTesto(e,t);
+},true);
+function ctxTesto(e,el){
+  const sel=String(el.value!=null?el.value:el.textContent||'').substring(el.selectionStart||0,el.selectionEnd||0);
+  const voci=[];
+  if(sel){
+    voci.push(['✂️ Taglia',`ctxTaglia()`]);
+    voci.push(['📋 Copia',`navigator.clipboard&&navigator.clipboard.writeText(${JSON.stringify(sel)})`]);
+  }
+  voci.push(['📥 Incolla',`ctxIncolla()`]);
+  if(!sel&&(el.value||'').length)voci.push(['⬚ Seleziona tutto',`ctxSelTutto()`]);
+  CTXEL=el;
+  showCtx(e,'',voci);
+}
+let CTXEL=null;
+function ctxTaglia(){
+  const el=CTXEL;if(!el)return;
+  const a=el.selectionStart,b=el.selectionEnd;
+  const testo=el.value.substring(a,b);
+  if(navigator.clipboard)navigator.clipboard.writeText(testo);
+  el.setRangeText('',a,b,'end');el.focus();
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+async function ctxIncolla(){
+  const el=CTXEL;if(!el)return;
+  let testo='';
+  try{testo=await navigator.clipboard.readText();}catch{toast('Il browser non mi lascia leggere gli appunti: usa Ctrl+V',true);el.focus();return;}
+  if(!testo)return;
+  el.setRangeText(testo,el.selectionStart||0,el.selectionEnd||0,'end');el.focus();
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function ctxSelTutto(){const el=CTXEL;if(!el)return;el.focus();el.select&&el.select();}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['mProg','mForn'].forEach(mClose);closeDD();chiudiImp();}});
 let _tt;function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='ok'?' ok':type===true?' err':'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3400);}
 
 init();

@@ -70,15 +70,28 @@ Cerca la stringa, non la riga.
 
 **Progetto — è qui che si lavora di più**
 
-Tre tab: **Albero parti** (`viewAlbero`), **Ricerca file** (`viewFile`),
-**Impostazioni progetto** (`viewImp`). `setView('albero'|'file'|'imp')` le
-accende; dentro le impostazioni ci sono tre sotto-tab, `impTab('modifica'|
-'fornitori'|'struttura')`. I dati del progetto e i fornitori del progetto NON
-sono più modali: stanno lì (`salvaImpProgetto`, `caricaPref`/`renderPref`).
-Il modale `mProg` serve solo a **creare** un progetto nuovo.
+Due tab: **Albero parti** (`viewAlbero`) e **Ricerca file** (`viewFile`),
+`setView('albero'|'file')`.
+
+Le **Impostazioni progetto** non sono una tab: sono un cassetto (`#impdraw`,
+stesso modo di `#pdraw`) che si apre dal pulsante in alto a destra con
+`apriImp(tab)`. Dentro tre sotto-tab, `impTab('modifica'|'fornitori'|
+'struttura')`. Ci vivono anche le quattro strisce (distinta, fornitori orfani,
+trattamenti, voci) che prima stavano sopra le righe dell'albero: si disegnano
+in `#impBanner`, non in `renderTree`. Il modale `mProg` serve solo a **creare**
+un progetto nuovo.
+
+In testata: `🚦 Cosa manca` · `✨ Auto-assegna` · `⚙️ Impostazioni`.
 
 - `"PROGETTO DETAIL"` — `openProgetto()` carica albero, file, voci
-- `"IMPOSTAZIONI PROGETTO"` — `renderImpostazioni` · `impTab` · `salvaImpProgetto`
+- `"IMPOSTAZIONI PROGETTO"` — `renderImpProgetto` · `impTab` · `salvaImpProgetto`
+  (**non** `renderImpostazioni`: quello è delle Impostazioni dell'applicazione)
+- `S.pmap` si riempie con **tutti** i pezzi all'inizio di `renderTree`, non
+  solo con le righe disegnate: le categorie nascono chiuse, e riempirlo dentro
+  `partRow` faceva fallire in silenzio ogni `jumpPart`/`openDraw` da fuori.
+  `apriRamiDi(p)` apre i rami che contengono il pezzo prima di scorrerci sopra.
+- **Revisione di progetto sospesa**: `REV_ATTIVA=false` spegne solo l'ingresso
+  in testata; modello, API, storico e diff sono tutti ancora lì.
 - `"vista albero raggruppata per CATEGORIA PROGETTO"` — modalità «Categorie mie»
 - `"FILTRI PER ATTRIBUTO"` — `fltBar`/`fltPassa`/`treeParti`, la barra sopra le righe
 - `"«Trattamenti termici e superficiali»"` — `trattTree()`, blocco trasversale in
@@ -160,6 +173,14 @@ da `go()` a ogni cambio sezione.
 ---
 
 ## Convenzioni — rispettarle
+
+**TASTO DESTRO — regola di Elia, vale in tutto il gestionale.** Il menu del
+browser non deve MAI comparire, da nessuna parte. Dove serve si apre un menu
+nostro (`showCtx(e,titolo,voci)`); dove non serve non succede niente, ma quel
+menu lì non si vede. Il divieto è già globale (listener `contextmenu` in
+capture, in fondo al file): aggiungendo una vista nuova non c'è niente da fare
+per il divieto, semmai c'è da **dare un menu** a quello che se lo merita.
+Dentro i campi di testo il menu nostro c'è già (taglia/copia/incolla).
 
 **Scrivere testo nell'HTML:** sempre `esc(valore)`. Dentro una stringa JS in un
 `onclick`: `jsq(valore)`. Non saltarlo mai, nemmeno su dati «nostri».
