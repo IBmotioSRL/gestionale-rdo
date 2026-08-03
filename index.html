@@ -603,6 +603,39 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .bp-add input{flex:1;border:1px solid var(--bd2);border-radius:7px;padding:6px 8px;font:inherit;font-size:12px}
 /* riga albero: modificato (rosso) / escluso (disattivato) */
 .tr-part.mod .tr-pcod{color:#C0151E}
+/* un pezzo senza fornitore deve saltare all'occhio: prima si vedeva solo dal
+   pallino, e trovare «quale dei 110» era un lavoro a mano */
+.tr-part.nofor{background:rgba(255,149,0,.07);box-shadow:inset 3px 0 0 var(--orange)}
+.tr-part.nofor:hover{background:rgba(255,149,0,.13)}
+.tr-part.punta{animation:punta 1.3s ease-out 2}
+@keyframes punta{0%,100%{background:transparent}35%{background:rgba(245,168,35,.55)}}
+.tr-sosp{font-size:9px;font-weight:800;color:#7A6050;background:rgba(44,21,6,.07);border-radius:5px;padding:2px 6px;white-space:nowrap}
+.tr-manca{font-size:9px;font-weight:800;color:#B36A00;background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.3);
+  border-radius:5px;padding:2px 7px;cursor:pointer;white-space:nowrap}
+.tr-manca:hover{background:var(--orange);color:#fff;border-color:transparent}
+.wpill-clic{cursor:pointer;border-color:rgba(255,149,0,.45)!important}
+.wpill-clic:hover{background:rgba(255,149,0,.14)}
+/* scheda progetto nella griglia: i numeri scritti, non da dedurre */
+.pcnums{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0 2px}
+.pcn{font-size:9.5px;font-weight:700;border-radius:5px;padding:2px 7px;white-space:nowrap}
+.pcn b{font-size:10.5px}
+.pcn.ok{background:rgba(52,199,89,.12);color:#1A7A2E}
+.pcn.manca{background:rgba(255,149,0,.14);color:#B36A00}
+.pcn.sosp{background:rgba(44,21,6,.07);color:var(--t2)}
+.pcn.tot{color:var(--t3)}
+.pcdue{font-size:9.5px;font-weight:700;color:var(--t2);background:rgba(44,21,6,.05);border-radius:5px;padding:2px 7px;white-space:nowrap}
+/* riepilogo di progetto (tasto destro) */
+.rp dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;margin-bottom:12px}
+.rp dt{color:var(--t2);white-space:nowrap}
+.rp dd{font-weight:600;text-align:right}
+.rp-h{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin:12px 0 6px}
+.rp-griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:7px}
+.rp-box{border:1px solid var(--bd);border-radius:9px;padding:8px 10px;background:var(--bg)}
+.rp-box b{display:block;font-size:16px;font-weight:800;line-height:1.2}
+.rp-box span{font-size:10px;color:var(--t2)}
+.rp-box.manca{border-color:rgba(255,149,0,.35);background:rgba(255,149,0,.06)}
+.rp-box.manca b{color:#B36A00}
+.rp-box.ok b{color:#1A7A2E}
 .tr-modtag{font-size:8px;font-weight:800;color:#fff;background:#C0151E;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;white-space:nowrap}
 .tr-part.excl{opacity:.55}
 .tr-part.excl .tr-pdesc{text-decoration:line-through}
@@ -1694,7 +1727,7 @@ textarea.fld{resize:vertical;min-height:60px}
        in mezzo alle righe che si guardano tutto il giorno. -->
   <div id="impdrawOv" onclick="chiudiImp()"></div>
   <div id="impdraw">
-      <div class="rz-split abs" data-target="#impdraw" data-dir="l" data-min="380" data-max="1100" data-key="rdo_impdraw" title="Trascina per ridimensionare"></div>
+      <div class="rz-split abs" data-target="#impdraw" data-dir="l" data-var="--impdrawW" data-min="380" data-max="1200" data-key="rdo_impdraw" title="Trascina per ridimensionare"></div>
       <div class="pd-hd">
         <div><div class="pd-name">Impostazioni progetto</div><div class="pd-cod" id="impCod"></div></div>
         <button class="mx" onclick="chiudiImp()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -1897,7 +1930,9 @@ textarea.fld{resize:vertical;min-height:60px}
 <!-- Drawer dettaglio particolare -->
 <div id="pdrawOv" onclick="closeDraw()"></div>
 <div id="pdraw">
-  <div class="rz-split abs" data-target="#pdraw" data-dir="l" data-min="340" data-max="900" data-key="rdo_pdraw" title="Trascina per ridimensionare il cassetto"></div>
+  <!-- data-var è OBBLIGATORIO: senza, il trascinamento scrive su una variabile
+       CSS che non esiste e la maniglia non muove niente -->
+  <div class="rz-split abs" data-target="#pdraw" data-dir="l" data-var="--pdrawW" data-min="340" data-max="1200" data-key="rdo_pdraw" title="Trascina per ridimensionare"></div>
   <div class="pd-hd">
     <div><div class="pd-name" id="pdName">—</div><div class="pd-cod" id="pdCod"></div></div>
     <button class="mx" onclick="closeDraw()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2167,6 +2202,16 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
+<!-- MODAL: riepilogo di progetto — solo da guardare, non si modifica niente.
+     Serve a rispondere al volo a «a che punto è» senza aprire la commessa. -->
+<div class="mov" id="mRiep" onclick="ovClose(event,'mRiep')">
+  <div class="modal" style="max-width:520px">
+    <div class="mhd"><div class="mico2">👁</div><div><div class="mtit" id="riepTit">Riepilogo</div><div class="msub" id="riepSub"></div></div><button class="mx" onclick="mClose('mRiep')">✕</button></div>
+    <div class="mbd rp" id="riepBody" style="max-height:70vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">Solo da guardare: qui non si modifica niente.</div><div class="mft-r"><button class="btn btn-ghost btn-sm" id="riepApri">Apri il progetto →</button><button class="btn btn-go" onclick="mClose('mRiep')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <!-- MODAL: confronto prezzi fra i fornitori di uno stesso pezzo.
      Era una scheda del pannello laterale; è l'unico posto dove si chiude un
      confronto scegliendo il vincitore, quindi è diventato un modale invece di
@@ -2423,20 +2468,105 @@ function statoBucket(p){
   if(p.stato==='confermata')return 'confermata';
   return 'daInviare';
 }
-function projStats(c){const s={tot:0,daSmistare:0,daInviare:0,inAttesa:0,confermata:0};flatParti(c).forEach(p=>{if(p.escluso)return;s.tot++;s[statoBucket(p)]++;});return s;}
+function projStats(c){
+  const s={tot:0,sospesi:0,daSmistare:0,daInviare:0,inAttesa:0,confermata:0};
+  flatParti(c).forEach(p=>{if(p.escluso){s.sospesi++;return;}s.tot++;s[statoBucket(p)]++;});
+  s.assegnati=s.tot-s.daSmistare;
+  // MAI arrotondare per eccesso: 281 su 282 faceva 100% e la scheda diceva
+  // «Completo» mentre ne mancava uno. Il 100 si scrive solo quando è 100.
+  s.pct=s.tot?(s.daSmistare?Math.min(99,Math.floor(s.assegnati/s.tot*100)):100):0;
+  return s;
+}
 
 /* ── PROGETTI GRID ── */
 function renderProjGrid(){
   const g=document.getElementById('projGrid');
   if(!commesse.length){g.innerHTML=emptyHtml('Nessun progetto','Crea il primo progetto indicando la cartella con la distinta base Excel.','openNuovo()','Nuovo progetto');return;}
-  g.innerHTML='<div class="pgrid">'+commesse.map(c=>{const s=projStats(c);const pct=s.tot?Math.round((s.tot-s.daSmistare)/s.tot*100):0;const dt=fmtDate(c.importata_at);
-    const stChip=s.tot===0?'<span class="chip cgr">vuoto</span>':pct===100?'<span class="chip cg">Completo</span>':s.daSmistare<s.tot?'<span class="chip co">In corso</span>':'<span class="chip cgr">Da smistare</span>';
+  g.innerHTML='<div class="pgrid">'+commesse.map(c=>{
+    const s=projStats(c);const dt=fmtDate(c.importata_at);
+    const stChip=s.tot===0?'<span class="chip cgr">vuoto</span>'
+      :s.daSmistare===0?'<span class="chip cg">Tutti assegnati</span>'
+      :s.assegnati?'<span class="chip co">In corso</span>':'<span class="chip cgr">Da smistare</span>';
+    const consegna=c.data_fine?`<span class="pcdue" title="Consegna prevista">🏁 ${fmtDate(c.data_fine)}</span>`:'';
     return `<div class="pcard" onclick="go('pdet',${c.id})" oncontextmenu="ctxProj(event,${c.id})"><div class="pctop"></div><div class="pcb">
       <div class="pchd"><span class="pccod">${esc(c.codice)}</span><span class="pcdate">${dt}</span></div>
       <div class="pcname">${esc(c.nome)}</div><div class="pccli">${esc(c.cliente||'—')}</div>
-      <div class="pcbb"><div class="pcbf${pct===100?' done':''}" style="width:${pct}%"></div></div>
-      <div class="pcstats"><span class="pcstat"><strong>${s.tot-s.daSmistare}</strong>/${s.tot} smistati</span>${stChip}</div>
+      <div class="pcbb"><div class="pcbf${s.daSmistare===0&&s.tot?' done':''}" style="width:${s.pct}%"></div></div>
+      <div class="pcnums">
+        <span class="pcn ok"><b>${s.assegnati}</b> ${plur(s.assegnati,'assegnato','assegnati')}</span>
+        ${s.daSmistare?`<span class="pcn manca"><b>${s.daSmistare}</b> da assegnare</span>`:''}
+        ${s.sospesi?`<span class="pcn sosp"><b>${s.sospesi}</b> ${plur(s.sospesi,'sospeso','sospesi')}</span>`:''}
+        <span class="pcn tot">su <b>${s.tot}</b></span>
+      </div>
+      <div class="pcstats"><span class="pcstat"><strong>${s.pct}%</strong> avanzamento</span>${consegna}${stChip}</div>
     </div></div>`;}).join('')+'</div>';
+}
+
+/* ── RIEPILOGO DI PROGETTO (tasto destro sulla scheda) ──
+   Da guardare al volo e basta: date, chi l'ha fatto, cosa manca, cosa è fatto.
+   Non si modifica niente da qui — per quello si apre il progetto. */
+async function apriRiepilogo(cid){
+  const c=commesse.find(x=>x.id===cid);if(!c)return;
+  document.getElementById('riepTit').textContent=c.codice+' — '+c.nome;
+  document.getElementById('riepSub').textContent=c.cliente||'';
+  document.getElementById('riepApri').onclick=()=>{mClose('mRiep');go('pdet',cid);};
+  const body=document.getElementById('riepBody');
+  body.innerHTML='<div class="fmuted" style="padding:14px">Carico…</div>';
+  mOpen('mRiep');
+  // i pezzi della commessa ci sono già; il resto si chiede al server
+  let gantt=null,ger=null;
+  try{
+    const [rg,rr]=await Promise.all([
+      fetch(API+`/api/commesse/${cid}/gantt`),
+      fetch(API+`/api/commesse/${cid}/gerarchia`)]);
+    gantt=rg.ok?await rg.json():null;ger=rr.ok?await rr.json():null;
+  }catch{}
+  const s=projStats(c);
+  const parti=flatParti(c).filter(p=>!p.escluso);
+  const forn=new Set(parti.map(p=>p.fornitore_id).filter(x=>x!=null));
+  const senzaDis=parti.filter(p=>!(p.categoria||'').toUpperCase().startsWith('COMMERC')&&!p.custom&&!pFiles(p).length).length;
+  const oggi=new Date();
+  const giorni=c.data_fine?Math.ceil((new Date(c.data_fine)-oggi)/86400000):null;
+  const scaduta=giorni!=null&&giorni<0;
+  const riga=(k,v)=>`<dt>${k}</dt><dd>${v}</dd>`;
+  const box=(n,l,cls)=>`<div class="rp-box ${cls||''}"><b>${n}</b><span>${l}</span></div>`;
+  body.innerHTML=`
+    <dl>
+      ${riga('Cliente',esc(c.cliente||'—'))}
+      ${riga('Partenza',c.data_inizio?fmtDate(c.data_inizio):'<span class="fmuted">non impostata</span>')}
+      ${riga('Consegna prevista',c.data_fine
+        ?fmtDate(c.data_fine)+(giorni!=null?` <span style="color:${scaduta?'#C0151E':'var(--t2)'};font-weight:700">(${scaduta?'scaduta da '+(-giorni):'fra '+giorni} ${Math.abs(giorni)===1?'giorno':'giorni'})</span>`:'')
+        :'<span class="fmuted">non impostata</span>')}
+      ${riga('Distinta importata',fmtDate(c.importata_at))}
+      ${riga('Distinta riconosciuta',c.distinta_codice?esc(c.distinta_codice):(S.albero&&S.albero.commessa_id===cid&&S.albero.distinta_codice?esc(S.albero.distinta_codice):'<span class="fmuted">nessuna</span>'))}
+      ${riga('Cartella','<span style="font-family:ui-monospace,monospace;font-size:10px">'+esc((c.percorso_cartella||'').split(/[\\\\/]/).pop())+'</span>')}
+    </dl>
+    <div class="rp-h">A che punto è</div>
+    <div class="rp-griglia">
+      ${box(s.tot,plur(s.tot,'pezzo in distinta','pezzi in distinta'))}
+      ${box(s.assegnati,plur(s.assegnati,'assegnato','assegnati'),'ok')}
+      ${s.daSmistare?box(s.daSmistare,'da assegnare','manca'):''}
+      ${s.sospesi?box(s.sospesi,plur(s.sospesi,'sospeso','sospesi')):''}
+      ${box(forn.size,plur(forn.size,'fornitore','fornitori'))}
+      ${box(s.pct+'%','avanzamento',s.daSmistare?'':'ok')}
+    </div>
+    <div class="rp-h">Cosa manca</div>
+    <div class="rp-griglia">
+      ${s.daSmistare?box(s.daSmistare,'senza fornitore','manca'):''}
+      ${senzaDis?box(senzaDis,'senza disegno','manca'):''}
+      ${gantt&&gantt.in_ritardo?box(gantt.in_ritardo,'passaggi in ritardo','manca'):''}
+      ${gantt&&gantt.senza_date?box(gantt.senza_date,'senza date'):''}
+      ${!s.daSmistare&&!senzaDis&&!(gantt&&gantt.in_ritardo)?'<div class="rp-box ok"><b>✓</b><span>niente blocca l&rsquo;invio</span></div>':''}
+    </div>
+    <div class="rp-h">Cosa c&rsquo;è</div>
+    <div class="rp-griglia">
+      ${box(s.daInviare,'da inviare')}
+      ${box(s.inAttesa,plur(s.inAttesa,'RDO inviata','RDO inviate'))}
+      ${box(s.confermata,plur(s.confermata,'confermato','confermati'),'ok')}
+      ${gantt?box(gantt.barre.length,plur(gantt.barre.length,'passaggio a calendario','passaggi a calendario')):''}
+      ${ger&&ger.n_legami?box(ger.n_legami,'legami di gerarchia'):''}
+      ${ger&&ger.n_grezzi?box(ger.n_grezzi,'righe di taglio'):''}
+    </div>`;
 }
 
 /* ── PROGETTO DETAIL ── */
@@ -2472,14 +2602,20 @@ async function openProgetto(pid){
 }
 function catParti(cat){return cat.kind==='commerciale'?[...(cat.gruppi||[]).flatMap(g=>g.parti),...(cat.tipi||[]).flatMap(t=>t.parti)]:(cat.lavorazioni||[]).flatMap(l=>l.parti);}
 function allParti(){return S.albero?S.albero.categorie.flatMap(catParti):[];}
+// I pezzi sospesi dal progetto sono fuori da ogni conto: contarli faceva dire
+// «109/110» senza che si capisse quale fosse il 110°, e il mancante era proprio
+// uno sospeso.
+function partiVive(arr){return (arr||allParti()).filter(p=>!p.escluso);}
 
 function renderProgress(){
-  const all=allParti();const tot=all.length;
+  const all=partiVive();const tot=all.length;
+  const sospesi=allParti().length-tot;
   const c={daSmistare:0,daInviare:0,inAttesa:0,confermata:0};all.forEach(p=>c[statoBucket(p)]++);
-  document.getElementById('tstats').textContent='· '+tot+' pezzi';
+  document.getElementById('tstats').textContent='· '+tot+' pezzi'+(sospesi?` · ${sospesi} ${sospesi===1?'sospeso':'sospesi'}`:'');
   const pct=tot?Math.round((tot-c.daSmistare)/tot*100):0;
   document.getElementById('wprog').innerHTML=`
-    <div class="wpill"><div class="wdot" style="background:var(--orange)"></div><b>${c.daSmistare}</b> da assegnare</div>
+    ${c.daSmistare?`<div class="wpill wpill-clic" onclick="vaiAlPrimoDaAssegnare()" title="Portami sul primo pezzo senza fornitore"><div class="wdot" style="background:var(--orange)"></div><b>${c.daSmistare}</b> da assegnare →</div>`
+      :`<div class="wpill"><div class="wdot" style="background:var(--green)"></div>tutti assegnati</div>`}
     <div class="wpill"><div class="wdot" style="background:var(--blue)"></div><b>${c.daInviare}</b> da inviare</div>
     <div class="wpill"><div class="wdot" style="background:var(--teal)"></div><b>${c.inAttesa}</b> inviati</div>
     <div class="wpill"><div class="wdot" style="background:var(--green)"></div><b>${c.confermata}</b> confermati</div>
@@ -2489,6 +2625,35 @@ function renderProgress(){
       <div class="seg" style="background:var(--blue);width:${tot?c.daInviare/tot*100:0}%"></div>
       <div class="seg" style="background:var(--orange);width:${tot?c.daSmistare/tot*100:0}%"></div>
     </div><span style="font-size:10px;font-weight:700;color:var(--t2)">${pct}%</span>`;
+}
+// «109/110, ma quale?»: porta sul primo pezzo senza fornitore, aprendo i rami
+// che lo contengono e accendendolo per qualche secondo
+function vaiAlPrimoDaAssegnare(){
+  const mancanti=partiVive().filter(p=>!pForns(p).length);
+  if(!mancanti.length){toast('Sono tutti assegnati','ok');return;}
+  S.daAssegnare=new Set(mancanti.map(p=>p.id));
+  jumpPart(mancanti[0].id);
+  lampeggia(mancanti[0].id);
+  if(mancanti.length>1)toast(mancanti.length+' pezzi senza fornitore: sono evidenziati');
+}
+// dal pannello «Cosa manca»: portami sul pezzo E aprimi la scelta del fornitore,
+// che è quello che si va a fare
+function vaiEAssegna(pid){
+  jumpPart(pid);lampeggia(pid);
+  setTimeout(()=>{
+    const riga=document.querySelector('.tr-part[data-pid="'+pid+'"]');
+    if(riga)showDD({stopPropagation(){},currentTarget:riga},{t:'P',id:pid});
+  },420);
+}
+function vaiAlPrimoDellaCategoria(cat){
+  const p=partiVive().find(x=>x.categoria===cat&&!pForns(x).length);
+  if(!p){toast('In questa categoria sono tutti assegnati','ok');return;}
+  jumpPart(p.id);lampeggia(p.id);
+}
+function lampeggia(pid){
+  const el=document.querySelector('.tr-part[data-pid="'+pid+'"]');if(!el)return;
+  el.classList.add('punta');
+  setTimeout(()=>el.classList.remove('punta'),2600);
 }
 
 /* ── multi-fornitore: helper su p.fornitori_comparazione / prezzi_comparazione ── */
@@ -2517,7 +2682,9 @@ function partRow(p){
   const revTag=isRevisionato(p.revisione)?`<span class="tr-revtag" title="Pezzo revisionato (revisione ${esc(p.revisione)}) — è la revisione corrente, sostituisce la rev 00">⟳ ${esc(revLabelPart(p.revisione))}</span>`:'';
   const dupBase=S.revDup?S.revDup[p.id]:null;
   const dupTag=dupBase?`<span class="tr-duptag" title="Questo pezzo è in distinta in ${S.revGrp[dupBase].length} revisioni contemporaneamente — clic per confrontarle" onclick="event.stopPropagation();openConfrontoRev('${jsq(dupBase)}')">⚠ ${S.revGrp[dupBase].length} revisioni</span>`:'';
-  return `<div class="tr-part${sel?' sel':''}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="partClick(event,'${jsq(p.numero_parte)}',${p.id})">
+  // senza fornitore e non sospeso: è uno di quelli che tengono ferma la commessa
+  const nofor=(n===0&&!p.escluso)?' nofor':'';
+  return `<div class="tr-part${sel?' sel':''}${nofor}${p.proprieta_modificata?' mod':''}${p.escluso?' excl':''}" data-pid="${p.id}" oncontextmenu="ctxPart(event,${p.id})" onclick="partClick(event,'${jsq(p.numero_parte)}',${p.id})">
       <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()" onchange="toggleRow(${p.id},this.checked)">
       <span class="tr-pst ${dot}" title="${dotT}"></span>
       <span class="tr-pcod" title="${esc(p.numero_parte)}">${esc(p.numero_parte)}</span>
@@ -3181,8 +3348,11 @@ function renderTree(){
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
     const catOpen=S.openCat[cat.categoria]!==false;
-    const allP=catParti(cat);
+    const tutti=catParti(cat);
+    const allP=partiVive(tutti);              // i sospesi non entrano nel conto
+    const sospesi=tutti.length-allP.length;
     const done=allP.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
+    const manca=allP.length-done;
     const isComm=cat.kind==='commerciale';
     if(!isComm&&prevComm)html+='<div class="tr-sep"></div>';
     prevComm=isComm;
@@ -3190,6 +3360,8 @@ function renderTree(){
       ${ckGruppo(allP.map(p=>p.id),null,'Seleziona tutta la categoria')}
       <span class="tr-arrow">${catOpen?'▾':'▸'}</span>
       <span class="tr-cat-label">${esc(cat.categoria||'')}</span>
+      ${sospesi?`<span class="tr-sosp" title="${sospesi} sospesi dal progetto: fuori da ogni conto">⊘ ${sospesi}</span>`:''}
+      ${manca?`<span class="tr-manca" title="Portami sul primo senza fornitore" onclick="event.stopPropagation();vaiAlPrimoDellaCategoria('${jsq(cat.categoria)}')">${manca} da assegnare →</span>`:''}
       <span class="tr-cnt ${done===allP.length&&allP.length?'done':''}">${done}/${allP.length}</span>
       ${isComm?'':`<span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,{t:'CAT',cat:'${jsq(cat.categoria)}'})">Assegna tutti</span>`}</div>`;
     if(!catOpen)return;
@@ -4371,8 +4543,10 @@ function controlliInvio(){
 
   // ── blocca ──
   add('forn','blocca','senza fornitore',
-    'Nessuno a cui chiedere: questi pezzi non entrano in nessuna RDO.',
-    all.filter(p=>!pForns(p).length).map(rigaPezzo));
+    'Nessuno a cui chiedere: questi pezzi non entrano in nessuna RDO. Clicca per andarci sopra.',
+    all.filter(p=>!pForns(p).length).map(p=>({
+      cod:p.numero_parte,txt:(p.denominazione||'—')+' · '+(p.categoria||''),
+      go:`vaiEAssegna(${p.id})`,fix:'Vai e assegna'})));
   add('mail','blocca','senza indirizzo mail',
     'Fornitori assegnati a cui la richiesta non si può spedire.',
     fidsUsati.map(fornById).filter(f=>fornSenzaRecapito(f)).map(rigaForn));
@@ -6925,6 +7099,7 @@ function ctxShip(e,cid,fid){const f=fornitori.find(x=>x.id==fid);const st=ddStat
   showCtx(e,f?f.nome:'RDO',items);
 }
 function ctxProj(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Progetto',[
+  ['👁 Riepilogo',`apriRiepilogo(${cid})`],
   ['🗂 Apri progetto',`go('pdet',${cid})`],
   ['✉ Prepara RDO',`RDOEXP.add(${cid});go('rdo')`],
   {sep:1},
@@ -8796,7 +8971,16 @@ function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 function esc(s){const d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
 function jsq(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 function ini(n){return (n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
-function fmtDate(s){try{return new Date(s).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}catch{return '';}}
+// `new Date(qualcosa di sbagliato)` non lancia: restituisce una data non valida,
+// e il catch non scattava mai. Risultato: «Invalid Date» a video su ogni data
+// mancante, e «01 gen 1970» su null. Meglio niente che una data finta.
+function fmtDate(s){
+  if(s==null||s==='')return '';
+  const d=new Date(s);
+  return isNaN(d.getTime())?'':d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+}
+// «1 assegnati» si legge male: il numero e la parola devono andare d'accordo
+function plur(n,uno,tanti){return n===1?uno:tanti;}
 function statoLbl(s){return {da_inviare:'da inviare',in_carrello:'in carrello',inviata_da_confermare:'inviato',confermata:'confermato',respinta:'respinto'}[s]||s;}
 function fileTags(filesJson){let arr=[];try{arr=JSON.parse(filesJson)||[];}catch{}const exts=[...new Set(arr.map(p=>(p.split('.').pop()||'').toLowerCase()))].filter(Boolean);
   return exts.map(e=>`<span class="ftag ftag-${e}">${e.toUpperCase()}</span>`).join('');}
@@ -8849,7 +9033,8 @@ function toggleGlance(){
 // ── separatori trascinabili generici (.rz-split) su griglie: RDO editor, Fornitori, Distinte ──
 (function setupSplitters(){
   // ripristina le larghezze salvate come variabili CSS su :root (ereditate dalle griglie)
-  [['rdo_rdonav','--rdonav'],['rdo_fvdet','--fvdet'],['rdo_ddprev','--ddprev'],['rdo_pdraw','--pdrawW']].forEach(([k,v])=>{
+  [['rdo_rdonav','--rdonav'],['rdo_fvdet','--fvdet'],['rdo_ddprev','--ddprev'],
+   ['rdo_pdraw','--pdrawW'],['rdo_impdraw','--impdrawW']].forEach(([k,v])=>{
     try{const val=localStorage.getItem(k);if(val)document.documentElement.style.setProperty(v,val+'px');}catch{}});
   let st=null;
   document.addEventListener('pointerdown',e=>{
