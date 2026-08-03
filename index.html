@@ -1568,6 +1568,54 @@ textarea.fld{resize:vertical;min-height:60px}
 .gr-grz .m{font-family:ui-monospace,monospace;font-size:9px;color:var(--t3)}
 .gr-orfani{margin-top:8px;border-top:1px dashed var(--bd2);padding:7px 10px;font-size:10px;color:var(--t2);white-space:normal}
 
+/* ── ALBERO: barra, filtri, vista ramificata, gruppi ──
+   Il colore dice CHE COS'È (assieme, parte, disegni) come nel PDM; la categoria
+   merceologica sta nell'etichetta, dove serve ma non grida. */
+.gr-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 9px;border-bottom:1px solid var(--bd);background:var(--surf);position:sticky;top:0;z-index:3}
+.gr-bar .sp{flex:1}
+.gr-bar select,.gr-bar input{font-family:inherit;font-size:11px;border:1px solid var(--bd2);background:var(--surf);color:var(--t1);border-radius:6px;padding:3px 7px}
+.gr-bar select{font-weight:600;max-width:15rem}
+.gr-seg{display:flex;background:var(--bg);border-radius:7px;padding:2px;gap:2px}
+.gr-seg button{border:0;background:transparent;font-family:inherit;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;cursor:pointer;color:var(--t2)}
+.gr-seg button.on{background:var(--surf);color:var(--t1);box-shadow:0 1px 3px rgba(44,21,6,.14)}
+.gr-flt{display:none;flex-wrap:wrap;gap:6px;padding:6px 9px;border-bottom:1px solid var(--bd);background:#FCF9F4}
+.gr-flt.on{display:flex}
+.gr-flt label{display:flex;flex-direction:column;gap:1px;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)}
+.gr-flt select{font-size:10.5px;padding:2px 5px;max-width:10rem;font-weight:500}
+.gr-riga.spento{opacity:.32}
+.gr-ico{width:14px;height:14px;flex-shrink:0;object-fit:contain}
+.gr-tag{font-size:8.5px;font-weight:700;padding:0 5px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.gr-gb{font-size:8.5px;font-weight:800;padding:0 5px;border-radius:4px;color:#fff;flex-shrink:0;white-space:nowrap}
+.gr-q{font-family:ui-monospace,monospace;font-size:9.5px;color:var(--t3);flex-shrink:0;margin-left:auto;padding-left:8px}
+.gr-dis{display:flex;align-items:center;gap:6px;padding:2px 10px;font-size:10px;color:#5B7A2E;cursor:pointer;white-space:nowrap}
+.gr-dis:hover{background:rgba(127,168,60,.08)}
+.gr-fmt{padding:1px 10px;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--t2);cursor:pointer;white-space:nowrap}
+.gr-fmt:hover{background:var(--bg);text-decoration:underline}
+/* vista ramificata */
+.gr-svg{overflow:auto;position:relative;cursor:grab;user-select:none;height:100%}
+.gr-svg.trascino{cursor:grabbing}
+.gr-svg .lk{stroke:#B8A090;stroke-width:1.4;fill:none}
+.gr-svg .bx{stroke-width:1.5;rx:7}
+.gr-svg .bx.sel{stroke-width:2.6}
+.gr-svg .cd{font-family:ui-monospace,monospace;font-size:10.5px;fill:var(--t1)}
+.gr-svg .dn{font-size:9px;fill:var(--t2)}
+.gr-svg .qb{font-family:ui-monospace,monospace;font-size:9px;fill:var(--t3)}
+.gr-svg .nodo{cursor:pointer}
+.gr-svg .piu{font-size:9px;fill:var(--t2);font-style:italic}
+.gr-svg .gring{fill:none;stroke-width:2.5;stroke-dasharray:4 3}
+/* pannello gruppi */
+.gr-wrap{display:grid;grid-template-columns:1fr 13.5rem;height:100%;min-height:0}
+.gr-main{overflow:auto;min-width:0;position:relative}
+.gr-side{background:var(--bg);border-left:1px solid var(--bd);padding:8px;overflow:auto}
+.gr-side h6{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin:0 0 6px;display:flex;align-items:center;gap:6px}
+.gr-side h6 button{margin-left:auto}
+.gr-grp{background:var(--surf);border:1px solid var(--bd);border-radius:7px;padding:6px 8px;margin-bottom:6px;cursor:pointer}
+.gr-grp b{font-size:10.5px;display:block}
+.gr-grp .m{font-size:9px;color:var(--t2);margin:1px 0 4px}
+.gr-grp .bar{height:4px;background:var(--bd2);border-radius:2px;overflow:hidden}
+.gr-grp .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--go),var(--go-d))}
+.gr-side .vuoto{font-size:9.5px;color:var(--t3);line-height:1.45}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);z-index:500;background:var(--t1);color:#fff;padding:11px 18px;border-radius:var(--rs);font-size:12.5px;box-shadow:var(--shl);opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -9394,6 +9442,41 @@ function gtVaiAlPezzo(pid){
    Stile PDM: chi sta dentro chi, e basta. Non comanda niente — comanda sempre
    la distinta. Ci sono solo i codici a disegno, con sotto i grezzi di taglio
    letti dal disegno del saldato (i tubolari che in distinta non ci sono). */
+/* ── L'ALBERO: due viste sullo stesso dato ──
+   Elenco per lavorare, ramificato per capire com'è fatta la commessa. Il colore
+   dice che cos'è l'oggetto (assieme, parte, disegni) come in un PDM; la
+   categoria merceologica sta nell'etichetta.
+   I «gruppi» sono le categorie di progetto: qui si assegnano dall'albero, di là
+   dalla sezione Progetto, ed è lo stesso campo. */
+const GR={vista:'elenco',radice:null,filtri:{},cerca:'',zoom:1,sel:new Set(),grezzi:false,mostraFlt:false};
+const GR_OGG={asm:{b:'#B8860B',f:'#FDF4DA',i:'asm.png'},part:{b:'#C9A227',f:'#FEFAE6',i:'part.png'},
+              dis:{b:'#7FA83C',f:'#F1F7E3',i:'drawing.png'}};
+const GR_TINTE=['#5856D6','#34C759','#FF9500','#007AFF','#FF3B30','#00A0A0'];
+const grTipo=n=>n.figli&&n.figli.length?'asm':'part';
+const grTinta=nome=>GR_TINTE[Math.abs([...String(nome)].reduce((a,c)=>a*31+c.charCodeAt(0)|0,7))%GR_TINTE.length];
+
+function grTuttiNodi(){                       // ogni nodo, anche ripetuto: serve ai filtri e ai gruppi
+  const out=[];const a=DOCK.albero;if(!a)return out;
+  (function giu(l){l.forEach(n=>{out.push(n);if(n.figli)giu(n.figli);});})(grRadici());
+  return out;
+}
+function grRadici(){
+  const a=DOCK.albero;if(!a)return [];
+  if(!GR.radice)return a.radici;
+  const cerca=l=>{for(const n of l){if(n.codice===GR.radice)return [n];const t=cerca(n.figli||[]);if(t.length)return t;}return [];};
+  return cerca(a.radici).length?cerca(a.radici):a.radici;
+}
+const GR_CAMPI=[['categoria','Categoria'],['tipo','Tipo'],['materiale','Materiale'],
+                ['lav_meccanica','Lavorazione'],['fornitore','Fornitore']];
+const grPassa=n=>GR_CAMPI.every(([k])=>!GR.filtri[k]||(n[k]||'')===GR.filtri[k]);
+function grGruppi(){                          // i gruppi sono le categorie di progetto dei pezzi
+  const m=new Map();
+  grTuttiNodi().forEach(n=>{if(!n.gruppo)return;
+    if(!m.has(n.gruppo))m.set(n.gruppo,new Set());
+    m.get(n.gruppo).add(n.codice);});
+  return m;
+}
+
 function dockDisegnaAlbero(){
   const el=document.getElementById('dockPaneAlbero');if(!el)return;
   const a=DOCK.albero;
@@ -9405,42 +9488,328 @@ function dockDisegnaAlbero(){
       <button class="btn btn-go btn-sm" onclick="grLeggi()">🔎 Leggi la gerarchia dai disegni</button></div>`;
     return;
   }
-  let html='<div class="gr">';
-  a.radici.forEach(n=>{html+=grNodo(n,0);});
-  html+='</div>';
-  if(a.orfani.length)html+=`<div class="gr-orfani"><b>${a.orfani.length} codici con un file ma fuori da ogni assieme</b>
-     (quasi sempre commerciali con la scheda tecnica): ${a.orfani.slice(0,14).map(esc).join(' · ')}${a.orfani.length>14?' …':''}</div>`;
-  html+=`<div style="padding:8px 10px"><button class="btn-mini g" onclick="grLeggi()">🔎 Rileggi dai disegni</button>
-     <span class="fmuted" style="font-size:10px;margin-left:8px">${a.n_legami} legami · ${a.n_grezzi} righe di taglio</span></div>`;
-  el.innerHTML=html;
+  el.innerHTML=`${grBarra()}${grFiltri()}
+    <div class="gr-wrap"><div class="gr-main" id="grMain"></div>
+    <div class="gr-side"><h6>Gruppi <button class="btn-mini g" onclick="grNuovoGruppo()">+ nuovo</button></h6>
+      <div id="grSide"></div></div></div>`;
+  grDisegnaVista();
 }
-function grNodo(n,liv,percorso){
-  const via=(percorso||'')+'/'+n.codice;
-  const haFigli=n.figli.length||n.grezzi.length;
-  const aperto=DOCK.aperti[via]===true||liv===0;
-  const ic=n.figli.length?(aperto?'📂':'📁'):'📄';
-  let h=`<div class="gr-riga${DOCK.sel==='n'+via?' sel':''}" style="padding-left:${10+liv*15}px" onclick="grClic('${jsq(via)}',${n.parte_id||'null'})">
-    <span class="gr-ar">${haFigli?(aperto?'▾':'▸'):''}</span>
-    <span class="gr-ic">${ic}</span>
-    <span class="gr-cod">${esc(n.codice)}</span>
-    <span class="gr-den">${esc(n.denominazione||'')}</span>
-    ${n.ripetuto?'<span class="gr-rip">anche altrove</span>':''}</div>`;
-  if(!aperto)return h;
-  n.grezzi.forEach(g=>{
-    h+=`<div class="gr-grz" style="padding-left:${25+liv*15}px" title="riga di taglio letta dal disegno — in distinta non c'è">
-      ✂ ${esc(g.descrizione)}</div>`;
-  });
-  n.figli.forEach(f=>{h+=grNodo(f,liv+1,via);});
+function grBarra(){
+  const a=DOCK.albero;
+  const opts=[`<option value="">Tutto · ${a.radici.length} radici</option>`].concat(
+    grTuttiNodi().filter(n=>n.figli&&n.figli.length)
+      .map(n=>`<option value="${esc(n.codice)}"${GR.radice===n.codice?' selected':''}>↳ ${esc(n.codice)} · ${esc(n.denominazione||'')}</option>`));
+  return `<div class="gr-bar">
+    <select onchange="GR.radice=this.value||null;GR.sel.clear();dockDisegnaAlbero()">${opts.join('')}</select>
+    <div class="gr-seg">
+      <button class="${GR.vista==='elenco'?'on':''}" onclick="GR.vista='elenco';dockDisegnaAlbero()">Elenco</button>
+      <button class="${GR.vista==='ramo'?'on':''}" onclick="grApriPrimoLivello();GR.vista='ramo';dockDisegnaAlbero()">Ramificato</button>
+    </div>
+    <button class="btn-mini g" onclick="grEspandi(true)">Espandi</button>
+    <button class="btn-mini g" onclick="grEspandi(false)">Comprimi</button>
+    <button class="btn-mini g" onclick="grEspandiRamo()">Espandi ramo</button>
+    <input type="search" placeholder="Cerca…" value="${esc(GR.cerca)}" oninput="GR.cerca=this.value;grDisegnaVista()">
+    <div class="sp"></div>
+    <button class="btn-mini ${GR.mostraFlt?'':'g'}" onclick="GR.mostraFlt=!GR.mostraFlt;dockDisegnaAlbero()">Filtri</button>
+    <button class="btn-mini ${GR.grezzi?'':'g'}" onclick="GR.grezzi=!GR.grezzi;dockDisegnaAlbero()">Grezzi</button>
+    <span class="fmuted" style="font-size:9.5px">${a.n_legami} legami</span>
+    <button class="btn-mini g" onclick="grLeggi()">🔎 Rileggi</button>
+  </div>`;
+}
+function grFiltri(){
+  if(!GR.mostraFlt)return '';
+  const nodi=grTuttiNodi();
+  return `<div class="gr-flt on">${GR_CAMPI.map(([k,et])=>{
+    const vals=[...new Set(nodi.map(n=>n[k]).filter(Boolean))].sort();
+    return `<label>${et}<select onchange="GR.filtri['${k}']=this.value;grDisegnaVista()">
+      <option value="">tutti (${vals.length})</option>
+      ${vals.map(v=>`<option value="${esc(v)}"${GR.filtri[k]===v?' selected':''}>${esc(v.length>24?v.slice(0,22)+'…':v)}</option>`).join('')}
+    </select></label>`;}).join('')}
+    <label>&nbsp;<button class="btn-mini g" onclick="GR.filtri={};dockDisegnaAlbero()">Azzera</button></label></div>`;
+}
+function grDisegnaVista(){
+  const m=document.getElementById('grMain');if(!m)return;
+  m.innerHTML = GR.vista==='elenco' ? grVistaElenco() : grVistaRamo();
+  if(GR.vista==='ramo')grPanZoom();
+  grDisegnaGruppi();
+}
+
+/* ── vista elenco ── */
+function grVistaElenco(){
+  let h='<div class="gr">';
+  const q=GR.cerca.trim().toLowerCase();
+  (function giu(l,liv,via){l.forEach(n=>{
+    const k=via+'/'+n.codice, aperto=DOCK.aperti[k]===true||liv===0;
+    const testo=(n.codice+' '+(n.denominazione||'')).toLowerCase();
+    if(!q||testo.includes(q))h+=grRiga(n,liv,k,aperto);
+    if(aperto||q){
+      if(n.formati&&n.formati.length&&(aperto||q))h+=grVoceDisegni(n,liv,k);
+      if(GR.grezzi)(n.grezzi||[]).forEach(g=>{h+=`<div class="gr-grz" style="padding-left:${25+liv*15}px"
+        title="riga di taglio letta dal disegno — è materia prima, non un figlio">✂ ${esc(g.descrizione)}</div>`;});
+      giu(n.figli||[],liv+1,k);
+    }});})(grRadici(),0,'');
+  h+='</div>';
+  const a=DOCK.albero;
+  if(a.orfani.length)h+=`<div class="gr-orfani"><b>${a.orfani.length} codici con un file ma fuori da ogni assieme</b>
+     (quasi sempre commerciali con la scheda tecnica): ${a.orfani.slice(0,14).map(esc).join(' · ')}${a.orfani.length>14?' …':''}</div>`;
   return h;
 }
-function grClic(via,pid){
-  DOCK.aperti[via]=!DOCK.aperti[via];
-  DOCK.sel='n'+via;
-  const y=document.getElementById('dockPaneAlbero').scrollTop;
-  dockDisegnaAlbero();
-  document.getElementById('dockPaneAlbero').scrollTop=y;
-  // le proprietà del codice: è tutto quello che questo albero deve fare
-  if(pid)gtVaiAlPezzo(pid);
+function grRiga(n,liv,k,aperto){
+  const haFigli=(n.figli&&n.figli.length)||(GR.grezzi&&n.grezzi&&n.grezzi.length);
+  const o=GR_OGG[grTipo(n)], ok=grPassa(n);
+  return `<div class="gr-riga${GR.sel.has(n.codice)?' sel':''}${ok?'':' spento'}" style="padding-left:${10+liv*15}px"
+      data-cod="${esc(n.codice)}" data-k="${esc(k)}" data-pid="${n.parte_id||''}"
+      onclick="grClic(event,'${jsq(n.codice)}','${jsq(k)}',${n.parte_id||'null'})"
+      oncontextmenu="grMenu(event,'${jsq(n.codice)}')">
+    <span class="gr-ar" onclick="event.stopPropagation();grToggle('${jsq(k)}')">${haFigli?(aperto?'▾':'▸'):''}</span>
+    <img class="gr-ico" src="${o.i}" alt="">
+    <span class="gr-cod">${esc(n.codice)}</span>
+    ${n.n_padri>1?`<span class="gr-rip" title="sta in ${n.n_padri} assiemi">×${n.n_padri}</span>`:''}
+    ${n.gruppo?`<span class="gr-gb" style="background:${grTinta(n.gruppo)}">${esc(n.gruppo)}</span>`:''}
+    <span class="gr-den">${esc(n.denominazione||'')}</span>
+    <span class="gr-tag" style="background:${o.f};color:${o.b}">${esc(n.categoria||'—')}</span>
+    <span class="gr-q" title="quantità totale di distinta">${esc(n.quantita||'—')}</span></div>`;
+}
+function grVoceDisegni(n,liv,k){
+  const kd=k+'#dis', aperto=DOCK.aperti[kd]===true;
+  let h=`<div class="gr-dis" style="padding-left:${25+liv*15}px" onclick="grAnteprima('${jsq(n.codice)}')">
+    <span class="gr-ar" onclick="event.stopPropagation();grToggle('${jsq(kd)}')">${aperto?'▾':'▸'}</span>
+    <img class="gr-ico" src="drawing.png" alt=""> Disegni <b>×${n.formati.length}</b></div>`;
+  if(aperto)n.formati.forEach(f=>{
+    h+=`<div class="gr-fmt" style="padding-left:${45+liv*15}px" onclick="grApriFile('${jsq(f.path)}')">${esc(n.codice)}.${esc(f.fmt)}</div>`;});
+  return h;
+}
+
+/* ── vista ramificata ── */
+function grVistaRamo(){
+  const BW=112,BH=38,GX=13,GY=60,MAXF=8;
+  const visti=[];
+  function build(n,liv,k){
+    const aperto=DOCK.aperti[k]===true||liv===0;
+    const tutti=n.figli||[];
+    const figli=(aperto?tutti.slice(0,MAXF):[]).map(f=>build(f,liv+1,k+'/'+f.codice));
+    if(aperto&&n.formati&&n.formati.length){
+      const kd=k+'#dis',apd=DOCK.aperti[kd]===true;
+      const d={dis:1,cod:n.codice,fmt:n.formati,k:kd,liv:liv+1,
+        figli:apd?n.formati.map((f,i)=>({foglia:n.codice+'.'+f.fmt,path:f.path,k:kd+'/'+i,liv:liv+2,figli:[],w:BW})):[]};
+      d.w=d.figli.length?d.figli.reduce((s,x)=>s+x.w+GX,-GX):BW;figli.push(d);
+    }
+    const o={n,k,liv,figli,extra:aperto?Math.max(0,tutti.length-MAXF):0,chiuso:!aperto&&tutti.length};
+    o.w=figli.length?figli.reduce((s,f)=>s+f.w+GX,-GX):BW;return o;
+  }
+  function pos(o,x,y){o.y=y;
+    if(!o.figli.length)o.x=x+o.w/2;
+    else{let cx=x;o.figli.forEach(f=>{pos(f,cx,y+GY);cx+=f.w+GX;});o.x=(o.figli[0].x+o.figli[o.figli.length-1].x)/2;}
+    visti.push(o);}
+  let cx=0;const rad=grRadici().map(n=>{const b=build(n,0,'/'+n.codice);pos(b,cx,0);cx+=b.w+GX*2;return b;});
+  if(!visti.length)return '<div class="gr-vuoto">Niente da mostrare.</div>';
+  const W=Math.max(...visti.map(o=>o.x))+BW/2+30, H=Math.max(...visti.map(o=>o.y))+BH+40;
+  const linee=visti.flatMap(o=>o.figli.map(f=>
+    `<path class="lk" d="M${o.x} ${o.y+BH} C${o.x} ${o.y+BH+22}, ${f.x} ${f.y-22}, ${f.x} ${f.y}"/>`)).join('');
+  const box=visti.map(o=>{
+    if(o.foglia)return `<g transform="translate(${o.x-BW/2},${o.y})">
+      <rect class="bx" width="${BW}" height="${BH-12}" style="fill:#FCFDF9;stroke:#D6E0C2"/>
+      <text class="cd" x="9" y="17" style="font-size:9.5px">${esc(o.foglia)}</text></g>`;
+    if(o.dis){const d=GR_OGG.dis;return `<g class="nodo" data-k="${esc(o.k)}" data-cod="${esc(o.cod)}" data-dis="1" transform="translate(${o.x-BW/2},${o.y})">
+      <rect class="bx" width="${BW}" height="${BH}" style="fill:${d.f};stroke:${d.b}"/>
+      <image href="drawing.png" x="7" y="10" width="16" height="16"/>
+      <text class="cd" x="28" y="17" style="font-size:10px">Disegni ×${o.fmt.length}</text>
+      <text class="dn" x="28" y="29">${esc(o.fmt.map(f=>f.fmt).join(' · ').slice(0,16))}</text></g>`;}
+    const n=o.n,ob=GR_OGG[grTipo(n)],ok=grPassa(n);
+    return `<g class="nodo" data-k="${esc(o.k)}" data-cod="${esc(n.codice)}" data-pid="${n.parte_id||''}" transform="translate(${o.x-BW/2},${o.y})">
+      ${n.gruppo?`<rect class="gring" x="-4" y="-4" width="${BW+8}" height="${BH+8}" rx="10" stroke="${grTinta(n.gruppo)}"/>`:''}
+      <rect class="bx ${GR.sel.has(n.codice)?'sel':''}" width="${BW}" height="${BH}" style="fill:${ob.f};stroke:${ob.b};opacity:${ok?1:.3}"/>
+      <image href="${ob.i}" x="6" y="10" width="16" height="16"/>
+      <text class="cd" x="27" y="16">${esc(n.codice.slice(-12))}${o.chiuso?' ▸':''}</text>
+      <text class="dn" x="27" y="28">${esc((n.denominazione||'').slice(0,14))}</text>
+      ${n.n_padri>1?`<text class="qb" x="${BW-6}" y="16" text-anchor="end">×${n.n_padri}</text>`:''}
+      ${o.extra?`<text class="piu" x="${BW/2}" y="${BH+12}" text-anchor="middle">+ altri ${o.extra}</text>`:''}</g>`;
+  }).join('');
+  const VW=W+36,VH=H+36;
+  return `<div class="gr-svg" id="grSvg"><svg width="${Math.round(VW*GR.zoom)}" height="${Math.round(VH*GR.zoom)}"
+    viewBox="0 0 ${VW} ${VH}"><g transform="translate(18,18)">${linee}${box}</g></svg></div>`;
+}
+// pan trascinando come su un DWG, zoom con Ctrl+rotella come su una mappa: le
+// barre restano, e il punto sotto il puntatore non si sposta mentre ingrandisci
+function grPanZoom(){
+  const V=document.getElementById('grSvg');if(!V)return;
+  let giu=false,px=0,py=0,sx=0,sy=0,mosso=false;
+  V.addEventListener('mousedown',e=>{if(e.button)return;giu=true;mosso=false;px=e.clientX;py=e.clientY;sx=V.scrollLeft;sy=V.scrollTop;V.classList.add('trascino');});
+  window.addEventListener('mousemove',e=>{if(!giu)return;const dx=e.clientX-px,dy=e.clientY-py;
+    if(Math.abs(dx)>3||Math.abs(dy)>3)mosso=true;V.scrollLeft=sx-dx;V.scrollTop=sy-dy;});
+  window.addEventListener('mouseup',()=>{giu=false;V.classList.remove('trascino');setTimeout(()=>mosso=false,0);});
+  V.addEventListener('wheel',e=>{
+    if(!e.ctrlKey)return;e.preventDefault();
+    const r=V.getBoundingClientRect(),mx=e.clientX-r.left+V.scrollLeft,my=e.clientY-r.top+V.scrollTop;
+    const prima=GR.zoom;GR.zoom=Math.min(3,Math.max(.35,GR.zoom*(e.deltaY<0?1.12:1/1.12)));
+    const kk=GR.zoom/prima;grDisegnaVista();
+    const N=document.getElementById('grSvg');if(N){N.scrollLeft=mx*kk-(e.clientX-r.left);N.scrollTop=my*kk-(e.clientY-r.top);}
+  },{passive:false});
+  V.querySelectorAll('.nodo').forEach(g=>{
+    g.addEventListener('click',e=>{if(mosso)return;
+      if(g.dataset.dis)return grAnteprima(g.dataset.cod,null);
+      grClic(e,g.dataset.cod,g.dataset.k,g.dataset.pid?+g.dataset.pid:null);});
+    g.addEventListener('dblclick',()=>{grToggle(g.dataset.k);});
+    g.addEventListener('contextmenu',e=>grMenu(e,g.dataset.cod));
+  });
+}
+
+/* ── comandi ── */
+function grToggle(k){DOCK.aperti[k]=!DOCK.aperti[k];grDisegnaVista();}
+function grApriPrimoLivello(){grRadici().forEach(n=>{DOCK.aperti['/'+n.codice]=true;});}
+function grEspandi(apri){
+  if(!apri){DOCK.aperti={};grApriPrimoLivello();}
+  else (function giu(l,via){l.forEach(n=>{const k=via+'/'+n.codice;DOCK.aperti[k]=true;giu(n.figli||[],k);});})(grRadici(),'');
+  grDisegnaVista();
+}
+function grEspandiRamo(){
+  if(!GR.sel.size)return toast('Seleziona prima un assieme',true);
+  (function giu(l,via){l.forEach(n=>{const k=via+'/'+n.codice;
+    if(GR.sel.has(n.codice))(function sotto(x,kk){DOCK.aperti[kk]=true;(x.figli||[]).forEach(f=>sotto(f,kk+'/'+f.codice));})(n,k);
+    giu(n.figli||[],k);});})(grRadici(),'');
+  grDisegnaVista();
+}
+function grClic(e,cod,k,pid){
+  if(e&&(e.ctrlKey||e.metaKey))GR.sel.has(cod)?GR.sel.delete(cod):GR.sel.add(cod);
+  else GR.sel=new Set([cod]);
+  grDisegnaVista();
+  if(pid)gtVaiAlPezzo(pid);        // le proprietà del pezzo, come prima
+}
+// apre il file col percorso che arriva dall'albero, sullo stesso endpoint che
+// la scheda pezzo usa già per i suoi allegati
+function grApriFile(path){
+  if(!DOCK.commessa||!path)return;
+  window.open(API+'/api/commesse/'+DOCK.commessa+'/file?path='+encodeURIComponent(path),'_blank');
+}
+// una modale costruita al volo: le altre del gestionale sono fisse nell'HTML,
+// questa cambia contenuto a ogni pezzo e non ha senso tenerla nel markup
+function grModale(titolo,corpo,azioni){
+  document.getElementById('grMod')?.remove();
+  const ov=document.createElement('div');
+  ov.className='mov open';ov.id='grMod';
+  ov.innerHTML=`<div class="modal" style="max-width:560px">
+    <div class="mhd"><div><div class="mtit">${titolo}</div></div>
+      <button class="mx" onclick="document.getElementById('grMod').remove()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mbd">${corpo}</div>
+    ${azioni&&azioni.length?`<div class="mft">${azioni.map((a,i)=>`<button class="btn ${a[2]?'btn-go':'btn-ghost'}" data-i="${i}">${a[0]}</button>`).join('')}</div>`:''}</div>`;
+  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  document.body.appendChild(ov);
+  ov.querySelectorAll('.mft .btn').forEach(b=>b.onclick=()=>{
+    const a=azioni[+b.dataset.i];if(a[1]&&a[1]()===false)return;ov.remove();});
+}
+function grAnteprima(cod){
+  const n=grTuttiNodi().find(x=>x.codice===cod);if(!n)return;
+  const ff=n.formati||[];
+  const pdf=ff.find(f=>f.fmt==='pdf');
+  grModale(`${esc(cod)} — ${esc(n.denominazione||'')}`,
+    `<div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+       ${pdf?`<iframe src="${API}/api/commesse/${DOCK.commessa}/file?path=${encodeURIComponent(pdf.path)}#toolbar=0"
+              style="width:250px;height:180px;border:1px solid var(--bd2);border-radius:8px;background:#fff"></iframe>`
+            :`<div style="width:250px;height:180px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg);display:grid;place-items:center;color:var(--t3);font-size:11px">nessun PDF da mostrare</div>`}
+       <div style="min-width:170px">
+         <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:5px">Formati · clic per aprire</div>
+         ${ff.map(f=>`<div class="gr-fmt" style="padding:3px 0" onclick="grApriFile('${jsq(f.path)}')">${esc(cod)}.${esc(f.fmt)}</div>`).join('')||'<span class="fmuted">nessun file</span>'}
+         ${n.gruppo?`<div style="margin-top:10px;font-size:10.5px">Gruppo: <b style="color:${grTinta(n.gruppo)}">${esc(n.gruppo)}</b></div>`:''}
+         <div style="margin-top:10px;font-size:10px;color:var(--t3);line-height:1.4">La miniatura 3D del pezzo arriverà dall&rsquo;archivio di BOM2Excel, accanto ai suoi disegni.</div>
+       </div></div>`,
+    [['Chiudi',null]]);
+}
+
+/* ── gruppi = categorie di progetto ── */
+function grDisegnaGruppi(){
+  const box=document.getElementById('grSide');if(!box)return;
+  const g=grGruppi();
+  if(!g.size){box.innerHTML='<div class="vuoto">Nessun gruppo.<br><br>Seleziona nell\'albero — <b>Ctrl</b> per più d\'uno — e usa il <b>tasto destro</b>. Oppure <b>+ nuovo</b>.</div>';return;}
+  box.innerHTML=[...g.entries()].map(([nome,cod])=>`
+    <div class="gr-grp" onclick="GR.sel=new Set(${JSON.stringify([...cod]).replace(/"/g,'&quot;')});grDisegnaVista()"
+         oncontextmenu="grMenuGruppo(event,'${jsq(nome)}')">
+      <b style="color:${grTinta(nome)}">${esc(nome)}</b>
+      <div class="m">${cod.size} pezzi · avanzamento dal Gantt</div>
+      <div class="bar"><i style="width:${grAvanzGruppo(cod)}%"></i></div></div>`).join('');
+}
+// l'avanzamento non lo ricalcola: prende quello che il Gantt ha già messo sulle barre
+function grAvanzGruppo(codici){
+  const g=DOCK.gantt&&DOCK.gantt.barre?DOCK.gantt.barre:[];
+  const v=g.filter(b=>codici.has(b.codice)).map(b=>+b.avanzamento||0);
+  return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*100):0;
+}
+function grMenu(e,cod){
+  e.preventDefault();e.stopPropagation();
+  if(!GR.sel.has(cod)){GR.sel=new Set([cod]);grDisegnaVista();}
+  const scelti=[...GR.sel];
+  const conFigli=scelti.filter(c=>{const n=grTuttiNodi().find(x=>x.codice===c);return n&&n.figli&&n.figli.length;});
+  const tutto=new Set(scelti);
+  conFigli.forEach(c=>{const n=grTuttiNodi().find(x=>x.codice===c);
+    (function giu(x){(x.figli||[]).forEach(f=>{tutto.add(f.codice);giu(f);});})(n);});
+  const et=scelti.length===1?scelti[0]:scelti.length+' elementi';
+  const voci=[];
+  if(conFigli.length)voci.push(['📂 Espandi il ramo',`grEspandiRamo()`]);
+  voci.push(['📁 Nuovo gruppo · solo i selezionati ('+scelti.length+')',`grCreaGruppo(${JSON.stringify(scelti).replace(/"/g,'&quot;')})`]);
+  if(conFigli.length)voci.push(['📁 Nuovo gruppo · con tutto il contenuto ('+tutto.size+')',`grCreaGruppo(${JSON.stringify([...tutto]).replace(/"/g,'&quot;')})`]);
+  const g=grGruppi();
+  if(g.size){voci.push({sep:1});
+    [...g.keys()].forEach(nome=>voci.push(['→ Sposta in «'+nome+'»',`grAssegna(${JSON.stringify(scelti).replace(/"/g,'&quot;')},'${jsq(nome)}')`]));
+    voci.push(['✕ Togli dal gruppo',`grAssegna(${JSON.stringify(scelti).replace(/"/g,'&quot;')},'')`]);}
+  showCtx(e,et,voci);
+}
+function grMenuGruppo(e,nome){
+  e.preventDefault();e.stopPropagation();
+  showCtx(e,nome,[
+    ['✎ Rinomina',`grRinominaGruppo('${jsq(nome)}')`],
+    ['◎ Seleziona i suoi pezzi',`GR.sel=new Set([...grGruppi().get('${jsq(nome)}')||[]]);grDisegnaVista()`],
+    ['✕ Svuota il gruppo',`grSvuotaGruppo('${jsq(nome)}')`]]);
+}
+async function grCreaGruppo(codici){
+  const nome=prompt('Nome del gruppo:','Gruppo '+(grGruppi().size+1));
+  if(nome===null)return;
+  const n=nome.trim();if(!n)return;
+  await grAssegna(codici,n);
+}
+async function grRinominaGruppo(vecchio){
+  const nome=prompt('Nuovo nome del gruppo:\n(cambia anche nella sezione Progetto)',vecchio);
+  if(nome===null)return;const n=nome.trim();if(!n||n===vecchio)return;
+  await grAssegna([...(grGruppi().get(vecchio)||[])],n);
+}
+async function grSvuotaGruppo(nome){
+  if(!confirm(`Tolgo «${nome}» da tutti i suoi pezzi?\nI pezzi restano, perdono solo il gruppo.`))return;
+  await grAssegna([...(grGruppi().get(nome)||[])],'');
+}
+// scrive la categoria di progetto: è lo stesso campo della sezione Progetto,
+// quindi cambiare qui cambia di là e viceversa
+async function grAssegna(codici,gruppo){
+  const ids=[];
+  grTuttiNodi().forEach(n=>{if(codici.includes(n.codice)&&n.parte_id&&!ids.includes(n.parte_id))ids.push(n.parte_id);});
+  if(!ids.length)return toast('Nessun pezzo di distinta da assegnare',true);
+  try{
+    const r=await fetch(API+`/api/commesse/${DOCK.commessa}/bulk-categoria`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ids,ambito:'progetto',categoria:gruppo})});
+    if(!r.ok)throw 0;
+    toast(gruppo?`${ids.length} pezzi in «${gruppo}»`:`${ids.length} pezzi senza gruppo`,'ok');
+    GR.sel.clear();DOCK.albero=null;await dockCarica(true);
+    if(S.projId===DOCK.commessa&&typeof refreshDetail==='function')refreshDetail();
+  }catch{toast('Non sono riuscito a salvare il gruppo',true);}
+}
+function grNuovoGruppo(){
+  const nodi=grTuttiNodi().filter(n=>n.parte_id);
+  const visti=new Set();const lista=nodi.filter(n=>!visti.has(n.codice)&&visti.add(n.codice));
+  grModale('Nuovo gruppo',
+    `<input type="text" id="grgNome" class="fld" placeholder="Nome del gruppo — es. Gruppo ruota" value="Gruppo ${grGruppi().size+1}">
+     <div style="margin:10px 0 5px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)">Pezzi (${lista.length}) — un pezzo sta in un gruppo solo</div>
+     <div id="grgLista" style="max-height:46vh;overflow:auto">
+       ${lista.map(n=>`<label style="display:flex;align-items:center;gap:7px;padding:3px 5px;font-size:11px;cursor:pointer">
+         <input type="checkbox" value="${esc(n.codice)}">
+         <img class="gr-ico" src="${GR_OGG[grTipo(n)].i}" alt="">
+         <span class="gr-cod">${esc(n.codice)}</span>
+         <span class="gr-den">${esc(n.denominazione||'')}</span>
+         ${n.gruppo?`<span class="gr-gb" style="background:${grTinta(n.gruppo)};margin-left:auto">${esc(n.gruppo)}</span>`:''}
+       </label>`).join('')}</div>`,
+    [['Annulla',null],['Crea il gruppo',()=>{
+      const nome=(document.getElementById('grgNome').value||'').trim();
+      const cod=[...document.querySelectorAll('#grgLista input:checked')].map(i=>i.value);
+      if(!nome||!cod.length)return toast('Serve un nome e almeno un pezzo',true);
+      grAssegna(cod,nome);},true]]);
 }
 async function grLeggi(){
   if(!DOCK.commessa)return;
