@@ -1,3 +1,6 @@
 
 # banco di prova locale: non va online finche non lo promuoviamo
 lab.html
+
+# impostazioni locali dell'editor (percorsi di questa macchina)
+.claude/

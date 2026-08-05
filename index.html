@@ -1010,6 +1010,54 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .mg-th:hover{color:var(--go)}
 .mg-sort-ic{font-size:8px;opacity:.45;flex-shrink:0}
 .mg-sort-ic.on{opacity:1;color:var(--go)}
+
+/* ── Righe del catalogo: zebra + il colore dell'acciaio ──
+   Verde = inox 304/302, bianco = 316 (il migliore: si distingue perché
+   montarne uno per l'altro si paga), rosso = non inossidabile. Il colore sta
+   su una barretta a sinistra e su un fondo appena accennato: deve farsi
+   riconoscere di sfuggita, non urlare. */
+.mg-tablewrap tbody tr:nth-child(even) td{background:rgba(0,0,0,.018)}
+.mg-tablewrap tbody tr td:first-child{box-shadow:inset 3px 0 0 transparent}
+.mg-tablewrap tbody tr.ac-inox304 td{background:rgba(52,199,89,.07)}
+.mg-tablewrap tbody tr.ac-inox304:nth-child(even) td{background:rgba(52,199,89,.12)}
+.mg-tablewrap tbody tr.ac-inox304 td:first-child{box-shadow:inset 3px 0 0 #34C759}
+.mg-tablewrap tbody tr.ac-inox316 td{background:#fff}
+.mg-tablewrap tbody tr.ac-inox316:nth-child(even) td{background:#FAFAFA}
+.mg-tablewrap tbody tr.ac-inox316 td:first-child{box-shadow:inset 3px 0 0 #C9CDD2}
+.mg-tablewrap tbody tr.ac-nero td{background:rgba(255,59,48,.06)}
+.mg-tablewrap tbody tr.ac-nero:nth-child(even) td{background:rgba(255,59,48,.1)}
+.mg-tablewrap tbody tr.ac-nero td:first-child{box-shadow:inset 3px 0 0 #FF3B30}
+.mg-tablewrap tbody tr:hover td{background:rgba(245,168,35,.13)!important}
+/* riga di intestazione di un macro-gruppo (per DENOMINAZIONE) */
+.mg-tablewrap tr.mg-grp td{background:var(--bg)!important;padding:5px 9px;font-size:10.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--t2);cursor:pointer;border-top:1px solid var(--bd2)}
+.mg-tablewrap tr.mg-grp:hover td{background:rgba(245,168,35,.12)!important}
+.mg-grp-n{font-weight:700;color:var(--t3);margin-left:6px;text-transform:none;letter-spacing:0}
+/* legenda dei colori */
+.mg-leg{display:flex;gap:12px;align-items:center;font-size:10px;color:var(--t2);margin:-4px 0 8px;flex-wrap:wrap}
+.mg-leg b{display:flex;align-items:center;gap:4px;font-weight:400}
+.mg-leg i{width:9px;height:9px;border-radius:2px;display:block;border:1px solid rgba(0,0,0,.12)}
+/* foto dell'articolo nella scheda */
+.mg-foto{width:100%;height:150px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg);
+  display:grid;place-items:center;overflow:hidden}
+.mg-foto img{width:100%;height:100%;object-fit:contain}
+.mg-foto .ph{font-size:10.5px;color:var(--t3);text-align:center;padding:10px;line-height:1.4}
+/* tab dentro la scheda articolo */
+.mg-tabs{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;margin:0 0 12px}
+.mg-tabs button{flex:1;border:0;background:transparent;font-family:inherit;font-size:11.5px;font-weight:700;
+  padding:6px 10px;border-radius:6px;cursor:pointer;color:var(--t2)}
+.mg-tabs button.on{background:var(--surf);color:var(--t1);box-shadow:0 1px 3px rgba(44,21,6,.14)}
+/* storico */
+.mg-st-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:7px;margin:0 0 12px}
+.mg-st-kpi div{background:var(--bg);border-radius:var(--rs);padding:7px 9px}
+.mg-st-kpi b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.mg-st-kpi span{font-size:9.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.04em}
+.mg-mov{width:100%;border-collapse:collapse;font-size:11.5px}
+.mg-mov th{text-align:left;padding:5px 7px;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);border-bottom:1px solid var(--bd)}
+.mg-mov td{padding:5px 7px;border-bottom:1px solid var(--bd)}
+.mg-mov td.q{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.mg-mov td.q.out{color:var(--red)}
+.mg-mov td.q.in{color:var(--green)}
 .mg-filter-ic{flex-shrink:0;cursor:pointer;opacity:.55;font-size:9px;padding:2px;border-radius:4px}
 .mg-filter-ic:hover{opacity:1;background:rgba(255,255,255,.15)}
 .mg-filter-ic.on{opacity:1;color:var(--go)}
@@ -1026,6 +1074,64 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .mg-filterdd-actions{gap:6px}
 .mg-filterdd-actions button{flex:1;border:1.4px solid var(--bd2);background:var(--surf);border-radius:6px;padding:5px 8px;font:inherit;font-size:10.5px;font-weight:700;color:var(--go-d);cursor:pointer}
 .mg-filterdd-actions button:hover{background:var(--bg);border-color:var(--go-d)}
+/* elenco materiali: un menu vero, non un <datalist>. Il datalist mostra solo le
+   voci che contengono quel che c'è già scritto nel campo, quindi con un
+   materiale già impostato si apriva su una riga sola. */
+.mg-pickdd{position:fixed;background:var(--surf);border:1px solid var(--bd2);border-radius:var(--rs);box-shadow:var(--shl);z-index:460;width:270px;display:none;font-weight:400}
+.mg-pickdd-list{max-height:280px;overflow-y:auto;padding:4px 0}
+.mg-pickdd-sec{padding:7px 12px 3px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)}
+.mg-pickdd-opt{display:block;padding:6px 12px;font-size:12px;color:var(--t1);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mg-pickdd-opt:hover{background:var(--bg)}
+.mg-pickdd-opt.on{background:var(--go);color:#3a2a08;font-weight:700}
+.mg-combo{display:flex;gap:0}
+.mg-combo input{flex:1;border-top-right-radius:0;border-bottom-right-radius:0}
+.mg-combo button{border:1.4px solid var(--bd2);border-left:none;border-top-right-radius:8px;border-bottom-right-radius:8px;background:var(--surf);padding:0 11px;cursor:pointer;font-size:11px;color:var(--t2)}
+.mg-combo button:hover{background:var(--bg);color:var(--go-d)}
+/* chi preleva: si guarda, non si scrive — è l'account con cui si è entrati */
+.mg-chi-fisso{margin-top:10px;display:flex;align-items:center;gap:9px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;font-size:13.5px;font-weight:800;color:var(--t1)}
+.mg-chi-fisso span{font-size:10.5px;font-weight:600;color:var(--t3);margin-left:auto;text-align:right}
+/* ── scheda Richieste: due specie separate, archivio in fondo, due viste ── */
+.mg-vista{display:flex;border:1.4px solid var(--bd2);border-radius:8px;overflow:hidden}
+.mg-vista button{border:none;background:var(--surf);padding:6px 11px;font-size:13px;line-height:1;color:var(--t2);cursor:pointer}
+.mg-vista button+button{border-left:1.4px solid var(--bd2)}
+.mg-vista button:hover{background:var(--bg)}
+.mg-vista button.on{background:var(--go);color:#3a2a08}
+.mg-sez{display:flex;align-items:center;gap:9px;margin:20px 0 8px;font-size:12.5px;font-weight:900;color:var(--t1);letter-spacing:.01em}
+.mg-sez .ic{font-size:14px}
+.mg-sez .n{font-size:10.5px;font-weight:600;color:var(--t3)}
+.mg-sez.arch{cursor:pointer;user-select:none;border-top:1px solid var(--bd);padding-top:16px;color:var(--t2)}
+.mg-sez.arch:hover{color:var(--t1)}
+.mg-sez-sub{margin:12px 0 6px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)}
+.mg-sez-sub span{background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:1px 7px;margin-left:5px;font-size:10px}
+/* completate e annullate: si leggono ancora, ma non chiedono più attenzione */
+.mg-spenta{opacity:.5;filter:grayscale(.55)}
+.mg-spenta:hover{opacity:.85;filter:none}
+.mg-arch{padding-left:10px;border-left:2px solid var(--bd)}
+table.mg-req{width:100%;border-collapse:collapse;font-size:12px}
+table.mg-req th{background:var(--br);color:#fff;text-align:left;padding:7px 9px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+table.mg-req td{padding:7px 9px;border-bottom:1px solid var(--bd);vertical-align:middle}
+table.mg-req tbody tr:hover{background:var(--bg)}
+table.mg-req .btn{margin-left:4px}
+/* ── estrazioni di BOM2Excel, nel modale «Nuovo progetto» ── */
+.arch-box{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.arch-hd{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);margin-bottom:8px}
+.arch-hd .fmuted{font-size:9.5px;font-weight:600;text-transform:none;letter-spacing:0;opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px}
+.arch-row{background:var(--surf);border:1.4px solid var(--bd);border-radius:8px;padding:8px 11px;margin-bottom:6px;cursor:pointer;transition:border-color .12s,background .12s}
+.arch-row:hover{border-color:var(--go-d)}
+.arch-row.on{border-color:var(--go-d);background:#FFF8EA}
+.arch-row.bad{cursor:default;opacity:.65;border-style:dashed}
+.arch-row b{display:block;font-size:12.5px;color:var(--t1)}
+.arch-row span{display:block;font-size:10.5px;color:var(--t3);margin-top:2px}
+.arch-stato{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 11px;margin:10px 0 0;font-size:11.5px;line-height:1.6;color:var(--t2)}
+.arch-stato.nuova{background:#FFF8EA;border-color:var(--go-d);color:var(--t1)}
+.arch-stato.bad{background:#FBEAEA;border-color:#E2B4B0;color:#8A2119}
+/* spunta con spiegazione sotto, per le scelte che vanno capite prima di darle */
+.mg-flag{display:flex;gap:9px;align-items:flex-start;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;cursor:pointer}
+.mg-flag input{margin-top:2px;flex:none}
+.mg-flag b{display:block;font-size:12.5px;color:var(--t1)}
+.mg-flag i{display:block;font-style:normal;font-size:10.5px;line-height:1.55;color:var(--t3);margin-top:3px}
+/* l'articolo a perdere si riconosce nell'elenco: non lo si riordina mai */
+.mg-perdere{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);border:1px solid var(--bd2);border-radius:20px;padding:1px 6px;margin-left:5px;white-space:nowrap}
 /* righe di sola lettura: le proprietà si cambiano dalla scheda, non in tabella */
 .mg-tablewrap tbody tr{cursor:pointer}
 .mg-tablewrap td.ro{padding:8px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1806,12 +1912,18 @@ textarea.fld{resize:vertical;min-height:60px}
             </div>
             <div class="imp-card">
               <div class="imp-h">Rileggi la cartella</div>
-              <div class="imp-sub">Ripassa la distinta Excel e i file su disco: aggiunge i pezzi nuovi, aggiorna i disegni e archivia le revisioni superate. Quello che hai modificato a mano resta.</div>
+              <div class="imp-sub">Ripassa la distinta e i file su disco: aggiunge i pezzi nuovi, aggiorna i disegni e archivia le revisioni superate. Quello che hai modificato a mano resta.</div>
+              <div id="spArchStato"></div>
               <div class="imp-act"><button class="btn btn-ghost" onclick="riscansiona()" id="btnRiscan">🔄 Riscansiona</button></div>
+            </div>
+            <div class="imp-card">
+              <div class="imp-h">Chiudi la commessa <span id="spChiusaBadge"></span></div>
+              <div class="imp-sub" id="spChiusaSub">Il lavoro è finito. La commessa passa in sospeso: resta tutta a storico e si può riaprire, ma non compare più dove si sceglie una commessa viva — per esempio nelle richieste di magazzino. <b>Non è l&rsquo;eliminazione</b>: quella è il pulsante rosso qui sotto.</div>
+              <div class="imp-act"><button class="btn btn-ghost" id="spChiusaBtn" onclick="toggleChiusaProgetto()">⏸ Chiudi commessa</button></div>
             </div>
             <div class="imp-card danger">
               <div class="imp-h">Elimina il progetto</div>
-              <div class="imp-sub">Toglie dal gestionale parti, assegnazioni e percorsi di questa commessa. I file su disco non vengono toccati.</div>
+              <div class="imp-sub">Toglie dal gestionale parti, assegnazioni e percorsi di questa commessa. Sparisce anche dallo storico: se volevi solo dire che il lavoro è finito, usa <b>Chiudi la commessa</b> qui sopra. I file su disco non vengono toccati.</div>
               <div class="imp-act"><button class="btn btn-danger" onclick="eliminaProgetto()">🗑 Elimina progetto</button></div>
             </div>
           </div>
@@ -1968,6 +2080,7 @@ textarea.fld{resize:vertical;min-height:60px}
 
 <div class="add" id="add"></div>
 <div class="mg-filterdd" id="magFilterDD"></div>
+<div class="mg-pickdd" id="magPickDD"></div>
 
 <!-- Anteprima al passaggio del mouse -->
 <div id="prevcard"><div id="previmg"></div><div class="pv-cap" id="prevcap"></div></div>
@@ -1999,6 +2112,14 @@ textarea.fld{resize:vertical;min-height:60px}
     </div>
     <div class="mbd">
       <input type="hidden" id="pId">
+      <!-- L'archivio che BOM2Excel scrive su rete a ogni estrazione: struttura,
+           anagrafica e disegni in tutti i formati, già pronti. Sceglierlo da qui
+           evita di scrivere a mano un percorso di rete lungo cento caratteri. -->
+      <div class="arch-box">
+        <div class="arch-hd">📦 Estrazioni di BOM2Excel <span id="pArchSub" class="fmuted"></span>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="caricaArchivio(true)">↻</button></div>
+        <div id="pArchList"><div class="fmuted" style="font-size:11.5px;padding:6px 2px">Cerco le estrazioni…</div></div>
+      </div>
       <div class="fg"><label class="fl">Codice commessa *</label><input class="fld" id="pCodice" placeholder="Es: IB05.2025"><div class="ferr" id="pCodiceErr">Campo obbligatorio</div></div>
       <div class="fg"><label class="fl">Nome progetto *</label><input class="fld" id="pNome" placeholder="Es: Carro LEM"><div class="ferr" id="pNomeErr">Campo obbligatorio</div></div>
       <div class="fg"><label class="fl">Cliente</label><input class="fld" id="pCliente" placeholder="Es: Fibbi"></div>
@@ -2366,13 +2487,15 @@ textarea.fld{resize:vertical;min-height:60px}
 </div>
 
 <div class="mov" id="mScanQr" onclick="magOvCloseScan(event)">
-  <div class="modal" style="max-width:480px">
+  <!-- quasi a tutto schermo: si usa col tablet in mano, davanti allo scaffale,
+       e un riquadro piccolo non riesce a mettere a fuoco il QR sull'etichetta -->
+  <div class="modal" style="max-width:96vw;width:96vw;height:94vh">
     <div class="mhd">
       <div class="mico2">📷</div>
       <div><div class="mtit">Scansione QR scatola</div><div class="msub">Inquadra l'etichetta o inserisci il testo a mano</div></div>
       <button class="mx" onclick="magChiudiScanModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="mbd" id="mScanQrBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mbd" id="mScanQrBody" style="flex:1;min-height:0;overflow:auto"></div>
     <div class="mft" id="mScanQrFt"></div>
   </div>
 </div>
@@ -2453,8 +2576,11 @@ function fillPropDatalists(){
 async function checkHealth(){const p=document.getElementById('apiPill'),t=document.getElementById('apiTxt');try{const r=await fetch(API+'/api/health');if(!r.ok)throw 0;p.classList.add('ok');p.classList.remove('err');t.textContent='Backend connesso';}catch{p.classList.add('err');p.classList.remove('ok');t.textContent='Non raggiungibile';}}
 // utente loggato (login "Accedi con Microsoft"): se il backend gira senza login attivo
 // (solo LAN, MS_REDIRECT_URI non configurato) /auth/utente risponde 404 e si tiene il default statico.
+let UTENTE={nome:'',email:''};
+function utenteNome(){return (UTENTE&&UTENTE.nome)||'';}
 async function loadUtente(){try{const r=await fetch(API+'/auth/utente');if(!r.ok)return;const u=await r.json();
   const nome=u.nome||u.email||'Utente';
+  UTENTE={nome:nome,email:u.email||''};   // chi firma i prelievi: vedi magChiediConferma
   document.getElementById('sbUserNome').textContent=nome;
   document.getElementById('sbUserEmail').textContent=u.email||'';
   document.getElementById('sbUserAv').textContent=nome.split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase();
@@ -4251,6 +4377,8 @@ function renderImpProgetto(){
     g('spCartella',c.percorso_cartella||'');g('spNote',c.note||'');g('spBrand',c.brand||'IB');
     const iso=v=>v?String(v).slice(0,10):'';
     g('spDaData',iso(c.data_inizio));g('spAData',iso(c.data_fine));
+    renderChiusaCard(c);
+    caricaStatoArchivio(c.id);
   }
   impTab(S.impTab||'modifica');
   // le tre strisce che prima stavano sopra l'albero vivono qui
@@ -4270,6 +4398,64 @@ function renderImpProgetto(){
     [S.albero.n_tappe||0,'tappe di percorso'],[custom,'aggiunti a mano'],[esclusi,'esclusi']];
   box.innerHTML=`<div class="imp-fatti">${fatti.map(([n,l])=>`<div class="imp-fatto"><b>${n}</b><span>${l}</span></div>`).join('')}</div>`
     +(S.albero.distinta_codice?`<div class="fmuted" style="font-size:11px;margin-top:10px">Distinta riconosciuta: <b>${esc(S.albero.distinta_codice)}</b></div>`:'');
+}
+/* Da quale estrazione viene questa commessa, e se nel frattempo la macro ne ha
+   fatta una più recente. Non si aggiorna da solo: una riscansione riscrive le
+   parti, e deve deciderla chi ci sta lavorando. */
+async function caricaStatoArchivio(cid){
+  const box=document.getElementById('spArchStato');if(!box)return;
+  box.innerHTML='';
+  let s=null;
+  try{const r=await fetch(API+'/api/archivio/commesse/'+cid+'/stato');s=r.ok?await r.json():null;}catch{}
+  if(!s||!s.archivio)return;              // commessa a cartella normale: niente da dire
+  if(s.errore){
+    box.innerHTML=`<div class="arch-stato bad">⚠ Archivio illeggibile: ${esc(s.errore)}</div>`;
+    return;
+  }
+  const quando=s.esportato_il?magFmtData(s.esportato_il):'—';
+  const riga=`Estrazione del <b>${esc(quando)}</b> · ${s.n_pezzi} pezzi · ${s.n_gerarchia} legami · ${s.n_grezzi} grezzi · macro ${esc(s.versione_macro||'?')}`
+    +(s.disegni_esportati?'':' · <b>senza disegni</b>');
+  box.innerHTML=s.aggiornabile
+    ? `<div class="arch-stato nuova">📦 In archivio c'è un'estrazione più recente di quella importata. ${riga}<br>Riscansiona per prenderla.</div>`
+    : `<div class="arch-stato">📦 ${riga}</div>`;
+}
+
+/* ── chiusura della commessa ──
+   Sospendere non è eliminare: la commessa resta tutta, con le sue parti, i suoi
+   costi e le sue richieste, ma smette di comparire fra quelle su cui si lavora
+   (per esempio nell'elenco delle richieste di magazzino). Si riapre quando
+   serve, e la data di chiusura dice da quando non conta più. */
+function renderChiusaCard(c){
+  const badge=document.getElementById('spChiusaBadge');
+  const btn=document.getElementById('spChiusaBtn');
+  const sub=document.getElementById('spChiusaSub');
+  if(!btn)return;
+  if(c.chiusa){
+    if(badge)badge.innerHTML='<span class="chip cgr" style="margin-left:8px">⏸ sospesa</span>';
+    btn.textContent='▶ Riapri commessa';
+    if(sub)sub.innerHTML=`Chiusa il <b>${esc(magFmtData(c.chiusa_at))}</b>. È a storico: resta tutto consultabile, ma non compare più dove si sceglie una commessa viva. Riaprendola torna al suo posto.`;
+  }else{
+    if(badge)badge.innerHTML='';
+    btn.textContent='⏸ Chiudi commessa';
+    if(sub)sub.innerHTML='Il lavoro è finito. La commessa passa in sospeso: resta tutta a storico e si può riaprire, ma non compare più dove si sceglie una commessa viva — per esempio nelle richieste di magazzino. <b>Non è l’eliminazione</b>: quella è il pulsante rosso qui sotto.';
+  }
+}
+async function toggleChiusaProgetto(){
+  const c=commesse.find(x=>x.id===S.projId);if(!c)return;
+  const chiudi=!c.chiusa;
+  if(chiudi&&!confirm(`Chiudo la commessa ${c.codice||c.nome}?\n\nResta tutta a storico e si può riaprire quando vuoi. Sparisce solo dagli elenchi dove si sceglie una commessa su cui lavorare.`))return;
+  const btn=document.getElementById('spChiusaBtn');
+  if(btn)btn.disabled=true;
+  try{
+    const r=await fetch(API+'/api/commesse/'+c.id,{method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chiusa:chiudi})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a cambiare lo stato'));
+    toast(chiudi?'Commessa chiusa: resta a storico':'Commessa riaperta');
+    await loadCommesse();
+    const agg=commesse.find(x=>x.id===S.projId);
+    if(agg)renderChiusaCard(agg);
+  }catch(e){toast(e.message||'Errore',true);}
+  finally{if(btn)btn.disabled=false;}
 }
 async function salvaImpProgetto(){
   clearErr(['spCodiceErr','spNomeErr','spCartellaErr'],['spCodice','spNome','spCartella']);
@@ -7987,12 +8173,15 @@ let MAG_FILTER_FIELD=null,MAG_FILTER_TEMP=null,MAG_FILTER_Q='';
 
 async function magEnter(){
   MAG.colW=magLoadColW();
+  magCaricaMateriali();
   if(!MAG.categorieLoaded){
     try{const r=await fetch(API+'/api/magazzino/articoli/categorie');MAG.categorie=r.ok?await r.json():[];}
     catch{MAG.categorie=[];}
     MAG.categorieLoaded=true;
   }
-  magGoTab(MAG.tab||'cat');
+  // chi era rimasto su «Riordino» (ora sospesa) torna al catalogo invece di
+  // trovarsi una scheda senza pulsante per uscirne
+  magGoTab(['cat','req','pick'].includes(MAG.tab)?MAG.tab:'cat');
 }
 function magGoTab(t){
   MAG.tab=t;
@@ -8004,7 +8193,11 @@ function magGoTab(t){
 }
 function renderMagTabs(){
   const el=document.getElementById('magTabs');if(!el)return;
-  const tabs=[['cat','📋','Catalogo e giacenze'],['req','📥','Richieste da commesse'],['pick','📱','Prelievo'],['reorder','🔔','Riordino']];
+  // «Riordino» è sospesa: non era chiaro a cosa servisse davvero, e mostrare
+  // una scheda che nessuno usa fa solo rumore. Il codice resta tutto qui sotto
+  // (renderMagRiordino, le notifiche lato server): per riaccenderla basta
+  // rimettere la voce in questo elenco.
+  const tabs=[['cat','📋','Catalogo e giacenze'],['req','📥','Richieste'],['pick','📱','Prelievo']];
   el.innerHTML=tabs.map(([k,ic,l])=>`<button class="${MAG.tab===k?'on':''}" onclick="magGoTab('${k}')">${ic} ${esc(l)}</button>`).join('');
 }
 function magFmtData(s){
@@ -8024,16 +8217,33 @@ async function magEnsureArticoliAll(){
 function magArticoloFull(id){return (MAG.articoliAll||[]).find(a=>a.id===id);}
 
 /* ── CATALOGO E GIACENZE ── */
+// Il catalogo si scarica INTERO una volta sola: categoria, «da riordinare» e
+// soprattutto la ricerca si applicano poi qui, in memoria. Prima ogni tasto
+// premuto rifaceva la chiamata e ridisegnava la barra, e il cursore usciva dal
+// campo: si riusciva a scrivere una lettera per volta.
 async function magLoadCatalogo(){
   const el=document.getElementById('magBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico catalogo…</div>';
-  const params=new URLSearchParams();
-  if(MAG.qcat)params.set('q',MAG.qcat);
-  if(MAG.filtCat&&MAG.filtCat!=='all')params.set('categoria',MAG.filtCat);
-  if(MAG.filtRiord)params.set('solo_da_riordinare','true');
-  try{const r=await fetch(API+'/api/magazzino/articoli?'+params.toString());MAG.articoli=r.ok?await r.json():[];}
+  if(!MAG.articoli||!MAG.articoli.length)
+    el.innerHTML='<div class="fmuted" style="font-size:11px">Carico catalogo…</div>';
+  try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoli=r.ok?await r.json():[];}
   catch{MAG.articoli=[];}
   renderMagCatalogo();
+}
+// filtri applicati in memoria: categoria, «solo da riordinare» e testo cercato
+function magFiltraLocale(base){
+  let rows=base;
+  if(MAG.filtCat&&MAG.filtCat!=='all')rows=rows.filter(a=>(a.categoria||'')===MAG.filtCat);
+  if(MAG.filtRiord)rows=rows.filter(a=>a.da_riordinare);
+  const q=(MAG.qcat||'').trim().toLowerCase();
+  if(q){
+    const parole=q.split(/\s+/);
+    rows=rows.filter(a=>{
+      const testo=[a.codice,a.categoria,a.normativa,a.denominazione,a.dimensione,a.materiale,a.note]
+        .map(x=>(x||'').toString().toLowerCase()).join(' ');
+      return parole.every(p=>testo.includes(p));
+    });
+  }
+  return rows;
 }
 function magKpi(cls,v,l){return `<div class="m ${cls}"><div class="mn">${v}</div><div class="ml">${esc(l)}</div></div>`;}
 function magColValori(field){
@@ -8103,8 +8313,7 @@ function magColResizeStart(e,field){
 }
 function renderMagCatalogo(){
   const el=document.getElementById('magBody');
-  const base=MAG.articoli||[];
-  const rows=magApplySort(magApplyColFiltri(base));
+  const rows=magApplySort(magApplyColFiltri(magFiltraLocale(MAG.articoli||[])));
   const tot=rows.length;
   const pezzi=rows.reduce((s,x)=>s+(x.giacenza||0),0);
   const impegnati=rows.reduce((s,x)=>s+(x.impegnato||0),0);
@@ -8122,9 +8331,18 @@ function renderMagCatalogo(){
       <div class="mg-search">🔎 <input id="magQCat" placeholder="Cerca…" value="${esc(MAG.qcat)}" oninput="magOnSearchCat(this.value)"></div>
       <div class="mg-chips" id="magChipsCat"></div>
       <div class="mg-chips"><div class="mg-chip${MAG.filtRiord?' on':''}" onclick="magToggleRiord()">⚠ Solo da riordinare</div></div>
+      <div class="mg-chips"><div class="mg-chip${MAG.raggr?' on':''}" onclick="magToggleRaggr()">📑 Raggruppa per denominazione</div></div>
+      ${MAG.raggr?`<div class="mg-chips">
+        <div class="mg-chip" onclick="magGrpTutti(false)" title="Apri tutti i gruppi">⊞ Espandi tutto</div>
+        <div class="mg-chip" onclick="magGrpTutti(true)" title="Chiudi tutti i gruppi">⊟ Comprimi tutto</div></div>`:''}
       <button class="btn btn-go" onclick="magNuovoArticolo()">+ Nuovo articolo</button>
     </div>
-    <div class="fmuted" style="font-size:11px;margin:-6px 0 8px">Clic su una riga per aprire la scheda e modificarne le proprietà.</div>
+    <div class="mg-leg">
+      <b><i style="background:#34C759"></i> inox 304 / 302</b>
+      <b><i style="background:#fff"></i> inox 316</b>
+      <b><i style="background:#FF3B30"></i> non inossidabile</b>
+      <span style="margin-left:auto">Giacenza e minima si scrivono qui; il resto nella scheda, clic sulla riga.</span>
+    </div>
     <div class="mg-tablewrap"><table class="mg-fixed">
       <thead><tr>
         ${MAG_COLS.map(([f,l,n])=>magColTh(f,l,n)).join('')}<th style="width:52px"></th>
@@ -8132,28 +8350,93 @@ function renderMagCatalogo(){
       <tbody id="magRowsCat"></tbody>
     </table></div>`;
   document.getElementById('magChipsCat').innerHTML=cats.map((c,i)=>`<div class="mg-chip${MAG.filtCat===c?' on':''}" onclick="magSetFiltCatIdx(${i})">${c==='all'?'Tutte':esc(c)}</div>`).join('');
+  magRenderRighe(rows);
+}
+// solo il corpo della tabella: si ridisegna a ogni tasto premuto nella ricerca,
+// e la barra sopra (con il campo e il cursore dentro) non viene toccata
+function magRenderRighe(rows){
+  const tb=document.getElementById('magRowsCat');
+  if(!tb)return;
+  rows=rows||magApplySort(magApplyColFiltri(magFiltraLocale(MAG.articoli||[])));
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="13"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
+    return;
+  }
   const roCell=(a,field,ph)=>`<td class="ro" title="${esc((a[field]||'').toString())}">${esc((a[field]||'').toString())||`<span class="fmuted">${ph||'—'}</span>`}</td>`;
-  document.getElementById('magRowsCat').innerHTML=rows.map(a=>`<tr onclick="magApriScheda(${a.id})">
+  // la cella si scrive direttamente: niente aprire la scheda per correggere un numero
+  const numCell=(a,campo,extra)=>`<td class="num" onclick="event.stopPropagation()">
+    <input class="mg-cellnum" type="number" min="0" step="1" value="${a[campo]==null?'':a[campo]}"
+      ${extra||''} onchange="magSalvaCella(${a.id},'${campo}',this)"
+      onkeydown="if(event.key==='Enter')this.blur()"></td>`;
+  const riga=a=>`<tr class="ac-${esc(a.classe_acciaio||'')}" onclick="magApriScheda(${a.id})">
     <td class="ro" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--t3);font-weight:700">${esc(a.codice||'')}</td>
-    ${roCell(a,'categoria')}
+    <td class="ro">${esc(a.categoria||'')||'<span class="fmuted">—</span>'}${a.a_perdere?'<span class="mg-perdere" title="Si usa finché dura: non viene mai chiesto di riordinarlo">a perdere</span>':''}</td>
     ${roCell(a,'normativa')}
     ${roCell(a,'denominazione')}
     ${roCell(a,'dimensione')}
     ${roCell(a,'materiale')}
     ${roCell(a,'unita')}
-    <td class="num">${a.giacenza}</td>
+    ${numCell(a,'giacenza')}
     <td class="num">${a.impegnato}</td>
     <td class="num" style="font-weight:800;${a.da_riordinare?'color:var(--red)':''}">${a.disponibile}</td>
-    <td class="num">${a.scorta_minima==null?'<span class="fmuted">—</span>':a.scorta_minima}</td>
+    ${numCell(a,'scorta_minima','placeholder="—"')}
     <td class="num">${a.in_arrivo?('+'+a.in_arrivo):'<span class="fmuted">—</span>'}</td>
     <td class="act">${a.da_riordinare?'<span class="chip cr">⚠</span>':'<span class="chip cg">ok</span>'}</td>
-  </tr>`).join('')||'<tr><td colspan="13"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
+  </tr>`;
+
+  if(!MAG.raggr){tb.innerHTML=rows.map(riga).join('');return;}
+
+  // macro-divisione per DENOMINAZIONE, come le categorie nell'albero di progetto
+  const g={};rows.forEach(a=>{const k=(a.denominazione||'(senza denominazione)').trim();(g[k]=g[k]||[]).push(a);});
+  MAG.grpChiusi=MAG.grpChiusi||{};
+  // Le chiavi passano per INDICE, non per testo: denominazioni come
+  // ROSETTA ELASTICA "GROWER" contengono virgolette doppie, che chiudevano in
+  // anticipo l'attributo onclick="…" e lasciavano quel gruppo senza clic —
+  // erano proprio i gruppi che non si comprimevano.
+  MAG._grpKeys=Object.keys(g).sort((x,y)=>x.localeCompare(y,'it',{sensitivity:'base'}));
+  tb.innerHTML=MAG._grpKeys.map((k,i)=>{
+    const arr=g[k],chiuso=MAG.grpChiusi[k]===true;
+    const pezzi=arr.reduce((s,x)=>s+(x.giacenza||0),0);
+    return `<tr class="mg-grp" onclick="magToggleGrp(${i})"><td colspan="13">
+        ${chiuso?'▸':'▾'} ${esc(k)}
+        <span class="mg-grp-n">${arr.length} articoli · ${pezzi} pz</span></td></tr>`
+      + (chiuso?'':arr.map(riga).join(''));
+  }).join('');
+}
+function magToggleGrp(i){
+  const k=(MAG._grpKeys||[])[i];if(k==null)return;
+  MAG.grpChiusi=MAG.grpChiusi||{};MAG.grpChiusi[k]=!MAG.grpChiusi[k];
+  magRenderRighe();
+}
+// comprimi/espandi tutto, come nell'albero di progetto: con una cinquantina di
+// denominazioni chiuderle una per una non è un lavoro che si fa due volte
+function magGrpTutti(chiudi){
+  MAG.grpChiusi={};
+  if(chiudi)(MAG._grpKeys||[]).forEach(k=>{MAG.grpChiusi[k]=true;});
+  magRenderRighe();
+}
+function magToggleRaggr(){MAG.raggr=!MAG.raggr;renderMagCatalogo();}
+// salva la singola cella e riallinea i numeri calcolati (disponibile, da riordinare)
+async function magSalvaCella(id,campo,input){
+  const raw=(input.value||'').trim();
+  const val=raw===''?(campo==='scorta_minima'?null:0):parseInt(raw,10);
+  if(val!==null&&(isNaN(val)||val<0)){toast('Serve un numero non negativo',true);magRenderRighe();return;}
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli/'+id,{method:'PATCH',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({[campo]:val})});
+    if(!r.ok)throw 0;
+    const agg=await r.json();
+    const i=(MAG.articoli||[]).findIndex(x=>x.id===id);
+    if(i>=0)MAG.articoli[i]=agg;
+    magRenderRighe();
+  }catch{toast('Non sono riuscito a salvare',true);magRenderRighe();}
 }
 
 /* ── SCHEDA ARTICOLO (crea / modifica / duplica / elimina) ── */
 function magOvCloseArt(e){if(e.target.id==='mMagArt')mClose('mMagArt');}
 function magNuovoArticolo(){
-  MAG.art={nuovo:true,dati:{categoria:'',normativa:'',denominazione:'',dimensione:'',materiale:'',unita:'pz',note:'',giacenza:0,scorta_minima:'',in_arrivo:0}};
+  MAG.artTab='prop';
+  MAG.art={nuovo:true,dati:{categoria:'',normativa:'',denominazione:'',dimensione:'',materiale:'',unita:'pz',note:'',giacenza:0,scorta_minima:'',in_arrivo:0,a_perdere:false}};
   renderMagScheda();
   mOpen('mMagArt');
 }
@@ -8162,10 +8445,12 @@ function magApriScheda(id,articolo){
   // (es. subito dopo un duplica, se i filtri attivi la escludono)
   const a=articolo||(MAG.articoli||[]).find(x=>x.id===id);
   if(!a){toast('Articolo non trovato',true);return;}
+  MAG.artTab='prop';
   MAG.art={nuovo:false,id:a.id,codice:a.codice,calc:a,dati:{
     categoria:a.categoria||'',normativa:a.normativa||'',denominazione:a.denominazione||'',
     dimensione:a.dimensione||'',materiale:a.materiale||'',unita:a.unita||'pz',note:a.note||'',
     giacenza:a.giacenza,scorta_minima:a.scorta_minima==null?'':a.scorta_minima,in_arrivo:a.in_arrivo,
+    a_perdere:!!a.a_perdere,
   }};
   renderMagScheda();
   mOpen('mMagArt');
@@ -8187,20 +8472,54 @@ function renderMagScheda(){
       <div>Disponibile<b style="${s.calc.da_riordinare?'color:var(--red)':''}">${s.calc.disponibile}</b></div>
       <div>Stato<b>${s.calc.da_riordinare?'⚠ da riordinare':'✔ ok'}</b></div>
     </div>`;
-  document.getElementById('mMagArtBody').innerHTML=`${calc}
+  // Ci sono SEMPRE tutti i materiali: la categoria decide solo chi sta in cima
+  // (una rosetta non ha la classe 8.8, una vite non ha la durezza HV), non cosa
+  // si può scegliere. Il campo resta scrivibile: l'elenco è un aiuto.
+  const campoMateriale=`<div class="fg"><label class="fl">Materiale</label>
+    <div class="mg-combo">
+      <input class="fld" id="magFldMateriale" value="${esc(d.materiale||'')}" placeholder="Scegli o scrivi…"
+        oninput="MAG.art.dati.materiale=this.value;magSchedaRefreshQr()">
+      <button type="button" title="Tutti i materiali" onclick="magApriPick(event,'materiale')">▾</button>
+    </div></div>`;
+  const campoCategoria=`<div class="fg"><label class="fl">Categoria</label>
+    <div class="mg-combo">
+      <input class="fld" id="magFldCategoria" value="${esc(d.categoria||'')}" placeholder="Es. vite"
+        oninput="MAG.art.dati.categoria=this.value">
+      <button type="button" title="Tutte le categorie" onclick="magApriPick(event,'categoria')">▾</button>
+    </div></div>`;
+
+  const tabs=`<div class="mg-tabs">
+      <button class="${MAG.artTab!=='storico'?'on':''}" onclick="magSchedaTab('prop')">Proprietà articolo</button>
+      <button class="${MAG.artTab==='storico'?'on':''}" onclick="magSchedaTab('storico')" ${s.nuovo?'disabled title="Prima salva l\'articolo"':''}>Storico</button>
+    </div>`;
+
+  if(!s.nuovo&&MAG.artTab==='storico'){
+    document.getElementById('mMagArtBody').innerHTML=tabs+`<div id="magStoricoBox"><div class="fmuted" style="font-size:11px">Carico lo storico…</div></div>`;
+    magCaricaStorico(s.id);
+  }else{
+    document.getElementById('mMagArtBody').innerHTML=`${s.nuovo?'':tabs}${calc}
     <div class="mg-art-grid">
-      ${fld('denominazione','Denominazione','Es. Vite TCEI')}
-      ${fld('categoria','Categoria','Es. vite')}
+      <div class="fg full" style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:180px;flex:none">${magFotoHtml(s)}</div>
+        <div style="flex:1;min-width:0">${fld('denominazione','Denominazione','Es. Vite TCEI')}${campoCategoria}</div>
+      </div>
       ${fld('normativa','Normativa','Es. DIN 912')}
       ${fld('dimensione','Dimensione','Es. M6x20')}
-      ${fld('materiale','Materiale','Es. AISI 304')}
+      ${campoMateriale}
       ${fld('unita','Unità','pz')}
       ${num('giacenza','Giacenza')}
       ${num('scorta_minima','Scorta minima','nessuna')}
       ${num('in_arrivo','In arrivo')}
+      <div class="fg full"><label class="mg-flag">
+        <input type="checkbox" ${d.a_perdere?'checked':''} onchange="MAG.art.dati.a_perdere=this.checked;renderMagScheda()">
+        <span><b>Articolo a perdere</b>
+          <i>Roba vecchia che c'è in giro e si usa finché dura — cuscinetti, pignoni, puffer avanzati
+             da lavori passati. Si preleva come tutto il resto, ma non viene mai chiesto di riordinarlo:
+             quando finisce è finita, e quello che manca si compra nuovo.</i></span></label></div>
       <div class="fg full"><label class="fl">Note</label><textarea class="fld" placeholder="Note (facoltative)" oninput="MAG.art.dati.note=this.value">${esc(d.note||'')}</textarea></div>
       <div class="fg full"><div class="mg-art-qr">Testo dell'etichetta QR: <b id="magSchedaQr">${esc(magSchedaQrTesto(d))||'—'}</b><br>Normativa · materiale · dimensione: è il testo che il tablet legge dalla scatola. Sigle inox diverse (AISI 302, A2-70…) sono riconosciute come equivalenti.</div></div>
     </div>`;
+  }
   document.getElementById('mMagArtFt').innerHTML=s.nuovo
     ?`<div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mMagArt')">Annulla</button><button class="btn btn-go" onclick="magSalvaScheda()">💾 Crea articolo</button></div>`
     :`<button class="btn btn-sm" onclick="magDuplicaScheda()">⧉ Duplica</button>
@@ -8211,6 +8530,126 @@ function magSchedaRefreshQr(){
   const el=document.getElementById('magSchedaQr');
   if(el)el.textContent=magSchedaQrTesto(MAG.art.dati)||'—';
 }
+function magSchedaTab(t){MAG.artTab=t;renderMagScheda();}
+// gli elenchi arrivano dal server una volta sola e restano in memoria: sono le
+// stesse configurazioni della bulloneria in SolidWorks
+// L'elenco contiene SEMPRE tutti i materiali: la categoria decide solo chi sta
+// in cima. Un anello di spessoramento di solito è AISI 302, ma se ne arriva uno
+// inox A4 il campo deve saperlo proporre lo stesso.
+function magMaterialiDi(categoria){
+  const tipici=(MAG.materiali||{})[(categoria||'').trim().toLowerCase()]||[];
+  const tutti=MAG.materialiTutti||[];
+  return tipici.concat(tutti.filter(m=>tipici.indexOf(m)<0));
+}
+function magMaterialiTipiciDi(categoria){
+  return (MAG.materiali||{})[(categoria||'').trim().toLowerCase()]||[];
+}
+async function magCaricaMateriali(){
+  if(MAG.materiali)return;
+  try{const r=await fetch(API+'/api/magazzino/materiali');
+    const j=r.ok?await r.json():{};
+    MAG.materiali=j.per_categoria||{};MAG.materialiTutti=j.tutti||[];}
+  catch{MAG.materiali={};MAG.materialiTutti=[];}
+}
+/* ── elenco a tendina di materiali e categorie ──
+   Un <datalist> non va bene: mostra solo le voci che contengono quel che c'è
+   già scritto nel campo, quindi con un materiale impostato si apriva su una
+   riga sola e sembrava che gli altri non ci fossero. Questo è un menu vero:
+   si apre sempre intero, e chi vuole restringere scrive nel campo sopra. */
+let MAG_PICK=null;
+function magApriPick(evt,campo){
+  evt.stopPropagation();
+  if(MAG_PICK&&MAG_PICK.campo===campo){magChiudiPick();return;}
+  MAG_PICK={campo};
+  const dd=document.getElementById('magPickDD');
+  const r=evt.currentTarget.closest('.mg-combo').getBoundingClientRect();
+  const alto=Math.min(320,window.innerHeight-24);
+  let top=r.bottom+4;
+  if(top+alto>window.innerHeight)top=Math.max(8,r.top-alto-4);
+  dd.style.cssText=`display:block;top:${top}px;left:${Math.max(8,Math.min(r.left,window.innerWidth-278))}px;width:${Math.max(220,r.width)}px`;
+  magRenderPick();
+}
+function magChiudiPick(){MAG_PICK=null;const d=document.getElementById('magPickDD');if(d)d.style.display='none';}
+function magRenderPick(){
+  if(!MAG_PICK)return;
+  const campo=MAG_PICK.campo;
+  const corrente=((MAG.art&&MAG.art.dati[campo])||'').trim();
+  const opt=(v,i)=>`<div class="mg-pickdd-opt${v===corrente?' on':''}" onclick="magScegliPick(${i})" title="${esc(v)}">${esc(v)}</div>`;
+  let voci=[],html='';
+  if(campo==='materiale'){
+    const cat=(MAG.art&&MAG.art.dati.categoria)||'';
+    const tipici=magMaterialiTipiciDi(cat);
+    const altri=(MAG.materialiTutti||[]).filter(m=>tipici.indexOf(m)<0);
+    voci=tipici.concat(altri);
+    let n=0;
+    if(tipici.length)html+=`<div class="mg-pickdd-sec">tipici per «${esc(cat)}»</div>`+tipici.map(v=>opt(v,n++)).join('');
+    if(altri.length)html+=`<div class="mg-pickdd-sec">${tipici.length?'altri materiali':'materiali'}</div>`+altri.map(v=>opt(v,n++)).join('');
+  }else{
+    voci=(MAG.categorie||[]).slice();
+    html=voci.map(opt).join('');
+  }
+  MAG_PICK.voci=voci;
+  document.getElementById('magPickDD').innerHTML=
+    `<div class="mg-pickdd-list">${html||'<div class="fmuted" style="padding:10px 12px;font-size:11.5px">Nessuna voce</div>'}</div>`;
+}
+function magScegliPick(i){
+  if(!MAG_PICK)return;
+  const v=(MAG_PICK.voci||[])[i];const campo=MAG_PICK.campo;
+  if(v==null)return;
+  MAG.art.dati[campo]=v;
+  const inp=document.getElementById(campo==='materiale'?'magFldMateriale':'magFldCategoria');
+  if(inp)inp.value=v;
+  magSchedaRefreshQr();
+  magChiudiPick();
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#magPickDD')&&!e.target.closest('.mg-combo'))magChiudiPick();});
+// la foto del pezzo: se non c'è, un disegnino generico invece di un buco
+function magFotoHtml(s){
+  const img=(s.calc&&s.calc.immagine)||'';
+  if(img)return `<div class="mg-foto"><img src="${API}/api/magazzino/articoli/${s.id}/immagine" alt=""
+      onerror="this.parentNode.innerHTML='<div class=\\'ph\\'>immagine non caricata</div>'"></div>`;
+  return `<div class="mg-foto"><div class="ph">
+      <div style="font-size:26px;line-height:1">🔩</div>
+      nessuna immagine<br><span style="opacity:.7">si prende dal gestionale, se il pezzo ce l'ha</span></div></div>`;
+}
+async function magCaricaStorico(id){
+  const box=document.getElementById('magStoricoBox');if(!box)return;
+  let st=null;
+  try{const r=await fetch(API+'/api/magazzino/articoli/'+id+'/storico');st=r.ok?await r.json():null;}
+  catch{}
+  if(!st){box.innerHTML='<div class="empty" style="padding:24px">Non sono riuscito a leggere lo storico.</div>';return;}
+  const q=v=>`<b>${v}</b>`;
+  const mov=st.movimenti.map(m=>`<tr>
+      <td>${esc(new Date(m.quando).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'}))}</td>
+      <td>${esc(m.tipo)}</td>
+      <td class="q ${m.quantita<0?'out':'in'}">${m.quantita>0?'+':''}${m.quantita}</td>
+      <td class="q" style="font-weight:400;color:var(--t2)">${m.giacenza_dopo}</td>
+      <td>${esc(m.commessa||'—')}</td>
+      <td>${esc(m.chi||'—')}</td>
+    </tr>`).join('');
+  const perComm=st.per_commessa.map(x=>`<tr><td>${esc(x.commessa)}</td><td class="q out">${x.quantita}</td></tr>`).join('');
+  const aperte=(st.richieste_aperte||[]).map(r=>`<tr>
+      <td>#${r.id}</td><td>${esc(r.speciale?(r.titolo||'speciale'):(r.commessa_codice||r.commessa_nome))}</td>
+      <td>${esc(r.stato)}</td>
+      <td class="q">${(r.righe.find(x=>x.articolo_id===id)||{}).richiesta||''}</td></tr>`).join('');
+  box.innerHTML=`
+    <div class="mg-st-kpi">
+      <div>${q(st.totale_uscito)}<span>Pezzi usciti</span></div>
+      <div>${q(st.volte_prelevato)}<span>Volte prelevato</span></div>
+      <div>${q(st.totale_entrato)}<span>Pezzi entrati</span></div>
+      <div>${q(st.per_commessa.length)}<span>Commesse servite</span></div>
+    </div>
+    ${perComm?`<div class="fl" style="margin:14px 0 5px">Dove è finito</div>
+      <table class="mg-mov"><thead><tr><th>Commessa</th><th style="text-align:right">Pezzi</th></tr></thead><tbody>${perComm}</tbody></table>`:''}
+    ${aperte?`<div class="fl" style="margin:14px 0 5px">Richieste ancora aperte</div>
+      <table class="mg-mov"><thead><tr><th>N.</th><th>Per</th><th>Stato</th><th style="text-align:right">Pezzi</th></tr></thead><tbody>${aperte}</tbody></table>`:''}
+    <div class="fl" style="margin:14px 0 5px">Movimenti</div>
+    ${mov?`<table class="mg-mov">
+      <thead><tr><th>Quando</th><th>Cosa</th><th style="text-align:right">Q.tà</th><th style="text-align:right">Dopo</th><th>Commessa</th><th>Chi</th></tr></thead>
+      <tbody>${mov}</tbody></table>`
+     :`<div class="empty" style="padding:20px;font-size:11.5px">Nessun movimento registrato.<br>
+        <span class="fmuted">La storia parte dal primo prelievo completato: prima di allora non c'è niente da raccontare.</span></div>`}`;
+}
 function magSchedaPayload(){
   const d=MAG.art.dati;
   const n=v=>{const x=Number((v??'').toString().replace(',','.'));return isNaN(x)?0:Math.max(0,Math.round(x));};
@@ -8218,7 +8657,7 @@ function magSchedaPayload(){
     categoria:(d.categoria||'').trim(),normativa:(d.normativa||'').trim(),
     denominazione:(d.denominazione||'').trim(),dimensione:(d.dimensione||'').trim(),
     materiale:(d.materiale||'').trim(),unita:(d.unita||'pz').trim()||'pz',
-    note:(d.note||'').trim(),giacenza:n(d.giacenza),in_arrivo:n(d.in_arrivo),
+    note:(d.note||'').trim(),giacenza:n(d.giacenza),in_arrivo:n(d.in_arrivo),a_perdere:!!d.a_perdere,
     scorta_minima:(d.scorta_minima===''||d.scorta_minima==null)?null:n(d.scorta_minima),
   };
 }
@@ -8319,9 +8758,12 @@ function magApplyColFilter(){
   renderMagCatalogo();
 }
 document.addEventListener('click',e=>{if(!e.target.closest('#magFilterDD')&&!e.target.closest('.mg-filter-ic'))magCloseColFilter();});
-function magOnSearchCat(v){MAG.qcat=v;clearTimeout(MAG_SEARCH_T);MAG_SEARCH_T=setTimeout(()=>magLoadCatalogo(),300);}
-function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];magLoadCatalogo();}
-function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;magLoadCatalogo();}
+// niente chiamata al server e niente ridisegno della barra: si filtra in
+// memoria e si riscrive solo il corpo della tabella, così il cursore resta
+// dov'è e si può scrivere una parola intera
+function magOnSearchCat(v){MAG.qcat=v;magRenderRighe();}
+function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];renderMagCatalogo();}
+function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;renderMagCatalogo();}
 /* ── RICHIESTE DA COMMESSE ── */
 async function magLoadRichieste(){
   const el=document.getElementById('magBody');
@@ -8335,13 +8777,19 @@ function magStBadge(s){
   const [c,l]=m[s]||['cgr',s];
   return `<span class="chip ${c}">${esc(l)}</span>`;
 }
-async function magApriNuovaRichiesta(){
+async function magApriNuovaRichiesta(speciale){
   if(!MAG.articoliAll){
     try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoliAll=r.ok?await r.json():[];}
     catch{MAG.articoliAll=[];}
   }
   const first=(MAG.articoliAll||[])[0];
-  MAG.newReq={commessa_id:commesse.length?commesse[0].id:null,righe:[{articolo_id:first?first.id:null,richiesta:1}]};
+  // una speciale non ha commessa: al suo posto un titolo che dice a cosa serve
+  const aperte=(commesse||[]).filter(c=>!c.chiusa);
+  // chi chiede è chi è loggato: il server riscrive comunque questo campo dalla
+  // sessione, qui si mostra solo perché si veda a nome di chi sta partendo
+  MAG.newReq={speciale:!!speciale,titolo:'',richiedente:utenteNome()||(ORE&&ORE.me&&ORE.me.nome)||'',
+    commessa_id:speciale?null:(aperte.length?aperte[0].id:null),
+    righe:[{articolo_id:first?first.id:null,richiesta:1}]};
   renderMagRichieste();
 }
 function magChiudiNuovaRichiesta(){MAG.newReq=null;renderMagRichieste();}
@@ -8355,8 +8803,9 @@ function magSetRigaArticolo(i,v){MAG.newReq.righe[i].articolo_id=parseInt(v)||nu
 function magSetRigaQta(i,v){MAG.newReq.righe[i].richiesta=Math.max(1,parseInt(v)||1);}
 function magSetNewReqCommessa(v){MAG.newReq.commessa_id=v===''?null:parseInt(v);}
 function magOptsCommesse(sel){
-  if(!commesse.length)return '<option value="">— nessuna commessa —</option>';
-  return commesse.map(c=>`<option value="${c.id}" ${String(sel)===String(c.id)?'selected':''}>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</option>`).join('');
+  const aperte=(commesse||[]).filter(c=>!c.chiusa);   // su una chiusa non si chiede più niente
+  if(!aperte.length)return '<option value="">— nessuna commessa aperta —</option>';
+  return aperte.map(c=>`<option value="${c.id}" ${String(sel)===String(c.id)?'selected':''}>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</option>`).join('');
 }
 function magOptsArticoli(sel){
   const list=MAG.articoliAll||[];
@@ -8372,9 +8821,13 @@ function renderMagRigheForm(){
   </div>`).join('');
 }
 async function magSalvaNuovaRichiesta(){
-  if(!MAG.newReq||!MAG.newReq.righe.length){toast('Aggiungi almeno un articolo',true);return;}
-  if(MAG.newReq.commessa_id==null){toast('Seleziona una commessa',true);return;}
-  const body={commessa_id:MAG.newReq.commessa_id,righe:MAG.newReq.righe.map(rg=>({articolo_id:rg.articolo_id,richiesta:rg.richiesta}))};
+  const n=MAG.newReq;
+  if(!n||!n.righe.length){toast('Aggiungi almeno un articolo',true);return;}
+  if(!n.speciale&&n.commessa_id==null){toast('Seleziona una commessa',true);return;}
+  if(n.speciale&&!(n.titolo||'').trim()){toast('Scrivi a cosa serve',true);return;}
+  const body={commessa_id:n.speciale?null:n.commessa_id,
+    titolo:(n.titolo||'').trim(),richiedente:(n.richiedente||'').trim(),
+    righe:n.righe.map(rg=>({articolo_id:rg.articolo_id,richiesta:rg.richiesta}))};
   try{
     const r=await fetch(API+'/api/magazzino/richieste',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(!r.ok){toast('Errore invio richiesta',true);return;}
@@ -8394,32 +8847,181 @@ async function magAnnullaRichiesta(id){
     await magLoadRichieste();
   }catch{toast('Errore di rete',true);}
 }
+// Due specie nella stessa pagina: quelle che nascono da una commessa e quelle
+// **speciali** (manutenzione, prove, ricambi), che non hanno un lavoro dietro e
+// per questo si possono anche cancellare. Le commesse chiuse non compaiono: le
+// filtra il server, che sa quali sono.
 function renderMagRichieste(){
   const el=document.getElementById('magBody');
-  let html=`<div class="mg-toolbar"><span style="flex:1"></span><button class="btn btn-go" onclick="magApriNuovaRichiesta()">+ Simula richiesta</button></div>`;
-  if(MAG.newReq){
+  const nuova=MAG.newReq;
+  const vista=MAG.reqVista||'grid';
+  let html=`<div class="mg-toolbar">
+      <div class="mg-search">🔎 <input placeholder="Cerca commessa o articolo…" value="${esc(MAG.qreq||'')}" oninput="MAG.qreq=this.value;magRenderReqCards()"></div>
+      <div class="mg-chips" id="magReqFiltri"></div>
+      <span style="flex:1"></span>
+      <div class="mg-vista">
+        <button class="${vista==='grid'?'on':''}" onclick="magSetReqVista('grid')" title="Vista a quadretti">▦</button>
+        <button class="${vista==='list'?'on':''}" onclick="magSetReqVista('list')" title="Vista a elenco">☰</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="magApriNuovaRichiesta(false)">+ Da commessa</button>
+      <button class="btn btn-go" onclick="magApriNuovaRichiesta(true)">+ Richiesta speciale</button>
+    </div>`;
+  if(nuova){
+    const sp=nuova.speciale;
     html+=`<div class="mg-formbox">
-      <div style="margin-bottom:8px"><select class="fld" id="magReqCommessa" onchange="magSetNewReqCommessa(this.value)">${magOptsCommesse(MAG.newReq.commessa_id)}</select></div>
+      <div style="margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap">
+        ${sp
+          ?`<input class="fld" style="flex:2;min-width:200px" placeholder="A cosa serve — es. manutenzione pressa" value="${esc(nuova.titolo||'')}" oninput="MAG.newReq.titolo=this.value">`
+          :`<select class="fld" style="flex:2;min-width:200px" onchange="magSetNewReqCommessa(this.value)">${magOptsCommesse(nuova.commessa_id)}</select>`}
+        ${utenteNome()
+          ?`<div class="mg-chi-fisso" style="flex:1;min-width:150px;margin:0">👤 ${esc(nuova.richiedente||'')}<span>la chiedi tu</span></div>`
+          :`<input class="fld" style="flex:1;min-width:150px" placeholder="Chi la richiede" value="${esc(nuova.richiedente||'')}" oninput="MAG.newReq.richiedente=this.value">`}
+      </div>
       <div id="magReqLines"></div>
       <button class="btn btn-ghost btn-sm" onclick="magAggiungiRigaRichiesta()">+ articolo</button>
-      <div class="mg-card-ft"><button class="btn btn-go" onclick="magSalvaNuovaRichiesta()">Invia richiesta</button><button class="btn btn-ghost" onclick="magChiudiNuovaRichiesta()">Annulla</button></div>
+      <div class="mg-card-ft"><button class="btn btn-go" onclick="magSalvaNuovaRichiesta()">${sp?'Crea richiesta speciale':'Invia richiesta'}</button><button class="btn btn-ghost" onclick="magChiudiNuovaRichiesta()">Annulla</button></div>
     </div>`;
   }
-  html+='<div class="mg-cards" id="magReqCards"></div>';
+  html+='<div id="magReqCards"></div>';
   el.innerHTML=html;
-  if(MAG.newReq)renderMagRigheForm();
-  const list=MAG.richieste||[];
-  document.getElementById('magReqCards').innerHTML=list.map(r=>{
+  if(nuova)renderMagRigheForm();
+  magRenderReqFiltri();
+  magRenderReqCards();
+}
+function magRenderReqFiltri(){
+  const box=document.getElementById('magReqFiltri');if(!box)return;
+  // una pastiglia per commessa: quando le richieste sono tante è l'unico modo
+  // di guardare solo il lavoro che interessa
+  const comm=new Map();
+  (MAG.richieste||[]).forEach(r=>{if(!r.speciale&&r.commessa_id)comm.set(r.commessa_id,r.commessa_codice||r.commessa_nome);});
+  const chip=(k,l,n)=>`<div class="mg-chip${(MAG.reqFiltro||'all')===k?' on':''}" onclick="MAG.reqFiltro='${jsq(k)}';magRenderReqFiltri();magRenderReqCards()">${esc(l)}${n!=null?` <b>${n}</b>`:''}</div>`;
+  const nSp=(MAG.richieste||[]).filter(r=>r.speciale).length;
+  box.innerHTML=chip('all','Tutte')+chip('speciali','⚡ Speciali',nSp)
+    +[...comm.entries()].map(([id,l])=>chip('c'+id,l,(MAG.richieste||[]).filter(r=>r.commessa_id===id).length)).join('');
+}
+function magSetReqVista(v){MAG.reqVista=v;renderMagRichieste();}
+function magToggleArchivio(){MAG.reqArchivioAperto=!MAG.reqArchivioAperto;magRenderReqCards();}
+// completata o annullata: il lavoro è finito, non c'è più niente da fare su
+// quella riga. Resta consultabile, ma spenta e in fondo.
+function magReqChiusa(r){return r.stato==='completata'||r.stato==='annullata';}
+
+function magRenderReqCards(){
+  const box=document.getElementById('magReqCards');if(!box)return;
+  const f=MAG.reqFiltro||'all';
+  const q=(MAG.qreq||'').trim().toLowerCase();
+  const vista=MAG.reqVista||'grid';
+  let list=(MAG.richieste||[]).filter(r=>{
+    if(f==='speciali'&&!r.speciale)return false;
+    if(f.startsWith('c')&&f!=='all'&&String(r.commessa_id)!==f.slice(1))return false;
+    if(q){
+      const testo=[r.commessa_codice,r.commessa_nome,r.titolo,r.richiedente,
+        ...(r.righe||[]).map(x=>x.articolo_denominazione+' '+x.articolo_codice)].join(' ').toLowerCase();
+      if(!testo.includes(q))return false;
+    }
+    return true;
+  });
+  if(!list.length){box.innerHTML='<div class="empty">Nessuna richiesta con questi filtri.</div>';return;}
+
+  const azioni=r=>{
+    let a='';
+    if(r.stato==='attesa')a=`<button class="btn btn-go btn-sm" onclick="magAutorizzaRichiesta(${r.id})">✅ Autorizza</button><button class="btn btn-ghost btn-sm" onclick="magAnnullaRichiesta(${r.id})">Annulla</button>`;
+    else if(r.stato==='autorizzata'||r.stato==='in_prelievo')a=`<button class="btn btn-ghost btn-sm" onclick="MAG.pickActive=${r.id};magGoTab('pick')">📱 ${r.stato==='in_prelievo'?'Continua prelievo':'Vai al prelievo'}</button>`;
+    // si eliminano tutte, di commessa o speciali: il movimento di magazzino
+    // resta comunque, così lo storico dell'articolo non perde niente
+    if(r.stato!=='in_prelievo')
+      a+=`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="magEliminaRichiesta(${r.id})">🗑 Elimina</button>`;
+    return a;
+  };
+  const sottotitolo=r=>`${esc(r.commessa_codice||'')}${r.commessa_codice?' · ':''}${r.richiedente?esc(r.richiedente)+' · ':''}richiesta del ${esc(magFmtData(r.creata_at))}`;
+  const titoloDi=r=>r.speciale?(r.titolo||'Richiesta speciale'):(r.commessa_nome||r.commessa_codice||'');
+
+  const card=r=>{
     const righe=(r.righe||[]).map(rg=>`<div class="mg-cardrow"><span class="nm">${esc(rg.articolo_denominazione||'')} ${esc(rg.articolo_dimensione||'')}</span><span class="q">${rg.prelevata!=null?rg.prelevata+' prelevati':rg.richiesta+' richiesti'}</span></div>`).join('');
-    let actions='';
-    if(r.stato==='attesa')actions=`<button class="btn btn-go btn-sm" onclick="magAutorizzaRichiesta(${r.id})">✅ Autorizza</button><button class="btn btn-ghost btn-sm" onclick="magAnnullaRichiesta(${r.id})">Annulla</button>`;
-    else if(r.stato==='autorizzata'||r.stato==='in_prelievo')actions=`<button class="btn btn-ghost btn-sm" onclick="MAG.pickActive=${r.id};magGoTab('pick')">📱 ${r.stato==='in_prelievo'?'Continua prelievo':'Vai al prelievo'}</button>`;
-    return `<div class="card"><div class="mg-card-hd"><b>${esc(r.commessa_nome||'')}</b><span class="sp"></span>${magStBadge(r.stato)}</div>
-      <div class="mg-card-sub">${esc(r.commessa_codice||'')}${r.commessa_codice?' · ':''}richiesta del ${esc(magFmtData(r.creata_at))}</div>
+    const a=azioni(r);
+    return `<div class="card${magReqChiusa(r)?' mg-spenta':''}"><div class="mg-card-hd">
+        ${r.speciale?'<span class="chip co">⚡ speciale</span> ':''}<b>${esc(titoloDi(r))}</b><span class="sp"></span>${magStBadge(r.stato)}</div>
+      <div class="mg-card-sub">${sottotitolo(r)}</div>
       <div class="mg-card-rows">${righe}</div>
-      ${actions?`<div class="mg-card-ft">${actions}</div>`:''}
+      ${a?`<div class="mg-card-ft">${a}</div>`:''}
     </div>`;
-  }).join('')||'<div class="empty">Nessuna richiesta ancora.</div>';
+  };
+  // vista a elenco: una riga per richiesta, per quando sono tante e servono
+  // solo stato e quantità a colpo d'occhio
+  const riga=r=>{
+    const pezzi=(r.righe||[]).reduce((s,x)=>s+(x.prelevata!=null?x.prelevata:x.richiesta),0);
+    const cosa=(r.righe||[]).length===1
+      ? `${esc(r.righe[0].articolo_denominazione||'')} ${esc(r.righe[0].articolo_dimensione||'')}`
+      : `${(r.righe||[]).length} articoli`;
+    return `<tr class="${magReqChiusa(r)?'mg-spenta':''}">
+      <td style="white-space:nowrap">${r.speciale?'⚡ ':''}<b>${esc(titoloDi(r))}</b></td>
+      <td class="fmuted">${esc(r.commessa_codice||'—')}</td>
+      <td>${cosa}</td>
+      <td style="text-align:right;font-weight:800">${pezzi}</td>
+      <td class="fmuted" style="white-space:nowrap">${esc(r.richiedente||'—')}</td>
+      <td class="fmuted" style="white-space:nowrap">${esc(magFmtData(r.creata_at))}</td>
+      <td>${magStBadge(r.stato)}</td>
+      <td style="text-align:right;white-space:nowrap">${azioni(r)}</td>
+    </tr>`;
+  };
+  const blocco=arr=>vista==='list'
+    ? `<div class="mg-tablewrap"><table class="mg-req"><thead><tr>
+         <th>Richiesta</th><th>Commessa</th><th>Cosa</th><th style="text-align:right">Pezzi</th>
+         <th>Chi</th><th>Quando</th><th>Stato</th><th></th></tr></thead>
+       <tbody>${arr.map(riga).join('')}</tbody></table></div>`
+    : `<div class="mg-cards">${arr.map(card).join('')}</div>`;
+
+  const intestazione=(icona,testo,arr,extra)=>`<div class="mg-sez">
+      <span class="ic">${icona}</span>${esc(testo)}
+      <span class="n">${arr.length} richieste${extra||''}</span></div>`;
+
+  // Le due specie non si mescolano mai: da una parte il materiale che serve a
+  // un lavoro, dall'altra quello per manutenzione, prove e ricambi.
+  const vive=list.filter(r=>!magReqChiusa(r));
+  const chiuse=list.filter(magReqChiusa);
+  const speciali=vive.filter(r=>r.speciale);
+  const diCommessa=vive.filter(r=>!r.speciale);
+
+  let html='';
+
+  html+=intestazione('📋','Richieste da commessa',diCommessa,
+    diCommessa.length?` · ${new Set(diCommessa.map(r=>r.commessa_id)).size} commesse`:'');
+  if(!diCommessa.length){
+    html+='<div class="empty" style="padding:18px;font-size:12px">Nessuna richiesta di commessa aperta.</div>';
+  }else{
+    // dentro le commesse si raggruppa ancora, una intestazione per commessa
+    const perComm=new Map();
+    diCommessa.forEach(r=>{const k=r.commessa_codice||r.commessa_nome||'Senza commessa';
+      (perComm.get(k)||perComm.set(k,[]).get(k)).push(r);});
+    html+=[...perComm.keys()].sort((a,b)=>a.localeCompare(b,'it')).map(k=>
+      `<div class="mg-sez-sub">${esc(k)} <span>${perComm.get(k).length}</span></div>${blocco(perComm.get(k))}`).join('');
+  }
+
+  html+=intestazione('⚡','Richieste speciali',speciali,' · manutenzione, prove, ricambi');
+  html+=speciali.length?blocco(speciali)
+    :'<div class="empty" style="padding:18px;font-size:12px">Nessuna richiesta speciale aperta.</div>';
+
+  if(chiuse.length){
+    const aperto=MAG.reqArchivioAperto===true;
+    html+=`<div class="mg-sez arch" onclick="magToggleArchivio()">
+        <span class="ic">${aperto?'▾':'▸'}</span>Archivio
+        <span class="n">${chiuse.length} fra completate e annullate</span></div>`;
+    if(aperto)html+=`<div class="mg-arch">${blocco(chiuse)}</div>`;
+  }
+  box.innerHTML=html;
+}
+async function magEliminaRichiesta(id){
+  const r=(MAG.richieste||[]).find(x=>x.id===id);
+  const prelevato=r&&(r.righe||[]).some(rg=>rg.prelevata);
+  const avviso=prelevato
+    ? '\n\nDa questa richiesta è già uscito del materiale: la giacenza resta com\'è e il movimento resta nello storico dell\'articolo, senza più la richiesta davanti.'
+    : '\n\nNon lascia traccia: sparisce e basta.';
+  if(!confirm('Elimino questa richiesta?'+avviso))return;
+  try{
+    const rs=await fetch(API+'/api/magazzino/richieste/'+id,{method:'DELETE'});
+    if(!rs.ok&&rs.status!==204){toast(await srvErrDetail(rs,'Non sono riuscito a eliminarla'),true);return;}
+    toast('Richiesta eliminata');
+    magLoadRichieste();
+  }catch{toast('Server non raggiungibile',true);}
 }
 
 /* ── PRELIEVO (TABLET) ── */
@@ -8459,11 +9061,24 @@ function renderMagPrelievo(){
         const full=magArticoloFull(rg.articolo_id);
         const sub=[full&&full.normativa,rg.articolo_dimensione,full&&full.materiale].filter(Boolean).join(' · ');
         const done=rg.prelevata!=null;
+        // prima di andare allo scaffale si deve sapere: chi la chiede, per cosa,
+        // quante ne servono, quante ce ne sono adesso e quante ne restano dopo
+        const ora=full?full.giacenza:null, dopo=full?Math.max(0,full.giacenza-rg.richiesta):null;
+        const poche=ora!=null&&ora<rg.richiesta;
         return `<div class="card">
           <div style="font-weight:800">${esc(rg.articolo_denominazione||'')}</div>
-          <div class="mg-card-sub">${esc(sub)}</div>
-          <div style="margin:6px 0">Richiesti <b>${rg.richiesta}</b>${done?` — <b style="color:#1A7A2E">prelevati ${rg.prelevata}</b>`:''}</div>
-          ${done?'':`<button class="btn btn-go" style="width:100%" onclick="magApriScan(${r.id},${rg.id})">📷 Scansiona QR e preleva</button>`}
+          <div class="mg-card-sub">${esc(sub)}${full?' · '+esc(full.codice):''}</div>
+          <div class="mg-st-kpi" style="margin:8px 0">
+            <div><b>${rg.richiesta}</b><span>Richieste</span></div>
+            <div><b style="${poche?'color:var(--red)':''}">${ora==null?'—':ora}</b><span>In magazzino</span></div>
+            <div><b>${dopo==null?'—':dopo}</b><span>Dopo il prelievo</span></div>
+            ${done?`<div><b style="color:#1A7A2E">${rg.prelevata}</b><span>Prelevate</span></div>`:''}
+          </div>
+          <div class="mg-card-sub" style="margin-bottom:6px">
+            Chiede <b>${esc(r.richiedente||'—')}</b> · per <b>${esc(r.speciale?(r.titolo||'richiesta speciale'):(r.commessa_codice||r.commessa_nome||'—'))}</b>
+          </div>
+          ${poche&&!done?`<div class="mg-card-sub" style="color:var(--red);margin-bottom:6px">⚠ In magazzino ce ne sono meno di quante ne servono.</div>`:''}
+          ${done?'':`<button class="btn btn-go" style="width:100%" onclick="magChiediConferma(${r.id},${rg.id})">📷 Preleva</button>`}
         </div>`;
       }).join('')}
     </div>
@@ -8489,6 +9104,37 @@ async function magCompletaPrelievo(reqId){
     MAG.pickActive=null;
     await magLoadPronte();
   }catch{toast('Errore di rete',true);}
+}
+
+/* Conferma prima della scansione: il magazzino è un posto condiviso, e chi
+   preleva deve restare scritto nello storico dell'articolo.
+
+   Il nome NON si scrive più a mano: è quello dell'account con cui si è entrati,
+   mostrato e basta. Un campo libero significava potersi firmare col nome di un
+   collega, e uno storico che si può firmare a piacere non risponde alla domanda
+   per cui esiste. Lo stesso nome lo riprende il server dalla sessione quando
+   registra il movimento — questo qui è solo ciò che l'utente vede. */
+function magChiediConferma(reqId,rigaId){
+  const r=(MAG.pronte||[]).find(x=>x.id===reqId);
+  const rg=r&&(r.righe||[]).find(x=>x.id===rigaId);
+  if(!rg)return;
+  const io=utenteNome();
+  const per=r.speciale?(r.titolo||'richiesta speciale'):(r.commessa_codice||r.commessa_nome||'—');
+  const chiede=(r.richiedente||'').trim();
+  const identita=io
+    ?`<div style="font-size:14px;line-height:1.6"><b>Sei ${esc(io)}?</b></div>
+       <div class="mg-chi-fisso">👤 ${esc(io)}<span>account con cui hai fatto l'accesso</span></div>`
+    :`<div style="font-size:14px;line-height:1.6">Non risulti collegato con un account:
+        il prelievo resterà a nome di <b>${esc(chiede||'chi ha fatto la richiesta')}</b>.</div>`;
+  const corpo=`${identita}
+    <div class="fmuted" style="font-size:12.5px;margin-top:10px;line-height:1.6">
+      Stai per prelevare <b>${rg.richiesta}</b> × ${esc(rg.articolo_denominazione||'')} per <b>${esc(per)}</b>${chiede&&chiede!==io?`, richiesti da <b>${esc(chiede)}</b>`:''}.
+    </div>
+    <div style="margin-top:14px;font-size:14px"><b>Autorizzare il prelievo?</b></div>`;
+  grModale('Conferma prelievo',corpo,[
+    ['Annulla',null],
+    ['✔ Sì, autorizzo',()=>{magApriScan(reqId,rigaId);},true],
+  ]);
 }
 
 /* ── PRELIEVO: scansione QR (fotocamera reale + fallback testo manuale) ── */
@@ -8618,7 +9264,7 @@ function renderMagScanModal(){
   }else if(s.cameraError){
     camHtml=`<div class="fmuted" style="font-size:12px;margin-bottom:8px">${esc(s.cameraError)}</div>`;
   }else if(s.supported===true){
-    camHtml=`<div style="border-radius:10px;overflow:hidden;background:#000;margin-bottom:8px"><video id="magScanVideo" autoplay playsinline muted style="width:100%;display:block;max-height:280px;object-fit:cover"></video></div>
+    camHtml=`<div style="border-radius:10px;overflow:hidden;background:#000;margin-bottom:8px"><video id="magScanVideo" autoplay playsinline muted style="width:100%;display:block;height:58vh;object-fit:cover"></video></div>
       <div class="fmuted" style="font-size:11px;margin-bottom:10px">Inquadra il QR sull'etichetta della scatola…</div>`;
   }else{
     camHtml='<div class="fmuted" style="font-size:12px;margin-bottom:8px">Avvio fotocamera…</div>';
@@ -8852,10 +9498,63 @@ function renderFornDetail(){
 }
 
 /* ── NUOVO/MODIFICA PROGETTO ── */
-function openNuovo(){document.getElementById('mProgTit').textContent='Nuovo progetto';document.getElementById('mProgSub').textContent='Indica la cartella con la distinta base Excel';document.getElementById('pBtn').textContent='Crea e importa';
+function openNuovo(){document.getElementById('mProgTit').textContent='Nuovo progetto';document.getElementById('mProgSub').textContent='Scegli un\'estrazione di BOM2Excel, o indica la cartella a mano';document.getElementById('pBtn').textContent='Crea e importa';
   ['pId','pCodice','pNome','pCliente','pCartella','pNote'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pBrand').value='IB';
-  document.getElementById('pCartella').disabled=false;clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');setTimeout(()=>document.getElementById('pCodice').focus(),80);}
+  document.getElementById('pCartella').disabled=false;clearErr(['pCodiceErr','pNomeErr','pCartellaErr'],['pCodice','pNome','pCartella']);mOpen('mProg');
+  caricaArchivio();
+  setTimeout(()=>document.getElementById('pCodice').focus(),80);}
+
+/* ── L'archivio di BOM2Excel ──
+   La macro, a ogni estrazione, scrive su rete una copia strutturata della
+   commessa: albero con le quantità per assieme, anagrafica, disegni in tutti i
+   formati e una miniatura per codice. Prima il gestionale doveva DEDURRE la
+   struttura leggendo le tabelle stampate sui PDF, e quattro assiemi su
+   ventiquattro — fra cui i due carri — un disegno non ce l'hanno proprio.
+   Da qui si sceglie quale estrazione importare: il percorso resta quello
+   dell'archivio, e a ogni riscansione si riparte sempre dall'ultima. */
+let ARCH=null;
+async function caricaArchivio(forza){
+  const box=document.getElementById('pArchList');if(!box)return;
+  if(ARCH&&!forza){renderArchivio();return;}
+  box.innerHTML='<div class="fmuted" style="font-size:11.5px;padding:6px 2px">Cerco le estrazioni…</div>';
+  try{const r=await fetch(API+'/api/archivio');ARCH=r.ok?await r.json():null;}
+  catch{ARCH=null;}
+  renderArchivio();
+}
+function renderArchivio(){
+  const box=document.getElementById('pArchList'),sub=document.getElementById('pArchSub');
+  if(!box)return;
+  if(!ARCH){box.innerHTML='<div class="fmuted" style="font-size:11.5px;padding:6px 2px">Backend non raggiungibile.</div>';return;}
+  if(sub)sub.textContent=ARCH.radice||'';
+  if(!ARCH.raggiungibile){
+    box.innerHTML=`<div class="fmuted" style="font-size:11.5px;padding:6px 2px">Archivio non raggiungibile — scrivi la cartella a mano qui sotto.<br><span style="opacity:.75">${esc(ARCH.errore||'')}</span></div>`;
+    return;
+  }
+  const p=ARCH.progetti||[];
+  if(!p.length){box.innerHTML='<div class="fmuted" style="font-size:11.5px;padding:6px 2px">Nessuna estrazione in archivio.</div>';return;}
+  box.innerHTML=p.map((x,i)=>{
+    if(x.errore)return `<div class="arch-row bad"><b>${esc(x.nome)}</b><span>non si riesce a leggerla — ${esc(x.errore)}</span></div>`;
+    const quando=x.esportato_il?magFmtData(x.esportato_il):'—';
+    return `<div class="arch-row" onclick="scegliArchivio(${i})">
+      <b>${esc(x.commessa||x.nome)}</b>
+      <span>${x.n_pezzi} pezzi · ${x.n_gerarchia} legami · ${x.n_grezzi} grezzi${x.disegni_esportati?'':' · senza disegni'}</span>
+      <span>estratta il ${esc(quando)} da ${esc(x.esportato_da||'—')} · macro ${esc(x.versione_macro||'?')}</span>
+    </div>`;
+  }).join('');
+}
+function scegliArchivio(i){
+  const x=((ARCH&&ARCH.progetti)||[])[i];if(!x||x.errore)return;
+  // il percorso punta SEMPRE alla cartella d'archivio: è da lì che si rilegge
+  // l'ultima estrazione a ogni riscansione
+  document.getElementById('pCartella').value=x.percorso;
+  const nome=document.getElementById('pNome');
+  if(!nome.value.trim())nome.value=x.commessa||x.nome;
+  document.querySelectorAll('#pArchList .arch-row').forEach((el,j)=>el.classList.toggle('on',j===i));
+  clearErr(['pCartellaErr'],['pCartella']);
+  const cod=document.getElementById('pCodice');
+  if(!cod.value.trim())cod.focus();
+}
 // i dati del progetto si modificano dalla scheda Impostazioni, non da un modale
 function openModifica(){apriImp('modifica');}
 // il modale serve solo a CREARE: un progetto già aperto si modifica dalla sua
