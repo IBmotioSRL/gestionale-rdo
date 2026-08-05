@@ -1164,6 +1164,46 @@ table.mg-req .btn{margin-left:4px}
 .rdo-esito i{display:block;font-style:normal;font-size:10.5px;color:var(--t3);margin-top:2px;line-height:1.5}
 .rdo-resp{margin-top:12px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;font-size:11.5px;line-height:1.8;color:var(--t2)}
 .rdo-resp b{text-transform:capitalize;color:var(--t1);margin-right:5px}
+/* le sette schede della RDO */
+.rdo-tabs{display:flex;gap:2px;padding:0 14px;border-bottom:1px solid var(--bd);background:var(--surf);overflow-x:auto;flex:none}
+.rdo-tabs button{border:none;background:none;padding:10px 12px;font:inherit;font-size:12px;font-weight:700;color:var(--t3);cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;display:flex;align-items:center;gap:5px}
+.rdo-tabs button:hover{color:var(--t1)}
+.rdo-tabs button.on{color:var(--go-d);border-bottom-color:var(--go-d)}
+.rdo-tabs i{font-style:normal;font-size:9.5px;font-weight:800;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:0 5px;color:var(--t2)}
+.rdo-tabs i.tb-warn{background:var(--go);border-color:var(--go-d);color:#3a2a08}
+.dd-tabpane{padding:14px 16px;overflow:auto}
+.rdo-steps{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.rdo-step{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:700;color:var(--t3)}
+.rdo-step b{font-size:12px}
+.rdo-step.fatto{background:#EAF8EF;border-color:#A9DFC0;color:#1A7A2E}
+.rdo-step.ora{background:var(--go);border-color:var(--go-d);color:#3a2a08}
+.rdo-step.off{opacity:.5}
+.rdo-step-sep{flex:none;width:12px;height:1px;background:var(--bd)}
+.rdo-metrics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.rdo-metric{flex:1;min-width:96px;background:var(--surf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+.rdo-metric b{display:block;font-size:20px;font-weight:900;color:var(--t1);line-height:1.1}
+.rdo-metric span{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);margin-top:3px}
+.rdo-metric.muta b{color:var(--t3);font-size:15px}
+.rdo-due{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.rdo-due{grid-template-columns:1fr}}
+.rdo-regola{display:flex;align-items:baseline;gap:7px;font-size:11.5px;padding:5px 0;border-bottom:1px dashed var(--bd);flex-wrap:wrap}
+.rdo-regola span{color:var(--t3);min-width:120px}
+.rdo-regola b{color:var(--t1)}
+.rdo-regola i{font-style:normal;color:var(--t3);font-size:10.5px}
+.rdo-ostacoli{background:#FFF8EA;border:1px solid var(--go-d);border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:12px}
+.rdo-ostacoli ul{margin:6px 0 8px;padding-left:18px;line-height:1.7}
+.rdo-att{display:flex;gap:9px;align-items:baseline;font-size:11.5px;padding:5px 0;border-bottom:1px dashed var(--bd)}
+.rdo-att span{color:var(--t3);white-space:nowrap;font-size:10.5px}
+.rdo-tot{text-align:right;font-size:15px;font-weight:900;margin-top:10px;color:var(--t1)}
+.rdo-vers{background:var(--surf);border:1px solid var(--bd);border-radius:9px;padding:9px 12px;margin-bottom:6px;font-size:11.5px}
+.rdo-vers.pre{border-style:dashed;background:var(--bg)}
+.rdo-vers b{font-size:12.5px;color:var(--t1);margin-right:8px}
+.rdo-vers span{color:var(--t3)}
+.rdo-vers i{display:block;font-style:normal;color:var(--t2);margin-top:3px}
+.rdo-cron{display:flex;gap:10px;align-items:baseline;font-size:11.5px;padding:7px 0;border-bottom:1px dashed var(--bd);flex-wrap:wrap}
+.rdo-cron span{color:var(--t3);white-space:nowrap;font-size:10.5px;min-width:130px}
+.rdo-cron b{color:var(--t1)}
+.rdo-cron i{font-style:normal;color:var(--t3);flex:1;min-width:160px}
 /* spunta con spiegazione sotto, per le scelte che vanno capite prima di darle */
 .mg-flag{display:flex;gap:9px;align-items:flex-start;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;cursor:pointer}
 .mg-flag input{margin-top:2px;flex:none}
@@ -1810,7 +1850,7 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="sb-sec">Principale</div>
     <div class="ni on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</div>
     <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
-    <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Comunicazioni</div>
+    <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Richieste di offerta</div>
     <div class="ni" data-v="ore" onclick="go('ore')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Raccolta Ore</div>
     <div class="ni" data-v="mag" onclick="go('mag')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v3M3 8l9 4 9-4M3 8v11a2 2 0 002 2h14a2 2 0 002-2V8"/><path d="M12 12v9"/></svg>Magazzino</div>
     <div class="ni" data-v="costi" onclick="go('costi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi</div>
@@ -1834,7 +1874,7 @@ textarea.fld{resize:vertical;min-height:60px}
     </div></div>
     <div class="vscroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;padding:40px 22px;min-height:100%">
       <img src="logo-definer.png" alt="IB Motion Definer" style="width:340px;max-width:80vw;height:auto">
-      <div class="fmuted" style="font-size:12.5px">Magazzino · Gestione Progetto · Comunicazioni · Raccolta Ore</div>
+      <div class="fmuted" style="font-size:12.5px">Magazzino · Gestione Progetto · Richieste di offerta · Raccolta Ore</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,220px));gap:18px;margin-top:6px;justify-content:center;width:100%;max-width:960px">
         <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('mag')">
           <div style="font-size:32px;margin-bottom:10px">📦</div>
@@ -1848,8 +1888,8 @@ textarea.fld{resize:vertical;min-height:60px}
         </div>
         <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('rdo')">
           <div style="font-size:32px;margin-bottom:10px">✉</div>
-          <div style="font-weight:800;font-size:14px">Comunicazioni</div>
-          <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Filoni con i fornitori, per qualsiasi commessa</div>
+          <div style="font-weight:800;font-size:14px">Richieste di offerta</div>
+          <div class="fmuted" style="font-size:11px;margin-top:6px;line-height:1.4">Richieste ai fornitori: bozza, invio, risposte e conferma</div>
         </div>
         <div class="card" style="cursor:pointer;text-align:center;padding:26px 18px" onclick="go('ore')">
           <div style="font-size:32px;margin-bottom:10px">⏱</div>
@@ -2003,7 +2043,7 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center;gap:6px"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <button class="hb" id="rdoBack" style="display:none" onclick="rdoBack()" title="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <div><div class="h1" id="rdoH1" style="font-size:15px">Comunicazioni</div><div class="vsub" id="rdoVsub">Seleziona una commessa per il filone comunicazioni coi fornitori</div></div></div>
+      <div><div class="h1" id="rdoH1" style="font-size:15px">Richieste di offerta (RDO)</div><div class="vsub" id="rdoVsub">Scegli una commessa per vedere le sue richieste</div></div></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-ghost" id="rdoBtnShip" onclick="rdoGoShip()" title="Pannello unico: stato e invio delle RDO">📤 Spedizione</button>
         <button class="btn btn-aggiorna" id="rdoBtnSync" onclick="rdoAggiornaTutte()" title="Rigenera distinta, allegati e testo mail di TUTTE le RDO dai dati di progetto">🔄 Aggiorna tutte</button>
@@ -4932,7 +4972,7 @@ function renderGlance(){
     body.innerHTML=`<div class="ck-ok"><div class="big">✓</div>
       <b>Tutto pronto</b>
       <span>${all.length} ${all.length===1?'pezzo':'pezzi'} su ${nf} ${nf===1?'fornitore':'fornitori'}: non manca niente per mandare le richieste.</span>
-      <button class="btn btn-go btn-sm" onclick="go('rdo')">Vai a Comunicazioni →</button></div>`;
+      <button class="btn btn-go btn-sm" onclick="go('rdo')">Vai alle Richieste di offerta →</button></div>`;
     return;
   }
   const blocca=c.filter(x=>x.liv==='blocca').reduce((s,x)=>s+(x.n||x.righe.length),0);
@@ -7115,9 +7155,9 @@ function renderRdoView(){
   ['rdoList','rdoWork','rdoEdit','rdoShip'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('rdoBack').style.display=RV.mode==='list'?'none':'inline-flex';
   document.getElementById('rdoBtnShip').style.display=RV.mode==='list'?'inline-flex':'none';
-  if(RV.mode==='list'){document.getElementById('rdoList').style.display='block';setRdoHdr("Comunicazioni","Seleziona una commessa per il filone comunicazioni coi fornitori");rdoRenderList();}
+  if(RV.mode==='list'){document.getElementById('rdoList').style.display='block';setRdoHdr("Richieste di offerta (RDO)","Scegli una commessa per vedere le sue richieste");rdoRenderList();}
   else if(RV.mode==='work'){document.getElementById('rdoWork').style.display='block';rdoRenderWork();}
-  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';setRdoHdr("Comunicazioni","Scegli un fornitore dall'elenco a sinistra per vedere il filone — cambio al volo");}
+  else if(RV.mode==='edit'){document.getElementById('rdoEdit').style.display='block';setRdoHdr("Richieste di offerta (RDO)","Scegli una richiesta dall'elenco a sinistra");}
   else if(RV.mode==='ship'){document.getElementById('rdoShip').style.display='block';setRdoHdr('Spedizione RDO','Stato di tutte le richieste — invia le approvate (anche più insieme)');rdoRenderShip();}
 }
 // Aggiorna TUTTE le RDO (permanente, in alto a dx): rigenera distinta+allegati+mail dal progetto
@@ -7945,6 +7985,7 @@ function renderDdEditor(d){
   }).join('');
   const confN=d.pezzi_in_confronto||0;
   const st=d.stato, canSend=st==='approvata';
+  const T=ddTabAttiva(d);
   const o=d.opzioni||{};
   const ctReq=!!d.conto_terzi_richiesto;
   const optComplete=(d.opzioni_complete!==undefined)?!!d.opzioni_complete:true;
@@ -7987,11 +8028,32 @@ function renderDdEditor(d){
       <div class="meta"><b>${esc(d.fornitore_nome)}</b>${codeRev?`<span class="dd-code">${esc(codeRev)}</span>`:''}<span class="dd-revbadge ${bloccata?'sent':'draft'}">${revTxt}${(rev>=1&&!bloccata)?' · in preparazione':''}</span><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
       <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}"${disAttr} onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}"${disAttr} onclick="ddSetBrand('YS')">YuBe</button></div>
     </div>
+    <nav class="rdo-tabs">${RDO_TABS.map(([k,ic,l])=>
+      `<button class="${ddTabAttiva(d)===k?'on':''}" onclick="ddTab('${k}')">${ic} ${esc(l)}${ddTabBadge(d,k)}</button>`).join('')}</nav>
     <div class="dd-body">
-      ${bloccata?'':`<div class="dd-split">
+      ${T==='riepilogo'?ddTabRiepilogo(d):''}
+      ${T==='comunicazioni'?`<div class="dd-tabpane">${threadHtml(d)}</div>`:''}
+      ${T==='analisi'?ddTabAnalisi(d):''}
+      ${T==='versioni'?ddTabVersioni(d):''}
+      ${T==='cronologia'?ddTabCronologia(d):''}
+      ${T==='documenti'?`<div class="dd-tabpane">
+        ${ddPacchettoHtml(d)}
+        <div class="dd-alleg">
+          <div class="ai" onclick="ddExport('pdf')"><span class="fi-ic pdf">PDF</span> Distinta RDO + richiesta (PDF) <span class="open">apri ↗</span></div>
+          <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
+        </div>
+        <div class="dd-sec" style="margin-top:14px">${dwg.length} ${esc(dwgLbl.toLowerCase())} dei pezzi inclusi</div>
+        <div class="dd-dwg">${dwgHtml}</div>
+        <div class="dd-sec" style="margin-top:14px">Anteprima della distinta
+          <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna</span>
+          <span class="lnk" onclick="window.open('${exportUrl}','_blank')">apri ↗</span></div>
+        <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" style="height:58vh" title="Anteprima distinta PDF"></iframe>
+      </div>`:''}
+      ${T!=='bozza'?'':`<div class="dd-split">
         <div class="dd-mailcol">
+          ${bloccata?`<div class="dd-lockbanner">🔒 ${esc(d.stato_etichetta)} — <b>Rev ${rev2(rev)}</b>. È immodificabile: per cambiarla apri una <b>nuova revisione</b>.</div>`:''}
+          ${ddTipologiaHtml(d)}
           <div class="dd-sec">Mail RDO</div>
-          ${bloccata?`<div class="dd-lockbanner">🔒 RDO inviata — <b>Rev ${rev2(rev)}</b>. È immodificabile: per cambiarla apri una <b>nuova revisione</b> (in fondo).</div>`:''}
           <div class="dd-mailgrid">
             <div><label class="fl">A (destinatari)</label><input class="dd-fld" id="ddTo"${roAttr} onchange="ddAutosave()" value="${esc((d.emails_to||[]).join('; '))}" placeholder="email1; email2"></div>
             <div><label class="fl">CC</label><input class="dd-fld" id="ddCc"${roAttr} onchange="ddAutosave()" value="${esc((d.emails_cc||[]).join('; '))}" placeholder="(facoltativo)"></div>
@@ -7999,7 +8061,6 @@ function renderDdEditor(d){
           </div>
           <input class="dd-fld" id="ddOgg"${roAttr} onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
           <textarea class="dd-fld" id="ddCorpo"${roAttr} onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
-          ${ddTipologiaHtml(d)}
           <div class="dd-opts">
             <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel e nella mail inviati al fornitore</span></div>
             ${(d.condizioni_mancanti||[]).length?`<div class="dd-opt-banner">⚠ Per approvare manca: ${esc((d.condizioni_mancanti||[]).join(' · '))}.</div>`:''}
@@ -8007,19 +8068,8 @@ function renderDdEditor(d){
             ${ctHtml}
             ${confHtml}
           </div>
-          ${ddPacchettoHtml(d)}
           <div id="ddSmistamento"></div>
           <details class="dd-coll" open>
-            <summary>📎 Allegati alla mail <span class="cnt">PDF · Excel · ${dwg.length} ${dwgLbl.toLowerCase()}</span></summary>
-            <div class="dd-collbody">
-              <div class="dd-alleg">
-                <div class="ai" onclick="ddExport('pdf')"><span class="fi-ic pdf">PDF</span> Distinta RDO + richiesta (PDF) <span class="open">apri ↗</span></div>
-                <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
-              </div>
-              <div class="dd-dwg">${dwgHtml}</div>
-            </div>
-          </details>
-          <details class="dd-coll">
             <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
             <div class="dd-collbody">
               <div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Seleziona tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Deseleziona tutte</button></div>
@@ -8028,13 +8078,7 @@ function renderDdEditor(d){
             </div>
           </details>
         </div>
-        <div class="rz-split" data-dir="l" data-var="--ddprev" data-min="260" data-max="620" data-key="rdo_ddprev" title="Trascina per ridimensionare"></div>
-        <div class="dd-prevcol">
-          <div class="dd-prevhd">Anteprima distinta <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna</span> <span class="lnk" onclick="window.open('${exportUrl}','_blank')">apri ↗</span></div>
-          <iframe class="dd-pdf" id="ddPdf" src="${pdfUrl}" title="Anteprima distinta PDF"></iframe>
-        </div>
       </div>`}
-      ${threadHtml(d)}
     </div>
     <div class="dd-ft">
       <span class="dd-badge ${st}">${RDO_ICO[st]||'●'} ${esc(d.stato_etichetta||st)}</span>
@@ -8049,6 +8093,185 @@ function renderDdEditor(d){
 }
 // icone di stato, le stesse in tutta la sezione
 const RDO_ICO={bozza:'●',approvata:'✓',inviata:'✈',ricevuta:'📥',confermata:'🔒',annullata:'✕'};
+
+/* ── Le sette schede della RDO (specifica v1.2, §14) ──
+   Una pratica sola vista da sette lati: a che punto è, cosa le si chiede, cosa
+   ci si è detti, cosa è stato offerto, cosa parte allegato, com'era prima, chi
+   ha fatto cosa. Prima era tutto in una colonna sola e non ci si trovava più. */
+const RDO_TABS=[
+  ['riepilogo','📊','Riepilogo'],
+  ['bozza','✍️','Bozza e approvazione'],
+  ['comunicazioni','💬','Comunicazioni'],
+  ['analisi','💶','Analisi offerta'],
+  ['documenti','📎','Documenti'],
+  ['versioni','🗂','Prerevisioni e revisioni'],
+  ['cronologia','🕘','Cronologia'],
+];
+function ddTabAttiva(d){
+  const t=DD.tab||'riepilogo';
+  return RDO_TABS.some(x=>x[0]===t)?t:'riepilogo';
+}
+function ddTab(t){DD.tab=t;renderDdEditor(DD.data);}
+// il pallino sulla linguetta: quello che chiede attenzione si vede senza entrarci
+function ddTabBadge(d,k){
+  if(k==='bozza'&&(d.ostacoli_approvazione||[]).length&&d.stato==='bozza')
+    return `<i class="tb-warn" title="${esc((d.ostacoli_approvazione||[]).join(' · '))}">!</i>`;
+  if(k==='comunicazioni'&&(DD.eventi||[]).length)return `<i class="tb-n">${DD.eventi.length}</i>`;
+  if(k==='versioni'){const n=(DD.revs||[]).length+(DD.prerev||[]).length;return n?`<i class="tb-n">${n}</i>`:'';}
+  if(k==='analisi'&&d.esito)return `<i class="tb-n">${d.esito==='completa'?'✓':'◐'}</i>`;
+  return '';
+}
+
+/* Riepilogo: a che punto è la pratica, cosa si può fare adesso e perché. */
+function ddTabRiepilogo(d){
+  const passi=['bozza','approvata','inviata','ricevuta','confermata'];
+  const iAtt=passi.indexOf(d.stato);
+  const step=passi.map((s,i)=>{
+    const cls=d.stato==='annullata'?(i===0?'':'off')
+      :(i<iAtt?'fatto':(i===iAtt?'ora':'off'));
+    return `<div class="rdo-step ${cls}"><b>${RDO_ICO[s]}</b><span>${esc(RDO_ETI[s])}</span></div>`;
+  }).join('<i class="rdo-step-sep"></i>');
+  const m=(v,l,cls)=>`<div class="rdo-metric ${cls||''}"><b>${v}</b><span>${esc(l)}</span></div>`;
+  const nIncl=(d.righe||[]).filter(r=>r.incl!==false).length;
+
+  const regole=[
+    ['Tipologia',d.tipologia==='commerciale'?'Commerciale':'Costruttiva',
+     d.tipologia==='commerciale'?'prezzo · tempi · spedizione':'prezzo · tempi · spedizione · trattamenti · fornitura'],
+    ['Approvata','bloccata e non modificabile','per cambiarla si riporta in bozza'],
+    ['Approvata → Bozza','lascia una prerevisione','il numero di revisione non cambia'],
+    ['Inviata','bloccata','si riapre solo con una nuova revisione'],
+    ['Ricevuta','torna modificabile','nessuna revisione automatica'],
+    ['Revisione','solo manuale','con un motivo, che resta scritto'],
+  ].map(([a,b,c])=>`<div class="rdo-regola"><span>${esc(a)}</span><b>${esc(b)}</b><i>${esc(c)}</i></div>`).join('');
+
+  const ostacoli=(d.ostacoli_approvazione||[]).length
+    ? `<div class="rdo-ostacoli"><b>Per approvare manca:</b><ul>${
+        d.ostacoli_approvazione.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+       <button class="btn btn-ghost btn-sm" onclick="ddTab('bozza')">Vai alla bozza →</button></div>`
+    : '';
+  const ultimi=(DD.eventi||[]).slice(-3).reverse().map(e=>
+    `<div class="rdo-att"><span>${esc(magFmtData(e.data))}</span><b>${esc((e.oggetto||e.testo||'').slice(0,90))}</b></div>`).join('')
+    || '<div class="fmuted" style="font-size:11.5px">Ancora niente da raccontare.</div>';
+
+  return `<div class="dd-tabpane">
+    <div class="rdo-steps">${step}</div>
+    ${d.stato==='annullata'?`<div class="rdo-ostacoli"><b>RDO annullata.</b> ${esc(d.motivo_annullamento||'')}</div>`:''}
+    <div class="rdo-metrics">
+      ${m(nIncl,'Articoli')}
+      ${m((d.pacchetto&&d.pacchetto.n_file)||0,'Allegati')}
+      ${m(rev2(d.revisione>=0?d.revisione:0),'Revisione')}
+      ${m(d.prerevisione||0,'Prerevisioni')}
+      ${m(d.esito?(d.esito_etichetta||d.esito):'—','Esito', d.esito?'':'muta')}
+    </div>
+    ${ostacoli}
+    <div class="rdo-due">
+      <div><div class="dd-sec">Regole operative</div>${regole}</div>
+      <div><div class="dd-sec">Ultime attività</div>${ultimi}</div>
+    </div>
+  </div>`;
+}
+const RDO_ETI={bozza:'Bozza',approvata:'Approvata',inviata:'Inviata',ricevuta:'Ricevuta',confermata:'Confermata',annullata:'Annullata'};
+
+/* Analisi offerta: cosa il fornitore ha quotato e cosa si decide di comprare.
+   Si apre solo dopo una risposta — prima non c'è niente da analizzare. */
+function ddTabAnalisi(d){
+  if(!d.esito)
+    return `<div class="dd-tabpane"><div class="empty" style="padding:34px">
+      <div style="font-size:30px;margin-bottom:8px">💶</div>
+      <div class="ed">Disponibile dopo la risposta del fornitore.<br>
+      Quando arriva, registrala dal pulsante in fondo e classificala.</div></div></div>`;
+  if(d.esito==='chiarimenti')
+    return `<div class="dd-tabpane"><div class="empty" style="padding:34px">
+      <div style="font-size:30px;margin-bottom:8px">💬</div>
+      <div class="ed">La conversazione è ancora aperta sui chiarimenti.<br>
+      Il riepilogo si prepara quando l'offerta si chiude come completa o parziale.</div></div></div>`;
+  if(d.esito==='rifiuto')
+    return `<div class="dd-tabpane"><div class="empty" style="padding:34px">
+      <div style="font-size:30px;margin-bottom:8px">✕</div>
+      <div class="ed">Il fornitore ha rifiutato. I pezzi sono tornati liberi per un altro.</div></div></div>`;
+
+  const righe=(d.righe||[]).filter(r=>r.incl!==false).map((r,i)=>`<tr>
+      <td class="cod">${esc(r.codice||'')}</td>
+      <td>${esc(r.descrizione||'')}</td>
+      <td class="qta">${esc(r.qta||'')}</td>
+      <td><input class="dd-fld" style="text-align:right;padding:4px 7px" type="number" step="0.01" min="0"
+            value="${r.prezzo!=null?esc(r.prezzo):''}" placeholder="—"
+            onchange="ddPrezzo(${i},this.value)"></td>
+      <td class="qta" id="ddTot${i}">${ddTotRiga(r)}</td>
+    </tr>`).join('');
+  return `<div class="dd-tabpane">
+    <div class="dd-sec">Riepilogo del materiale da confermare</div>
+    <div class="fmuted" style="font-size:11.5px;margin-bottom:8px">
+      Scrivi i prezzi che il fornitore ha offerto. Le righe senza prezzo restano fuori dalla
+      conferma: non sono state quotate, e non si ordinano.</div>
+    <table class="mg-req"><thead><tr>
+      <th>Codice</th><th>Descrizione</th><th style="text-align:right">Q.tà</th>
+      <th style="text-align:right">Prezzo unit.</th><th style="text-align:right">Totale</th>
+    </tr></thead><tbody>${righe}</tbody></table>
+    <div class="rdo-tot">Totale <b id="ddTotGen">${ddTotGenerale(d)}</b></div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-go" onclick="ddConferma()">📄 Prepara il pacchetto di conferma</button>
+    </div>
+  </div>`;
+}
+function ddTotRiga(r){
+  const p=parseFloat(String(r.prezzo??'').replace(',','.')),q=parseInt(r.qta)||0;
+  return isNaN(p)?'—':(p*q).toFixed(2)+' €';
+}
+function ddTotGenerale(d){
+  const t=(d.righe||[]).filter(r=>r.incl!==false).reduce((s,r)=>{
+    const p=parseFloat(String(r.prezzo??'').replace(',','.')),q=parseInt(r.qta)||0;
+    return s+(isNaN(p)?0:p*q);},0);
+  return t.toFixed(2)+' €';
+}
+async function ddPrezzo(i,v){
+  const incl=(DD.data.righe||[]).filter(r=>r.incl!==false);
+  const r=incl[i];if(!r)return;
+  r.prezzo=v===''?null:v;
+  const el=document.getElementById('ddTot'+i);if(el)el.textContent=ddTotRiga(r);
+  const tot=document.getElementById('ddTotGen');if(tot)tot.textContent=ddTotGenerale(DD.data);
+  try{await ddPersist();}catch{}
+}
+
+/* Prerevisioni e revisioni: le copie che non si toccano più. */
+function ddTabVersioni(d){
+  const pre=(DD.prerev||[]).map(p=>`<div class="rdo-vers pre">
+      <b>${esc(p.etichetta)}</b>
+      <span>${esc(magFmtData(p.creato_at))}${p.utente?' · '+esc(p.utente):''}</span>
+      <i>${esc(p.motivo||'nessun motivo indicato')}</i>
+    </div>`).join('')
+    || `<div class="fmuted" style="font-size:11.5px">Nessun ritorno in bozza: la RDO non è mai stata riaperta dopo l'approvazione.</div>`;
+  const rev=(DD.revs||[]).slice().sort((a,b)=>b.numero-a.numero).map(r=>`<div class="rdo-vers">
+      <b>REV ${rev2(r.numero)}</b>
+      <span>${esc(magFmtData(r.inviata_at||r.creato_at))}${r.utente?' · '+esc(r.utente):''}${r.inviata_at?' · inviata':' · non inviata'}</span>
+      ${r.nota?`<i>${esc(r.nota)}</i>`:''}
+    </div>`).join('')
+    || `<div class="fmuted" style="font-size:11.5px">Nessuna revisione ancora emessa.</div>`;
+  return `<div class="dd-tabpane">
+    <div class="dd-sec">Prerevisioni <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— ritorni in bozza prima dell'invio, dentro la revisione corrente</span></div>
+    ${pre}
+    <div class="dd-sec" style="margin-top:16px">Revisioni ufficiali <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— si creano solo a mano, mai da una risposta</span></div>
+    ${rev}
+  </div>`;
+}
+
+/* Cronologia: chi ha fatto cosa e quando, senza dipendere da Outlook. */
+function ddTabCronologia(d){
+  const voci=[];
+  if(d.aggiornato_at)voci.push([d.aggiornato_at,'Ultimo salvataggio della bozza','']);
+  if(d.approvata_at)voci.push([d.approvata_at,'RDO approvata e bloccata','']);
+  if(d.inviata_at)voci.push([d.inviata_at,'RDO inviata · REV '+rev2(d.revisione>=0?d.revisione:0),'']);
+  if(d.ricevuta_at)voci.push([d.ricevuta_at,'Risposta ricevuta',d.esito_etichetta||'']);
+  if(d.confermata_at)voci.push([d.confermata_at,'Conferma registrata','ordine partito dall\'amministrazione']);
+  if(d.annullata_at)voci.push([d.annullata_at,'RDO annullata',d.motivo_annullamento||'']);
+  (DD.prerev||[]).forEach(p=>voci.push([p.creato_at,p.etichetta+' · riportata in bozza',p.motivo||'']));
+  (DD.eventi||[]).forEach(e=>voci.push([e.data,e.oggetto||(e.tipo||'').replace('_',' '),(e.testo||'').slice(0,120)]));
+  voci.sort((a,b)=>String(b[0]).localeCompare(String(a[0])));
+  if(!voci.length)return `<div class="dd-tabpane"><div class="fmuted" style="font-size:11.5px">Ancora niente.</div></div>`;
+  return `<div class="dd-tabpane">${voci.map(([q,t,s])=>`<div class="rdo-cron">
+      <span>${esc(magFmtData(q))}</span><b>${esc(t)}</b>${s?`<i>${esc(s)}</i>`:''}
+    </div>`).join('')}</div>`;
+}
 
 /* La tipologia comanda il modello della mail, quali condizioni servono e cosa
    blocca l'approvazione. Si propone dall'anagrafica del fornitore, ma è il
