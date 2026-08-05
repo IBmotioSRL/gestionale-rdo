@@ -1125,6 +1125,45 @@ table.mg-req .btn{margin-left:4px}
 .arch-stato{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 11px;margin:10px 0 0;font-size:11.5px;line-height:1.6;color:var(--t2)}
 .arch-stato.nuova{background:#FFF8EA;border-color:var(--go-d);color:var(--t1)}
 .arch-stato.bad{background:#FBEAEA;border-color:#E2B4B0;color:#8A2119}
+/* ── RDO v1.2: tipologia, pacchetto, smistamento bulloneria, esiti ── */
+.dd-tipo{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin:10px 0}
+.dd-tipo .oh{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);margin-bottom:8px}
+.dd-tipo-scelte{display:flex;gap:8px;flex-wrap:wrap}
+.dd-tipo-v{flex:1;min-width:210px;display:flex;gap:8px;align-items:flex-start;background:var(--surf);border:1.4px solid var(--bd);border-radius:8px;padding:9px 11px;cursor:pointer}
+.dd-tipo-v.on{border-color:var(--go-d);background:#FFF8EA}
+.dd-tipo-v.ro{opacity:.6;cursor:default}
+.dd-tipo-v input{margin-top:2px;flex:none}
+.dd-tipo-v b{display:block;font-size:12.5px;color:var(--t1)}
+.dd-tipo-v i{display:block;font-style:normal;font-size:10.5px;line-height:1.5;color:var(--t3);margin-top:2px}
+.dd-pack{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 11px;margin:10px 0;font-size:11.5px;color:var(--t2)}
+.dd-pack.link{background:#FFF8EA;border-color:var(--go-d)}
+.dd-pack b{font-size:12px;color:var(--t1)}
+.dd-pack .warn{color:#8A2119;font-weight:700}
+.sm-intro{font-size:11.5px;color:var(--t3);line-height:1.6;margin-bottom:10px}
+.sm-riga{border:1px solid var(--bd);border-radius:9px;padding:10px 12px;margin-bottom:8px;background:var(--surf)}
+.sm-hd{font-size:12.5px;color:var(--t1);margin-bottom:7px}
+.sm-hd b{font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+.sm-serve{float:right;font-size:11px;color:var(--t3);font-weight:700}
+.sm-corpo{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sm-corpo label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);display:flex;gap:6px;align-items:center}
+.sm-corpo input{width:74px;padding:5px 7px;border:1.4px solid var(--bd2);border-radius:6px;font:inherit;font-size:13px;font-weight:800;text-align:right;color:var(--t1)}
+.sm-sep{font-size:15px;color:var(--t3);font-weight:800}
+.sm-nota{font-size:10.5px;color:var(--t3);flex:1;min-width:180px}
+.sm-sostituti{margin-top:9px;padding-top:8px;border-top:1px dashed var(--bd)}
+.sm-lbl{font-size:10.5px;color:var(--t2);margin-bottom:5px}
+.sm-sost{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:var(--t1);padding:4px 0;cursor:pointer}
+.sm-sost i{display:block;font-style:normal;font-size:10px;color:var(--t3);margin-top:1px}
+.sm-scartati{margin-top:7px;font-size:10.5px;color:var(--t3);font-style:italic}
+.sm-ft{margin-top:10px;display:flex;justify-content:flex-end}
+.dd-revtag.esito{background:#EAF3FF;border-color:#B7D3F5;color:#12467F}
+.rdo-esiti{display:flex;flex-direction:column;gap:6px}
+.rdo-esito{display:flex;gap:8px;align-items:flex-start;background:var(--bg);border:1.4px solid var(--bd);border-radius:8px;padding:9px 11px;cursor:pointer}
+.rdo-esito:hover{border-color:var(--go-d)}
+.rdo-esito input{margin-top:2px;flex:none}
+.rdo-esito b{display:block;font-size:12.5px;color:var(--t1)}
+.rdo-esito i{display:block;font-style:normal;font-size:10.5px;color:var(--t3);margin-top:2px;line-height:1.5}
+.rdo-resp{margin-top:12px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;font-size:11.5px;line-height:1.8;color:var(--t2)}
+.rdo-resp b{text-transform:capitalize;color:var(--t1);margin-right:5px}
 /* spunta con spiegazione sotto, per le scelte che vanno capite prima di darle */
 .mg-flag{display:flex;gap:9px;align-items:flex-start;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;cursor:pointer}
 .mg-flag input{margin-top:2px;flex:none}
@@ -7960,13 +7999,16 @@ function renderDdEditor(d){
           </div>
           <input class="dd-fld" id="ddOgg"${roAttr} onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
           <textarea class="dd-fld" id="ddCorpo"${roAttr} onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
+          ${ddTipologiaHtml(d)}
           <div class="dd-opts">
             <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel e nella mail inviati al fornitore</span></div>
-            ${optComplete?'':'<div class="dd-opt-banner">⚠ Tutte le opzioni sono obbligatorie: completale per poter approvare la RDO.</div>'}
+            ${(d.condizioni_mancanti||[]).length?`<div class="dd-opt-banner">⚠ Per approvare manca: ${esc((d.condizioni_mancanti||[]).join(' · '))}.</div>`:''}
             ${optsHtml}
             ${ctHtml}
             ${confHtml}
           </div>
+          ${ddPacchettoHtml(d)}
+          <div id="ddSmistamento"></div>
           <details class="dd-coll" open>
             <summary>📎 Allegati alla mail <span class="cnt">PDF · Excel · ${dwg.length} ${dwgLbl.toLowerCase()}</span></summary>
             <div class="dd-collbody">
@@ -7995,25 +8037,101 @@ function renderDdEditor(d){
       ${threadHtml(d)}
     </div>
     <div class="dd-ft">
-      <span class="dd-badge ${st}">${st==='bozza'?'● Bozza':(st==='approvata'?'✓ Approvata':'✈ Inviata')}</span>
+      <span class="dd-badge ${st}">${RDO_ICO[st]||'●'} ${esc(d.stato_etichetta||st)}</span>
       <span class="dd-revtag ${bloccata?'sent':'draft'}">${revTxt}</span>
-      ${bloccata
-        ? `<span class="dd-lock">🔒 inviata — immodificabile</span>
-           <div style="margin-left:auto;display:flex;gap:8px">
-             <button class="btn btn-go btn-sm" onclick="ddNuovaRevisione()" title="Sblocca per modificare: crea la revisione successiva">✚ Nuova revisione</button>
-             ${rev>=1?`<button class="btn btn-ghost btn-sm" onclick="ddCancellaRevisione(${rev})" title="Cancella questa revisione e torna alla precedente">🗑 Cancella Rev ${rev2(rev)}</button>`:''}
-           </div>`
-        : `<button class="btn btn-aggiorna" onclick="ddAggiorna()" title="Rigenera distinta, file allegati e testo mail dal progetto">🔄 Aggiorna contenuto</button>
-           <div style="margin-left:auto;display:flex;gap:8px">
-             ${(rev>=1)?`<button class="btn btn-ghost btn-sm" onclick="ddCancellaRevisione(${rev})" title="Annulla questa nuova revisione e torna alla precedente">↩ Annulla Rev ${rev2(rev)}</button>`:''}
-             ${st==='bozza'?(!optComplete
-               ?`<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Completa tutte le OPZIONI RDO per approvare">✓ Approva</button>`
-               :`<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`):''}
-             ${st==='approvata'?`<button class="btn btn-ghost btn-sm" onclick="ddStato('bozza')">↩ Rimetti in bozza</button>`:''}
-             ${st==='approvata'?`<button class="btn btn-go btn-sm" onclick="ddStato('inviata')" title="Invia questa RDO al fornitore (simulato)">✈ Invia RDO</button>`:''}
-             ${st==='approvata'?`<span style="font-size:10.5px;color:var(--t3);align-self:center" title="Da qui invii solo questa; per mandarne più insieme c'è il pannello «Richieste d'Offerta»">o in blocco dal pannello RDO</span>`:''}
-           </div>`}
+      ${(d.prerevisione>0)?`<span class="dd-revtag draft" title="Ritorni in bozza dopo l'approvazione, dentro questa revisione">${esc(d.prerev_etichetta)}</span>`:''}
+      ${d.esito?`<span class="dd-revtag esito">${esc(d.esito_etichetta)}</span>`:''}
+      ${ddAzioni(d)}
     </div>`;
+  // lo smistamento arriva dal server: si carica dopo aver disegnato, così la
+  // scheda compare subito e il blocco bulloneria si riempie appena pronto
+  ddCaricaSmistamento();
+}
+// icone di stato, le stesse in tutta la sezione
+const RDO_ICO={bozza:'●',approvata:'✓',inviata:'✈',ricevuta:'📥',confermata:'🔒',annullata:'✕'};
+
+/* La tipologia comanda il modello della mail, quali condizioni servono e cosa
+   blocca l'approvazione. Si propone dall'anagrafica del fornitore, ma è il
+   lavoro a decidere: da un terzista può capitare di comprare roba a catalogo. */
+function ddTipologiaHtml(d){
+  const t=d.tipologia||'costruttiva',ro=!d.modificabile;
+  const voci=[
+    ['commerciale','Commerciale','Articoli di catalogo. Si chiedono prezzo e tempi; la spedizione parte a carico del fornitore. Niente trattamenti né conto lavoro.'],
+    ['costruttiva','Costruttiva','Particolari da fare, lavorazioni sul nostro materiale, assiemi. Servono anche trattamenti e provenienza del materiale.'],
+  ];
+  return `<div class="dd-tipo">
+    <div class="oh">🏷 Tipologia RDO</div>
+    <div class="dd-tipo-scelte">${voci.map(([k,tit,sub])=>`
+      <label class="dd-tipo-v${t===k?' on':''}${ro?' ro':''}">
+        <input type="radio" name="ddTipo" value="${k}" ${t===k?'checked':''} ${ro?'disabled':''}
+          onchange="ddSetTipologia('${k}')">
+        <span><b>${tit}</b><i>${sub}</i></span></label>`).join('')}</div>
+  </div>`;
+}
+async function ddSetTipologia(t){
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/tipologia?tipologia=${t}`,{method:'POST'});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore'));
+    DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);
+    toast('Tipologia: '+t+' — testo della mail rigenerato','ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
+/* Fino a 25 MB tutto in un unico ZIP; oltre, un link solo e nessun allegato.
+   Nessuna via di mezzo: con un pacchetto diviso a metà nessuno sa più se ha
+   visto tutto. */
+function ddPacchettoHtml(d){
+  const p=d.pacchetto;if(!p)return '';
+  return `<div class="dd-pack ${p.modalita}">
+    <b>${p.modalita==='zip'?'📦 ZIP allegato':'🔗 Link unico'}</b>
+    <span>${esc(p.spiegazione)} · ${p.n_file} file</span>
+    ${p.file_non_trovati?`<span class="warn">⚠ ${p.file_non_trovati} file non si trovano più su disco: il peso reale è maggiore</span>`:''}
+  </div>`;
+}
+
+/* Le azioni disponibili le decide il backend (`prossimi_stati`): l'interfaccia
+   non ha una sua idea di cosa si può fare, mostra quello che la macchina degli
+   stati permette. Così le due non possono divergere. */
+function ddAzioni(d){
+  const st=d.stato,puo=s=>(d.prossimi_stati||[]).includes(s);
+  const ostacoli=d.ostacoli_approvazione||[];
+  const A=[];
+
+  if(st==='inviata'||st==='confermata'||st==='annullata')
+    A.push(`<span class="dd-lock">🔒 ${esc(d.stato_etichetta)} — immodificabile</span>`);
+  if(st==='annullata'&&d.motivo_annullamento)
+    A.push(`<span class="dd-lock" style="font-weight:400">${esc(d.motivo_annullamento)}</span>`);
+  if(d.modificabile)
+    A.push(`<button class="btn btn-aggiorna" onclick="ddAggiorna()" title="Rigenera distinta, file allegati e testo mail dal progetto">🔄 Aggiorna contenuto</button>`);
+
+  const dx=[];
+  if(d.revisione>=1&&d.modificabile)
+    dx.push(`<button class="btn btn-ghost btn-sm" onclick="ddCancellaRevisione(${d.revisione})">↩ Annulla Rev ${rev2(d.revisione)}</button>`);
+
+  if(puo('approvata'))
+    dx.push(ostacoli.length
+      ? `<button class="btn btn-go btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="${esc(ostacoli.join(' · '))}">✓ Approva</button>`
+      : `<button class="btn btn-go btn-sm" onclick="ddStato('approvata')">✓ Approva</button>`);
+  if(st==='approvata'){
+    // il ritorno in bozza lascia una prerevisione: si chiede il perché, perché
+    // fra un mese «l'abbiamo riaperta» senza motivo non dice niente a nessuno
+    dx.push(`<button class="btn btn-ghost btn-sm" onclick="ddRiportaInBozza()" title="Lascia una prerevisione: il numero di revisione non cambia">↩ Riporta in bozza</button>`);
+    dx.push(`<button class="btn btn-go btn-sm" onclick="ddStato('inviata')">✈ Invia RDO</button>`);
+  }
+  if(st==='inviata')
+    dx.push(`<button class="btn btn-go btn-sm" onclick="ddClassifica()">📥 Registra risposta</button>`);
+  if(st==='ricevuta'){
+    dx.push(`<button class="btn btn-ghost btn-sm" onclick="ddClassifica()">🏷 Cambia esito</button>`);
+    dx.push(`<button class="btn btn-go btn-sm" onclick="ddNuovaRevisione()">✚ Crea revisione</button>`);
+    if(d.esito==='completa'||d.esito==='parziale')
+      dx.push(`<button class="btn btn-go btn-sm" onclick="ddConferma()">📄 Prepara conferma</button>`);
+  }
+  if(st==='inviata'&&d.revisione>=0)
+    dx.push(`<button class="btn btn-go btn-sm" onclick="ddNuovaRevisione()" title="Sblocca per modificare: crea la revisione successiva">✚ Nuova revisione</button>`);
+  if(puo('annullata')&&st!=='bozza')
+    dx.push(`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="ddAnnulla()">✕ Annulla RDO</button>`);
+
+  return A.join('')+(dx.length?`<div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">${dx.join('')}</div>`:'');
 }
 function ddDisegniFiles(d,righeOverride){
   const c=commesse.find(x=>x.id===d.commessa_id);const parti=(c&&c._parti)||[];
@@ -8105,16 +8223,25 @@ async function ddRefreshPreview(){try{await ddPersist();}catch{}const fr=documen
 async function ddSave(){try{await ddPersist();await loadDdList();renderDdEditor(DD.data);toast('Distinta salvata','ok');}catch{toast('Errore salvataggio',true);}}
 async function ddRigenera(){if(!confirm('Rigenerare la distinta dai dati originali? Le modifiche manuali verranno perse.'))return;
   try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/rigenera`,{method:'POST'});if(!r.ok)throw 0;DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);toast('Distinta rigenerata','ok');}catch{toast('Errore',true);}}
-async function ddStato(s){
+async function ddStato(s,motivo){
   try{if(s==='approvata')await ddPersist();
-    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/stato?stato=${s}`,{method:'POST'});
+    const q=`stato=${s}`+(motivo?`&motivo=${encodeURIComponent(motivo)}`:'');
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/stato?${q}`,{method:'POST'});
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(typeof e.detail==='string'?e.detail:'Errore');}
-    DD.data=await r.json();await ddLoadRevs();
+    DD.data=await r.json();await ddLoadRevs();await ddLoadPrerev();
     if(s==='inviata'){await ddLoadEventi();await ddLoadRevDettagli();}
     await loadDdList();renderDdEditor(DD.data);
     if(S.projId===DD.cid)refreshDetail();
-    toast(s==='approvata'?'Distinta approvata':(s==='inviata'?('RDO inviata · Rev '+rev2(DD.data.revisione>=0?DD.data.revisione:0)+' (simulato)'):'Rimessa in bozza'),'ok');
+    const msg={approvata:'Distinta approvata',
+      inviata:'RDO inviata · Rev '+rev2(DD.data.revisione>=0?DD.data.revisione:0)+' (simulato)',
+      bozza:'Rimessa in bozza'+(DD.data.prerevisione?' · '+DD.data.prerev_etichetta:''),
+      confermata:'RDO confermata',annullata:'RDO annullata'}[s]||'Stato aggiornato';
+    toast(msg,'ok');
   }catch(e){toast(e.message||'Errore',true);}
+}
+async function ddLoadPrerev(){
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/prerevisioni`);DD.prerev=r.ok?await r.json():[];}
+  catch{DD.prerev=[];}
 }
 async function ddLoadRevs(){try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/revisioni`);DD.revs=r.ok?await r.json():[];}catch{DD.revs=[];}}
 // rende l'elenco strutturato dei cambiamenti (com'era → com'è); tollera il vecchio formato a stringhe
@@ -8127,6 +8254,211 @@ function revDiffHtml(diff){
     return `<div class="rr-chg"><div class="rr-chg-t">${esc(d.txt||'')}</div>${ba}</div>`;
   }).join('');
 }
+/* ── Smistamento bulloneria ──
+   La distinta dice quante ne servono, ma al fornitore si chiede solo quello che
+   MANCA, arrotondato: nessuno ordina due viti. Il resto diventa una richiesta di
+   prelievo al magazzino. È una proposta: i due numeri si correggono a mano, e la
+   sostituzione di materiale (le A4 al posto delle A2) non si applica mai da sola. */
+async function ddCaricaSmistamento(){
+  const box=document.getElementById('ddSmistamento');
+  if(!box||!DD.data||!DD.data.modificabile){if(box)box.innerHTML='';return;}
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento`);
+    DD.smist=r.ok?await r.json():null;}
+  catch{DD.smist=null;}
+  renderDdSmistamento();
+}
+function renderDdSmistamento(){
+  const box=document.getElementById('ddSmistamento');if(!box)return;
+  const s=DD.smist;
+  if(!s||!s.righe.length){box.innerHTML='';return;}
+  const riga=(r,i)=>{
+    const sostituti=(r.sostituti||[]).map(a=>`
+      <label class="sm-sost"><input type="radio" name="sm${i}" value="${a.id}" onchange="smScegli(${i},${a.id})">
+        <span>usa <b>${esc(a.materiale)}</b> — ${a.disponibile} disponibili${a.a_perdere?' · a perdere':''}
+          <i>${esc(a.nota)}</i></span></label>`).join('');
+    const scartati=(r.non_utilizzabili||[]).map(a=>
+      `${esc(a.codice)} in ${esc(a.materiale)} (${a.disponibile})`).join(' · ');
+    return `<div class="sm-riga">
+      <div class="sm-hd"><b>${esc(r.codice)}</b> ${esc(r.denominazione)}
+        <span class="sm-serve">ne servono ${r.serve}</span></div>
+      <div class="sm-corpo">
+        <label>dal magazzino
+          <input type="number" min="0" max="${r.disponibile}" value="${r.da_prelevare}"
+            id="smP${i}" onchange="smRicalcola(${i})"></label>
+        <span class="sm-sep">+</span>
+        <label>dal fornitore
+          <input type="number" min="0" value="${r.da_comprare}" id="smC${i}"></label>
+        <span class="sm-nota" id="smN${i}">${esc(smNota(r))}</span>
+      </div>
+      ${sostituti?`<div class="sm-sostituti"><div class="sm-lbl">A magazzino c'è un materiale migliore — <b>lo decidi tu</b>:</div>${sostituti}</div>`:''}
+      ${scartati?`<div class="sm-scartati">Della stessa misura ci sono anche: ${esc(scartati)} — non vanno bene, il materiale è inferiore.</div>`:''}
+    </div>`;
+  };
+  box.innerHTML=`<details class="dd-coll" open>
+    <summary>🔩 Bulloneria dal magazzino <span class="cnt">${s.righe.length} codici · ${s.totale_da_prelevare} da prelevare · ${s.totale_da_comprare} da comprare</span></summary>
+    <div class="dd-collbody">
+      <div class="sm-intro">Al fornitore si chiede solo quello che manca, arrotondato per misura.
+        Il resto diventa una richiesta di prelievo, e l'avanzo dell'arrotondamento rientra a magazzino.</div>
+      ${s.righe.map(riga).join('')}
+      <div class="sm-ft">
+        <button class="btn btn-go" onclick="smApplica()">✓ Applica: crea la richiesta e aggiorna la RDO</button>
+      </div>
+    </div></details>`;
+}
+function smNota(r){
+  if(!r.da_comprare)return r.da_prelevare?'tutto dal magazzino':'niente da fare';
+  const avanzo=r.avanzo?` · ${r.avanzo} di scorta rientrano a magazzino`:'';
+  return `ne mancano ${r.mancante}, arrotondato a ${r.da_comprare} (a passi di ${r.passo})${avanzo}`;
+}
+// scegliendo un sostituto la riga si ricalcola su QUEL materiale
+function smScegli(i,articoloId){
+  const r=DD.smist.righe[i];
+  const a=(r.sostituti||[]).find(x=>x.id===articoloId);if(!a)return;
+  r._articolo=articoloId;r._sostituto=a.materiale;
+  const inp=document.getElementById('smP'+i);
+  inp.max=a.disponibile;inp.value=Math.min(r.serve,a.disponibile);
+  smRicalcola(i);
+}
+function smRicalcola(i){
+  const r=DD.smist.righe[i];
+  const prelevo=Math.max(0,parseInt(document.getElementById('smP'+i).value)||0);
+  const manca=Math.max(0,r.serve-prelevo);
+  // stesso arrotondamento del server, con lo stesso margine di 3 pezzi
+  let compro=0;
+  if(manca>0){const p=r.passo||10;compro=Math.ceil(manca/p)*p;if(compro-manca<=3)compro+=p;}
+  document.getElementById('smC'+i).value=compro;
+  const el=document.getElementById('smN'+i);
+  if(el)el.textContent=smNota({...r,da_prelevare:prelevo,da_comprare:compro,mancante:manca,avanzo:Math.max(0,compro-manca)});
+}
+async function smApplica(){
+  const righe=DD.smist.righe.map((r,i)=>({
+    codice:r.codice,
+    da_prelevare:Math.max(0,parseInt(document.getElementById('smP'+i).value)||0),
+    da_comprare:Math.max(0,parseInt(document.getElementById('smC'+i).value)||0),
+    articolo_id:r._articolo||((r.articoli||[])[0]||{}).id||null,
+    materiale_richiesto:r.materiale_richiesto||'',
+  })).filter(x=>x.da_prelevare>0||x.da_comprare>=0);
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento/applica`,
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({righe})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore'));
+    const out=await r.json();
+    DD.data=out;await loadDdList();renderDdEditor(out);
+    const msg=out.richiesta_magazzino_id
+      ? 'Richiesta di prelievo creata · la RDO chiede solo il mancante'
+      : 'RDO aggiornata';
+    toast(msg,'ok');
+    if((out.sostituzioni||[]).length)
+      toast('Sostituzioni: '+out.sostituzioni.join(' · '));
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
+/* ── le azioni del flusso v1.2 ── */
+
+// Riportare in bozza una RDO approvata lascia una PREREVISIONE: si chiede il
+// perché, perché fra un mese «l'abbiamo riaperta» senza motivo non dice niente.
+function ddRiportaInBozza(){
+  grModale('Riporta in bozza',
+    `<div style="font-size:13px;line-height:1.6">La RDO torna modificabile e resta una
+       <b>prerevisione</b> con com'era adesso. Il numero di revisione non cambia:
+       al fornitore non è ancora andato niente.</div>
+     <input class="fld" id="ddMotivoPre" style="margin-top:12px" placeholder="Perché la riapri? (es. mancava un pezzo)">`,
+    [['Annulla',null],['↩ Riporta in bozza',()=>{
+      const m=(document.getElementById('ddMotivoPre').value||'').trim();
+      ddStato('bozza',m);
+    },true]]);
+}
+
+// Come è andata la risposta la sceglie una persona: le mail dei fornitori sono
+// troppo varie perché il programma ci indovini.
+function ddClassifica(){
+  const voci=[['completa','✅ Offerta completa','Tutti i pezzi sono quotati: si può preparare la conferma.'],
+              ['parziale','◐ Offerta parziale','Solo una parte è quotata. Decidi tu se creare una revisione.'],
+              ['chiarimenti','💬 Richiesta chiarimenti','La conversazione resta aperta. Nessuna revisione automatica.'],
+              ['rifiuto','✕ Rifiuto del fornitore','La RDO viene annullata e i pezzi tornano liberi.']];
+  grModale('Come è andata la risposta?',
+    `<div class="rdo-esiti">${voci.map(([k,t,sub])=>`
+       <label class="rdo-esito"><input type="radio" name="ddEsito" value="${k}" ${DD.data.esito===k?'checked':''}>
+         <span><b>${esc(t)}</b><i>${esc(sub)}</i></span></label>`).join('')}</div>
+     <input class="fld" id="ddMotivoEsito" style="margin-top:10px" placeholder="Nota (obbligatoria per il rifiuto)">`,
+    [['Annulla',null],['Registra',()=>{
+      const sel=document.querySelector('input[name=ddEsito]:checked');
+      if(!sel){toast('Scegli come è andata',true);return false;}
+      const m=(document.getElementById('ddMotivoEsito').value||'').trim();
+      if(sel.value==='rifiuto'&&!m){toast('Per un rifiuto serve il motivo',true);return false;}
+      ddSetEsito(sel.value,m);
+    },true]]);
+}
+async function ddSetEsito(esito,motivo){
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/esito?esito=${esito}&motivo=${encodeURIComponent(motivo||'')}`,{method:'POST'});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore'));
+    DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);
+    if(S.projId===DD.cid)refreshDetail();
+    toast(DD.data.esito_etichetta||'Risposta registrata','ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
+function ddAnnulla(){
+  grModale('Annulla la RDO',
+    `<div style="font-size:13px;line-height:1.6">La RDO si chiude e i pezzi tornano
+       liberi, pronti per un altro fornitore. Mail, revisioni e cronologia restano.</div>
+     <input class="fld" id="ddMotivoAnn" style="margin-top:12px" placeholder="Motivo (resta a storico)">`,
+    [['Torna indietro',null],['✕ Annulla RDO',()=>{
+      const m=(document.getElementById('ddMotivoAnn').value||'').trim();
+      if(!m){toast('Serve il motivo',true);return false;}
+      ddStato('annullata',m);
+    },true]]);
+}
+
+/* Il riepilogo per l'amministrazione. Il gestionale lo prepara, l'ordine lo
+   manda l'amministrazione: finché quella comunicazione non è registrata qui
+   dentro la RDO non diventa confermata. */
+async function ddConferma(){
+  let d=null;
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/conferma`);
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore'));
+    d=await r.json();
+  }catch(e){toast(e.message||'Errore',true);return;}
+
+  const righe=d.righe.map(r=>`<tr>
+      <td>${esc(r.codice)}</td><td>${esc(r.denominazione)}</td>
+      <td style="text-align:right">${r.quantita}</td>
+      <td style="text-align:right">${r.prezzo_unitario.toFixed(2)} €</td>
+      <td style="text-align:right;font-weight:800">${r.totale_riga.toFixed(2)} €</td></tr>`).join('');
+  const resp=Object.entries(d.responsabilita||{}).filter(([,v])=>v)
+    .map(([k,v])=>`<div><b>${esc(k)}</b> ${esc(v)}</div>`).join('');
+  grModale(`Conferma fornitura — ${esc(d.codice_rdo)}`,
+    `<div class="fmuted" style="font-size:11.5px;margin-bottom:8px">${esc(d.esito_etichetta)} · ${d.n_righe} articoli · ${d.allegati.length} allegati</div>
+     ${d.avviso?`<div class="arch-stato bad">${esc(d.avviso)}</div>`:`
+     <table class="mg-req"><thead><tr><th>Codice</th><th>Descrizione</th><th style="text-align:right">Q.tà</th><th style="text-align:right">Prezzo</th><th style="text-align:right">Totale</th></tr></thead>
+       <tbody>${righe}</tbody></table>
+     <div style="text-align:right;font-size:15px;font-weight:900;margin-top:10px">Totale ${d.totale.toFixed(2)} €</div>`}
+     ${resp?`<div class="rdo-resp">${resp}</div>`:''}
+     <div style="margin-top:14px;font-size:12.5px;line-height:1.6">
+       Questo foglio va all'amministrazione, che prepara e manda l'ordine.
+       ${d.mail_amministrazione_registrata
+         ? '<b>La sua comunicazione è già registrata:</b> la RDO si può confermare.'
+         : 'Quando l\'ha mandato, <b>registralo qui</b>: solo allora la RDO diventa confermata.'}
+     </div>
+     ${d.mail_amministrazione_registrata?'':`<input class="fld" id="ddMailAmm" style="margin-top:10px" placeholder="Riferimento dell'ordine inviato (es. ORD 2026/114)">`}`,
+    d.mail_amministrazione_registrata
+      ? [['Chiudi',null],['🔒 Conferma RDO',()=>ddStato('confermata'),true]]
+      : [['Chiudi',null],['📩 Registra ordine amministrazione',()=>{
+          const t=(document.getElementById('ddMailAmm').value||'').trim();
+          if(!t){toast("Scrivi il riferimento dell'ordine",true);return false;}
+          ddRegistraAmm(t);
+        },true]]);
+}
+async function ddRegistraAmm(testo){
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/mail-amministrazione?testo=${encodeURIComponent(testo)}`,{method:'POST'});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore'));
+    DD.data=await r.json();await ddLoadEventi();renderDdEditor(DD.data);
+    toast('Ordine registrato: ora la RDO si può confermare','ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
 async function ddNuovaRevisione(){
   const nxt=((DD.data&&DD.data.revisione>=0?DD.data.revisione:0))+1;
   if(!confirm('Aprire una NUOVA revisione (Rev '+rev2(nxt)+')?\nLa RDO torna modificabile; si congela al prossimo invio.'))return;
