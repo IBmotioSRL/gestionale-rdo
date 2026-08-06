@@ -1204,6 +1204,42 @@ table.mg-req .btn{margin-left:4px}
 .rdo-cron span{color:var(--t3);white-space:nowrap;font-size:10.5px;min-width:130px}
 .rdo-cron b{color:var(--t1)}
 .rdo-cron i{font-style:normal;color:var(--t3);flex:1;min-width:160px}
+/* ── pagina d'ingresso: le commesse aperte, una scheda per ciascuna ── */
+.rdoc-head{margin-bottom:14px}
+.rdoc-head h2{margin:0;font-size:19px;color:var(--t1)}
+.rdoc-head p{margin:4px 0 0;font-size:11.5px;color:var(--t3)}
+.rdoc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:900px){.rdoc-metrics{grid-template-columns:1fr 1fr}}
+.rdoc-metric{border:1px solid var(--bd);border-radius:9px;padding:11px 13px;background:var(--bg)}
+.rdoc-metric b{display:block;font-size:19px;font-weight:900;color:var(--t1);line-height:1.1}
+.rdoc-metric span{display:block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);margin-top:4px}
+.rdoc-panel{background:var(--surf);border:1px solid var(--bd);border-radius:11px;box-shadow:var(--shl);overflow:hidden}
+.rdoc-toolbar{display:grid;grid-template-columns:1fr 230px;gap:8px;padding:12px;border-bottom:1px solid var(--bd)}
+@media(max-width:620px){.rdoc-toolbar{grid-template-columns:1fr}}
+.rdoc-toolbar input,.rdoc-toolbar select{width:100%;border:1.4px solid var(--bd2);border-radius:7px;background:var(--surf);padding:8px 10px;font:inherit;font-size:12px;color:var(--t1)}
+.rdoc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px}
+@media(max-width:1100px){.rdoc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.rdoc-grid{grid-template-columns:1fr}}
+.rdoc-card{border:1px solid var(--bd);border-radius:10px;padding:13px;background:var(--surf);cursor:pointer;transition:border-color .13s,transform .13s,background .13s}
+.rdoc-card:hover{border-color:var(--go-d);background:#FFFAF2;transform:translateY(-1px)}
+.rdoc-code{font-size:10px;color:var(--go-d);font-weight:900;font-family:ui-monospace,Menlo,monospace}
+.rdoc-title{font-size:14px;font-weight:800;margin:5px 0 2px;color:var(--t1)}
+.rdoc-client{font-size:10.5px;color:var(--t3)}
+.rdoc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:12px}
+.rdoc-stat{background:var(--bg);border-radius:7px;padding:7px;text-align:center}
+.rdoc-stat b{display:block;font-size:13px;font-weight:900;color:var(--t1)}
+.rdoc-stat span{font-size:8.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+.rdoc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:9.5px;color:var(--t3);gap:8px}
+.rdoc-warn{margin-top:8px;font-size:10px;color:#8A2119;background:#FBEAEA;border-radius:6px;padding:5px 8px}
+/* ── elenco delle RDO di una commessa (pannello di sinistra) ── */
+.nav-proj{padding:13px 12px 8px;font-size:10px;font-weight:900;letter-spacing:.04em;color:var(--go-d);text-transform:uppercase}
+.nav-filtri{display:grid;grid-template-columns:1fr 96px;gap:7px;padding:0 10px 10px}
+.nav-filtri input,.nav-filtri select{width:100%;border:1.4px solid var(--bd2);border-radius:7px;background:var(--surf);padding:6px 8px;font:inherit;font-size:11px;color:var(--t1)}
+.nav-sub{font-size:9.5px;color:var(--t3);margin-top:3px}
+.nav-it.on .nav-sub{color:#fff3de}
+.nav-bulk{margin-top:10px;border-top:1px solid var(--bd);padding:10px}
+.nav-bulk-i{font-size:10px;color:var(--t3);margin-bottom:7px}
+.nav-bulk-i b{color:var(--t1)}
 /* spunta con spiegazione sotto, per le scelte che vanno capite prima di darle */
 .mg-flag{display:flex;gap:9px;align-items:flex-start;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;cursor:pointer}
 .mg-flag input{margin-top:2px;flex:none}
@@ -7143,7 +7179,6 @@ function fillTplSelect(sel,val){if(!sel)return;sel.innerHTML='<option value="">�
 /* ═══════════ RDO — router a livelli (lista commesse → workspace → editor + spedizione) ═══════════ */
 const RV={mode:'list',cid:null,fid:null,selForn:null};
 let SHIPSEL=new Set();
-let RDOEXP=new Set();  // id delle commesse espanse nell'elenco «Comunicazioni» (collassate di default)
 function setRdoHdr(h1,sub){document.getElementById('rdoH1').textContent=h1;document.getElementById('rdoVsub').textContent=sub;}
 async function rdoEnter(){RV.mode='list';RV.cid=null;RV.fid=null;RV.selForn=null;loadTemplates();await loadDdList();renderRdoView();}
 function rdoBack(){
@@ -7181,48 +7216,102 @@ async function rdoAggiornaTutte(){
 function renderRDO(){if(S.v==='rdo')renderRdoView();}
 
 /* ── livello 1: lista commesse, a fisarmonica (collassate di default) ── */
+/* ── Pagina d'ingresso: le commesse aperte, una scheda per ciascuna ──
+   La RDO nasce da sola quando si assegnano dei codici a un fornitore: qui non
+   si crea niente, si sceglie su quale commessa lavorare. Le quattro cifre sulla
+   scheda dicono a colpo d'occhio dov'è il lavoro — quante bozze da approvare,
+   quante risposte da guardare. */
+let RDOQ='', RDOFLT='all';
 function rdoRenderList(){
   const el=document.getElementById('rdoList');
   const active=commesse.filter(c=>flatParti(c).length);
   if(!active.length){el.innerHTML=emptyHtml('Nessuna RDO','Importa un progetto e assegna i fornitori per generare le RDO.',"go('proj')",'Vai ai progetti');return;}
-  el.innerHTML='<div class="rdo-clist">'+active.map(c=>{
-    const parti=flatParti(c);const unass=parti.filter(p=>!p.fornitore_id).length;
-    const badge=unass?`<span class="rdo-warn">⚠ ${unass} non assegnati</span>`:`<span class="rdo-ok">✓ tutti assegnati</span>`;
-    const open=RDOEXP.has(c.id);
-    return `<div class="rdo-crow" onclick="rdoToggleComm(${c.id})" oncontextmenu="ctxComm(event,${c.id})">
-      <span class="rdo-arr2">${open?'▾':'▸'}</span>
-      <span class="rdo-pcod">${esc(c.codice)}</span>
-      <span class="rdo-pname">${esc(c.nome)}</span>
-      ${c.cliente?`<span class="rdo-cli">${esc(c.cliente)}</span>`:''}
-      <span class="rdo-crow-r"><span class="rdo-hist" onclick="event.stopPropagation();openStoricoRevisioni(${c.id},'${jsq(c.codice)} · ${jsq(c.nome)}')" title="Storico revisioni delle RDO di questo progetto">🗂 Storico revisioni</span>${badge}</span>
-    </div>${open?rdoCommSubHtml(c):''}`;
-  }).join('')+'</div>';
-}
-// riga fornitore/RDO di una commessa espansa: stato pronto/non pronto a colpo d'occhio
-function rdoCommSubHtml(c){
-  const parti=flatParti(c);const byF={};
-  parti.filter(p=>p.fornitore_id).forEach(p=>{(byF[p.fornitore_id]=byF[p.fornitore_id]||[]).push(p);});
-  const unass=parti.filter(p=>!p.fornitore_id).length;
-  const fids=Object.keys(byF);
-  const rows=fids.map(fid=>{
-    const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
-    const st=ddStatoCorrente(c.id,+fid);
-    return `<div class="rdo-frow" onclick="event.stopPropagation();rdoOpenEditor(${c.id},${fid})" oncontextmenu="event.stopPropagation();ctxRdoForn(event,${c.id},${fid})">
-      <span class="rwc-av" style="background:${avc(f.nome)}">${ini(f.nome)}</span>
-      <span class="rdo-fnm"><b>${esc(f.nome)}</b><span>${byF[fid].length} pezzi · ${esc(f.tipo)}</span></span>
-      <span class="dd-st ${st}">${st}</span></div>`;
-  }).join('');
-  const warnRow=unass?`<div class="rdo-frow warn" onclick="event.stopPropagation();go('pdet',${c.id})">
-      <span class="rwc-av" style="background:#9b2c2c">⚠</span>
-      <span class="rdo-fnm"><b>${unass} pezzi senza fornitore</b><span>vai al progetto per assegnarli</span></span></div>`:'';
-  return `<div class="rdo-csub">${rows||(unass?'':'<div class="fmuted" style="padding:6px 12px">Nessun fornitore assegnato ancora.</div>')}${warnRow}</div>`;
-}
-async function rdoToggleComm(cid){
-  if(RDOEXP.has(cid))RDOEXP.delete(cid);
-  else{RDOEXP.add(cid);await loadDdList();}
-  rdoRenderList();
-}
 
+  const perComm={};
+  (DDLIST||[]).forEach(x=>{(perComm[x.commessa_id]=perComm[x.commessa_id]||[]).push(x);});
+  const conta=(arr,st)=>arr.filter(x=>x.stato===st).length;
+
+  // le metriche in alto sommano tutte le commesse: è il colpo d'occhio globale
+  const tutte=DDLIST||[];
+  const metriche=[
+    [active.length,'Commesse aperte'],
+    [conta(tutte,'bozza'),'RDO in bozza'],
+    [conta(tutte,'inviata'),'RDO inviate'],
+    [tutte.filter(x=>x.stato==='ricevuta').length,'Risposte da analizzare'],
+  ].map(([n,l])=>`<div class="rdoc-metric"><b>${n}</b><span>${esc(l)}</span></div>`).join('');
+
+  const q=(RDOQ||'').trim().toLowerCase();
+  let schede=active.filter(c=>{
+    const rdo=perComm[c.id]||[];
+    if(RDOFLT==='risposte'&&!rdo.some(x=>x.stato==='ricevuta'))return false;
+    if(RDOFLT==='bozze'&&!rdo.some(x=>x.stato==='bozza'))return false;
+    if(RDOFLT==='inviate'&&!rdo.some(x=>x.stato==='inviata'))return false;
+    if(q&&![c.codice,c.nome,c.cliente].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  });
+
+  const card=c=>{
+    const rdo=perComm[c.id]||[];
+    const parti=flatParti(c);
+    const unass=parti.filter(p=>!p.fornitore_id).length;
+    // in fondo alla scheda si mette la cosa che chiede attenzione per prima:
+    // una risposta da guardare batte una bozza da approvare
+    const nRic=conta(rdo,'ricevuta'), nBoz=conta(rdo,'bozza'), nApp=conta(rdo,'approvata');
+    const nAnn=conta(rdo,'annullata');
+    const stato=nRic?['ricevuta',`${nRic} da analizzare`]
+      :nApp?['approvata',`${nApp} pronte da inviare`]
+      :nBoz?['bozza',`${nBoz} da approvare`]
+      :nAnn?['annullata',`${nAnn} annullate`]
+      :['confermata','tutto chiuso'];
+    const giorni=rdo.map(x=>x.giorni_da_ultimo_contatto).filter(g=>g!=null);
+    const ult=giorni.length?(Math.min(...giorni)===0?'oggi':(Math.min(...giorni)===1?'ieri':Math.min(...giorni)+' giorni fa')):'—';
+    const st=(n,l)=>`<div class="rdoc-stat"><b>${n}</b><span>${esc(l)}</span></div>`;
+    return `<article class="rdoc-card" onclick="rdoApriCommessa(${c.id})" oncontextmenu="ctxComm(event,${c.id})">
+      <div class="rdoc-code">${esc(c.codice)}</div>
+      <div class="rdoc-title">${esc(c.nome)}</div>
+      <div class="rdoc-client">${esc(c.cliente||'—')}</div>
+      <div class="rdoc-stats">${st(rdo.length,'RDO')}${st(nBoz,'Bozza')}${st(conta(rdo,'inviata'),'Inviate')}${st(nRic,'Ricevute')}</div>
+      <div class="rdoc-foot">
+        <span>Ultima attività: ${esc(ult)}</span>
+        <span class="dd-st ${stato[0]}">${esc(stato[1])}</span>
+      </div>
+      ${unass?`<div class="rdoc-warn">⚠ ${unass} pezzi non ancora assegnati a un fornitore</div>`:''}
+    </article>`;
+  };
+
+  el.innerHTML=`
+    <div class="rdoc-head">
+      <div><h2>Commesse aperte</h2>
+        <p>La RDO si crea da sola quando uno o più codici vengono assegnati a un fornitore.</p></div>
+    </div>
+    <div class="rdoc-metrics">${metriche}</div>
+    <div class="rdoc-panel">
+      <div class="rdoc-toolbar">
+        <input id="rdocQ" placeholder="Cerca commessa, cliente o descrizione" value="${esc(RDOQ)}" oninput="rdoFiltra(this.value)">
+        <select onchange="RDOFLT=this.value;rdoRenderList()">
+          <option value="all"${RDOFLT==='all'?' selected':''}>Tutte le commesse</option>
+          <option value="risposte"${RDOFLT==='risposte'?' selected':''}>Con risposte da analizzare</option>
+          <option value="bozze"${RDOFLT==='bozze'?' selected':''}>Con bozze da approvare</option>
+          <option value="inviate"${RDOFLT==='inviate'?' selected':''}>Con RDO inviate</option>
+        </select>
+      </div>
+      <div class="rdoc-grid">${schede.map(card).join('')||'<div class="empty" style="padding:30px;grid-column:1/-1">Nessuna commessa con questi filtri.</div>'}</div>
+    </div>`;
+}
+// si filtra in memoria e si ridisegna: la casella è dentro il blocco ridisegnato,
+// quindi il cursore va rimesso dov'era o si riesce a scrivere una lettera per volta
+function rdoFiltra(v){
+  RDOQ=v;rdoRenderList();
+  const inp=document.getElementById('rdocQ');
+  if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
+}
+// dalla scheda commessa si entra nel suo elenco di RDO, sulla prima disponibile
+function rdoApriCommessa(cid){
+  const rdo=(DDLIST||[]).filter(x=>String(x.commessa_id)===String(cid));
+  if(!rdo.length){toast('Questa commessa non ha ancora fornitori assegnati',true);return;}
+  const pref=rdo.find(x=>x.stato==='ricevuta')||rdo.find(x=>x.stato==='bozza')||rdo[0];
+  rdoOpenEditor(cid,pref.fornitore_id);
+}
 /* ── livello 2: workspace commessa (card fornitori + scheda laterale) ── */
 function rdoRenderWork(){
   const c=commesse.find(x=>x.id===RV.cid);
@@ -7299,31 +7388,88 @@ function renderDdNav(){
   }
   // solo la commessa aperta nell'editor: i fornitori di altre commesse non c'entrano
   // (per cambiare commessa si torna indietro con «‹», livello 1/2 del pannello Comunicazioni)
-  commesse.filter(c=>String(c.id)===String(RV.cid)).forEach(c=>{
-    const parti=flatParti(c);const byF={};
-    // un pezzo "appartiene" al primario e a tutti i fornitori in confronto
-    parti.forEach(p=>{pForns(p).forEach(fid=>{(byF[fid]=byF[fid]||[]).push(p);});});
-    const fids=Object.keys(byF);if(!fids.length)return;
-    h+=`<div class="nav-grp">${esc(c.codice)} · ${esc(c.nome)}</div>`;
-    fids.forEach(fid=>{
-      const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
-      const idx=NAVITEMS.length;NAVITEMS.push({cid:c.id,fid:+fid});
-      const on=String(RV.cid)===String(c.id)&&String(RV.fid)===String(fid);
-      const sel=NAVSEL.has(navKey(c.id,+fid));
-      const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
-      const code=dd&&(dd.codice_rev||dd.codice_rdo)?`<b style="font-family:ui-monospace,monospace">${esc(dd.codice_rev||dd.codice_rdo)}</b> · `:'';
-      const revN=(dd&&dd.revisione!=null&&dd.revisione>=0)?dd.revisione:0;
-      const revBadge=`<span class="nav-rev ${(dd&&dd.stato==='inviata')?'sent':'draft'}">Rev ${rev2(revN)}</span>`;
-      const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
-      const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori (offerte in raccolta)">🔀 ${nConf}</span>`:'';
-      const stb=(dd&&!sel)?`<span class="nav-st dd-st ${dd.stato}">${dd.stato}</span>`:'';
-      const ct=ctText(dd);
-      h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
-        <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
-        <div class="nav-tx"><div class="nn">${esc(f.nome)} ${revBadge}</div><div class="ss">${code}${byF[fid].length} pezzi · ${esc(f.tipo)}</div>${ct?`<div class="ct-badge${dd.in_attesa_risposta?' warn':''}">${ct}</div>`:''}</div>${confb}${stb}</div>`;
-    });
+  const c=commesse.find(x=>String(x.id)===String(RV.cid));
+  if(!c){nav.innerHTML='';return;}
+  const parti=flatParti(c);const byF={};
+  // un pezzo "appartiene" al primario e a tutti i fornitori in confronto
+  parti.forEach(p=>{pForns(p).forEach(fid=>{(byF[fid]=byF[fid]||[]).push(p);});});
+  const fids=Object.keys(byF);
+
+  // intestazione della commessa + filtri: qui dentro si lavora su UNA commessa,
+  // e il filtro per stato è il modo di trovare «quelle che aspettano me»
+  h+=`<div class="nav-proj">${esc(c.codice)} · ${esc((c.nome||'').toUpperCase())}</div>
+    <div class="nav-filtri">
+      <input id="navQ" placeholder="Cerca fornitore o RDO" value="${esc(NAVQ)}" oninput="navFiltra(this.value)">
+      <select onchange="NAVFLT=this.value;renderDdNav()">
+        ${[['all','Tutti'],['bozza','Bozza'],['approvata','Approvata'],['inviata','Inviata'],
+           ['ricevuta','Ricevuta'],['confermata','Confermata'],['annullata','Annullata']]
+          .map(([k,l])=>`<option value="${k}"${NAVFLT===k?' selected':''}>${l}</option>`).join('')}
+      </select>
+    </div>`;
+
+  const q=(NAVQ||'').trim().toLowerCase();
+  let visibili=0;
+  fids.forEach(fid=>{
+    const f=fornitori.find(x=>x.id==fid)||{nome:'?',tipo:'—'};
+    const dd=DDLIST.find(x=>String(x.commessa_id)===String(c.id)&&String(x.fornitore_id)===String(fid));
+    const st=(dd&&dd.stato)||'bozza';
+    if(NAVFLT!=='all'&&st!==NAVFLT)return;
+    if(q&&![f.nome,(dd&&dd.codice_rdo)||'',(dd&&dd.tipologia)||''].join(' ').toLowerCase().includes(q))return;
+    visibili++;
+    const idx=NAVITEMS.length;NAVITEMS.push({cid:c.id,fid:+fid});
+    const on=String(RV.fid)===String(fid);
+    const sel=NAVSEL.has(navKey(c.id,+fid));
+    const code=dd&&(dd.codice_rev||dd.codice_rdo)?esc(dd.codice_rev||dd.codice_rdo)+' · ':'';
+    const tip=dd&&dd.tipologia?(dd.tipologia==='commerciale'?'Commerciale':'Costruttiva'):'';
+    const nConf=byF[fid].filter(p=>pForns(p).length>=2).length;
+    const confb=nConf?`<span class="cmptag" title="${nConf} pezzi in confronto tra più fornitori">🔀 ${nConf}</span>`:'';
+    // il sotto-stato è la riga che dice cosa aspetta questa RDO adesso
+    const sotto=dd?(dd.esito_etichetta
+      || (st==='bozza'?((dd.prerevisione?`PREREV ${rev2(dd.prerevisione)} · `:'')+'da controllare')
+      : st==='approvata'?'bloccata · pronta invio'
+      : st==='inviata'?`REV ${rev2(dd.revisione>=0?dd.revisione:0)} · in attesa risposta`
+      : st==='confermata'?'ordine registrato'
+      : st==='annullata'?(dd.motivo_annullamento||'chiusa'):'')):'';
+    const ct=ctText(dd);
+    h+=`<div class="nav-it${on?' on':''}${sel?' sel':''}" onclick="navClick(event,${idx})" oncontextmenu="navCtx(event,${idx})">
+      <div class="nav-av" style="background:${avc(f.nome)}">${ini(f.nome)}</div>
+      <div class="nav-tx">
+        <div class="nn">${esc(f.nome)}</div>
+        <div class="ss">${code}${byF[fid].length} pezzi${tip?' · '+tip:''}</div>
+        ${sotto?`<div class="nav-sub">${esc(sotto)}</div>`:''}
+        ${ct?`<div class="ct-badge${dd.in_attesa_risposta?' warn':''}">${ct}</div>`:''}
+      </div>${confb}${sel?'':`<span class="nav-st dd-st ${st}">${esc((dd&&dd.stato_etichetta)||st)}</span>`}</div>`;
   });
-  nav.innerHTML=h||'<div class="fmuted" style="padding:10px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
+  if(!fids.length)h+='<div class="fmuted" style="padding:10px;font-size:11.5px">Nessuna RDO: assegna i fornitori ai pezzi.</div>';
+  else if(!visibili)h+='<div class="fmuted" style="padding:10px;font-size:11.5px">Nessuna RDO con questi filtri.</div>';
+
+  // invio in blocco: una mail per fornitore, mai un messaggio solo a tutti
+  const appr=(DDLIST||[]).filter(x=>String(x.commessa_id)===String(c.id)&&x.stato==='approvata');
+  if(appr.length)h+=`<div class="nav-bulk">
+    <div class="nav-bulk-i"><b>${appr.length} RDO approvate</b> · invii separati per fornitore</div>
+    <button class="btn btn-go btn-sm" style="width:100%" onclick="rdoInviaApprovate(${c.id})">✈ Invia le RDO approvate</button>
+  </div>`;
+
+  nav.innerHTML=h;
+}
+let NAVQ='', NAVFLT='all';
+function navFiltra(v){
+  NAVQ=v;renderDdNav();
+  const inp=document.getElementById('navQ');
+  if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
+}
+async function rdoInviaApprovate(cid){
+  const appr=(DDLIST||[]).filter(x=>String(x.commessa_id)===String(cid)&&x.stato==='approvata');
+  if(!appr.length)return;
+  if(!confirm(`Inviare ${appr.length} RDO approvate?\nParte una mail per fornitore, non un messaggio unico.`))return;
+  let ok=0,ko=0;
+  for(const x of appr){
+    try{const r=await fetch(API+`/api/commesse/${cid}/rdo/${x.fornitore_id}/stato?stato=inviata`,{method:'POST'});
+      r.ok?ok++:ko++;}catch{ko++;}
+  }
+  await loadDdList();renderDdNav();
+  if(RV.fid)await openDd(RV.cid,RV.fid);
+  toast(ko?`${ok} inviate, ${ko} non riuscite`:`${ok} RDO inviate`,ko?true:'ok');
 }
 function navClick(e,idx){
   const it=NAVITEMS[idx];if(!it)return;
@@ -7449,8 +7595,9 @@ function showCtx(e,title,items){
   CTX.style.left=x+'px';CTX.style.top=y+'px';
 }
 function ctxComm(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Commessa',[
-  ['📂 Espandi/comprimi fornitori',`rdoToggleComm(${cid})`],
+  ['📋 Apri le sue RDO',`rdoApriCommessa(${cid})`],
   ['🗂 Vai al progetto',`go('pdet',${cid})`],
+  ['🕘 Storico revisioni',`openStoricoRevisioni(${cid},'${jsq((c&&c.codice)||'')} · ${jsq((c&&c.nome)||'')}')`],
   {sep:1},
   ['📤 Pannello spedizione',`rdoGoShip()`]
 ]);}
@@ -7477,7 +7624,7 @@ function ctxShip(e,cid,fid){const f=fornitori.find(x=>x.id==fid);const st=ddStat
 function ctxProj(e,cid){const c=commesse.find(x=>x.id===cid);showCtx(e,c?c.codice:'Progetto',[
   ['👁 Riepilogo',`apriRiepilogo(${cid})`],
   ['🗂 Apri progetto',`go('pdet',${cid})`],
-  ['✉ Prepara RDO',`RDOEXP.add(${cid});go('rdo')`],
+  ['✉ Prepara RDO',`go('rdo');setTimeout(()=>rdoApriCommessa(${cid}),300)`],
   {sep:1},
   ['📋 Copia codice',`navigator.clipboard&&navigator.clipboard.writeText('${jsq(c?c.codice:'')}');toast&&toast('Codice copiato','ok')`]
 ]);}
