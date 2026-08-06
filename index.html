@@ -7611,8 +7611,16 @@ function ctxRdoForn(e,cid,fid){const f=fornitori.find(x=>x.id==fid);const st=ddS
   else items.push(['✓ Approva ora',`rdoQuickStato(${cid},${fid},'approvata')`]);
   items.push({sep:1},
     ['⬇ Scarica distinta PDF',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=pdf','_blank')`],
-    ['⬇ Scarica distinta Excel',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=xlsx','_blank')`]);
+    ['⬇ Scarica distinta Excel',`window.open('${API}/api/commesse/${cid}/rdo/${fid}/export?fmt=xlsx','_blank')`],
+    {sep:1},
+    ['🗑 Elimina la RDO',`rdoEliminaDaElenco(${cid},${fid})`,'danger']);
   showCtx(e,f?f.nome:'Fornitore',items);
+}
+// eliminazione dall'elenco: apre la RDO e chiede conferma dalla sua scheda, così
+// si vede che cosa si sta buttando via prima di buttarlo
+async function rdoEliminaDaElenco(cid,fid){
+  await rdoOpenEditor(cid,fid);
+  setTimeout(ddElimina,400);
 }
 function ctxShip(e,cid,fid){const f=fornitori.find(x=>x.id==fid);const st=ddStatoCorrente(cid,fid);
   const items=[['✉ Apri editor RDO',`rdoOpenEditor(${cid},${fid})`]];
@@ -8500,6 +8508,9 @@ function ddAzioni(d){
     dx.push(`<button class="btn btn-go btn-sm" onclick="ddNuovaRevisione()" title="Sblocca per modificare: crea la revisione successiva">✚ Nuova revisione</button>`);
   if(puo('annullata')&&st!=='bozza')
     dx.push(`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="ddAnnulla()">✕ Annulla RDO</button>`);
+  // eliminare è un'altra cosa dall'annullare: annullata resta a storico, questa
+  // sparisce del tutto — serve per buttare via le prove
+  dx.push(`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="ddElimina()" title="Butta via la richiesta e la sua storia">🗑 Elimina</button>`);
 
   return A.join('')+(dx.length?`<div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">${dx.join('')}</div>`:'');
 }
@@ -8766,6 +8777,45 @@ async function ddSetEsito(esito,motivo){
     DD.data=await r.json();await loadDdList();renderDdEditor(DD.data);
     if(S.projId===DD.cid)refreshDetail();
     toast(DD.data.esito_etichetta||'Risposta registrata','ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+
+/* Eliminare NON è annullare: una RDO annullata resta a storico con il suo
+   motivo, questa sparisce del tutto. Serve a buttare via le prove — e siccome
+   l'assegnazione dei pezzi resta, riaprendo la scheda se ne prepara una nuova
+   da zero. */
+function ddElimina(){
+  const d=DD.data,st=d.stato;
+  const avviso=st==='confermata'
+    ? `<div class="arch-stato bad">Su questa RDO è già stato registrato un ordine dell'amministrazione: eliminandola sparisce anche quella traccia.</div>`
+    : (st==='inviata'||st==='ricevuta')
+    ? `<div class="arch-stato nuova">Questa RDO è già partita: spariscono anche la revisione e i messaggi del filone.</div>`
+    : '';
+  grModale(`Elimino ${esc(d.codice_rev||d.codice_rdo||'questa RDO')}?`,
+    `${avviso}
+     <div style="font-size:13px;line-height:1.7">
+       Spariscono la richiesta, le sue prerevisioni, le revisioni e i messaggi.
+       <b>I pezzi restano assegnati a ${esc(d.fornitore_nome)}</b>: riaprendo la scheda
+       ne nasce una nuova, vuota. Per non chiedergli più niente togli i pezzi dal progetto.
+     </div>
+     ${(d.esito==='completa'||d.esito==='parziale')
+       ? `<div class="fmuted" style="font-size:11.5px;margin-top:10px">Le offerte già ricevute non si toccano: sono un documento del fornitore.</div>`:''}`,
+    [['Annulla',null],['🗑 Elimina la RDO',()=>ddEliminaConferma(),true]]);
+}
+async function ddEliminaConferma(){
+  const cid=DD.cid,fid=DD.fid;
+  try{
+    const r=await fetch(API+`/api/commesse/${cid}/rdo/${fid}`,{method:'DELETE'});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a eliminarla'));
+    const esito=await r.json();
+    await loadDdList();
+    // si resta sulla commessa: si passa alla prima RDO rimasta, o si torna all'elenco
+    const restanti=(DDLIST||[]).filter(x=>String(x.commessa_id)===String(cid)&&String(x.fornitore_id)!==String(fid));
+    if(restanti.length)await rdoOpenEditor(cid,restanti[0].fornitore_id);
+    else{RV.mode='list';RV.fid=null;renderRdoView();}
+    toast(esito.eliminata
+      ? `${esito.codice||'RDO'} eliminata${esito.pezzi_liberati?` · ${esito.pezzi_liberati} pezzi tornati da inviare`:''}`
+      : 'Non c\'era niente da eliminare','ok');
   }catch(e){toast(e.message||'Errore',true);}
 }
 
