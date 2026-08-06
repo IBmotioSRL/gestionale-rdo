@@ -52,6 +52,8 @@ Una per sezione, tutte già nel markup; il router accende quella giusta.
 | `v-proj` | Progetti (griglia) | `renderProgetti` · `"PROGETTI GRID"` | 1480 |
 | `v-pdet` | **Progetto** (albero + drawer + impostazioni) | `openProgetto` · `renderTree` · `"PROGETTO DETAIL"` | 1490 |
 | `v-rdo` | RDO | `"RDO VIEW"` | 1543 |
+| `v-fav` | Forniture e avanzamento | `favEnter` · `"FORNITURE E AVANZAMENTO"` | dopo `v-rdo` |
+| `v-gantt` | Gantt e gerarchia (a tutta pagina) | ospita il dock, `"FINESTRA IN BASSO"` | dopo `v-fav` |
 | `v-forn` | Fornitori | `renderForn` · `"FORNITORI — lista friendly"` | 1562 |
 | `v-ore` | Raccolta ore | `"RACCOLTA ORE"` | 1585 |
 | `v-mag` | Magazzino | `"MAGAZZINO"` | 1597 |
@@ -61,6 +63,11 @@ Una per sezione, tutte già nel markup; il router accende quella giusta.
 
 **Router:** `go(vista, pid)` — accende `.view#v-<vista>` e la voce di menu
 `.ni[data-v=…]`. Per aprire un progetto: `go('pdet', id)`.
+
+**Menu a discesa:** `NAV_GRUPPI` raccoglie sotto la voce **Commessa** le quattro
+schermate della stessa commessa (`proj`, `pdet`, `rdo`, `fav`, `gantt`).
+`navGrp(g)` apre e chiude, `navSync(v)` tiene aperto il gruppo che contiene la
+vista accesa. Cliccare l'intestazione **non naviga**.
 
 ---
 
@@ -128,6 +135,17 @@ In testata: `🚦 Cosa manca` · `✨ Auto-assegna` · `⚙️ Impostazioni`.
 - `"revisione RDO + blocco (inviata = immodificabile)"`
 - `"pannello unico di spedizione"`
 
+**Forniture e avanzamento** (`"FORNITURE E AVANZAMENTO"`)
+
+Stessi dati del Gantt (`/api/commesse/{id}/gantt`), letti come elenco di
+consegne: raggruppati per fornitore, in ordine di data promessa. Stato in `FAV`.
+`favGruppi()` fa i gruppi (fornitore · «IB Motion (in casa)» per interne e
+incluse · «Pezzi senza percorso» in fondo); lo stato di una tappa si cambia da
+qui con la **stessa** `PATCH /api/percorso/tappe/{id}` del cassetto del pezzo —
+un solo modo di cambiare stato, così le notifiche alla tappa dopo partono
+comunque. Dopo la PATCH si ricarica tutto: una tappa fatta sposta gli inizi
+dedotti di quelle a valle.
+
 **Finestra in basso — Gantt e gerarchia** (`"FINESTRA IN BASSO"`, in fondo)
 
 Sta **fuori da `.app`**, `position:fixed`, e si vede da ogni sezione tranne
@@ -135,6 +153,12 @@ Magazzino e Raccolta Ore (`SEZIONI_SENZA_DOCK`). Stato in `DOCK`, salvato in
 `localStorage.rdo_dock`; quattro stati: `chiuso` / `aperto` / `ridotto` /
 `pieno`. `dockApplica()` è l'unico posto che decide cosa si vede — va chiamata
 da `go()` a ogni cambio sezione.
+
+Nella sezione **Gantt e gerarchia** (`v-gantt`) lo stesso pannello viene
+**spostato** dentro `#gantSlot` da `dockAncora()` e prende la classe `.inpage`:
+è l'elemento vero, non una copia — due Gantt vivi vorrebbero dire due volte gli
+stessi id. Lì è sempre aperto, ma `DOCK.stato` **non** si tocca, altrimenti
+uscendo la finestra resterebbe aperta dappertutto.
 
 - `controlliInvio`-style: `dockCarica()` prende `/gantt` e `/gerarchia` insieme
 - `dockDisegnaGantt()` — asse tempo, barre per pezzo o per fornitore

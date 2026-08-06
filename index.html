@@ -41,6 +41,14 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .ni:hover{background:rgba(44,21,6,.05);color:var(--t1)}
 .ni.on{background:rgba(245,168,35,.13);color:var(--go-d);font-weight:700}
 .ni svg{width:15px;height:15px;flex-shrink:0}
+/* voce di menu che si apre a discesa: «Commessa» tiene sotto di sé le quattro
+   schermate che parlano della stessa cosa. La freccia dice se è aperta. */
+.ni-caret{margin-left:auto;font-style:normal;font-size:11px;color:var(--t3);transition:transform .15s;transform:rotate(0)}
+.ni-grp.aperto .ni-caret{transform:rotate(90deg)}
+.ni-sub{display:none;margin:0 0 3px 0;padding-left:11px;border-left:1px solid var(--bd)}
+.ni-sub.on{display:block}
+.ni-sub .ni{font-size:12px;padding:6px 9px}
+.ni-sub .ni .nid{width:15px;text-align:center;flex-shrink:0;font-size:12px}
 .sb-foot{padding:10px 12px;border-top:1px solid var(--bd);flex-shrink:0}
 .api-pill{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2);padding:6px 9px;border-radius:6px;background:rgba(44,21,6,.04);cursor:pointer;width:100%;border:none;font-family:inherit;transition:background .12s}
 .api-pill:hover{background:rgba(44,21,6,.08)}
@@ -1756,6 +1764,54 @@ textarea.fld{resize:vertical;min-height:60px}
 .ico-btn{border:1px solid var(--bd);background:var(--surf);color:var(--t2);border-radius:6px;
   width:23px;height:21px;font-size:11px;line-height:1;cursor:pointer;flex-shrink:0}
 .ico-btn:hover{border-color:var(--go);color:var(--go-d)}
+/* lo stesso pannello, ma dentro la pagina «Gantt e gerarchia»: perde il
+   galleggiamento e occupa tutto lo spazio. I tre pulsanti di finestra
+   (riduci / a tutta pagina / chiudi) qui non vogliono dire niente. */
+.dock.inpage{position:static;height:auto!important;flex:1;min-height:0;z-index:auto;
+  border-top:0;box-shadow:none;display:flex}
+.dock.inpage .dock-rz,.dock.inpage .ico-btn{display:none}
+/* qui lo spazio c'è: i filtri vanno a capo invece di scorrere di lato, e
+   l'ultima tendina smette di sparire oltre il bordo */
+.dock.inpage .flt-bar{flex-wrap:wrap;overflow-x:visible}
+.dock.inpage .flt-bar select,.dock.inpage .flt-bar input{font-size:11px;max-width:none}
+
+/* ── FORNITURE E AVANZAMENTO ── */
+.fa-wrap{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.fa-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}
+.fa-k{background:var(--surf);border:1px solid var(--bd);border-radius:11px;padding:11px 13px}
+.fa-k .v{font-size:20px;font-weight:800;line-height:1.1}
+.fa-k .l{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.fa-k.rit .v{color:#C0151E}
+.fa-k.ok .v{color:#1E7A3C}
+.fa-f{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.fa-f input,.fa-f select{font-size:11.5px;border:1px solid var(--bd);border-radius:7px;padding:5px 8px;background:var(--surf)}
+.fa-grp{background:var(--surf);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.fa-gh{display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;background:var(--bg);border-bottom:1px solid var(--bd)}
+.fa-gh:hover{background:rgba(44,21,6,.04)}
+.fa-gh .cv{font-size:11px;color:var(--t3);width:11px;flex-shrink:0}
+.fa-gh .nm{font-size:12.5px;font-weight:800;color:var(--t1)}
+.fa-gh .rdo{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:20px;background:rgba(44,21,6,.06);color:var(--t2)}
+.fa-gh .sp{flex:1}
+.fa-gh .mini{font-size:10.5px;color:var(--t2)}
+.fa-bar{width:110px;height:7px;border-radius:20px;background:rgba(44,21,6,.09);overflow:hidden;flex-shrink:0}
+.fa-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--go),var(--go-d))}
+.fa-tb{width:100%;border-collapse:collapse;font-size:11.5px}
+.fa-tb th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);font-weight:800;padding:6px 10px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.fa-tb td{padding:6px 10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.fa-tb tr:last-child td{border-bottom:0}
+.fa-tb tr:hover td{background:rgba(44,21,6,.03)}
+.fa-tb .cod{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:11px;cursor:pointer;color:var(--go-d)}
+.fa-tb .den{color:var(--t2)}
+.fa-st{font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.fa-st.da_fare{background:rgba(44,21,6,.07);color:var(--t2)}
+.fa-st.in_corso{background:rgba(245,168,35,.18);color:#8a5a06}
+.fa-st.fatta{background:rgba(30,122,60,.14);color:#1E7A3C}
+.fa-rit{font-size:9.5px;font-weight:800;color:#fff;background:#C0151E;border-radius:20px;padding:1px 7px;margin-left:5px}
+.fa-avz{display:flex;gap:4px}
+.fa-avz button{border:1px solid var(--bd);background:var(--surf);border-radius:6px;font:inherit;font-size:10px;font-weight:700;padding:2px 7px;cursor:pointer;color:var(--t2)}
+.fa-avz button:hover{border-color:var(--go);color:var(--go-d)}
+.fa-avz button.on{background:var(--go);color:#3a2406;border-color:var(--go)}
+.fa-vuoto{padding:30px 16px;text-align:center;font-size:12px;color:var(--t2);line-height:1.6}
 
 /* GANTT */
 .gt{min-width:100%;font-size:11px;position:relative}
@@ -1916,8 +1972,16 @@ textarea.fld{resize:vertical;min-height:60px}
   <nav class="sb-nav">
     <div class="sb-sec">Principale</div>
     <div class="ni on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</div>
-    <div class="ni" data-v="proj" onclick="go('proj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Progetti</div>
-    <div class="ni" data-v="rdo" onclick="go('rdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Richieste di offerta</div>
+    <!-- Commessa: una voce sola che si apre sulle quattro schermate della
+         stessa commessa. Cliccarla apre o chiude l'elenco, non naviga: la
+         destinazione la sceglie chi legge. -->
+    <div class="ni ni-grp" id="navGrpComm" onclick="navGrp('comm')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Commessa<i class="ni-caret">›</i></div>
+    <div class="ni-sub" id="navSubComm">
+      <div class="ni" data-v="proj" onclick="go('proj')"><span class="nid">📁</span>Progetti</div>
+      <div class="ni" data-v="rdo" onclick="go('rdo')"><span class="nid">✉</span>Richieste di offerta</div>
+      <div class="ni" data-v="fav" onclick="go('fav')"><span class="nid">🚚</span>Forniture e avanzamento</div>
+      <div class="ni" data-v="gantt" onclick="go('gantt')"><span class="nid">📊</span>Gantt e gerarchia</div>
+    </div>
     <div class="ni" data-v="ore" onclick="go('ore')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Raccolta Ore</div>
     <div class="ni" data-v="mag" onclick="go('mag')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v3M3 8l9 4 9-4M3 8v11a2 2 0 002 2h14a2 2 0 002-2V8"/><path d="M12 12v9"/></svg>Magazzino</div>
     <div class="ni" data-v="costi" onclick="go('costi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi</div>
@@ -2122,6 +2186,33 @@ textarea.fld{resize:vertical;min-height:60px}
       <div id="rdoEdit" style="display:none"></div>
       <div id="rdoShip" style="display:none"></div>
     </div>
+  </div>
+
+  <!-- ════ FORNITURE E AVANZAMENTO ════
+       La stessa commessa del Gantt, vista come elenco di consegne invece che
+       come barre: chi deve portare cosa, entro quando, e cosa è già arrivato. -->
+  <div id="v-fav" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Forniture e avanzamento</div><div class="vsub" id="favSub">Chi deve portare cosa, e a che punto è</div></div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="favComm" onchange="favSetComm(this.value)" style="font-size:11.5px;border:1px solid var(--bd);border-radius:7px;padding:5px 8px;background:var(--surf);max-width:250px"></select>
+        <button class="btn btn-aggiorna" onclick="favCarica(true)">🔄 Aggiorna</button>
+      </div>
+    </div></div>
+    <div class="vscroll"><div id="favBody"></div></div>
+  </div>
+
+  <!-- ════ GANTT E GERARCHIA ════
+       Il pannello in basso, a tutta pagina. Non è una copia: è proprio lui,
+       spostato qui dentro quando si entra e rimesso al suo posto quando si
+       esce, così le barre si disegnano con un codice solo. -->
+  <div id="v-gantt" class="view">
+    <div class="vtop"><div class="vtop-row">
+      <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div><div class="h1" style="font-size:15px">Gantt e gerarchia</div><div class="vsub">Il calendario della commessa e l'albero dei codici</div></div></div>
+    </div></div>
+    <div class="vscroll" style="padding:0;overflow:hidden"><div id="gantSlot" style="height:100%;display:flex"></div></div>
   </div>
 
   <!-- ════ FORNITORI ════ -->
@@ -2747,10 +2838,37 @@ async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r
 }catch{commesse=[];}}
 
 /* ── NAV ── */
+/* ── menu a discesa: «Commessa» ──
+   Quattro schermate che parlano della stessa cosa stanno sotto una voce sola.
+   Cliccare l'intestazione apre o chiude l'elenco e basta: portare da qualche
+   parte chi voleva solo guardare le opzioni è il modo migliore per fargli
+   perdere il punto in cui era. */
+const NAV_GRUPPI={comm:['proj','pdet','rdo','fav','gantt']};
+const NAV_APERTI={comm:true};
+function navGrp(g){
+  NAV_APERTI[g]=!NAV_APERTI[g];
+  try{localStorage.setItem('rdo_nav_grp',JSON.stringify(NAV_APERTI));}catch{}
+  navSync(S.v);
+}
+function navSync(v){
+  Object.keys(NAV_GRUPPI).forEach(g=>{
+    const dentro=NAV_GRUPPI[g].includes(v);
+    // la voce corrente sta lì sotto: l'elenco si apre da solo, altrimenti la
+    // pagina accesa sarebbe invisibile nel menu
+    const aperto=NAV_APERTI[g]||dentro;
+    const hd=document.getElementById('navGrp'+g[0].toUpperCase()+g.slice(1));
+    const sub=document.getElementById('navSub'+g[0].toUpperCase()+g.slice(1));
+    if(hd){hd.classList.toggle('aperto',aperto);hd.classList.toggle('on',dentro&&!aperto);}
+    if(sub)sub.classList.toggle('on',aperto);
+  });
+}
+try{Object.assign(NAV_APERTI,JSON.parse(localStorage.getItem('rdo_nav_grp')||'{}'));}catch{}
+
 function go(v,pid){
   closeDD();closeSb();
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.ni[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===v||(v==='pdet'&&x.dataset.v==='proj')));
+  navSync(v);
   S.v=v;
   if(v==='pdet'){
     // aprendo un progetto la finestra in basso lo segue; poi si può cambiare
@@ -2759,9 +2877,12 @@ function go(v,pid){
     openProgetto(pid);dockApplica();return;
   }
   hideFAB();
-  dockApplica();   // la finestra in basso c'è dovunque tranne Magazzino e Ore
   document.getElementById('v-'+v).classList.add('on');
+  // dopo aver acceso la vista: dentro «Gantt e gerarchia» il pannello si
+  // trasferisce nella pagina, e per farlo la pagina deve già esserci
+  dockApplica();   // la finestra in basso c'è dovunque tranne Magazzino e Ore
   if(v==='proj')renderProjGrid();
+  if(v==='fav')favEnter();
   if(v==='rdo')rdoEnter();
   if(v==='ore')oreEnter();
   if(v==='mag')magEnter();
@@ -10645,6 +10766,194 @@ function toggleGlance(){
   function up(){if(!st)return;st.s.classList.remove('drag');try{localStorage.setItem(st.key,parseInt(getComputedStyle(document.documentElement).getPropertyValue(st.vr))||st.w);}catch{}document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);st=null;}
 })();
 /* ════════════════════════════════════════════════════════════════════════════
+   FORNITURE E AVANZAMENTO
+   ════════════════════════════════════════════════════════════════════════════
+   Il Gantt risponde a «quando»; questa pagina risponde a «chi deve portarmi
+   cosa, e l'ha portato?». Stessi dati (`/gantt`), lettura diversa: raggruppati
+   per fornitore, in ordine di consegna, con lo stato che si cambia da qui —
+   perché segnare un pezzo arrivato non deve costringere ad aprire l'albero,
+   trovare il codice, aprire il cassetto e scendere fino al percorso.
+
+   Le tappe interne e quelle comprese nel lavoro di chi produce finiscono nel
+   gruppo «IB Motion», non hanno un fornitore da chiamare. I pezzi senza
+   percorso restano in fondo, in un gruppo loro: non sono una fornitura, sono
+   una fornitura che nessuno ha ancora pianificato, ed è un'informazione.
+*/
+const FAV={commessa:null,gantt:null,rdo:null,caricando:false,q:'',solo:'',aperti:{},salvando:null};
+const FAV_STATI=[['da_fare','Da fare'],['in_corso','In corso'],['fatta','Fatta']];
+
+function favEnter(){
+  if(!FAV.commessa)FAV.commessa=S.projId||DOCK.commessa||(commesse[0]&&commesse[0].id)||null;
+  favCarica();
+}
+function favSetComm(id){FAV.commessa=id?parseInt(id,10):null;FAV.gantt=null;FAV.aperti={};favCarica(true);}
+function favCommOpts(){
+  const sel=document.getElementById('favComm');if(!sel)return;
+  sel.innerHTML=commesse.length
+    ?commesse.map(c=>`<option value="${c.id}"${c.id===FAV.commessa?' selected':''}>${esc(c.codice)} — ${esc((c.nome||'').slice(0,40))}</option>`).join('')
+    :'<option value="">nessuna commessa</option>';
+}
+async function favCarica(forza){
+  favCommOpts();
+  const body=document.getElementById('favBody');if(!body)return;
+  if(!FAV.commessa){body.innerHTML='<div class="fa-vuoto">Non c\'è nessuna commessa da mostrare.</div>';return;}
+  if(FAV.caricando)return;
+  if(!forza&&FAV.gantt&&FAV.gantt.commessa_id===FAV.commessa)return favRender();
+  FAV.caricando=true;
+  body.innerHTML='<div class="fa-vuoto">carico…</div>';
+  try{
+    const [rg,rr]=await Promise.all([
+      fetch(API+`/api/commesse/${FAV.commessa}/gantt`),
+      fetch(API+`/api/rdo-list?commessa_id=${FAV.commessa}`)]);
+    FAV.gantt=rg.ok?await rg.json():null;
+    FAV.rdo=rr.ok?await rr.json():[];
+  }catch{FAV.gantt=null;FAV.rdo=[];}
+  finally{FAV.caricando=false;}
+  favRender();
+}
+
+/* Le barre diventate righe di fornitura, raggruppate per chi le deve fare. */
+function favGruppi(){
+  const barre=(FAV.gantt&&FAV.gantt.barre)||[];
+  const q=(FAV.q||'').toLowerCase().trim();
+  const g=new Map();
+  const chiave=b=>{
+    if(b.tipo==='senza_percorso')return '￿|Pezzi senza percorso';
+    if(b.fornitore_nome)return '0|'+b.fornitore_nome;
+    return '￾|IB Motion (in casa)';
+  };
+  barre.forEach(b=>{
+    if(q&&!((b.codice||'')+' '+(b.denominazione||'')+' '+(b.etichetta||'')+' '+(b.fornitore_nome||'')).toLowerCase().includes(q))return;
+    if(FAV.solo==='ritardo'&&!b.in_ritardo)return;
+    if(FAV.solo==='aperte'&&b.stato==='fatta')return;
+    if(FAV.solo==='senza_data'&&b.fine)return;
+    const k=chiave(b);
+    // il fornitore (e quindi la RDO) è del gruppo solo quando il gruppo È un
+    // fornitore: nel mucchio dei pezzi senza percorso ce ne sono di tutti,
+    // e mostrare la RDO del primo capitato sarebbe una bugia
+    if(!g.has(k))g.set(k,{nome:k.split('|').slice(1).join('|'),forn_id:k[0]==='0'?b.fornitore_id:null,righe:[]});
+    g.get(k).righe.push(b);
+  });
+  const lontano='9999-12-31';
+  return [...g.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>{
+    v.righe.sort((a,b)=>String(a.fine||lontano).localeCompare(String(b.fine||lontano))||String(a.codice).localeCompare(String(b.codice)));
+    v.chiave=k;
+    v.fatte=v.righe.filter(r=>r.stato==='fatta').length;
+    v.ritardo=v.righe.filter(r=>r.in_ritardo).length;
+    v.prossima=v.righe.map(r=>r.fine).filter(Boolean).sort()[0]||null;
+    v.rdo=(FAV.rdo||[]).find(r=>r.fornitore_id===v.forn_id)||null;
+    return v;
+  });
+}
+function favRender(){
+  const body=document.getElementById('favBody');if(!body)return;
+  const sub=document.getElementById('favSub');
+  if(!FAV.gantt){body.innerHTML='<div class="fa-vuoto">Non sono riuscito a leggere l\'avanzamento di questa commessa.</div>';return;}
+  const c=commesse.find(x=>x.id===FAV.commessa);
+  if(sub)sub.textContent=c?`${c.codice} — ${c.nome||''}`:'Chi deve portare cosa, e a che punto è';
+  const gruppi=favGruppi();
+  const tutte=(FAV.gantt.barre||[]).filter(b=>b.tipo!=='senza_percorso');
+  const fatte=tutte.filter(b=>b.stato==='fatta').length;
+  const ritardo=tutte.filter(b=>b.in_ritardo).length;
+  const senzaData=tutte.filter(b=>!b.fine).length;
+  const fornitori_n=new Set(tutte.map(b=>b.fornitore_nome).filter(Boolean)).size;
+
+  body.innerHTML=`<div class="fa-wrap">
+    <div class="fa-kpi">
+      <div class="fa-k"><div class="v">${fornitori_n}</div><div class="l">Fornitori coinvolti</div></div>
+      <div class="fa-k"><div class="v">${tutte.length}</div><div class="l">Forniture da seguire</div></div>
+      <div class="fa-k ok"><div class="v">${fatte}</div><div class="l">Già arrivate</div></div>
+      <div class="fa-k rit"><div class="v">${ritardo}</div><div class="l">In ritardo</div></div>
+      <div class="fa-k"><div class="v">${senzaData}</div><div class="l">Senza data promessa</div></div>
+    </div>
+    <div class="fa-f">
+      <input id="favQ" placeholder="Cerca codice, denominazione o fornitore" style="min-width:250px;flex:1" value="${esc(FAV.q)}" oninput="favFiltro(this)">
+      <select onchange="FAV.solo=this.value;favRender()">
+        <option value=""${FAV.solo?'':' selected'}>Tutte</option>
+        <option value="aperte"${FAV.solo==='aperte'?' selected':''}>Solo non arrivate</option>
+        <option value="ritardo"${FAV.solo==='ritardo'?' selected':''}>Solo in ritardo</option>
+        <option value="senza_data"${FAV.solo==='senza_data'?' selected':''}>Solo senza data</option>
+      </select>
+      <span style="flex:1"></span>
+      <button class="btn btn-ghost btn-sm" onclick="favApriTutti(true)">Espandi tutto</button>
+      <button class="btn btn-ghost btn-sm" onclick="favApriTutti(false)">Comprimi tutto</button>
+    </div>
+    ${gruppi.length?gruppi.map((v,i)=>favGruppoHtml(v,i)).join(''):'<div class="fa-vuoto">Nessuna fornitura con questi filtri.</div>'}
+  </div>`;
+  FAV._chiavi=gruppi.map(v=>v.chiave);
+}
+function favGruppoHtml(v,i){
+  const tot=v.righe.length,perc=tot?Math.round(v.fatte*100/tot):0;
+  const aperto=!!FAV.aperti[v.chiave];
+  const senza=v.chiave.charCodeAt(0)===0xffff;
+  return `<div class="fa-grp">
+    <div class="fa-gh" onclick="favToggle(${i})">
+      <span class="cv">${aperto?'▾':'▸'}</span>
+      <span class="nm">${esc(v.nome)}</span>
+      ${v.rdo?`<span class="rdo">${esc(v.rdo.codice_rev||v.rdo.codice_rdo||'')} · ${esc(v.rdo.stato_etichetta||'')}</span>`:''}
+      <span class="sp"></span>
+      ${v.ritardo?`<span class="fa-rit">${v.ritardo} in ritardo</span>`:''}
+      ${senza?'':`<span class="mini">${v.fatte}/${tot} arrivate</span><span class="fa-bar"><i style="width:${perc}%"></i></span>`}
+      ${senza?`<span class="mini">${tot} codici</span>`:''}
+      <span class="mini">${v.prossima?('prossima '+fmtDate(v.prossima)):'nessuna data'}</span>
+    </div>
+    ${aperto?favTabellaHtml(v):''}
+  </div>`;
+}
+function favTabellaHtml(v){
+  return `<div style="overflow-x:auto"><table class="fa-tb">
+    <tr><th>Codice</th><th>Denominazione</th><th>Passaggio</th><th>Inizio</th><th>Consegna</th><th>Stato</th></tr>
+    ${v.righe.map(b=>{
+      const tid=String(b.id||'').startsWith('tappa-')?parseInt(String(b.id).slice(6),10):null;
+      return `<tr>
+      <td>${b.parte_id?`<span class="cod" onclick="favVaiAlPezzo(${b.parte_id})">${esc(b.codice||'—')}</span>`:`<span class="fmuted">—</span>`}</td>
+      <td class="den">${esc(b.denominazione||(b.tipo==='voce'?'voce di commessa':''))}</td>
+      <td>${esc(b.etichetta||'')}${b.tipo==='senza_percorso'&&b.fornitore_nome?` <span class="fmuted">· ${esc(b.fornitore_nome)}</span>`:''}${b.interna?' <span class="fmuted">(in casa)</span>':''}${b.inclusa?' <span class="fmuted">(compreso)</span>':''}</td>
+      <td>${b.inizio?fmtDate(b.inizio)+(b.inizio_dedotto?' <span class="fmuted" title="dedotta, non scritta">≈</span>':''):'<span class="fmuted">—</span>'}</td>
+      <td>${b.fine?fmtDate(b.fine):'<span class="fmuted">—</span>'}${b.in_ritardo?'<span class="fa-rit">ritardo</span>':''}</td>
+      <td>${tid
+        ?`<div class="fa-avz">${FAV_STATI.map(([k,l])=>`<button class="${b.stato===k?'on':''}" onclick="favStato(${tid},'${k}')">${l}</button>`).join('')}</div>`
+        :`<span class="fa-st ${esc(b.stato)}">${esc((FAV_STATI.find(s=>s[0]===b.stato)||['','—'])[1])}</span>`}</td>
+    </tr>`;}).join('')}
+  </table></div>`;
+}
+// ridisegnare a ogni tasto rimette il campo da capo: il cursore va rimesso
+// dov'era, altrimenti correggere una lettera in mezzo diventa impossibile
+function favFiltro(el){
+  FAV.q=el.value;
+  const pos=el.selectionStart;
+  favRender();
+  const n=document.getElementById('favQ');
+  if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch{}}
+}
+function favToggle(i){
+  const k=(FAV._chiavi||[])[i];if(k==null)return;
+  FAV.aperti[k]=!FAV.aperti[k];favRender();
+}
+function favApriTutti(v){(FAV._chiavi||[]).forEach(k=>{FAV.aperti[k]=v;});favRender();}
+async function favVaiAlPezzo(pid){
+  const cid=FAV.commessa;
+  if(cid!==S.projId){go('pdet',cid);setTimeout(()=>{try{jumpPart(pid);openDraw(pid);}catch{}},700);return;}
+  go('pdet',cid);try{jumpPart(pid);openDraw(pid);}catch{}
+}
+/* Segnare una tappa da qui è la stessa PATCH del cassetto del pezzo: un solo
+   modo di cambiare stato, e le notifiche alla tappa successiva partono lo
+   stesso. Si ricarica tutto perché una tappa fatta sposta gli inizi dedotti
+   di quelle dopo — mostrarne una aggiornata e le altre no sarebbe peggio. */
+async function favStato(tappaId,stato){
+  if(FAV.salvando)return;
+  FAV.salvando=tappaId;
+  try{
+    const r=await fetch(API+'/api/percorso/tappe/'+tappaId,{method:'PATCH',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({stato})});
+    if(!r.ok)return toast(await srvErrDetail(r,'Non sono riuscito a cambiare lo stato'),true);
+    toast('Aggiornato','ok');
+    await favCarica(true);
+    if(DOCK.gantt&&DOCK.commessa===FAV.commessa){DOCK.gantt=null;dockCarica(true);}
+  }finally{FAV.salvando=null;}
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
    FINESTRA IN BASSO — Gantt e gerarchia
    ════════════════════════════════════════════════════════════════════════════
    Vive su tutto il software, non solo dentro un progetto: «a che punto siamo»
@@ -10675,17 +10984,37 @@ function dockStatoLeggi(){
     if(s.h)document.documentElement.style.setProperty('--dockh',s.h+'px');
   }catch{}
 }
-// la finestra c'è dovunque tranne dove la commessa non c'entra
-function dockAmmesso(){return !SEZIONI_SENZA_DOCK.includes(S.v);}
+// la finestra c'è dovunque tranne dove la commessa non c'entra. Nella sezione
+// «Gantt e gerarchia» non galleggia: è la pagina.
+function dockAmmesso(){return S.v==='gantt'||!SEZIONI_SENZA_DOCK.includes(S.v);}
+function dockInPagina(){return S.v==='gantt';}
+/* Sposta il pannello dentro la pagina e viceversa. Si sposta l'elemento vero,
+   non se ne fa una copia: due Gantt vivi vorrebbero dire due volte gli stessi
+   id, due volte i listener e due volte i modi di sbagliare. */
+function dockAncora(){
+  const d=document.getElementById('dock'),slot=document.getElementById('gantSlot');
+  if(!d||!slot)return;
+  if(dockInPagina()){
+    if(d.parentElement!==slot)slot.appendChild(d);
+    d.classList.add('inpage');
+  }else if(d.classList.contains('inpage')){
+    document.body.insertBefore(d,document.getElementById('dockApri'));
+    d.classList.remove('inpage');
+  }
+}
 function dockApplica(){
   const d=document.getElementById('dock'),lin=document.getElementById('dockApri');
   if(!d)return;
-  const ammesso=dockAmmesso();
-  const aperto=ammesso&&DOCK.stato!=='chiuso';
+  dockAncora();
+  const ammesso=dockAmmesso(),inPag=dockInPagina();
+  // Nella sua pagina è sempre aperto e intero — ma senza toccare DOCK.stato:
+  // se lo cambiassimo, uscendo di lì la finestra resterebbe aperta dappertutto
+  // solo perché si è passati a dare un'occhiata al Gantt.
+  const aperto=ammesso&&(inPag||DOCK.stato!=='chiuso');
   d.classList.toggle('on',aperto);
-  d.classList.toggle('ridotto',DOCK.stato==='ridotto');
-  d.classList.toggle('pieno',DOCK.stato==='pieno');
-  lin.classList.toggle('on',ammesso&&DOCK.stato==='chiuso');
+  d.classList.toggle('ridotto',!inPag&&DOCK.stato==='ridotto');
+  d.classList.toggle('pieno',!inPag&&DOCK.stato==='pieno');
+  lin.classList.toggle('on',!inPag&&ammesso&&DOCK.stato==='chiuso');
   document.getElementById('dockBtnRid').textContent=DOCK.stato==='ridotto'?'▔':'▁';
   document.getElementById('dockBtnRid').title=DOCK.stato==='ridotto'?'Riapri':'Riduci a barra';
   ['gantt','albero','due'].forEach(v=>{
@@ -10694,8 +11023,9 @@ function dockApplica(){
   });
   document.getElementById('dockPaneGantt').style.display=(DOCK.vista==='albero')?'none':'block';
   document.getElementById('dockPaneAlbero').style.display=(DOCK.vista==='gantt')?'none':'block';
-  if(aperto&&DOCK.stato!=='ridotto')dockCarica();
-  dockOrologio(aperto&&DOCK.stato!=='ridotto');
+  const attivo=aperto&&(inPag||DOCK.stato!=='ridotto');
+  if(attivo)dockCarica();
+  dockOrologio(attivo);
   dockStatoSalva();
 }
 function dockApri(){DOCK.stato='aperto';if(!DOCK.commessa&&S.projId)DOCK.commessa=S.projId;dockApplica();}
