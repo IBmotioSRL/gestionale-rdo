@@ -1163,22 +1163,52 @@ table.mg-req .btn{margin-left:4px}
 .dd-pack.link{background:#FFF8EA;border-color:var(--go-d)}
 .dd-pack b{font-size:12px;color:var(--t1)}
 .dd-pack .warn{color:#8A2119;font-weight:700}
-.sm-intro{font-size:11.5px;color:var(--t3);line-height:1.6;margin-bottom:10px}
-.sm-riga{border:1px solid var(--bd);border-radius:9px;padding:10px 12px;margin-bottom:8px;background:var(--surf)}
-.sm-hd{font-size:12.5px;color:var(--t1);margin-bottom:7px}
-.sm-hd b{font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
-.sm-serve{float:right;font-size:11px;color:var(--t3);font-weight:700}
-.sm-corpo{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.sm-corpo label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);display:flex;gap:6px;align-items:center}
-.sm-corpo input{width:74px;padding:5px 7px;border:1.4px solid var(--bd2);border-radius:6px;font:inherit;font-size:13px;font-weight:800;text-align:right;color:var(--t1)}
-.sm-sep{font-size:15px;color:var(--t3);font-weight:800}
-.sm-nota{font-size:10.5px;color:var(--t3);flex:1;min-width:180px}
-.sm-sostituti{margin-top:9px;padding-top:8px;border-top:1px dashed var(--bd)}
-.sm-lbl{font-size:10.5px;color:var(--t2);margin-bottom:5px}
-.sm-sost{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:var(--t1);padding:4px 0;cursor:pointer}
-.sm-sost i{display:block;font-style:normal;font-size:10px;color:var(--t3);margin-top:1px}
-.sm-scartati{margin-top:7px;font-size:10.5px;color:var(--t3);font-style:italic}
-.sm-ft{margin-top:10px;display:flex;justify-content:flex-end}
+/* ── MAGAZZINO nella RDO ──
+   Una riga per codice. Il bordo sinistro colorato è la prima cosa che si vede
+   scorrendo: rosso = qualcosa va ordinato, verde = si copre con quello che c'è. */
+.sm-banner{font-size:11.5px;line-height:1.55;color:var(--t2);background:var(--bg);
+  border:1px solid var(--bd);border-radius:10px;padding:9px 12px;margin-bottom:11px}
+.sm-banner.attesa{background:rgba(245,168,35,.12);border-color:rgba(245,168,35,.45);color:#7a4f05}
+.sm-banner.ok{background:rgba(30,122,60,.10);border-color:rgba(30,122,60,.32);color:#1a6335}
+.sm-elenco{display:flex;flex-direction:column;gap:6px}
+.sm-r{border:1px solid var(--bd);border-left:4px solid var(--t3);border-radius:9px;
+  padding:8px 12px;background:var(--surf)}
+.sm-r.compra{border-left-color:#C0151E}
+.sm-r.coperta{border-left-color:#1E7A3C}
+.sm-r.ok{background:rgba(30,122,60,.04)}
+.sm-r-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sm-pallino{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--t3)}
+.sm-r.compra .sm-pallino{background:#C0151E}
+.sm-r.coperta .sm-pallino{background:#1E7A3C}
+.sm-cod{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:var(--t1)}
+.sm-den{font-size:11.5px;color:var(--t2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sm-tag{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+  padding:1px 7px;border-radius:20px;white-space:nowrap}
+.sm-tag.scorta{background:rgba(44,21,6,.07);color:var(--t2)}
+.sm-tag.perdere{background:rgba(199,154,59,.20);color:#7a4f05}
+.sm-sp{flex:1}
+.sm-conf{border:1.4px solid var(--go);background:var(--go);color:#3a2406;border-radius:7px;
+  font:inherit;font-size:10.5px;font-weight:800;padding:3px 11px;cursor:pointer;white-space:nowrap}
+.sm-conf:hover{filter:brightness(1.06)}
+.sm-conf.ok{background:transparent;border-color:rgba(30,122,60,.45);color:#1E7A3C}
+.sm-conf:disabled{opacity:.5;cursor:default}
+.sm-r-testo{font-size:11.5px;color:var(--t2);margin-top:4px;line-height:1.6}
+.sm-r-testo b{color:var(--t1);font-variant-numeric:tabular-nums}
+.sm-r-testo b.rosso{color:#C0151E}
+.sm-r-testo b.verde{color:#1E7A3C}
+.sm-alt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px;
+  padding-top:6px;border-top:1px dashed var(--bd)}
+.sm-alt-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3)}
+.sm-alt-v{display:flex;gap:5px;align-items:center;font-size:11px;color:var(--t1);cursor:pointer;
+  border:1px solid var(--bd);border-radius:7px;padding:2px 8px}
+.sm-alt-v.on{border-color:var(--go);background:rgba(245,168,35,.10)}
+.sm-alt-v i{font-style:normal;font-size:9.5px;color:var(--t3)}
+.sm-alt-no{font-size:10px;color:var(--t3);font-style:italic;cursor:help}
+.sm-r-campi{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.sm-r-campi label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
+  color:var(--t3);display:flex;gap:6px;align-items:center}
+.sm-r-campi input{width:72px;padding:3px 7px;border:1.4px solid var(--bd2);border-radius:6px;
+  font:inherit;font-size:12.5px;font-weight:800;text-align:right;color:var(--t1)}
 .dd-revtag.esito{background:#EAF3FF;border-color:#B7D3F5;color:#12467F}
 .rdo-esiti{display:flex;flex-direction:column;gap:6px}
 .rdo-esito{display:flex;gap:8px;align-items:flex-start;background:var(--bg);border:1.4px solid var(--bd);border-radius:8px;padding:9px 11px;cursor:pointer}
@@ -8630,6 +8660,11 @@ function ddAzioni(d){
   }
   if(st==='inviata')
     dx.push(`<button class="btn btn-go btn-sm" onclick="ddClassifica()">📥 Registra risposta</button>`);
+  // «la merce è arrivata» è un fatto suo, separato dalla conferma d'ordine: il
+  // fornitore accetta oggi e consegna fra tre settimane. L'avanzo rientra a
+  // scaffale qui, non prima — se no il magazzino risulta pieno di roba che non c'è.
+  if(!d.merce_arrivata_at&&d.magazzino_richiesta_id&&['inviata','ricevuta','confermata'].includes(st))
+    dx.push(`<button class="btn btn-ghost btn-sm" onclick="smMerceArrivata()" title="Registra l'entrata: l'avanzo dell'arrotondamento torna a magazzino">📦 Merce arrivata</button>`);
   if(st==='ricevuta'){
     dx.push(`<button class="btn btn-ghost btn-sm" onclick="ddClassifica()">🏷 Cambia esito</button>`);
     dx.push(`<button class="btn btn-go btn-sm" onclick="ddNuovaRevisione()">✚ Crea revisione</button>`);
@@ -8753,35 +8788,23 @@ async function ddCaricaSmistamento(){
   if(ddTabVisibile(DD.data,'magazzino')!==avevaLinguetta){renderDdEditor(DD.data);return;}
   renderDdSmistamento();
 }
+/* ── la scheda Magazzino: una riga di testo per codice ──
+   Rossa se qualcosa va ordinato, per qualsiasi motivo; verde se si copre tutto
+   con quello che c'è già. Il colore risponde alla domanda che ci si fa
+   scorrendo l'elenco — «questa mi costa o no?» — e la risposta si vede prima
+   di leggere i numeri.
+
+   Ogni riga si conferma da sé. Finché ne resta una da guardare la RDO non si
+   approva: partire senza sapere cosa c'è in casa vuol dire comprare due volte
+   la stessa vite, e quelle arrivano, si pagano e si aggiungono al mucchio. */
 function renderDdSmistamento(){
   const box=document.getElementById('ddSmistamento');if(!box)return;
   const s=DD.smist;
   if(!s||!s.righe.length){
     box.innerHTML='<div class="empty" style="padding:30px">Nessun articolo di questo fornitore sta a magazzino.</div>';
     return;}
-  const riga=(r,i)=>{
-    const sostituti=(r.sostituti||[]).map(a=>`
-      <label class="sm-sost"><input type="radio" name="sm${i}" value="${a.id}" onchange="smScegli(${i},${a.id})">
-        <span>usa <b>${esc(a.materiale)}</b> — ${a.disponibile} disponibili${a.a_perdere?' · a perdere':''}
-          <i>${esc(a.nota)}</i></span></label>`).join('');
-    const scartati=(r.non_utilizzabili||[]).map(a=>
-      `${esc(a.codice)} in ${esc(a.materiale)} (${a.disponibile})`).join(' · ');
-    return `<div class="sm-riga">
-      <div class="sm-hd"><b>${esc(r.codice)}</b> ${esc(r.denominazione)}
-        <span class="sm-serve">ne servono ${r.serve}</span></div>
-      <div class="sm-corpo">
-        <label>dal magazzino
-          <input type="number" min="0" max="${r.disponibile}" value="${r.da_prelevare}"
-            id="smP${i}" onchange="smRicalcola(${i})"></label>
-        <span class="sm-sep">+</span>
-        <label>dal fornitore
-          <input type="number" min="0" value="${r.da_comprare}" id="smC${i}"></label>
-        <span class="sm-nota" id="smN${i}">${esc(smNota(r))}</span>
-      </div>
-      ${sostituti?`<div class="sm-sostituti"><div class="sm-lbl">A magazzino c'è un materiale migliore — <b>lo decidi tu</b>:</div>${sostituti}</div>`:''}
-      ${scartati?`<div class="sm-scartati">Della stessa misura ci sono anche: ${esc(scartati)} — non vanno bene, il materiale è inferiore.</div>`:''}
-    </div>`;
-  };
+  const ro=!s.modificabile;
+  const mancano=s.righe.filter(r=>!r.confermata).length;
   box.innerHTML=`
     <div class="rdo-metrics">
       <div class="rdo-metric"><b>${s.righe.length}</b><span>Codici a magazzino</span></div>
@@ -8789,27 +8812,87 @@ function renderDdSmistamento(){
       <div class="rdo-metric"><b>${s.totale_da_comprare}</b><span>Da comprare</span></div>
       <div class="rdo-metric"><b>${s.totale_avanzo}</b><span>Avanzo che rientra</span></div>
     </div>
-    <div class="sm-intro">Al fornitore si chiede <b>solo quello che manca</b>, arrotondato per misura:
-      nessuno ordina due viti. Il resto diventa una richiesta di prelievo, e l'avanzo
-      dell'arrotondamento rientra a magazzino come reintegro.</div>
-    ${s.righe.map(riga).join('')}
-    <div class="sm-ft">
-      <button class="btn btn-go" onclick="smApplica()">✓ Applica: crea la richiesta e aggiorna la RDO</button>
-    </div>`;
+    ${smBannerHtml(s,mancano,ro)}
+    <div class="sm-elenco">${s.righe.map((r,i)=>smRigaHtml(r,i,ro)).join('')}</div>`;
 }
-function smNota(r){
-  if(!r.da_comprare)return r.da_prelevare?'tutto dal magazzino':'niente da fare';
-  const avanzo=r.avanzo?` · ${r.avanzo} di scorta rientrano a magazzino`:'';
-  return `ne mancano ${r.mancante}, arrotondato a ${r.da_comprare} (a passi di ${r.passo})${avanzo}`;
+function smBannerHtml(s,mancano,ro){
+  if(s.merce_arrivata_at)
+    return `<div class="sm-banner ok">📦 Merce arrivata il ${esc(fmtDate(s.merce_arrivata_at))}: l'avanzo è rientrato a magazzino.</div>`;
+  if(ro)
+    return `<div class="sm-banner">🔒 La RDO non è più in bozza: il magazzino è quello deciso al momento dell'approvazione.
+      ${s.richiesta_magazzino_id?`La richiesta di prelievo è la <b>#${s.richiesta_magazzino_id}</b>.`:''}</div>`;
+  if(mancano)
+    return `<div class="sm-banner attesa">⚠ <b>${mancano}</b> ${mancano===1?'riga ancora da confermare':'righe ancora da confermare'}.
+      Finché ne resta una la RDO non si può approvare.</div>`;
+  return `<div class="sm-banner ok">✓ Magazzino confermato. Approvando la RDO nasce la richiesta di prelievo.</div>`;
 }
-// scegliendo un sostituto la riga si ricalcola su QUEL materiale
+/* La riga: prima la frase, poi i due campi da correggere se serve. I numeri
+   sono nell'ordine in cui uno se li chiede — quante ne servono, quante ne ho,
+   quante ne ordino, quante ne restano sullo scaffale. */
+function smRigaHtml(r,i,ro){
+  const rosso=r.da_comprare>0;
+  const alt=(r.sostituti||[]).length;
+  const scelto=r.articolo_id;
+  return `<div class="sm-r ${rosso?'compra':'coperta'}${r.confermata?' ok':''}" id="smR${i}">
+    <div class="sm-r-top">
+      <span class="sm-pallino"></span>
+      <b class="sm-cod">${esc(r.codice)}</b>
+      <span class="sm-den">${esc(r.denominazione||'')}</span>
+      <span class="sm-tag ${r.a_perdere?'perdere':'scorta'}">${r.a_perdere?'a perdere':'di scorta'}</span>
+      <span class="sm-sp"></span>
+      ${r.confermata
+        ?`<button class="sm-conf ok"${ro?' disabled':''} onclick="smConferma(${i},false)" title="Rimetti in discussione">✓ confermata</button>`
+        :`<button class="sm-conf"${ro?' disabled':''} onclick="smConferma(${i},true)">Conferma</button>`}
+    </div>
+    <div class="sm-r-testo">
+      ne servono <b>${r.serve}</b> ·
+      a magazzino <b>${r.disponibile}</b> ·
+      da ordinare <b class="${rosso?'rosso':'verde'}">${r.da_comprare}</b> ·
+      ne restano <b>${r.residuo}</b>
+      ${r.avanzo?` · <span class="fmuted">${r.avanzo} rientrano all'arrivo</span>`:''}
+      ${r.da_comprare?`<span class="fmuted"> — arrotondato a passi di ${r.passo}</span>`:''}
+    </div>
+    ${alt?smAlternativeHtml(r,i,ro,scelto):''}
+    ${ro?'':`<div class="sm-r-campi">
+      <label>dal magazzino <input type="number" min="0" max="${r.disponibile_max||r.disponibile}"
+        value="${r.da_prelevare}" id="smP${i}" onchange="smRicalcola(${i})"${ro?' disabled':''}></label>
+      <label>dal fornitore <input type="number" min="0" value="${r.da_comprare}" id="smC${i}"
+        onchange="smSegnaDaConfermare(${i})"${ro?' disabled':''}></label>
+    </div>`}
+  </div>`;
+}
+/* Le alternative si mostrano solo dove esistono davvero. Un elenco con
+   un'unica voce già scelta non è una scelta: è rumore che fa dubitare. */
+function smAlternativeHtml(r,i,ro,scelto){
+  const voci=[...(r.articoli||[]).map(a=>[a,false]),...(r.sostituti||[]).map(a=>[a,true])];
+  return `<div class="sm-alt">
+    <span class="sm-alt-lbl">Materiale:</span>
+    ${voci.map(([a,sost])=>`<label class="sm-alt-v${a.id===scelto?' on':''}">
+      <input type="radio" name="smA${i}" ${a.id===scelto?'checked':''}${ro?' disabled':''}
+        onchange="smScegli(${i},${a.id})">
+      <span>${esc(a.materiale)} <i>${a.disponibile} disp.${sost?' · al posto di '+esc(r.materiale_richiesto||'—'):''}</i></span>
+    </label>`).join('')}
+    ${(r.non_utilizzabili||[]).length?`<span class="sm-alt-no" title="${esc((r.non_utilizzabili||[]).map(a=>a.materiale+' ('+a.disponibile+')').join(' · '))}">
+      ci sono anche materiali inferiori: non si possono usare</span>`:''}
+  </div>`;
+}
+// scegliendo un altro materiale la riga si ricalcola su QUELLA scatola
 function smScegli(i,articoloId){
   const r=DD.smist.righe[i];
-  const a=(r.sostituti||[]).find(x=>x.id===articoloId);if(!a)return;
-  r._articolo=articoloId;r._sostituto=a.materiale;
+  const a=[...(r.articoli||[]),...(r.sostituti||[])].find(x=>x.id===articoloId);if(!a)return;
+  r.articolo_id=articoloId;
+  r.disponibile=a.disponibile;
   const inp=document.getElementById('smP'+i);
-  inp.max=a.disponibile;inp.value=Math.min(r.serve,a.disponibile);
+  if(inp){inp.max=a.disponibile;inp.value=Math.min(r.serve,a.disponibile);}
   smRicalcola(i);
+}
+// toccare i numeri rimette la riga in discussione: una conferma vale per
+// quello che si era guardato, non per quello che c'è adesso
+function smSegnaDaConfermare(i){
+  const r=DD.smist.righe[i];
+  r.da_comprare=Math.max(0,parseInt((document.getElementById('smC'+i)||{}).value)||0);
+  r.confermata=false;
+  renderDdSmistamento();
 }
 function smRicalcola(i){
   const r=DD.smist.righe[i];
@@ -8818,30 +8901,48 @@ function smRicalcola(i){
   // stesso arrotondamento del server, con lo stesso margine di 3 pezzi
   let compro=0;
   if(manca>0){const p=r.passo||10;compro=Math.ceil(manca/p)*p;if(compro-manca<=3)compro+=p;}
-  document.getElementById('smC'+i).value=compro;
-  const el=document.getElementById('smN'+i);
-  if(el)el.textContent=smNota({...r,da_prelevare:prelevo,da_comprare:compro,mancante:manca,avanzo:Math.max(0,compro-manca)});
+  r.da_prelevare=prelevo;r.da_comprare=compro;r.mancante=manca;
+  r.avanzo=Math.max(0,compro-manca);
+  r.residuo=Math.max(0,r.disponibile-prelevo);
+  r.confermata=false;
+  renderDdSmistamento();
 }
-async function smApplica(){
-  const righe=DD.smist.righe.map((r,i)=>({
-    codice:r.codice,
-    da_prelevare:Math.max(0,parseInt(document.getElementById('smP'+i).value)||0),
-    da_comprare:Math.max(0,parseInt(document.getElementById('smC'+i).value)||0),
-    articolo_id:r._articolo||((r.articoli||[])[0]||{}).id||null,
-    materiale_richiesto:r.materiale_richiesto||'',
-  })).filter(x=>x.da_prelevare>0||x.da_comprare>=0);
+/* Confermare salva: le scelte vanno sul server subito, non a fine elenco.
+   Con 66 righe, perdere tutto per un tasto sbagliato sarebbe una mattina. */
+async function smConferma(i,valore){
+  const r=DD.smist.righe[i];
+  r.confermata=valore;
   try{
-    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento/applica`,
-      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({righe})});
-    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore'));
+    const out=await smSalva([r]);
+    DD.smist.da_confermare=(DD.smist.righe||[]).filter(x=>!x.confermata).length;
+    DD.data=out;renderDdEditor(out);
+  }catch(e){r.confermata=!valore;renderDdSmistamento();toast(e.message||'Errore',true);}
+}
+async function smSalva(righe){
+  const body={righe:righe.map(r=>({
+    codice:r.codice,
+    da_prelevare:Math.max(0,r.da_prelevare||0),
+    da_comprare:Math.max(0,r.da_comprare||0),
+    articolo_id:r.articolo_id||null,
+    materiale_richiesto:r.materiale_richiesto||'',
+    confermata:!!r.confermata,
+  }))};
+  const rp=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento/applica`,
+    {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!rp.ok)throw new Error(await srvErrDetail(rp,'Non sono riuscito a salvare'));
+  return await rp.json();
+}
+// «la merce è arrivata»: l'avanzo rientra a scaffale. Non è la conferma
+// d'ordine — fra le due passano settimane.
+async function smMerceArrivata(){
+  if(!confirm('Confermi che la merce è arrivata?\nL\'avanzo dell\'arrotondamento rientra a magazzino.'))return;
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/merce-arrivata`,{method:'POST'});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a registrare l\'arrivo'));
     const out=await r.json();
-    DD.data=out;await loadDdList();renderDdEditor(out);
-    const msg=out.richiesta_magazzino_id
-      ? 'Richiesta di prelievo creata · la RDO chiede solo il mancante'
-      : 'RDO aggiornata';
-    toast(msg,'ok');
-    if((out.sostituzioni||[]).length)
-      toast('Sostituzioni: '+out.sostituzioni.join(' · '));
+    const n=(out.rientri||[]).reduce((s,x)=>s+x.quantita,0);
+    DD.data=out;DD.smistKey=null;await ddCaricaSmistamento();renderDdEditor(out);
+    toast(n?`Arrivo registrato · ${n} pezzi rientrati a magazzino`:'Arrivo registrato','ok');
   }catch(e){toast(e.message||'Errore',true);}
 }
 
