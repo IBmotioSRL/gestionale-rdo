@@ -1240,6 +1240,37 @@ table.mg-req .btn{margin-left:4px}
 .nav-bulk{margin-top:10px;border-top:1px solid var(--bd);padding:10px}
 .nav-bulk-i{font-size:10px;color:var(--t3);margin-bottom:7px}
 .nav-bulk-i b{color:var(--t1)}
+/* ── testata fissa della RDO: stato e azioni sempre nello stesso punto ──
+   Cambiando linguetta non si deve cercare dov'è finito «Approva»: intestazione,
+   barra azioni e linguette restano incollate in cima mentre il contenuto scorre. */
+.dd-fisso{position:sticky;top:0;z-index:8;background:var(--surf);border-bottom:1px solid var(--bd)}
+.dd-azioni{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 16px;border-top:1px solid var(--bd);background:var(--bg)}
+.rdo-tabs{position:static}
+/* la colonna di destra della bozza: opzioni e distinta accanto alla mail,
+   così si vede subito l'effetto di una spunta senza scorrere su e giù */
+.dd-opzcol{width:var(--ddopz,380px);min-width:280px;flex:none;overflow:auto;padding:0 4px 0 0}
+.dd-opzcol .dd-opts{margin-top:0}
+.dd-opzcol .dd-tab{font-size:10.5px}
+.dd-opzcol .dd-tab th,.dd-opzcol .dd-tab td{padding:4px 5px}
+@media(max-width:1200px){.dd-split{flex-direction:column}.dd-opzcol{width:auto;min-width:0}.dd-split .rz-split{display:none}}
+/* passi dell'avanzamento: distesi, con la barra che si riempie e la freccia */
+.rdo-steps{gap:0}
+.rdo-step{padding:7px 15px;gap:7px}
+.rdo-step-sep{flex:1;min-width:26px;height:2px;background:var(--bd);position:relative;display:flex;align-items:center;justify-content:center;margin:0 2px}
+.rdo-step-sep b{position:absolute;left:0;top:0;bottom:0;width:0;background:#A9DFC0}
+.rdo-step-sep.fatto b{width:100%}
+.rdo-step-sep s{position:absolute;text-decoration:none;font-size:15px;font-weight:900;color:var(--bd2);background:var(--surf);padding:0 2px;line-height:1}
+.rdo-step-sep.fatto s{color:#1A7A2E}
+/* Documenti raggruppati per codice */
+.doc-grp{border:1px solid var(--bd);border-radius:9px;margin-bottom:8px;overflow:hidden}
+.doc-grp-hd{display:flex;align-items:baseline;gap:9px;background:var(--bg);padding:7px 11px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.doc-grp-hd b{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--t1)}
+.doc-grp-hd span{font-size:11.5px;color:var(--t2)}
+.doc-grp-hd i{margin-left:auto;font-style:normal;font-size:10px;color:var(--t3)}
+.doc-grp .dd-dwg{padding:2px 8px}
+/* Comunicazioni: una riga per messaggio, non un pannello di strumenti */
+.th-top{display:flex;align-items:center;gap:10px;padding:0 2px 10px;font-size:11.5px}
+.th-top .fmuted{flex:1}
 /* spunta con spiegazione sotto, per le scelte che vanno capite prima di darle */
 .mg-flag{display:flex;gap:9px;align-items:flex-start;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;cursor:pointer}
 .mg-flag input{margin-top:2px;flex:none}
@@ -7815,7 +7846,11 @@ function threadHtml(d){
   const wmUrl=API+`/api/brand-logo/${d.brand==='YS'?'YS':'IB'}`;
   // cronologia con filigrana del logo (sfondo "da chat"); la barra di risposta compare
   // solo DOPO il primo invio — prima non c'è nessuno a cui rispondere.
-  return `<div class="thread">
+  return `<div class="th-top">
+    <span class="fmuted">${evs.length} messaggi · ${esc(d.fornitore_nome)}</span>
+    <button class="btn btn-ghost btn-sm" onclick="thImportMail()" title="Porta dentro una mail vera da Outlook">📥 Importa mail</button>
+  </div>
+  <div class="thread">
     <div class="thread-wm" style="background-image:url('${wmUrl}')"></div>
     <div class="thread-content">
       ${wait}
@@ -7828,28 +7863,15 @@ function thSignature(d){
   const brandLabel=d.brand==='YS'?'YuBe Solutions':'IB Motion S.r.l.';
   return `Cordiali saluti,\nElia Gatti\n${brandLabel} — Ufficio Tecnico\nTel. 030.2383896 — tecnico@ibmotion.com`;
 }
+/* La barra di risposta, ridotta all'osso: si scrive e si manda.
+   Sono spariti «registra mail ricevuta», «contatti» e «registra telefonata» —
+   tre pannelli che si aprivano sopra la conversazione per cose che si fanno una
+   volta ogni tanto. Resta l'importazione di una mail vera, che è l'unico modo
+   di far entrare qui dentro quello che è successo davvero in Outlook. */
 function thComposeHtml(d){
   const to=(d.emails_to||[]).join(', '), cc=(d.emails_cc||[]).join(', '), ccn=(d.emails_ccn||[]).join(', ');
   const oggRisposta=d.oggetto?('R: '+d.oggetto):'';
   return `<div class="compose">
-    <div class="compose-tools">
-      <a class="ctool" onclick="thToggle('thRecvBox')">📩 Registra mail ricevuta</a>
-      <a class="ctool" onclick="thImportMail()">📥 Importa mail (.eml/.msg)</a>
-      <a class="ctool" onclick="thToggle('thMsgBox')">✎ oggetto/destinatari</a>
-      <a class="ctool" onclick="thToggle('thContBox')">✎ contatti</a>
-    </div>
-    <div class="ctool-panel" id="thRecvBox" style="display:none">
-      <input type="text" id="thRecvDa" placeholder="Da (nome/mail mittente)" value="${esc(d.fornitore_nome)}">
-      <input type="text" id="thRecvOgg" placeholder="Oggetto (es. R: ${esc(d.oggetto||'')})">
-      <div class="ctool-row">
-        <div class="fld2"><label>A</label><input type="text" id="thRecvTo" value="${esc(to)}"></div>
-        <div class="fld2"><label>CC</label><input type="text" id="thRecvCc" value="${esc(cc)}"></div>
-        <div class="fld2"><label>CCN</label><input type="text" id="thRecvCcn" value=""></div>
-      </div>
-      <textarea id="thRecvTxt" placeholder="Cosa dice la mail che hai ricevuto?"></textarea>
-      <label class="ctool-file"><input type="file" id="thRecvFile" accept=".pdf,.xlsx,.xls,.csv,.eml,.msg"> <span>📎 Se è un'offerta/preventivo allegato, aggiungilo qui — i prezzi si leggono da soli</span></label>
-      <div class="ctool-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thRecvSalva()">Registra</button></div>
-    </div>
     <div class="ctool-panel" id="thMsgBox" style="display:none">
       <input type="text" id="thMsgOgg" placeholder="Oggetto di questo messaggio" value="${esc(oggRisposta)}">
       <div class="ctool-row">
@@ -7858,38 +7880,15 @@ function thComposeHtml(d){
         <div class="fld2"><label>CCN</label><input type="text" id="thMsgCcn" value="${esc(ccn)}"></div>
       </div>
     </div>
-    <div class="ctool-panel" id="thContBox" style="display:none">
-      <div class="ctool-row">
-        <div class="fld2"><label>A</label><input type="text" id="thContTo" value="${esc(to)}"></div>
-        <div class="fld2"><label>CC</label><input type="text" id="thContCc" value="${esc(cc)}"></div>
-        <div class="fld2"><label>CCN</label><input type="text" id="thContCcn" value="${esc(ccn)}"></div>
-      </div>
-      <div class="ctool-ft"><span class="sp"></span><button class="btn btn-go btn-sm" onclick="thContSalva()">Aggiorna contatti</button></div>
-    </div>
     <div class="compose-bar">
       <button class="cb-ic" onclick="thAttach(event)" title="Allega materiale">➕</button>
       <textarea id="thTxt" placeholder="Scrivi un messaggio…" rows="1" oninput="thAutoGrow(this)" onkeydown="thTxtKey(event)"></textarea>
-      <button class="cb-ic" onclick="thLogCall()" title="Registra una telefonata">📞</button>
+      <button class="cb-ic" onclick="thToggle('thMsgBox')" title="Oggetto e destinatari di questo messaggio">✎</button>
       <button class="cb-send" onclick="thInvia()" title="Invia">➤</button>
     </div>
-    <div class="compose-sig">${esc(thSignature(d))}</div>
   </div>`;
 }
 function thToggle(id){const el=document.getElementById(id);el.style.display=el.style.display==='none'?'block':'none';}
-async function thRecvSalva(){
-  const da=(document.getElementById('thRecvDa').value||'').trim();
-  const oggetto=(document.getElementById('thRecvOgg').value||'').trim();
-  const to=splitEmails(document.getElementById('thRecvTo').value);
-  const cc=splitEmails(document.getElementById('thRecvCc').value);
-  const ccn=splitEmails(document.getElementById('thRecvCcn').value);
-  const testo=(document.getElementById('thRecvTxt').value||'').trim();
-  const fileInp=document.getElementById('thRecvFile');
-  const file=fileInp&&fileInp.files[0];
-  if(!testo&&!file){toast('Scrivi cosa dice la mail o allega un file',true);return;}
-  const ev=await thSalvaEvento({tipo:'mail_ricevuta',testo:testo||'(vedi allegato)',email_da:da||DD.data.fornitore_nome,
-    oggetto:oggetto||null,email_to:to,email_cc:cc,email_ccn:ccn});
-  if(ev&&file)await thEstraiOfferta(file,ev.id);
-}
 async function thEstraiOfferta(file,eventoId){
   const fd=new FormData();fd.append('file',file);fd.append('fornitore_id',DD.fid);fd.append('evento_comunicazione_id',eventoId);
   toast("Leggo l'allegato con l'AI…",'ok');
@@ -7937,18 +7936,6 @@ async function thNuovaOfferta(eventoId){
     openOffDoc(off);
     toast('Prezzi non individuati automaticamente: compilali a mano','ok');
   }catch{toast('Errore creazione offerta',true);}
-}
-async function thContSalva(){
-  const to=splitEmails(document.getElementById('thContTo').value);
-  const cc=splitEmails(document.getElementById('thContCc').value);
-  const ccn=splitEmails(document.getElementById('thContCcn').value);
-  try{
-    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/contatti`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({emails_to:to,emails_cc:cc,emails_ccn:ccn})});
-    if(!r.ok)throw 0;
-    DD.data=await r.json();
-    renderDdEditor(DD.data);
-    toast('Contatti aggiornati','ok');
-  }catch{toast('Errore aggiornamento contatti',true);}
 }
 let IM={cid:null,fid:null,rows:[],oggetto:'',to:[],cc:[],ccn:[]};
 function thImportMail(){
@@ -8034,13 +8021,6 @@ function thAttachPick(path){
   const txtEl=document.getElementById('thTxt');
   txtEl.value=(txtEl.value?txtEl.value+'\n':'')+'📎 '+name;
   thAutoGrow(txtEl);txtEl.focus();
-}
-async function thLogCall(){
-  const txtEl=document.getElementById('thTxt');
-  const testo=(txtEl.value||'').trim();
-  if(!testo){toast('Scrivi cosa vi siete detti',true);return;}
-  const ok=await thSalvaEvento({tipo:'telefonata',testo});
-  if(ok){txtEl.value='';thAutoGrow(txtEl);}
 }
 async function thInvia(){
   // l'invio reale (Graph) non è ancora attivo, ma qui costruiamo tutto COME SE lo fosse:
@@ -8178,15 +8158,23 @@ function renderDdEditor(d){
   // ogni revisione è già un proprio messaggio nel filone (con distinta/disegni annidati):
   // non serve più un pannello "Revisioni RDO" separato con diff.
   document.getElementById('ddEditor').innerHTML=`
-    <div class="dd-hd">
-      <img class="dd-logo" src="${API}/api/brand-logo/${d.brand}" alt="${d.brand}">
-      <div class="meta"><b>${esc(d.fornitore_nome)}</b>${codeRev?`<span class="dd-code">${esc(codeRev)}</span>`:''}<span class="dd-revbadge ${bloccata?'sent':'draft'}">${revTxt}${(rev>=1&&!bloccata)?' · in preparazione':''}</span><br>Distinta RDO · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
-      <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}"${disAttr} onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}"${disAttr} onclick="ddSetBrand('YS')">YuBe</button></div>
+    <div class="dd-fisso">
+      <div class="dd-hd">
+        <img class="dd-logo" src="${API}/api/brand-logo/${d.brand}" alt="${d.brand}">
+        <div class="meta"><b>${esc(d.fornitore_nome)}</b>${codeRev?`<span class="dd-code">${esc(codeRev)}</span>`:''}<span class="dd-revbadge ${bloccata?'sent':'draft'}">${revTxt}</span><br>${esc(d.tipologia_etichetta||'')} · ${esc(d.commessa_codice)} — ${esc(d.commessa_nome)}</div>
+        <div class="brand-sel" style="margin-left:auto"><button class="${d.brand==='IB'?'on':''}"${disAttr} onclick="ddSetBrand('IB')">IB Motion</button><button class="${d.brand==='YS'?'on':''}"${disAttr} onclick="ddSetBrand('YS')">YuBe</button></div>
+      </div>
+      <div class="dd-azioni">
+        <span class="dd-badge ${st}">${RDO_ICO[st]||'●'} ${esc(d.stato_etichetta||st)}</span>
+        ${d.esito?`<span class="dd-revtag esito">${esc(d.esito_etichetta)}</span>`:''}
+        ${ddAzioni(d)}
+      </div>
+      <nav class="rdo-tabs">${RDO_TABS.filter(t=>ddTabVisibile(d,t[0])).map(([k,ic,l])=>
+        `<button class="${ddTabAttiva(d)===k?'on':''}" onclick="ddTab('${k}')">${ic} ${esc(l)}${ddTabBadge(d,k)}</button>`).join('')}</nav>
     </div>
-    <nav class="rdo-tabs">${RDO_TABS.map(([k,ic,l])=>
-      `<button class="${ddTabAttiva(d)===k?'on':''}" onclick="ddTab('${k}')">${ic} ${esc(l)}${ddTabBadge(d,k)}</button>`).join('')}</nav>
     <div class="dd-body">
       ${T==='riepilogo'?ddTabRiepilogo(d):''}
+      ${T==='magazzino'?`<div class="dd-tabpane" id="ddSmistamento"></div>`:''}
       ${T==='comunicazioni'?`<div class="dd-tabpane">${threadHtml(d)}</div>`:''}
       ${T==='analisi'?ddTabAnalisi(d):''}
       ${T==='versioni'?ddTabVersioni(d):''}
@@ -8198,7 +8186,7 @@ function renderDdEditor(d){
           <div class="ai" onclick="ddExport('xlsx')"><span class="fi-ic xlsx">XLS</span> Distinta RDO + richiesta (Excel) <span class="open">apri ↗</span></div>
         </div>
         <div class="dd-sec" style="margin-top:14px">${dwg.length} ${esc(dwgLbl.toLowerCase())} dei pezzi inclusi</div>
-        <div class="dd-dwg">${dwgHtml}</div>
+        ${ddDocPerCodice(dwg)}
         <div class="dd-sec" style="margin-top:14px">Anteprima della distinta
           <span class="lnk" onclick="ddRefreshPreview()">⟳ aggiorna</span>
           <span class="lnk" onclick="window.open('${exportUrl}','_blank')">apri ↗</span></div>
@@ -8216,31 +8204,26 @@ function renderDdEditor(d){
           </div>
           <input class="dd-fld" id="ddOgg"${roAttr} onchange="ddAutosave()" style="margin-bottom:8px" value="${esc(d.oggetto||'')}">
           <textarea class="dd-fld" id="ddCorpo"${roAttr} onchange="ddAutosave()">${esc(d.corpo||'')}</textarea>
+        </div>
+        <div class="rz-split" data-dir="l" data-var="--ddopz" data-min="280" data-max="640" data-key="rdo_ddopz" title="Trascina per ridimensionare"></div>
+        <div class="dd-opzcol">
           <div class="dd-opts">
-            <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel e nella mail inviati al fornitore</span></div>
+            <div class="oh">⚙ Opzioni RDO <span class="fmuted" style="font-weight:600;text-transform:none;letter-spacing:0">— compaiono nel PDF/Excel e nella mail</span></div>
             ${(d.condizioni_mancanti||[]).length?`<div class="dd-opt-banner">⚠ Per approvare manca: ${esc((d.condizioni_mancanti||[]).join(' · '))}.</div>`:''}
             ${optsHtml}
             ${ctHtml}
             ${confHtml}
           </div>
-          <div id="ddSmistamento"></div>
           <details class="dd-coll" open>
             <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
             <div class="dd-collbody">
-              <div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Seleziona tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Deseleziona tutte</button></div>
+              <div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Nessuna</button></div>
               <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
               <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
             </div>
           </details>
         </div>
       </div>`}
-    </div>
-    <div class="dd-ft">
-      <span class="dd-badge ${st}">${RDO_ICO[st]||'●'} ${esc(d.stato_etichetta||st)}</span>
-      <span class="dd-revtag ${bloccata?'sent':'draft'}">${revTxt}</span>
-      ${(d.prerevisione>0)?`<span class="dd-revtag draft" title="Ritorni in bozza dopo l'approvazione, dentro questa revisione">${esc(d.prerev_etichetta)}</span>`:''}
-      ${d.esito?`<span class="dd-revtag esito">${esc(d.esito_etichetta)}</span>`:''}
-      ${ddAzioni(d)}
     </div>`;
   // lo smistamento arriva dal server: si carica dopo aver disegnato, così la
   // scheda compare subito e il blocco bulloneria si riempie appena pronto
@@ -8258,13 +8241,21 @@ const RDO_TABS=[
   ['bozza','✍️','Bozza e approvazione'],
   ['comunicazioni','💬','Comunicazioni'],
   ['analisi','💶','Analisi offerta'],
+  ['magazzino','🔩','Magazzino'],
   ['documenti','📎','Documenti'],
   ['versioni','🗂','Prerevisioni e revisioni'],
   ['cronologia','🕘','Cronologia'],
 ];
+/* La scheda Magazzino compare solo quando questo fornitore porta roba che a
+   magazzino c'è: su chi ci vende catene o motori sarebbe una linguetta vuota. */
+function ddTabVisibile(d,k){
+  if(k!=='magazzino')return true;
+  return !!(DD.smist&&DD.smist.righe&&DD.smist.righe.length);
+}
 function ddTabAttiva(d){
   const t=DD.tab||'riepilogo';
-  return RDO_TABS.some(x=>x[0]===t)?t:'riepilogo';
+  if(!RDO_TABS.some(x=>x[0]===t))return 'riepilogo';
+  return ddTabVisibile(d,t)?t:'riepilogo';
 }
 function ddTab(t){DD.tab=t;renderDdEditor(DD.data);}
 // il pallino sulla linguetta: quello che chiede attenzione si vede senza entrarci
@@ -8277,6 +8268,32 @@ function ddTabBadge(d,k){
   return '';
 }
 
+/* I file raggruppati per codice: un blocco per pezzo, con la sua denominazione
+   in testa e dentro i suoi formati. Un elenco piatto di 43 righe in cui lo
+   stesso codice compare tre volte non si legge — si scorre. */
+function ddDocPerCodice(dwg){
+  if(!dwg.length)return '<div class="fmuted" style="font-size:11.5px;padding:6px 2px">Nessun file collegato ai pezzi inclusi.</div>';
+  const g=new Map();
+  dwg.forEach(x=>{
+    const k=x.cod||'(senza codice)';
+    if(!g.has(k))g.set(k,{den:x.den||'',file:[]});
+    g.get(k).file.push(x);
+  });
+  return [...g.entries()].map(([cod,v])=>`<div class="doc-grp">
+    <div class="doc-grp-hd"><b>${esc(cod)}</b>${v.den?`<span>${esc(v.den)}</span>`:''}
+      <i>${v.file.length} file</i></div>
+    <div class="dd-dwg">${v.file.map(x=>{
+      const isPdf=x.ext==='pdf';
+      const ic=['pdf','dwg','dxf','xlsx','xls','step','stp'].includes(x.ext)?x.ext:'oth';
+      const prev=isPdf?` data-prevpdf="${esc(x.path)}" data-prevcap="${esc(x.cod)}"`:'';
+      return `<div class="di"${prev} onclick="window.open('${jsq(fileUrl(x.path))}','_blank')">
+        <span class="fi-ic ${ic}">${x.ext.toUpperCase()}</span>
+        <span class="dn">${esc(x.path.split(/[\\/]/).pop())}</span>
+        <span class="open">${isPdf?'apri ↗':'scarica ↗'}</span></div>`;
+    }).join('')}</div>
+  </div>`).join('');
+}
+
 /* Riepilogo: a che punto è la pratica, cosa si può fare adesso e perché. */
 function ddTabRiepilogo(d){
   const passi=['bozza','approvata','inviata','ricevuta','confermata'];
@@ -8284,8 +8301,12 @@ function ddTabRiepilogo(d){
   const step=passi.map((s,i)=>{
     const cls=d.stato==='annullata'?(i===0?'':'off')
       :(i<iAtt?'fatto':(i===iAtt?'ora':'off'));
-    return `<div class="rdo-step ${cls}"><b>${RDO_ICO[s]}</b><span>${esc(RDO_ETI[s])}</span></div>`;
-  }).join('<i class="rdo-step-sep"></i>');
+    // fra una casella e l'altra una barra che si riempie fin dove si è arrivati,
+    // con la freccia a dire da che parte si va
+    const sep=i<passi.length-1
+      ? `<i class="rdo-step-sep${i<iAtt?' fatto':''}"><b></b><s>›</s></i>` : '';
+    return `<div class="rdo-step ${cls}"><b>${RDO_ICO[s]}</b><span>${esc(RDO_ETI[s])}</span></div>${sep}`;
+  }).join('');
   const m=(v,l,cls)=>`<div class="rdo-metric ${cls||''}"><b>${v}</b><span>${esc(l)}</span></div>`;
   const nIncl=(d.righe||[]).filter(r=>r.incl!==false).length;
 
@@ -8436,6 +8457,7 @@ function ddTipologiaHtml(d){
   const voci=[
     ['commerciale','Commerciale','Articoli di catalogo. Si chiedono prezzo e tempi; la spedizione parte a carico del fornitore. Niente trattamenti né conto lavoro.'],
     ['costruttiva','Costruttiva','Particolari da fare, lavorazioni sul nostro materiale, assiemi. Servono anche trattamenti e provenienza del materiale.'],
+    ['trattamenti','Trattamenti','Nichelatura, zincatura, verniciatura, trattamenti termici su pezzi nostri. Non si chiede chi tratta: è tutto quello che gli si chiede.'],
   ];
   return `<div class="dd-tipo">
     <div class="oh">🏷 Tipologia RDO</div>
@@ -8641,17 +8663,27 @@ function revDiffHtml(diff){
    prelievo al magazzino. È una proposta: i due numeri si correggono a mano, e la
    sostituzione di materiale (le A4 al posto delle A2) non si applica mai da sola. */
 async function ddCaricaSmistamento(){
-  const box=document.getElementById('ddSmistamento');
-  if(!box||!DD.data||!DD.data.modificabile){if(box)box.innerHTML='';return;}
+  if(!DD.data)return;
+  // si carica una volta per RDO: la linguetta «Magazzino» esiste solo se questo
+  // fornitore porta roba che a magazzino c'è, e quel dato arriva dal server
+  const chiave=DD.cid+':'+DD.fid;
+  if(DD.smistKey===chiave){renderDdSmistamento();return;}
+  const avevaLinguetta=ddTabVisibile(DD.data,'magazzino');
   try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento`);
     DD.smist=r.ok?await r.json():null;}
   catch{DD.smist=null;}
+  DD.smistKey=chiave;
+  // se la linguetta è appena comparsa (o sparita) la barra va ridisegnata,
+  // altrimenti resta quella di prima e la scheda non si raggiunge
+  if(ddTabVisibile(DD.data,'magazzino')!==avevaLinguetta){renderDdEditor(DD.data);return;}
   renderDdSmistamento();
 }
 function renderDdSmistamento(){
   const box=document.getElementById('ddSmistamento');if(!box)return;
   const s=DD.smist;
-  if(!s||!s.righe.length){box.innerHTML='';return;}
+  if(!s||!s.righe.length){
+    box.innerHTML='<div class="empty" style="padding:30px">Nessun articolo di questo fornitore sta a magazzino.</div>';
+    return;}
   const riga=(r,i)=>{
     const sostituti=(r.sostituti||[]).map(a=>`
       <label class="sm-sost"><input type="radio" name="sm${i}" value="${a.id}" onchange="smScegli(${i},${a.id})">
@@ -8675,16 +8707,20 @@ function renderDdSmistamento(){
       ${scartati?`<div class="sm-scartati">Della stessa misura ci sono anche: ${esc(scartati)} — non vanno bene, il materiale è inferiore.</div>`:''}
     </div>`;
   };
-  box.innerHTML=`<details class="dd-coll" open>
-    <summary>🔩 Bulloneria dal magazzino <span class="cnt">${s.righe.length} codici · ${s.totale_da_prelevare} da prelevare · ${s.totale_da_comprare} da comprare</span></summary>
-    <div class="dd-collbody">
-      <div class="sm-intro">Al fornitore si chiede solo quello che manca, arrotondato per misura.
-        Il resto diventa una richiesta di prelievo, e l'avanzo dell'arrotondamento rientra a magazzino.</div>
-      ${s.righe.map(riga).join('')}
-      <div class="sm-ft">
-        <button class="btn btn-go" onclick="smApplica()">✓ Applica: crea la richiesta e aggiorna la RDO</button>
-      </div>
-    </div></details>`;
+  box.innerHTML=`
+    <div class="rdo-metrics">
+      <div class="rdo-metric"><b>${s.righe.length}</b><span>Codici a magazzino</span></div>
+      <div class="rdo-metric"><b>${s.totale_da_prelevare}</b><span>Da prelevare</span></div>
+      <div class="rdo-metric"><b>${s.totale_da_comprare}</b><span>Da comprare</span></div>
+      <div class="rdo-metric"><b>${s.totale_avanzo}</b><span>Avanzo che rientra</span></div>
+    </div>
+    <div class="sm-intro">Al fornitore si chiede <b>solo quello che manca</b>, arrotondato per misura:
+      nessuno ordina due viti. Il resto diventa una richiesta di prelievo, e l'avanzo
+      dell'arrotondamento rientra a magazzino come reintegro.</div>
+    ${s.righe.map(riga).join('')}
+    <div class="sm-ft">
+      <button class="btn btn-go" onclick="smApplica()">✓ Applica: crea la richiesta e aggiorna la RDO</button>
+    </div>`;
 }
 function smNota(r){
   if(!r.da_comprare)return r.da_prelevare?'tutto dal magazzino':'niente da fare';
