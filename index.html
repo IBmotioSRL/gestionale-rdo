@@ -402,7 +402,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .rs-fh{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .rs-fn{font-size:13px;font-weight:800;color:var(--t1)}
 .rs-fs{font-size:11px;color:var(--t2)}
-.dd-split{display:grid;grid-template-columns:1fr 7px var(--ddprev,340px);gap:16px;align-items:start}
+/* Bozza a due colonne: la mail a sinistra, opzioni e distinta a destra.
+   La larghezza della colonna destra la decide QUESTA riga — cioè la traccia
+   della griglia. Metterla sul figlio (`width` su .dd-opzcol) non allarga la
+   traccia: il contenuto usciva dalla sua colonna e spariva sotto il resto. */
+.dd-split{display:grid;grid-template-columns:minmax(300px,1fr) 7px minmax(0,var(--ddopz,380px));gap:16px;align-items:start}
 /* separatore trascinabile fra due pannelli di una griglia (resize riutilizzabile) */
 .rz-split{cursor:col-resize;align-self:stretch;min-height:60px;border-radius:4px;background:transparent}
 .rz-split:hover,.rz-split.drag{background:rgba(199,154,59,.30)}
@@ -415,7 +419,7 @@ table.rzcols thead th::after{content:'';position:absolute;top:0;right:0;width:8p
 .dd-prevhd{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:10px}
 .dd-prevhd .lnk{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;text-transform:none;letter-spacing:0}
 .dd-prevhd .lnk:last-child{margin-left:auto}
-@media(max-width:980px){.dd-split{grid-template-columns:1fr}.dd-prevcol{position:static}.dd-split .rz-split{display:none}}
+@media(max-width:980px){.dd-split{grid-template-columns:1fr}.dd-split .rz-split{display:none}}
 /* master-detail: elenco RDO a sx + editor a dx, cambio RDO al volo */
 .rdo-edwrap{display:grid;grid-template-columns:var(--rdonav,264px) 7px 1fr;gap:14px;align-items:start;padding:14px}
 .rdo-ednav{position:sticky;top:6px;max-height:calc(100vh - 110px);overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--surf);padding:8px}
@@ -1256,11 +1260,11 @@ table.mg-req .btn{margin-left:4px}
 .rdo-tabs{position:static}
 /* la colonna di destra della bozza: opzioni e distinta accanto alla mail,
    così si vede subito l'effetto di una spunta senza scorrere su e giù */
-.dd-opzcol{width:var(--ddopz,380px);min-width:280px;flex:none;overflow:auto;padding:0 4px 0 0}
+.dd-opzcol{min-width:0;padding:0 4px 0 0}
 .dd-opzcol .dd-opts{margin-top:0}
 .dd-opzcol .dd-tab{font-size:10.5px}
 .dd-opzcol .dd-tab th,.dd-opzcol .dd-tab td{padding:4px 5px}
-@media(max-width:1200px){.dd-split{flex-direction:column}.dd-opzcol{width:auto;min-width:0}.dd-split .rz-split{display:none}}
+@media(max-width:1200px){.dd-split{grid-template-columns:1fr}.dd-split .rz-split{display:none}}
 /* passi dell'avanzamento: distesi, con la barra che si riempie e la freccia */
 .rdo-steps{gap:0}
 .rdo-step{padding:7px 15px;gap:7px}
@@ -1722,21 +1726,13 @@ textarea.fld{resize:vertical;min-height:60px}
 .chip-sugg div{padding:6px 10px;font-size:12px;cursor:pointer}
 .chip-sugg div:hover,.chip-sugg div.act{background:rgba(245,168,35,.1);color:var(--go-d)}
 
-/* ── FINESTRA IN BASSO: Gantt + gerarchia ──
-   Vive sopra tutto il software (non solo dentro un progetto), perché la domanda
-   «a che punto siamo» non appartiene a una sezione sola. Sta fuori da .app così
-   il resto del layout non la deve sapere; in Magazzino e Raccolta Ore non si fa
-   vedere — là non serve. */
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:300;height:var(--dockh,320px);
-  background:var(--surf);border-top:1px solid var(--bd2);box-shadow:0 -6px 24px rgba(44,21,6,.10);
-  display:none;flex-direction:column;overflow:hidden}
+/* ── GANTT + GERARCHIA ──
+   Era la finestra galleggiante in fondo allo schermo. Adesso vive dentro la
+   sezione «Gantt e gerarchia» e basta: `.on` la accende, `.inpage` la incastra
+   nella pagina. Il markup resta fuori da .app perché è il suo posto a riposo,
+   ma senza `.on` non si vede da nessuna parte. */
+.dock{display:none;flex-direction:column;overflow:hidden;background:var(--surf)}
 .dock.on{display:flex}
-.dock.ridotto{height:auto!important}
-.dock.ridotto .dock-bd{display:none}
-.dock.pieno{top:0;height:auto!important}
-.dock-rz{height:7px;margin-top:-4px;cursor:row-resize;flex-shrink:0}
-.dock-rz:hover,.dock-rz.drag{background:rgba(199,154,59,.30)}
-.dock.pieno .dock-rz,.dock.ridotto .dock-rz{visibility:hidden}
 .dock-hd{display:flex;align-items:center;gap:8px;padding:5px 11px;border-bottom:1px solid var(--bd);
   background:var(--bg);flex-shrink:0;flex-wrap:wrap}
 .dock-tabs{display:flex;background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
@@ -1756,20 +1752,8 @@ textarea.fld{resize:vertical;min-height:60px}
 .dock .flt-bar select,.dock .flt-bar input{font-size:10px;padding:3px 6px;max-width:130px}
 .dock .flt-n{margin-left:6px}
 .dock-pane+.dock-pane{border-left:1px solid var(--bd)}
-.dock-apri{position:fixed;right:16px;bottom:0;z-index:299;border:1px solid var(--bd2);border-bottom:0;
-  border-radius:9px 9px 0 0;background:var(--surf);color:var(--t1);font:inherit;font-size:11px;font-weight:700;
-  padding:5px 13px;cursor:pointer;box-shadow:0 -3px 12px rgba(44,21,6,.10);display:none}
-.dock-apri.on{display:block}
-.dock-apri:hover{background:var(--go);color:#3a2406}
-.ico-btn{border:1px solid var(--bd);background:var(--surf);color:var(--t2);border-radius:6px;
-  width:23px;height:21px;font-size:11px;line-height:1;cursor:pointer;flex-shrink:0}
-.ico-btn:hover{border-color:var(--go);color:var(--go-d)}
-/* lo stesso pannello, ma dentro la pagina «Gantt e gerarchia»: perde il
-   galleggiamento e occupa tutto lo spazio. I tre pulsanti di finestra
-   (riduci / a tutta pagina / chiudi) qui non vogliono dire niente. */
-.dock.inpage{position:static;height:auto!important;flex:1;min-height:0;z-index:auto;
-  border-top:0;box-shadow:none;display:flex}
-.dock.inpage .dock-rz,.dock.inpage .ico-btn{display:none}
+/* incastrato nella pagina: prende tutta l'altezza che c'è */
+.dock.inpage{flex:1;min-height:0}
 /* qui lo spazio c'è: i filtri vanno a capo invece di scorrere di lato, e
    l'ultima tendina smette di sparire oltre il bordo */
 .dock.inpage .flt-bar{flex-wrap:wrap;overflow-x:visible}
@@ -2738,11 +2722,12 @@ textarea.fld{resize:vertical;min-height:60px}
 </div>
 
 <div class="ore-viztip" id="oreViztip"></div>
-<!-- ════ FINESTRA IN BASSO: Gantt e gerarchia ════
-     Sta fuori da .app di proposito: si vede da qualsiasi sezione, perché «a che
-     punto siamo» non è una domanda che appartiene a una schermata sola. -->
+<!-- ════ GANTT E GERARCHIA ════
+     Era la finestra galleggiante in basso, aperta dovunque. Adesso che ha una
+     sezione sua (`v-gantt`) galleggiare non serve più: `dockAncora()` la
+     sposta dentro `#gantSlot` quando si entra lì, e fuori da lì non si vede.
+     Il markup resta qui, fuori da .app, perché è il suo posto a riposo. -->
 <div class="dock" id="dock">
-  <div class="dock-rz" id="dockRz" title="Trascina per cambiare altezza"></div>
   <div class="dock-hd">
     <div class="dock-tabs">
       <button id="dkGantt" onclick="dockVista('gantt')">📊 Gantt</button>
@@ -2752,16 +2737,12 @@ textarea.fld{resize:vertical;min-height:60px}
     <select id="dockComm" onchange="dockSetComm(this.value)" title="Di quale commessa"></select>
     <span class="dock-info" id="dockInfo"></span>
     <span style="flex:1"></span>
-    <button class="ico-btn" onclick="dockRiduci()" id="dockBtnRid" title="Riduci a barra">▁</button>
-    <button class="ico-btn" onclick="dockPieno()" id="dockBtnPieno" title="A tutta finestra">⛶</button>
-    <button class="ico-btn" onclick="dockChiudi()" title="Chiudi">✕</button>
   </div>
   <div class="dock-bd">
     <div class="dock-pane" id="dockPaneGantt"></div>
     <div class="dock-pane" id="dockPaneAlbero" style="display:none"></div>
   </div>
 </div>
-<button class="dock-apri" id="dockApri" onclick="dockApri()">📊 Gantt e gerarchia</button>
 
 <div class="toast" id="toast"></div>
 
@@ -10752,7 +10733,7 @@ function toggleGlance(){
 // ── separatori trascinabili generici (.rz-split) su griglie: RDO editor, Fornitori, Distinte ──
 (function setupSplitters(){
   // ripristina le larghezze salvate come variabili CSS su :root (ereditate dalle griglie)
-  [['rdo_rdonav','--rdonav'],['rdo_fvdet','--fvdet'],['rdo_ddprev','--ddprev'],
+  [['rdo_rdonav','--rdonav'],['rdo_fvdet','--fvdet'],['rdo_ddopz','--ddopz'],
    ['rdo_pdraw','--pdrawW'],['rdo_impdraw','--impdrawW']].forEach(([k,v])=>{
     try{const val=localStorage.getItem(k);if(val)document.documentElement.style.setProperty(v,val+'px');}catch{}});
   let st=null;
@@ -10954,39 +10935,31 @@ async function favStato(tappaId,stato){
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   FINESTRA IN BASSO — Gantt e gerarchia
+   GANTT E GERARCHIA
    ════════════════════════════════════════════════════════════════════════════
-   Vive su tutto il software, non solo dentro un progetto: «a che punto siamo»
-   non è una domanda di una schermata sola. In Magazzino e Raccolta Ore non si
-   fa vedere — là la commessa non c'entra.
+   Prima era una finestra galleggiante in basso, aperta da qualsiasi sezione.
+   Adesso che ha una sezione sua quel galleggiare non serve più — anzi, coprire
+   il fondo di ogni schermata per una cosa che ha già il suo posto era solo
+   ingombro. `dockAncora()` porta il pannello dentro `#gantSlot` quando si entra
+   in `v-gantt` e lo riporta a riposo quando si esce; fuori di lì non si vede.
 
-   Quattro stati: chiusa (resta solo la linguetta in basso a destra), aperta con
-   l'altezza che decidi tu trascinando il bordo, ridotta a barra, a tutta
-   finestra. Lo stato si ricorda.
-
-   La commessa la sceglie il pannello, non la sezione: si può guardare il Gantt
-   dei Carri mentre si è dentro Comunicazioni.
+   Restano di quel periodo la vista (`gantt` / `albero` / `tutte e due`) e il
+   raggruppamento, che si ricordano: sono scelte di lettura, non di finestra.
 */
-const SEZIONI_SENZA_DOCK=['mag','ore'];
-const DOCK={stato:'chiuso',vista:'gantt',commessa:null,gantt:null,albero:null,
+const DOCK={vista:'gantt',commessa:null,gantt:null,albero:null,
   caricando:false,sel:null,raggr:'pezzo',flt:{},aperti:{},orologio:null};
 
 function dockStatoSalva(){
-  try{localStorage.setItem('rdo_dock',JSON.stringify(
-    {stato:DOCK.stato,vista:DOCK.vista,raggr:DOCK.raggr,h:parseInt(getComputedStyle(document.documentElement).getPropertyValue('--dockh'))||320}));}catch{}
+  try{localStorage.setItem('rdo_dock',JSON.stringify({vista:DOCK.vista,raggr:DOCK.raggr}));}catch{}
 }
 function dockStatoLeggi(){
   try{
     const s=JSON.parse(localStorage.getItem('rdo_dock')||'{}');
-    if(s.stato)DOCK.stato=s.stato;
     if(s.vista)DOCK.vista=s.vista;
     if(s.raggr)DOCK.raggr=s.raggr;
-    if(s.h)document.documentElement.style.setProperty('--dockh',s.h+'px');
   }catch{}
 }
-// la finestra c'è dovunque tranne dove la commessa non c'entra. Nella sezione
-// «Gantt e gerarchia» non galleggia: è la pagina.
-function dockAmmesso(){return S.v==='gantt'||!SEZIONI_SENZA_DOCK.includes(S.v);}
+// il pannello esiste solo nella sua sezione
 function dockInPagina(){return S.v==='gantt';}
 /* Sposta il pannello dentro la pagina e viceversa. Si sposta l'elemento vero,
    non se ne fa una copia: due Gantt vivi vorrebbero dire due volte gli stessi
@@ -10998,40 +10971,26 @@ function dockAncora(){
     if(d.parentElement!==slot)slot.appendChild(d);
     d.classList.add('inpage');
   }else if(d.classList.contains('inpage')){
-    document.body.insertBefore(d,document.getElementById('dockApri'));
+    document.body.appendChild(d);
     d.classList.remove('inpage');
   }
 }
 function dockApplica(){
-  const d=document.getElementById('dock'),lin=document.getElementById('dockApri');
+  const d=document.getElementById('dock');
   if(!d)return;
   dockAncora();
-  const ammesso=dockAmmesso(),inPag=dockInPagina();
-  // Nella sua pagina è sempre aperto e intero — ma senza toccare DOCK.stato:
-  // se lo cambiassimo, uscendo di lì la finestra resterebbe aperta dappertutto
-  // solo perché si è passati a dare un'occhiata al Gantt.
-  const aperto=ammesso&&(inPag||DOCK.stato!=='chiuso');
+  const aperto=dockInPagina();
   d.classList.toggle('on',aperto);
-  d.classList.toggle('ridotto',!inPag&&DOCK.stato==='ridotto');
-  d.classList.toggle('pieno',!inPag&&DOCK.stato==='pieno');
-  lin.classList.toggle('on',!inPag&&ammesso&&DOCK.stato==='chiuso');
-  document.getElementById('dockBtnRid').textContent=DOCK.stato==='ridotto'?'▔':'▁';
-  document.getElementById('dockBtnRid').title=DOCK.stato==='ridotto'?'Riapri':'Riduci a barra';
   ['gantt','albero','due'].forEach(v=>{
     const b=document.getElementById('dk'+v[0].toUpperCase()+v.slice(1));
     if(b)b.classList.toggle('on',DOCK.vista===v);
   });
   document.getElementById('dockPaneGantt').style.display=(DOCK.vista==='albero')?'none':'block';
   document.getElementById('dockPaneAlbero').style.display=(DOCK.vista==='gantt')?'none':'block';
-  const attivo=aperto&&(inPag||DOCK.stato!=='ridotto');
-  if(attivo)dockCarica();
-  dockOrologio(attivo);
+  if(aperto)dockCarica();
+  dockOrologio(aperto);
   dockStatoSalva();
 }
-function dockApri(){DOCK.stato='aperto';if(!DOCK.commessa&&S.projId)DOCK.commessa=S.projId;dockApplica();}
-function dockChiudi(){DOCK.stato='chiuso';dockApplica();}
-function dockRiduci(){DOCK.stato=DOCK.stato==='ridotto'?'aperto':'ridotto';dockApplica();}
-function dockPieno(){DOCK.stato=DOCK.stato==='pieno'?'aperto':'pieno';dockApplica();}
 function dockVista(v){DOCK.vista=v;dockApplica();dockDisegna();}
 function dockSetComm(id){DOCK.commessa=id?parseInt(id,10):null;DOCK.gantt=DOCK.albero=null;DOCK.sel=null;dockCarica(true);}
 
@@ -11079,22 +11038,9 @@ function dockDisegna(){
   if(DOCK.vista!=='albero')dockDisegnaGantt();
   if(DOCK.vista!=='gantt')dockDisegnaAlbero();
 }
-(function setupDock(){
-  dockStatoLeggi();
-  const rz=document.getElementById('dockRz');const d=document.getElementById('dock');
-  if(!rz||!d)return;
-  let y0=0,h0=0;
-  const mv=e=>{
-    const h=Math.min(window.innerHeight-90,Math.max(120,h0+(y0-e.clientY)));
-    document.documentElement.style.setProperty('--dockh',h+'px');
-  };
-  const up=()=>{rz.classList.remove('drag');document.removeEventListener('pointermove',mv);
-    document.removeEventListener('pointerup',up);dockStatoSalva();dockDisegna();};
-  rz.addEventListener('pointerdown',e=>{
-    e.preventDefault();y0=e.clientY;h0=d.getBoundingClientRect().height;
-    rz.classList.add('drag');document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);
-  });
-})();
+// niente più maniglia per l'altezza: dentro la sua pagina il pannello prende
+// tutto lo spazio che c'è, e non c'è un'altezza da scegliere
+dockStatoLeggi();
 
 /* ── IL GANTT ──
    Asse X = il tempo, fra l'inizio e la fine della commessa (date messe a mano).
