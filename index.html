@@ -1170,45 +1170,69 @@ table.mg-req .btn{margin-left:4px}
   border:1px solid var(--bd);border-radius:10px;padding:9px 12px;margin-bottom:11px}
 .sm-banner.attesa{background:rgba(245,168,35,.12);border-color:rgba(245,168,35,.45);color:#7a4f05}
 .sm-banner.ok{background:rgba(30,122,60,.10);border-color:rgba(30,122,60,.32);color:#1a6335}
-.sm-elenco{display:flex;flex-direction:column;gap:6px}
-.sm-r{border:1px solid var(--bd);border-left:4px solid var(--t3);border-radius:9px;
-  padding:8px 12px;background:var(--surf)}
+.sm-barra{display:flex;gap:8px;margin-bottom:9px}
+/* le schede per categoria: stesso modo del catalogo di magazzino */
+.sm-grp{border:1px solid var(--bd);border-radius:11px;background:var(--surf);
+  overflow:hidden;margin-bottom:8px}
+.sm-grp-hd{display:flex;align-items:center;gap:8px;padding:7px 11px;cursor:pointer;
+  background:var(--bg);border-bottom:1px solid transparent;flex-wrap:wrap}
+.sm-grp.on .sm-grp-hd{border-bottom-color:var(--bd)}
+.sm-grp-hd:hover{background:rgba(44,21,6,.04)}
+.sm-grp-hd .cv{font-size:10px;color:var(--t3);width:10px;flex-shrink:0}
+.sm-grp-hd b{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--t1)}
+.sm-grp-hd .n{font-size:9.5px;font-weight:800;background:rgba(44,21,6,.08);color:var(--t2);
+  border-radius:20px;padding:1px 7px}
+.sm-gtag{font-size:9.5px;font-weight:800;border-radius:20px;padding:1px 8px;white-space:nowrap}
+.sm-gtag.compra{background:rgba(192,21,30,.12);color:#C0151E}
+.sm-gtag.ok{background:rgba(30,122,60,.12);color:#1E7A3C}
+.sm-gtag.attesa{background:rgba(245,168,35,.20);color:#7a4f05}
+.sm-gtag.alt{background:rgba(199,154,59,.22);color:#7a4f05}
+.sm-elenco{display:flex;flex-direction:column}
+.sm-r{border-bottom:1px solid var(--bd);border-left:4px solid var(--t3);
+  padding:5px 11px;background:var(--surf)}
+.sm-r:last-child{border-bottom:0}
 .sm-r.compra{border-left-color:#C0151E}
 .sm-r.coperta{border-left-color:#1E7A3C}
-.sm-r.ok{background:rgba(30,122,60,.04)}
+/* c'è un altro materiale utilizzabile: qui una persona deve scegliere, e il
+   giallo serve a distinguerla dalle righe che non chiedono niente */
+.sm-r.alt{border-left-color:#E0A800;background:rgba(245,168,35,.07)}
+.sm-r.ok{background:rgba(30,122,60,.05)}
+.sm-r.alt.ok{background:rgba(245,168,35,.10)}
 .sm-r-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .sm-pallino{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--t3)}
 .sm-r.compra .sm-pallino{background:#C0151E}
 .sm-r.coperta .sm-pallino{background:#1E7A3C}
 .sm-cod{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:var(--t1)}
-.sm-den{font-size:11.5px;color:var(--t2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* la denominazione è la sola cosa che può accorciarsi: i numeri no, e il
+   codice nemmeno. Così la riga resta su una riga finché è possibile. */
+.sm-den{font-size:11.5px;color:var(--t2);flex:1 1 60px;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sm-tag{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
   padding:1px 7px;border-radius:20px;white-space:nowrap}
 .sm-tag.scorta{background:rgba(44,21,6,.07);color:var(--t2)}
 .sm-tag.perdere{background:rgba(199,154,59,.20);color:#7a4f05}
 .sm-sp{flex:1}
 .sm-conf{border:1.4px solid var(--go);background:var(--go);color:#3a2406;border-radius:7px;
-  font:inherit;font-size:10.5px;font-weight:800;padding:3px 11px;cursor:pointer;white-space:nowrap}
+  font:inherit;font-size:10px;font-weight:800;padding:2px 10px;cursor:pointer;white-space:nowrap}
 .sm-conf:hover{filter:brightness(1.06)}
-.sm-conf.ok{background:transparent;border-color:rgba(30,122,60,.45);color:#1E7A3C}
+.sm-conf.ok{background:transparent;border-color:rgba(30,122,60,.45);color:#1E7A3C;padding:2px 8px}
 .sm-conf:disabled{opacity:.5;cursor:default}
-.sm-r-testo{font-size:11.5px;color:var(--t2);margin-top:4px;line-height:1.6}
+.sm-r-testo{font-size:11px;color:var(--t3);white-space:nowrap}
 .sm-r-testo b{color:var(--t1);font-variant-numeric:tabular-nums}
+.sm-r-testo i{font-style:normal;color:var(--t3)}
 .sm-r-testo b.rosso{color:#C0151E}
 .sm-r-testo b.verde{color:#1E7A3C}
-.sm-alt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px;
-  padding-top:6px;border-top:1px dashed var(--bd)}
+.sm-alt{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:4px;
+  padding-top:4px;border-top:1px dashed var(--bd)}
 .sm-alt-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3)}
 .sm-alt-v{display:flex;gap:5px;align-items:center;font-size:11px;color:var(--t1);cursor:pointer;
   border:1px solid var(--bd);border-radius:7px;padding:2px 8px}
 .sm-alt-v.on{border-color:var(--go);background:rgba(245,168,35,.10)}
 .sm-alt-v i{font-style:normal;font-size:9.5px;color:var(--t3)}
 .sm-alt-no{font-size:10px;color:var(--t3);font-style:italic;cursor:help}
-.sm-r-campi{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
-.sm-r-campi label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
-  color:var(--t3);display:flex;gap:6px;align-items:center}
-.sm-r-campi input{width:72px;padding:3px 7px;border:1.4px solid var(--bd2);border-radius:6px;
-  font:inherit;font-size:12.5px;font-weight:800;text-align:right;color:var(--t1)}
+.sm-r-campi{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.sm-r-campi input{width:58px;padding:2px 6px;border:1.4px solid var(--bd2);border-radius:6px;
+  font:inherit;font-size:11.5px;font-weight:800;text-align:right;color:var(--t1)}
 .dd-revtag.esito{background:#EAF3FF;border-color:#B7D3F5;color:#12467F}
 .rdo-esiti{display:flex;flex-direction:column;gap:6px}
 .rdo-esito{display:flex;gap:8px;align-items:flex-start;background:var(--bg);border:1.4px solid var(--bd);border-radius:8px;padding:9px 11px;cursor:pointer}
@@ -5166,7 +5190,57 @@ function controlliInvio(){
   if(S.albero&&!S.albero.distinta_codice)c.push({k:'dib',liv:'guarda',tit:'distinta non riconosciuta',
     sub:'Nessuna riga è marcata come distinta della commessa: conta come un pezzo da ordinare.',
     righe:[],azione:['Indica la distinta','distintaApri()'],n:1});
+
+  /* ── categoria e materiale che non vanno d'accordo ──
+     Due segnalazioni simmetriche: un pezzo non plastico finito in PLASTICA, e
+     uno di plastica finito altrove. Nessuna delle due blocca — la distinta può
+     avere ragione e la regola torto — ma entrambe si mettono a tacere una per
+     una con «lo so», che resta scritto sul pezzo invece di essere ignorato a
+     occhio ogni volta. */
+  const rigaDeroga=(p,perche)=>({
+    cod:p.numero_parte,
+    txt:`${p.denominazione||'—'} · ${perche}`,
+    go:`derogaMateriale(${p.id})`,fix:'Lo so, va bene'});
+  add('plin','guarda','in PLASTICA ma non è plastica',
+    'Il materiale dichiarato non è una plastica. Clicca per dire che va bene così.',
+    all.filter(p=>!p.deroga_materiale&&catPlastica(p.categoria)
+                  &&(p.materiale||'').trim()&&!materialePlastico(p.materiale))
+       .map(p=>rigaDeroga(p,`categoria ${p.categoria} · materiale ${p.materiale}`)));
+  add('plout','guarda','di plastica ma fuori da PLASTICA',
+    'Materiale plastico in una categoria che non è quella delle plastiche.',
+    all.filter(p=>!p.deroga_materiale&&!catPlastica(p.categoria)
+                  &&materialePlastico(p.materiale))
+       .map(p=>rigaDeroga(p,`categoria ${p.categoria||'—'} · materiale ${p.materiale}`)));
   return c;
+}
+/* Le plastiche, riconosciute dal materiale.
+   Le sigle si confrontano per parola intera, non per pezzo di testo: `PE`
+   dentro `PEEK` o `PET` darebbe ragione per il motivo sbagliato, e una regola
+   che indovina per caso prima o poi sbaglia per caso. I nomi per esteso ci
+   sono perché in distinta capita di trovarli scritti così. */
+const SIGLE_PLASTICHE=new Set(['PET','PETG','PE','HDPE','LDPE','UHMW','PP','PVC','PA','PA6','PA66',
+  'POM','PTFE','PEEK','ABS','PC','PMMA','PUR','PU','PS','EPDM','NBR','TPU','PVDF','PEHD']);
+const NOMI_PLASTICHE=['nylon','teflon','delrin','plexiglass','poliammide','polietilene',
+  'polipropilene','policarbonato','poliuretano','polistirene','ertalon','ertacetal','moplen','gomma'];
+function materialePlastico(mat){
+  const m=(mat||'').trim();if(!m)return false;
+  const basso=m.toLowerCase();
+  if(NOMI_PLASTICHE.some(n=>basso.includes(n)))return true;
+  return m.toUpperCase().split(/[^A-Z0-9]+/).some(t=>t&&SIGLE_PLASTICHE.has(t));
+}
+function catPlastica(cat){return (cat||'').toUpperCase().includes('PLAST');}
+/* «Lo so, va bene»: la deroga resta sul pezzo, non nella testa di chi guarda. */
+async function derogaMateriale(pid){
+  try{
+    const r=await fetch(API+'/api/parti/'+pid,{method:'PATCH',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({deroga_materiale:true})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a salvare'));
+    const p=S.pmap[pid];if(p)p.deroga_materiale=true;
+    const c=commesse.find(x=>x.id===S.projId);
+    const lp=(c&&c._parti||[]).find(x=>x.id===pid);if(lp)lp.deroga_materiale=true;
+    renderGlance();
+    toast('Segnalazione messa a tacere per questo pezzo','ok');
+  }catch(e){toast(e.message||'Errore',true);}
 }
 function renderGlance(){
   const body=document.getElementById('glanceBody');if(!body)return;
@@ -8805,6 +8879,8 @@ function renderDdSmistamento(){
     return;}
   const ro=!s.modificabile;
   const mancano=s.righe.filter(r=>!r.confermata).length;
+  const gruppi=smGruppi(s.righe);
+  SM_GRPKEYS=gruppi.map(g=>g.chiave);
   box.innerHTML=`
     <div class="rdo-metrics">
       <div class="rdo-metric"><b>${s.righe.length}</b><span>Codici a magazzino</span></div>
@@ -8813,8 +8889,59 @@ function renderDdSmistamento(){
       <div class="rdo-metric"><b>${s.totale_avanzo}</b><span>Avanzo che rientra</span></div>
     </div>
     ${smBannerHtml(s,mancano,ro)}
-    <div class="sm-elenco">${s.righe.map((r,i)=>smRigaHtml(r,i,ro)).join('')}</div>`;
+    <div class="sm-barra">
+      <button class="btn btn-ghost btn-sm" onclick="smApriTutti(true)">⊞ Espandi tutto</button>
+      <button class="btn btn-ghost btn-sm" onclick="smApriTutti(false)">⊟ Comprimi tutto</button>
+    </div>
+    ${gruppi.map((g,gi)=>smGruppoHtml(g,gi,ro)).join('')}`;
 }
+/* ── le righe raggruppate per categoria ──
+   Sessantasei righe tutte uguali non si leggono: si scorrono. Divise per
+   categoria — viti, dadi, rosette, linguette — diventano quattro elenchi
+   corti, e ognuno si chiude quando non serve più. Stessa logica del catalogo
+   di magazzino, così chi passa da una schermata all'altra ritrova le stesse
+   mani. */
+let SM_GRPKEYS=[];
+const SM_APERTI={};
+function smGruppi(righe){
+  const g=new Map();
+  righe.forEach((r,i)=>{
+    const k=(r.categoria||'senza categoria').toUpperCase();
+    if(!g.has(k))g.set(k,{chiave:k,nome:k,righe:[]});
+    g.get(k).righe.push({r,i});
+  });
+  return [...g.values()].sort((a,b)=>a.nome.localeCompare(b.nome)).map(x=>{
+    x.compra=x.righe.filter(v=>v.r.da_comprare>0).length;
+    x.daConfermare=x.righe.filter(v=>!v.r.confermata).length;
+    x.alternative=x.righe.filter(v=>(v.r.sostituti||[]).length).length;
+    return x;
+  });
+}
+function smGruppoHtml(g,gi,ro){
+  // di default aperti: la prima volta che si apre la scheda si deve vedere
+  // cosa c'è, non un elenco di cartelline chiuse
+  const aperto=SM_APERTI[g.chiave]!==false;
+  return `<div class="sm-grp${aperto?' on':''}">
+    <div class="sm-grp-hd" onclick="smToggleGrp(${gi})">
+      <span class="cv">${aperto?'▾':'▸'}</span>
+      <b>${esc(g.nome)}</b>
+      <span class="n">${g.righe.length}</span>
+      <span class="sm-sp"></span>
+      ${g.alternative?`<span class="sm-gtag alt">${g.alternative} con alternative</span>`:''}
+      ${g.compra?`<span class="sm-gtag compra">${g.compra} da ordinare</span>`:`<span class="sm-gtag ok">tutto a magazzino</span>`}
+      ${g.daConfermare?`<span class="sm-gtag attesa">${g.daConfermare} da confermare</span>`:'<span class="sm-gtag ok">✓ confermate</span>'}
+    </div>
+    ${aperto?`<div class="sm-elenco">${g.righe.map(({r,i})=>smRigaHtml(r,i,ro)).join('')}</div>`:''}
+  </div>`;
+}
+// l'indice invece del nome: una categoria con un apostrofo o le virgolette
+// dentro romperebbe l'onclick, ed è già successo nel catalogo di magazzino
+function smToggleGrp(gi){
+  const k=SM_GRPKEYS[gi];if(k==null)return;
+  SM_APERTI[k]=SM_APERTI[k]===false;
+  renderDdSmistamento();
+}
+function smApriTutti(v){(SM_GRPKEYS||[]).forEach(k=>{SM_APERTI[k]=v;});renderDdSmistamento();}
 function smBannerHtml(s,mancano,ro){
   if(s.merce_arrivata_at)
     return `<div class="sm-banner ok">📦 Merce arrivata il ${esc(fmtDate(s.merce_arrivata_at))}: l'avanzo è rientrato a magazzino.</div>`;
@@ -8829,36 +8956,39 @@ function smBannerHtml(s,mancano,ro){
 /* La riga: prima la frase, poi i due campi da correggere se serve. I numeri
    sono nell'ordine in cui uno se li chiede — quante ne servono, quante ne ho,
    quante ne ordino, quante ne restano sullo scaffale. */
+/* La riga, su una riga sola quando ci sta. Il bordo sinistro dice la cosa che
+   si cerca scorrendo: **giallo** dove c'è un materiale alternativo, cioè dove
+   una persona deve decidere; rosso o verde dove non c'è niente da scegliere e
+   conta solo se si compra. Il pallino tiene comunque il rosso/verde, così il
+   giallo non nasconde l'informazione che copriva. */
 function smRigaHtml(r,i,ro){
   const rosso=r.da_comprare>0;
   const alt=(r.sostituti||[]).length;
   const scelto=r.articolo_id;
-  return `<div class="sm-r ${rosso?'compra':'coperta'}${r.confermata?' ok':''}" id="smR${i}">
+  return `<div class="sm-r ${alt?'alt ':''}${rosso?'compra':'coperta'}${r.confermata?' ok':''}" id="smR${i}">
     <div class="sm-r-top">
       <span class="sm-pallino"></span>
       <b class="sm-cod">${esc(r.codice)}</b>
       <span class="sm-den">${esc(r.denominazione||'')}</span>
-      <span class="sm-tag ${r.a_perdere?'perdere':'scorta'}">${r.a_perdere?'a perdere':'di scorta'}</span>
+      ${r.a_perdere?'<span class="sm-tag perdere">a perdere</span>':''}
+      <span class="sm-r-testo">
+        servono <b>${r.serve}</b> ·
+        in casa <b>${r.disponibile}</b> ·
+        ordinare <b class="${rosso?'rosso':'verde'}">${r.da_comprare}</b> ·
+        restano <b>${r.residuo}</b>${r.avanzo?` · <i>${r.avanzo} rientrano</i>`:''}
+      </span>
       <span class="sm-sp"></span>
+      ${ro?'':`<span class="sm-r-campi">
+        <input type="number" min="0" max="${r.disponibile}" title="quante dal magazzino"
+          value="${r.da_prelevare}" id="smP${i}" onchange="smRicalcola(${i})">
+        <input type="number" min="0" title="quante dal fornitore"
+          value="${r.da_comprare}" id="smC${i}" onchange="smSegnaDaConfermare(${i})">
+      </span>`}
       ${r.confermata
-        ?`<button class="sm-conf ok"${ro?' disabled':''} onclick="smConferma(${i},false)" title="Rimetti in discussione">✓ confermata</button>`
+        ?`<button class="sm-conf ok"${ro?' disabled':''} onclick="smConferma(${i},false)" title="Rimetti in discussione">✓</button>`
         :`<button class="sm-conf"${ro?' disabled':''} onclick="smConferma(${i},true)">Conferma</button>`}
     </div>
-    <div class="sm-r-testo">
-      ne servono <b>${r.serve}</b> ·
-      a magazzino <b>${r.disponibile}</b> ·
-      da ordinare <b class="${rosso?'rosso':'verde'}">${r.da_comprare}</b> ·
-      ne restano <b>${r.residuo}</b>
-      ${r.avanzo?` · <span class="fmuted">${r.avanzo} rientrano all'arrivo</span>`:''}
-      ${r.da_comprare?`<span class="fmuted"> — arrotondato a passi di ${r.passo}</span>`:''}
-    </div>
     ${alt?smAlternativeHtml(r,i,ro,scelto):''}
-    ${ro?'':`<div class="sm-r-campi">
-      <label>dal magazzino <input type="number" min="0" max="${r.disponibile_max||r.disponibile}"
-        value="${r.da_prelevare}" id="smP${i}" onchange="smRicalcola(${i})"${ro?' disabled':''}></label>
-      <label>dal fornitore <input type="number" min="0" value="${r.da_comprare}" id="smC${i}"
-        onchange="smSegnaDaConfermare(${i})"${ro?' disabled':''}></label>
-    </div>`}
   </div>`;
 }
 /* Le alternative si mostrano solo dove esistono davvero. Un elenco con
