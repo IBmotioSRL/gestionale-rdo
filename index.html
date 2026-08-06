@@ -442,6 +442,19 @@ table.rzcols thead th::after{content:'';position:absolute;top:0;right:0;width:8p
 .nav-st{font-size:9px;font-weight:800;padding:1px 6px;border-radius:20px;flex:0 0 auto}
 .rdo-edmain{min-width:0}
 .rdo-edmain .dd-body{max-height:none}
+/* La testata fissa della RDO non si incollava: `.panel` ha `overflow:hidden`,
+   e un antenato che ritaglia crea un contenitore di scorrimento suo. Il
+   `position:sticky` si aggrappava a quello — che non scorre — invece che alla
+   pagina, e quindi non si muoveva mai. Qui il ritaglio non serve: gli angoli
+   arrotondati li fa la testata stessa. */
+.rdo-edmain>.panel{overflow:visible}
+.rdo-edmain>.panel>.dd-fisso{border-radius:var(--r) var(--r) 0 0}
+/* …e si fermava 14px sotto il bordo, lasciando passare la mail in quella
+   fessura: quei 14px sono il `padding-top` del contenitore che scorre, che il
+   `top:0` dello sticky conta. Li si toglie da lì e li si ridà agli altri tre
+   riquadri della sezione, che li usavano davvero. */
+#v-rdo>.vscroll{padding-top:0}
+#rdoList,#rdoWork,#rdoShip{padding-top:14px}
 @media(max-width:980px){.rdo-edwrap{grid-template-columns:1fr}.rdo-ednav{position:static;max-height:220px}.rdo-edwrap .rz-split{display:none}}
 .dd-sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--t3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
 .dd-sec:first-child{margin-top:2px}
@@ -593,7 +606,6 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .dd-opt-checks label input,.dd-opt-choices label input{accent-color:var(--go-d)}
 .dd-opt-banner{margin:0 0 8px;border:1.4px solid #d9822b;background:#fff6ec;color:#a85a13;border-radius:9px;padding:7px 11px;font-size:11.5px;font-weight:700}
 /* distinta RDO: barra seleziona/deseleziona tutte */
-.ddx-bar{display:flex;gap:8px;margin:2px 0 9px}
 /* proprietà particolare editabili (drawer) */
 .pp-in{width:100%;border:1px solid transparent;border-radius:6px;padding:5px 7px;font:inherit;font-size:11.5px;font-weight:600;color:var(--t1);background:transparent;outline:none}
 .pp-in:hover{border-color:var(--bd2);background:#fff}
@@ -1455,10 +1467,6 @@ table.ftable tbody tr:hover{background:rgba(245,168,35,.06)}
 .ship-nm{display:flex;flex-direction:column;min-width:0;flex:1}
 .ship-nm b{font-size:12.5px}.ship-nm span{font-size:10px;color:var(--t3)}
 .ship-open{font-size:10px;font-weight:700;color:var(--go-d);cursor:pointer;white-space:nowrap}
-.ddx{text-align:center;width:30px}
-.ddx input{cursor:pointer}
-tr.ddrow-off td{opacity:.4;text-decoration:line-through}
-tr.ddrow-off td.ddx{opacity:1;text-decoration:none}
 .ddx-hint{font-size:10.5px;color:var(--t3);margin:7px 2px 0;font-style:italic}
 .rdo-grid{display:flex;flex-direction:column;gap:10px}
 .rdo-proj{background:var(--surf);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);overflow:hidden}
@@ -8199,26 +8207,27 @@ function renderDdEditor(d){
   const codeRev=d.codice_rev||d.codice_rdo||'';
   const roAttr=bloccata?' readonly':'';
   const disAttr=bloccata?' disabled':'';
-  const ths='<th style="width:30px" title="Includi nella RDO">✓</th>'+cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
-  const nIncl=d.righe.filter(r=>r.incl!==false).length;
+  const ths=cols.map(c=>`<th>${esc(c[1])}</th>`).join('')+'<th></th>';
   const _cc=commesse.find(x=>x.id===d.commessa_id);const _cp=(_cc&&_cc._parti)||[];
   const confSet=new Set(_cp.filter(p=>pForns(p).length>=2).map(p=>p.id));
   // mappa parte_id → PDF (per l'anteprima al passaggio del mouse sulla riga)
   const pdfByPid={};_cp.forEach(pp=>{const f=firstPdf(pp);if(f)pdfByPid[pp.id]=f;});
-  const rows=d.righe.map((r,i)=>{
-    const inc=r.incl!==false;
-    // celle in SOLA LETTURA: questa tabella serve solo a includere/escludere (le checkbox),
-    // non a modificare i dati del pezzo (quelli si cambiano nel pannello Progetto).
+  /* Tabella in SOLA LETTURA, spunte comprese.
+     Toglierne una non era «non lo chiedo stavolta»: rimandava il pezzo a «da
+     smistare» nel progetto. Cioè una modifica di progetto fatta da un
+     documento che dal progetto discende — e siccome la RDO si rigenera con
+     «Aggiorna contenuto», nessuno poteva più dire quale delle due avesse
+     ragione. Un pezzo si toglie dove è scritto perché: nel progetto. */
+  const rows=d.righe.map(r=>{
     const tds=cols.map(([k])=>{
       if(r.tipo==='ass'&&['peso','tratt_term','tratt_sup'].includes(k))return '<td style="text-align:center;color:var(--t3)">—</td>';
       const cls=k==='codice'?'cod':(k==='revisione'?'rev':(k==='qta'?'qta':''));
       return `<td class="${cls}">${esc(r[k]||'')}</td>`;
     }).join('');
-    const chk=`<td class="ddx"><input type="checkbox" ${inc?'checked':''}${disAttr} title="${inc?'Incluso — togli per non richiederlo':'Escluso dalla RDO'}" onchange="ddToggleIncl(${i},this.checked)"></td>`;
     const cmpMark=(r.parte_id&&confSet.has(r.parte_id))?'<span class="cmptag" title="Pezzo in confronto tra più fornitori">🔀</span> ':'';
     const pdf=r.parte_id?pdfByPid[r.parte_id]:null;
     const prev=pdf?` data-prevpdf="${esc(pdf)}" data-prevcap="${esc(r.codice||'')}"`:'';
-    return `<tr class="${inc?'':'ddrow-off'}"${prev}>${chk}${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+    return `<tr${prev}>${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
   }).join('');
   const confN=d.pezzi_in_confronto||0;
   const st=d.stato, canSend=st==='approvata';
@@ -8317,11 +8326,10 @@ function renderDdEditor(d){
             ${confHtml}
           </div>
           <details class="dd-coll" open>
-            <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${nIncl}/${d.righe.length} inclusi</span></summary>
+            <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${d.righe.length} ${d.righe.length===1?'riga':'righe'}</span></summary>
             <div class="dd-collbody">
-              <div class="ddx-bar"><button class="btn btn-ghost btn-sm" onclick="ddInclAll(true)">✓ Tutte</button><button class="btn btn-ghost btn-sm" onclick="ddInclAll(false)">▢ Nessuna</button></div>
               <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
-              <div class="ddx-hint">Togli la spunta per non richiedere un pezzo: esce dalla distinta/mail e torna «da smistare» nel progetto.</div>
+              <div class="ddx-hint">È quello che parte al fornitore, com'è in distinta. Per togliere o aggiungere un pezzo si passa dal <b>progetto</b>: lì la modifica resta scritta, e poi «Aggiorna contenuto» la porta qui.</div>
             </div>
           </details>
         </div>
@@ -8681,41 +8689,6 @@ async function ddAggiorna(){
   }catch{toast('Errore aggiornamento',true);}
 }
 function ddSetBrand(b){DD.data.brand=b;renderDdEditor(DD.data);}
-async function ddToggleIncl(i,checked){
-  const r=DD.data.righe[i];if(!r)return;r.incl=checked;
-  if(r.parte_id){
-    try{await fetch(API+'/api/parti/'+r.parte_id,{method:'PATCH',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(checked?{fornitore_id:DD.fid}:{fornitore_id:null,stato:'da_smistare'})});}catch{}
-    const c=commesse.find(x=>x.id===DD.cid);const p=(c&&c._parti||[]).find(x=>x.id===r.parte_id);
-    if(p){if(checked){p.fornitore_id=DD.fid;}else{p.fornitore_id=null;p.stato='da_smistare';}}
-    if(S.projId===DD.cid)refreshDetail();
-  }
-  try{await ddPersist();}catch{}
-  renderDdEditor(DD.data);
-}
-// seleziona / deseleziona tutte le righe della distinta in un colpo solo.
-// Stessa semantica della spunta singola: includere = (ri)assegna il pezzo al
-// fornitore; escludere = lo rilascia («da smistare»). Deselezionare tutte è
-// un'azione pesante → chiede conferma.
-async function ddInclAll(on){
-  if(!DD.data||!DD.data.righe||!DD.data.righe.length)return;
-  if(!on&&!confirm('Deselezionare tutte le righe?\nI pezzi escono da questa RDO e tornano «da smistare» nel progetto.'))return;
-  const c=commesse.find(x=>x.id===DD.cid);
-  const localParti=(c&&c._parti)||[];
-  const body=on?{fornitore_id:DD.fid}:{fornitore_id:null,stato:'da_smistare'};
-  for(const r of DD.data.righe){
-    r.incl=on;
-    if(r.parte_id){
-      try{await fetch(API+'/api/parti/'+r.parte_id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}catch{}
-      const p=localParti.find(x=>x.id===r.parte_id);
-      if(p){if(on){p.fornitore_id=DD.fid;}else{p.fornitore_id=null;p.stato='da_smistare';}}
-    }
-  }
-  try{await ddPersist();}catch{}
-  await loadDdList();renderDdEditor(DD.data);renderDdNav&&renderDdNav();
-  if(S.projId===DD.cid)refreshDetail();
-  toast(on?'Tutte le righe incluse':'Tutte le righe escluse','ok');
-}
 function splitEmails(v){return (v||'').split(/[;,]/).map(s=>s.trim()).filter(Boolean);}
 async function ddPersist(){
   const d=DD.data;const gv=id=>{const e=document.getElementById(id);return e?e.value:'';};
