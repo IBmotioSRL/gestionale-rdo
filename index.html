@@ -9741,6 +9741,7 @@ function ddExport(fmt){
 /* ── MAGAZZINO ── */
 let MAG={tab:'cat',categorieLoaded:false,categorie:[],articoli:null,articoliAll:null,_catsList:['all'],
   qcat:'',filtCat:'all',filtRiord:false,sortCol:null,sortDir:'asc',colFiltri:{},colW:{},art:null,
+  inCasa:true,limite:400,offset:0,tot:0,totCat:0,colValori:{},
   richieste:null,newReq:null,
   pronte:null,pickActive:null,scan:null,
   notifiche:null};
@@ -9791,9 +9792,17 @@ function magFmtData(s){
   if(isNaN(d))return esc(s);
   return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
 }
+/* L'elenco per le tendine delle richieste. Chiede **solo quello che c'e' a
+   scaffale**, ed e' anche piu' corretto di prima: da una richiesta di prelievo
+   si prende quello che c'e', non una misura a norma che non abbiamo mai
+   comprato. Senza questo la tendina avrebbe ventimila voci, quasi tutte a zero. */
 async function magEnsureArticoliAll(){
   if(MAG.articoliAll)return;
-  try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoliAll=r.ok?await r.json():[];}
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli?solo_in_casa=true&limite=2000');
+    const d=r.ok?await r.json():null;
+    MAG.articoliAll=d?d.articoli:[];
+  }
   catch{MAG.articoliAll=[];}
 }
 function magArticoloFull(id){return (MAG.articoliAll||[]).find(a=>a.id===id);}
@@ -9803,16 +9812,50 @@ function magArticoloFull(id){return (MAG.articoliAll||[]).find(a=>a.id===id);}
 // soprattutto la ricerca si applicano poi qui, in memoria. Prima ogni tasto
 // premuto rifaceva la chiamata e ridisegnava la barra, e il cursore usciva dal
 // campo: si riusciva a scrivere una lettera per volta.
+/* ── il catalogo arriva a pagine, filtrato dal server ──
+   Fino al 07/08/2026 si caricava tutto e si filtrava qui: con 86 articoli
+   andava benissimo. Generando le combinazioni delle norme che usiamo gli
+   articoli diventano oltre ventimila, e «tutto» sarebbe qualche megabyte a
+   ogni apertura della schermata.
+
+   `MAG.inCasa` e' acceso di default, ed e' la scelta che conta piu' della
+   paginazione: un catalogo fatto per il 99% di zeri, mostrato per intero, non
+   e' un catalogo — e' un elenco di cose che non abbiamo. */
 async function magLoadCatalogo(){
   const el=document.getElementById('magBody');
   if(!MAG.articoli||!MAG.articoli.length)
     el.innerHTML='<div class="fmuted" style="font-size:11px">Carico catalogo…</div>';
-  try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoli=r.ok?await r.json():[];}
-  catch{MAG.articoli=[];}
+  const p=new URLSearchParams({limite:MAG.limite,offset:MAG.offset,solo_in_casa:MAG.inCasa?'true':'false'});
+  if((MAG.qcat||'').trim())p.set('q',MAG.qcat.trim());
+  if(MAG.filtCat&&MAG.filtCat!=='all')p.set('categoria',MAG.filtCat);
+  if(MAG.filtRiord)p.set('solo_da_riordinare','true');
+  try{
+    const r=await fetch(API+'/api/magazzino/articoli?'+p);
+    const d=r.ok?await r.json():null;
+    MAG.articoli=d?d.articoli:[];
+    MAG.tot=d?d.totale:0;MAG.totCat=d?d.totale_catalogo:0;
+  }catch{MAG.articoli=[];MAG.tot=MAG.totCat=0;}
+  MAG.colValori={};
   renderMagCatalogo();
 }
+// cercando o cambiando filtro si riparte dalla prima pagina: restare a pagina
+// tre di un elenco che non esiste piu' e' il modo piu' rapido di vedere «nessun
+// risultato» su una ricerca che invece trova
+function magRicarica(){MAG.offset=0;magLoadCatalogo();}
+function magPagina(d){
+  const n=MAG.offset+d*MAG.limite;
+  if(n<0||n>=MAG.tot)return;
+  MAG.offset=n;magLoadCatalogo();
+}
+function magToggleInCasa(){MAG.inCasa=!MAG.inCasa;magRicarica();}
 // filtri applicati in memoria: categoria, «solo da riordinare» e testo cercato
+// categoria, «da riordinare» e testo cercato li applica ormai il database
+// (`magLoadCatalogo`): rifarli qui vorrebbe dire filtrare la pagina dentro la
+// pagina, e con i risultati a pagine il conto non tornerebbe piu'
 function magFiltraLocale(base){
+  return base;
+}
+function _magFiltraLocaleVecchia(base){
   let rows=base;
   if(MAG.filtCat&&MAG.filtCat!=='all')rows=rows.filter(a=>(a.categoria||'')===MAG.filtCat);
   if(MAG.filtRiord)rows=rows.filter(a=>a.da_riordinare);
@@ -9827,15 +9870,58 @@ function magFiltraLocale(base){
   }
   return rows;
 }
+/* Quante se ne stanno guardando e quante ce ne sono. Con ventimila articoli
+   «Nessun risultato» senza un numero accanto non dice se e' colpa della ricerca
+   o del filtro «solo quello che abbiamo». */
+function magPagineHtml(){
+  const da=MAG.tot?MAG.offset+1:0, a=Math.min(MAG.offset+MAG.limite,MAG.tot);
+  const altri=Math.max(0,(MAG.totCat||0)-(MAG.tot||0));
+  return `<div class="mg-leg" style="margin-bottom:8px">
+    <b>${MAG.tot?`${da}–${a} di ${MAG.tot}`:'nessun articolo'}</b>
+    ${MAG.inCasa&&altri?`<span class="fmuted">· altri <b>${altri}</b> esistono a catalogo ma non li abbiamo</span>`:''}
+    <span style="margin-left:auto;display:flex;gap:6px;align-items:center">
+      <button class="btn btn-ghost btn-sm" ${MAG.offset<=0?'disabled':''} onclick="magPagina(-1)">‹ indietro</button>
+      <button class="btn btn-ghost btn-sm" ${MAG.offset+MAG.limite>=MAG.tot?'disabled':''} onclick="magPagina(1)">avanti ›</button>
+    </span>
+  </div>`;
+}
 function magKpi(cls,v,l){return `<div class="m ${cls}"><div class="mn">${v}</div><div class="ml">${esc(l)}</div></div>`;}
+/* I valori di una tendina di colonna vengono dal **database**, non dalle righe
+   che si stanno guardando: filtrare su «i materiali di questa pagina» sarebbe
+   un filtro che cambia da solo mentre si scorre. Si chiedono una volta e si
+   tengono finche' non cambia la ricerca (`MAG.colValori`, svuotata a ogni
+   ricaricamento). */
+const MAG_COL_SERVER=['categoria','normativa','denominazione','dimensione','materiale','unita'];
 function magColValori(field){
-  const seen=new Map();
-  (MAG.articoli||[]).forEach(a=>{
-    const raw=a[field];
-    const v=(raw===null||raw===undefined||raw==='')?'(vuoto)':raw.toString();
-    if(!seen.has(v))seen.set(v,raw);
-  });
-  return [...seen.entries()].sort((a,b)=>a[0].localeCompare(b[0],'it',{numeric:true,sensitivity:'base'}));
+  if(!MAG_COL_SERVER.includes(field)){
+    const seen=new Map();
+    (MAG.articoli||[]).forEach(a=>{
+      const raw=a[field];
+      const v=(raw===null||raw===undefined||raw==='')?'(vuoto)':raw.toString();
+      if(!seen.has(v))seen.set(v,raw);
+    });
+    return [...seen.entries()].sort((a,b)=>a[0].localeCompare(b[0],'it',{numeric:true,sensitivity:'base'}));
+  }
+  const pronti=MAG.colValori[field];
+  if(pronti)return pronti;
+  magCaricaColValori(field);
+  return [];   // arrivano fra un attimo, e la tendina si ridisegna da sola
+}
+async function magCaricaColValori(field){
+  const p=new URLSearchParams({campo:field,solo_in_casa:MAG.inCasa?'true':'false'});
+  if((MAG.qcat||'').trim())p.set('q',MAG.qcat.trim());
+  if(MAG.filtCat&&MAG.filtCat!=='all')p.set('categoria',MAG.filtCat);
+  let vals=[];
+  try{const r=await fetch(API+'/api/magazzino/articoli/valori?'+p);vals=r.ok?await r.json():[];}
+  catch{vals=[];}
+  MAG.colValori[field]=vals.map(v=>[v===''?'(vuoto)':v,v]);
+  // se la tendina di quella colonna e' aperta adesso, si ridisegna con i valori
+  // appena arrivati; e la selezione parte da «tutti», come quando si apre
+  if(MAG_FILTER_FIELD===field){
+    const attivo=MAG.colFiltri[field];
+    if(!attivo||!attivo.size)MAG_FILTER_TEMP=new Set(MAG.colValori[field].map(([v])=>v));
+    magRenderColFilter();
+  }
 }
 function magApplyColFiltri(rows){
   const attivi=Object.entries(MAG.colFiltri).filter(([,set])=>set&&set.size);
@@ -9917,8 +10003,11 @@ function renderMagCatalogo(){
       ${MAG.raggr?`<div class="mg-chips">
         <div class="mg-chip" onclick="magGrpTutti(false)" title="Apri tutti i gruppi">⊞ Espandi tutto</div>
         <div class="mg-chip" onclick="magGrpTutti(true)" title="Chiudi tutti i gruppi">⊟ Comprimi tutto</div></div>`:''}
+      <div class="mg-chips"><div class="mg-chip${MAG.inCasa?'':' on'}" onclick="magToggleInCasa()"
+        title="Il catalogo contiene anche le misure a norma che non abbiamo mai comprato: di solito non servono, ma si trovano cercandole">📚 Anche quelli che non abbiamo</div></div>
       <button class="btn btn-go" onclick="magNuovoArticolo()">+ Nuovo articolo</button>
     </div>
+    ${magPagineHtml()}
     <div class="mg-leg">
       <b><i style="background:#34C759"></i> inox 304 / 302</b>
       <b><i style="background:#fff"></i> inox 316</b>
@@ -10343,9 +10432,11 @@ document.addEventListener('click',e=>{if(!e.target.closest('#magFilterDD')&&!e.t
 // niente chiamata al server e niente ridisegno della barra: si filtra in
 // memoria e si riscrive solo il corpo della tabella, così il cursore resta
 // dov'è e si può scrivere una parola intera
-function magOnSearchCat(v){MAG.qcat=v;magRenderRighe();}
-function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];renderMagCatalogo();}
-function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;renderMagCatalogo();}
+// la ricerca la fa il database: si aspetta che si smetta di scrivere, se no
+// si manda una richiesta per ogni tasto
+function magOnSearchCat(v){MAG.qcat=v;clearTimeout(MAG_SEARCH_T);MAG_SEARCH_T=setTimeout(magRicarica,260);}
+function magSetFiltCatIdx(i){MAG.filtCat=(MAG._catsList||['all'])[i];magRicarica();}
+function magToggleRiord(){MAG.filtRiord=!MAG.filtRiord;magRicarica();}
 /* ── RICHIESTE DA COMMESSE ── */
 async function magLoadRichieste(){
   const el=document.getElementById('magBody');
@@ -10360,10 +10451,7 @@ function magStBadge(s){
   return `<span class="chip ${c}">${esc(l)}</span>`;
 }
 async function magApriNuovaRichiesta(speciale){
-  if(!MAG.articoliAll){
-    try{const r=await fetch(API+'/api/magazzino/articoli');MAG.articoliAll=r.ok?await r.json():[];}
-    catch{MAG.articoliAll=[];}
-  }
+  await magEnsureArticoliAll();
   const first=(MAG.articoliAll||[])[0];
   // una speciale non ha commessa: al suo posto un titolo che dice a cosa serve
   const aperte=(commesse||[]).filter(c=>!c.chiusa);

@@ -207,7 +207,15 @@ variabile: la distinta ne chiede uno, a scaffale ce n'è un altro.
 - `smApriRegistro` (modale `mSost`) — chi ha cambiato quale materiale, quando e
   quante. La distinta non si tocca mai, quindi è l'**unica** traccia.
 
-- `"MAGAZZINO"` → `"CATALOGO E GIACENZE"`, `"SCHEDA ARTICOLO"`, `"PRELIEVO (TABLET)"`, `"RIORDINO"`
+- `"MAGAZZINO"` → `"CATALOGO E GIACENZE"`, `"SCHEDA ARTICOLO"`, `"PRELIEVO (TABLET)"`, `"RIORDINO"`.
+  **Il catalogo ha 21.786 articoli** (generati dalle norme che usiamo, quasi
+  tutti a zero) e arriva **a pagine dal server**: ricerca, categoria e
+  «da riordinare» li fa il database, non `magFiltraLocale`, che ora non filtra
+  più niente. `MAG.inCasa` è acceso di default — si vede quello che c'è a
+  scaffale, il resto si trova cercandolo. I valori delle tendine di colonna
+  vengono da `/api/magazzino/articoli/valori`, non dalle righe visibili.
+  Aggiungendo un filtro nuovo va messo **lato server**: farlo qui filtrerebbe
+  la pagina dentro la pagina.
 - `"RACCOLTA ORE"` → `"TIMBRATURE"`, `"INSERIMENTO ORE"`, `"CALENDARIO PRESENZE"`, `"REPORT"`, `"IMPOSTAZIONI"`
 - `"FORNITORI — lista friendly + scheda dettaglio"`, `"FORNITORE CRUD"`
 - `"RICERCA FILE (ex Calderone)"`, `"ANTEPRIMA AL PASSAGGIO DEL MOUSE"`
