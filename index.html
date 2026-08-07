@@ -5196,20 +5196,28 @@ function controlliInvio(){
      uno di plastica finito altrove. Nessuna delle due blocca — la distinta può
      avere ragione e la regola torto — ma entrambe si mettono a tacere una per
      una con «lo so», che resta scritto sul pezzo invece di essere ignorato a
-     occhio ogni volta. */
+     occhio ogni volta.
+
+     **Solo sui costruttivi.** Un commerciale di plastica non è un errore: una
+     valvola in PP, un tappo in PE e un soffietto in PVC sono fatti così, e
+     nella categoria PLASTICA non ci vanno perché quella vuol dire «pezzo che
+     ricaviamo noi da lastra o barra». Su questa commessa la regola, applicata
+     anche ai commerciali, chiedeva quattro deroghe il primo giorno per quattro
+     cose giuste: un avviso che ha sempre torto smette di essere letto, e poi
+     non lo si legge nemmeno quando ha ragione. */
   const rigaDeroga=(p,perche)=>({
     cod:p.numero_parte,
     txt:`${p.denominazione||'—'} · ${perche}`,
     go:`derogaMateriale(${p.id})`,fix:'Lo so, va bene'});
+  const costruttivi=all.filter(p=>!_comm(p)&&!p.deroga_materiale);
   add('plin','guarda','in PLASTICA ma non è plastica',
-    'Il materiale dichiarato non è una plastica. Clicca per dire che va bene così.',
-    all.filter(p=>!p.deroga_materiale&&catPlastica(p.categoria)
+    'Pezzo costruttivo nella categoria delle plastiche con un materiale che plastica non è.',
+    costruttivi.filter(p=>catPlastica(p.categoria)
                   &&(p.materiale||'').trim()&&!materialePlastico(p.materiale))
        .map(p=>rigaDeroga(p,`categoria ${p.categoria} · materiale ${p.materiale}`)));
   add('plout','guarda','di plastica ma fuori da PLASTICA',
-    'Materiale plastico in una categoria che non è quella delle plastiche.',
-    all.filter(p=>!p.deroga_materiale&&!catPlastica(p.categoria)
-                  &&materialePlastico(p.materiale))
+    'Pezzo costruttivo con materiale plastico in una categoria che non è quella delle plastiche.',
+    costruttivi.filter(p=>!catPlastica(p.categoria)&&materialePlastico(p.materiale))
        .map(p=>rigaDeroga(p,`categoria ${p.categoria||'—'} · materiale ${p.materiale}`)));
   return c;
 }
