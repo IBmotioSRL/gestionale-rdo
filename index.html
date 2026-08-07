@@ -1225,13 +1225,19 @@ table.mg-req .btn{margin-left:4px}
 .sm-alt{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:4px;
   padding-top:4px;border-top:1px dashed var(--bd)}
 .sm-alt-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3)}
+.sm-alt-lbl i{font-style:normal;font-weight:600;text-transform:none;letter-spacing:0}
 .sm-alt-v{display:flex;gap:5px;align-items:center;font-size:11px;color:var(--t1);cursor:pointer;
   border:1px solid var(--bd);border-radius:7px;padding:2px 8px}
-.sm-alt-v.on{border-color:var(--go);background:rgba(245,168,35,.10)}
+.sm-alt-v.on{border-color:var(--go);background:rgba(245,168,35,.14);font-weight:700}
+/* un materiale che resiste meno si può scegliere, ma si deve vedere che lo è */
+.sm-alt-v.giu{border-style:dashed;border-color:rgba(192,21,30,.40)}
+.sm-alt-v.giu i{color:#C0151E}
+.sm-alt-v.su i{color:#1E7A3C}
 .sm-alt-v i{font-style:normal;font-size:9.5px;color:var(--t3)}
-.sm-alt-no{font-size:10px;color:var(--t3);font-style:italic;cursor:help}
-.sm-r-campi{display:flex;gap:5px;align-items:center;flex-shrink:0}
-.sm-r-campi input{width:58px;padding:2px 6px;border:1.4px solid var(--bd2);border-radius:6px;
+.sm-r-campi{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.sm-r-campi label{display:flex;gap:4px;align-items:center;font-size:9px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--t3);cursor:help}
+.sm-r-campi input{width:56px;padding:2px 6px;border:1.4px solid var(--bd2);border-radius:6px;
   font:inherit;font-size:11.5px;font-weight:800;text-align:right;color:var(--t1)}
 .dd-revtag.esito{background:#EAF3FF;border-color:#B7D3F5;color:#12467F}
 .rdo-esiti{display:flex;flex-direction:column;gap:6px}
@@ -8967,7 +8973,7 @@ function smBannerHtml(s,mancano,ro){
    giallo non nasconde l'informazione che copriva. */
 function smRigaHtml(r,i,ro){
   const rosso=r.da_comprare>0;
-  const alt=(r.sostituti||[]).length;
+  const alt=smOpzioni(r).length>1;
   const scelto=r.articolo_id;
   return `<div class="sm-r ${alt?'alt ':''}${rosso?'compra':'coperta'}${r.confermata?' ok':''}" id="smR${i}">
     <div class="sm-r-top">
@@ -8983,10 +8989,12 @@ function smRigaHtml(r,i,ro){
       </span>
       <span class="sm-sp"></span>
       ${ro?'':`<span class="sm-r-campi">
-        <input type="number" min="0" max="${r.disponibile}" title="quante dal magazzino"
-          value="${r.da_prelevare}" id="smP${i}" onchange="smRicalcola(${i})">
-        <input type="number" min="0" title="quante dal fornitore"
-          value="${r.da_comprare}" id="smC${i}" onchange="smSegnaDaConfermare(${i})">
+        <label title="Quante se ne prendono dallo scaffale">prelevo
+          <input type="number" min="0" max="${r.disponibile}"
+            value="${r.da_prelevare}" id="smP${i}" onchange="smRicalcola(${i})"></label>
+        <label title="Quante se ne chiedono al fornitore in questa RDO">ordino
+          <input type="number" min="0"
+            value="${r.da_comprare}" id="smC${i}" onchange="smSegnaDaConfermare(${i})"></label>
       </span>`}
       ${r.confermata
         ?`<button class="sm-conf ok"${ro?' disabled':''} onclick="smConferma(${i},false)" title="Rimetti in discussione">✓</button>`
@@ -8995,25 +9003,37 @@ function smRigaHtml(r,i,ro){
     ${alt?smAlternativeHtml(r,i,ro,scelto):''}
   </div>`;
 }
-/* Le alternative si mostrano solo dove esistono davvero. Un elenco con
-   un'unica voce già scelta non è una scelta: è rumore che fa dubitare. */
+/* Tutti i materiali della stessa misura, in fila e tutti scegliibili.
+   Anche quelli che la regola non promuove — un A2 dove la distinta chiede A4,
+   un acciaio non inox: la regola sa cosa resiste di più, non cosa serve a quel
+   pezzo, e quello lo sa solo chi lo progetta. Ognuno è etichettato per quello
+   che è (uguale / migliore / inferiore), così la scelta è consapevole invece
+   che nascosta. */
+function smOpzioni(r){
+  return [
+    ...(r.articoli||[]).map(a=>[a,'uguale']),
+    ...(r.sostituti||[]).map(a=>[a,'su']),
+    ...(r.non_utilizzabili||[]).map(a=>[a,'giu']),
+  ].filter(([a])=>a&&a.id!=null);
+}
+const SM_ETICHETTA={uguale:'',su:'più resistente',giu:'meno resistente'};
 function smAlternativeHtml(r,i,ro,scelto){
-  const voci=[...(r.articoli||[]).map(a=>[a,false]),...(r.sostituti||[]).map(a=>[a,true])];
+  const voci=smOpzioni(r);
+  if(voci.length<2)return '';   // una voce sola non è una scelta: è rumore
   return `<div class="sm-alt">
-    <span class="sm-alt-lbl">Materiale:</span>
-    ${voci.map(([a,sost])=>`<label class="sm-alt-v${a.id===scelto?' on':''}">
+    <span class="sm-alt-lbl">Materiale <i>(distinta: ${esc(r.materiale_richiesto||'—')})</i></span>
+    ${voci.map(([a,liv])=>`<label class="sm-alt-v ${liv}${a.id===scelto?' on':''}"
+      title="${esc(a.nota||'')}">
       <input type="radio" name="smA${i}" ${a.id===scelto?'checked':''}${ro?' disabled':''}
         onchange="smScegli(${i},${a.id})">
-      <span>${esc(a.materiale)} <i>${a.disponibile} disp.${sost?' · al posto di '+esc(r.materiale_richiesto||'—'):''}</i></span>
+      <span>${esc(a.materiale)} <i>${a.disponibile} disp.${SM_ETICHETTA[liv]?' · '+SM_ETICHETTA[liv]:''}${a.a_perdere?' · a perdere':''}</i></span>
     </label>`).join('')}
-    ${(r.non_utilizzabili||[]).length?`<span class="sm-alt-no" title="${esc((r.non_utilizzabili||[]).map(a=>a.materiale+' ('+a.disponibile+')').join(' · '))}">
-      ci sono anche materiali inferiori: non si possono usare</span>`:''}
   </div>`;
 }
 // scegliendo un altro materiale la riga si ricalcola su QUELLA scatola
 function smScegli(i,articoloId){
   const r=DD.smist.righe[i];
-  const a=[...(r.articoli||[]),...(r.sostituti||[])].find(x=>x.id===articoloId);if(!a)return;
+  const a=smOpzioni(r).map(([x])=>x).find(x=>x.id===articoloId);if(!a)return;
   r.articolo_id=articoloId;
   r.disponibile=a.disponibile;
   const inp=document.getElementById('smP'+i);
