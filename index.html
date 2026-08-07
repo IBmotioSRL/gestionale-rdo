@@ -2882,7 +2882,11 @@ const S={v:'home',projId:null,albero:null,cal:null,sel:null,tab:'tutti',rows:new
 const RDO_OPEN={};const RDO_PX={};const VOCI={};
 
 /* ── INIT ── */
-async function init(){await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();go('home');dockApplica();
+async function init(){navCarica();await Promise.all([checkHealth(),loadUtente(),loadFornitori(),loadLavorazioni(),loadTemplates()]);await loadCommesse();
+  // si riparte da dove si era rimasti, non dalla Home: ricaricare la pagina
+  // non deve costare la strada per tornare al punto (Elia, 07/08/2026)
+  go(NAV.ultima==='pdet'&&(NAV.sez.pdet||{}).pid!=null?'pdet':NAV.ultima,(NAV.sez.pdet||{}).pid);
+  dockApplica();
   await loadNotifiche(false);(NOTIF.notifiche||[]).forEach(n=>NOTIF_SEEN.add(n.id));startNotifPolling();}
 async function loadLavorazioni(){try{const r=await fetch(API+'/api/vocabolario');if(r.ok){const d=await r.json();PROP.categorie=d.categorie||[];PROP.lavorazioni=d.lavorazioni||[];PROP.tipi=d.tipi||[];PROP.fornitori=d.fornitori||[];LAVORAZIONI=[...(PROP.lavorazioni),...(PROP.tipi),...(PROP.categorie)];}}catch{}fillPropDatalists();}
 // tendine personalizzabili (datalist) per le proprietà note
@@ -2924,6 +2928,9 @@ async function loadFornitori(){try{const r=await fetch(API+'/api/fornitori');if(
 async function loadCommesse(){try{const r=await fetch(API+'/api/commesse');if(!r.ok)throw 0;commesse=await r.json();
   // carica parti di ogni commessa (per stats dashboard/progetti/RDO)
   await Promise.all(commesse.map(async c=>{try{const rp=await fetch(API+'/api/commesse/'+c.id+'/parti');c._parti=rp.ok?await rp.json():[];}catch{c._parti=[];}}));
+  // le commesse sono cambiate: le sezioni che le elencano non sono piu' buone
+  // per come sono disegnate adesso, e vanno rifatte al prossimo ingresso
+  navScade('proj','rdo','costi','fav');
 }catch{commesse=[];}}
 
 /* ── NAV ── */
@@ -2953,33 +2960,125 @@ function navSync(v){
 }
 try{Object.assign(NAV_APERTI,JSON.parse(localStorage.getItem('rdo_nav_grp')||'{}'));}catch{}
 
+/* ── LA NAVIGAZIONE RICORDA DOVE ERI ──
+   Regola di Elia (07/08/2026): cambiare sezione non deve costare niente. Se
+   stavo scrivendo la mail di una RDO e vado a controllare il magazzino,
+   tornando devo ritrovare **quella** RDO, allo stesso punto, con quello che
+   avevo scritto ancora lì. Prima ogni rientro chiamava `rdoEnter()`, che
+   riportava a `mode='list'` e rifaceva tutto da capo.
+
+   Due meccanismi diversi, e servono entrambi:
+
+   * **dentro la stessa pagina** la vista non si distrugge, si nasconde: basta
+     non ridisegnarla al rientro e quello che c'è nei campi resta lì. Per
+     questo `NAV.viste` tiene traccia di chi è già stato aperto, e `*Enter()`
+     gira una volta sola;
+   * **ricaricando il sito** il DOM non c'è più, e allora serve lo stato
+     salvato (`localStorage`): quale sezione, quale schermata interna, quale
+     commessa. Lo scorrimento si ricorda in tutti e due i casi.
+
+   Chi vuole davvero ripartire da zero ha il pulsante «indietro» della sezione
+   — e cambiare commessa resta un gesto esplicito, non un effetto collaterale
+   dell'essere passati da un'altra parte. */
+const NAV={ultima:'home',viste:new Set(),scroll:{},sez:{}};
+const NAV_CHIAVE='rdo_nav';
+// quanto vale la pena ricordare: dopo un giorno «dov'ero» non è più una
+// comodità, è una sorpresa
+const NAV_SCADENZA=12*60*60*1000;
+
+function navCarica(){
+  try{
+    const d=JSON.parse(localStorage.getItem(NAV_CHIAVE)||'{}');
+    if(!d.quando||Date.now()-d.quando>NAV_SCADENZA)return;
+    NAV.ultima=d.ultima||'home';NAV.scroll=d.scroll||{};NAV.sez=d.sez||{};
+  }catch{}
+}
+function navSalva(){
+  NAV.sez={
+    rdo:{mode:RV.mode,cid:RV.cid,fid:RV.fid,selForn:RV.selForn},
+    costi:{mode:CX.mode,cid:CX.cid,view:CX.view},
+    mag:{tab:MAG.tab},ore:{tab:ORE.tab},fav:{commessa:FAV.commessa},
+    pdet:{pid:S.projId},avvisi:{tab:AV_TAB},
+  };
+  try{localStorage.setItem(NAV_CHIAVE,JSON.stringify(
+    {quando:Date.now(),ultima:NAV.ultima,scroll:NAV.scroll,sez:NAV.sez}));}catch{}
+}
+// ogni vista ha la sua area che scorre: è lì che sta la posizione, non sulla
+// finestra (il corpo della pagina non scorre mai)
+function navScrollEl(v){
+  const box=document.getElementById('v-'+v);
+  return box?box.querySelector('.vscroll'):null;
+}
+function navRicordaScroll(v){
+  const el=navScrollEl(v);
+  if(el)NAV.scroll[v]=el.scrollTop;
+}
+function navTornaAScroll(v){
+  const el=navScrollEl(v),y=NAV.scroll[v];
+  if(!el||!y)return;
+  // dopo il render: le righe non ci sono ancora quando `go` finisce
+  requestAnimationFrame(()=>{requestAnimationFrame(()=>{el.scrollTop=y;});});
+}
+
 function go(v,pid){
   closeDD();closeSb();
+  if(S.v&&S.v!==v)navRicordaScroll(S.v);
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.ni[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===v||(v==='pdet'&&x.dataset.v==='proj')));
   navSync(v);
-  S.v=v;
+  S.v=v;NAV.ultima=v;
+  // primo ingresso in questa sezione da quando la pagina è aperta: è l'unico
+  // momento in cui si carica e si disegna tutto
+  const primaVolta=!NAV.viste.has(v);
+  NAV.viste.add(v);
   if(v==='pdet'){
     // aprendo un progetto la finestra in basso lo segue; poi si può cambiare
     // commessa da lì senza uscire dalla sezione in cui si sta lavorando
     if(pid!=null&&pid!==DOCK.commessa){DOCK.commessa=pid;DOCK.gantt=DOCK.albero=null;DOCK.sel=null;}
-    openProgetto(pid);dockApplica();return;
+    // Se torno al progetto senza dirne uno, è quello di prima: `openProgetto`
+    // riazzera selezione, filtri e rami aperti, ed è proprio quello che non
+    // deve succedere passando di qua. La vista però va accesa comunque —
+    // normalmente lo fa `openProgetto`, e saltarlo la lasciava invisibile.
+    document.getElementById('v-pdet').classList.add('on');
+    // si ricarica solo quando serve davvero: un progetto scelto adesso,
+    // nessun progetto aperto, o il primo ingresso da quando la pagina è aperta
+    if(pid!=null||S.projId==null||primaVolta)openProgetto(pid);
+    dockApplica();
+    navTornaAScroll(v);navSalva();return;
   }
   hideFAB();
   document.getElementById('v-'+v).classList.add('on');
   // dopo aver acceso la vista: dentro «Gantt e gerarchia» il pannello si
   // trasferisce nella pagina, e per farlo la pagina deve già esserci
   dockApplica();   // la finestra in basso c'è dovunque tranne Magazzino e Ore
-  if(v==='proj')renderProjGrid();
-  if(v==='fav')favEnter();
-  if(v==='rdo')rdoEnter();
-  if(v==='ore')oreEnter();
-  if(v==='mag')magEnter();
-  if(v==='costi'){CX.mode='list';CX.cid=null;CX.data=null;renderCosti();}
-  if(v==='forn')renderForn();
-  if(v==='avvisi')renderAvvisi();
-  if(v==='impostazioni')renderImpostazioni();
+  if(primaVolta){
+    if(v==='proj')renderProjGrid();
+    if(v==='fav')favEnter();
+    if(v==='rdo')rdoEnter();
+    if(v==='ore')oreEnter();
+    if(v==='mag')magEnter();
+    if(v==='costi'){const s=NAV.sez.costi||{};CX.mode=s.mode||'list';CX.cid=s.cid??null;CX.view=s.view||'cat';renderCosti();}
+    if(v==='forn')renderForn();
+    if(v==='avvisi')renderAvvisi();
+    if(v==='impostazioni')renderImpostazioni();
+  }else if(v==='avvisi')renderAvvisi();   // le notifiche nuove vanno viste
+  navTornaAScroll(v);
+  navSalva();
 }
+/* Rientrare in una sezione già aperta non la ridisegna. Quando invece un dato
+   è cambiato per davvero — una RDO approvata, un articolo creato — è chi lo
+   cambia a dirlo, chiamando questa. */
+function navScade(...viste){viste.forEach(v=>NAV.viste.delete(v));}
+// muoversi DENTRO una sezione conta quanto cambiarla: se apro una RDO e poi
+// ricarico, devo ritrovare quella. Le funzioni che spostano da una schermata
+// interna all'altra chiamano questa.
+function navPunto(){NAV.ultima=S.v||NAV.ultima;navSalva();}
+// chiudere o nascondere la pagina: l'ultima posizione di scorrimento non
+// passerebbe mai da `go`
+['pagehide','visibilitychange'].forEach(e=>addEventListener(e,()=>{
+  if(e==='visibilitychange'&&!document.hidden)return;
+  navRicordaScroll(S.v);navSalva();
+}));
 function renderImpostazioni(){
   const nome=document.getElementById('sbUserNome').textContent;
   const email=document.getElementById('sbUserEmail').textContent;
@@ -4493,7 +4592,7 @@ const AV_ICO={solidworks_sync:'🔧',revisioni_coesistenti:'⟳',_:'🔔'};
    è una RDO. Sotto la stessa campanella ci stavano insieme, e chi cercava una
    cosa scorreva l'altra. */
 let AV_TAB='sw', AV_NOTE=[];
-function avGoTab(t){AV_TAB=t;renderAvvisi();}
+function avGoTab(t){AV_TAB=t;navPunto();renderAvvisi();}
 async function renderAvvisi(){
   await Promise.all([loadNotifiche(false),avCaricaNote()]);
   const el=document.getElementById('avvisiList');if(!el)return;
@@ -5984,7 +6083,7 @@ let ORE_CLOCK_INT=null;
 async function oreEnter(){
   if(!ORE.me){try{const r=await fetch(API+'/api/ore/me');ORE.me=r.ok?await r.json():null;}catch{ORE.me=null;}}
   await oreLoadCatalogs();
-  oreGoTab(ORE.tab||'timbro');
+  oreGoTab((NAV.sez.ore||{}).tab||ORE.tab||'timbro');
 }
 async function oreLoadCatalogs(){
   if((ORE.fasi||[]).length&&(ORE.gruppi||[]).length&&(ORE.assenzeTipi||[]).length)return;
@@ -5996,6 +6095,7 @@ async function oreLoadCatalogs(){
   }catch{}
 }
 function oreGoTab(t){
+  navPunto();
   ORE.tab=t;
   renderOreTabs();
   if(t==='timbro')oreLoadTimbro();
@@ -7635,13 +7735,27 @@ function fillTplSelect(sel,val){if(!sel)return;sel.innerHTML='<option value="">�
 const RV={mode:'list',cid:null,fid:null,selForn:null};
 let SHIPSEL=new Set();
 function setRdoHdr(h1,sub){document.getElementById('rdoH1').textContent=h1;document.getElementById('rdoVsub').textContent=sub;}
-async function rdoEnter(){RV.mode='list';RV.cid=null;RV.fid=null;RV.selForn=null;loadTemplates();await loadDdList();renderRdoView();}
+/* Il primo ingresso dopo aver aperto la pagina. **Non riazzera più**: se
+   ricaricando il sito ero dentro una RDO, ci torno. Prima qui c'era
+   `RV.mode='list'`, ed era il motivo per cui uscire un attimo dalla sezione
+   costava sempre tre clic per tornare al punto. */
+async function rdoEnter(){
+  const s=NAV.sez.rdo||{};
+  RV.mode=s.mode||'list';RV.cid=s.cid??null;RV.fid=s.fid??null;RV.selForn=s.selForn??null;
+  loadTemplates();await loadDdList();
+  // la commessa o il fornitore potrebbero non esserci più: meglio l'elenco che
+  // una schermata vuota di cui non si capisce il motivo
+  if(RV.mode!=='list'&&RV.mode!=='ship'&&RV.cid==null){RV.mode='list';RV.selForn=null;}
+  if(RV.mode==='edit'&&RV.cid!=null&&RV.fid!=null)return rdoOpenEditor(RV.cid,RV.fid);
+  renderRdoView();
+}
 function rdoBack(){
   if(RV.mode==='edit'){RV.mode='list';RV.selForn=null;renderRdoView();}
   else if(RV.mode==='work'){RV.mode='list';RV.selForn=null;renderRdoView();}
   else if(RV.mode==='ship'){RV.mode='list';renderRdoView();}
 }
 function renderRdoView(){
+  navPunto();
   ['rdoList','rdoWork','rdoEdit','rdoShip'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('rdoBack').style.display=RV.mode==='list'?'none':'inline-flex';
   document.getElementById('rdoBtnShip').style.display=RV.mode==='list'?'inline-flex':'none';
@@ -9127,8 +9241,33 @@ const SM_REGOLE=[
 function smRegoleMenu(e,gi){
   const cat=gi==null?'':(SM_GRPKEYS[gi]||'');
   const dove=cat?`«${cat.toLowerCase()}»`:'tutte le righe';
-  showCtx(e,`Materiale · ${dove}`,SM_REGOLE.map(([k,etichetta,spiega])=>
-    [`${etichetta}<div class="mi-sub">${esc(spiega)}</div>`,`smApplicaRegola('${k}','${jsq(cat)}')`,'due-righe']));
+  showCtx(e,`Materiale · ${dove}`,[
+    ...SM_REGOLE.map(([k,etichetta,spiega])=>
+      [`${etichetta}<div class="mi-sub">${esc(spiega)}</div>`,`smApplicaRegola('${k}','${jsq(cat)}')`,'due-righe']),
+    {sep:1},
+    [`↺ Azzera<div class="mi-sub">Butta via le scelte e torna alla proposta di partenza. Non è «come a distinta»: qui non resta scritto niente.</div>`,
+     `smAzzera('${jsq(cat)}')`,'due-righe danger'],
+  ]);
+}
+/* Provare una regola e non esserne convinti deve costare un clic, non sessanta
+   righe rimesse a mano — se no si tiene quello che è uscito, ed è così che una
+   comodità diventa un errore. */
+async function smAzzera(categoria){
+  const dove=categoria?`della categoria «${categoria.toLowerCase()}»`:'di tutta la RDO';
+  if(!confirm(`Azzero le scelte di materiale ${dove}?\nLe righe tornano alla proposta di partenza e da confermare.`))return;
+  try{
+    const rp=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento/azzera`,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({regola:'distinta',categoria:categoria||''})});
+    if(!rp.ok)throw new Error(await srvErrDetail(rp,'Non sono riuscito ad azzerare'));
+    const out=await rp.json();
+    DD.smist=out.smistamento;SM_ESITO=null;
+    renderDdSmistamento();
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}`);
+    if(r.ok){DD.data=await r.json();renderDdEditor(DD.data);renderDdSmistamento();}
+    const n=out.azzerate.length;
+    toast(n?`${n} ${plur(n,'riga azzerata','righe azzerate')}`:'Non c\'era niente da azzerare','ok');
+  }catch(e){toast(e.message||'Errore',true);}
 }
 async function smApplicaRegola(regola,categoria){
   try{
@@ -9239,7 +9378,10 @@ function smBannerHtml(s,mancano,ro){
    giallo non nasconde l'informazione che copriva. */
 function smRigaHtml(r,i,ro){
   const rosso=r.da_comprare>0;
-  const alt=smOpzioni(r).length>1;
+  // riga «gialla» = c'è una scelta di materiale da fare. Anche quando la
+  // scatola è una sola, se non è quella di distinta.
+  const opz=smOpzioni(r);
+  const alt=opz.length>1||(opz.length===1&&opz[0].livello!=='uguale');
   const scelto=r.articolo_id;
   return `<div class="sm-r ${alt?'alt ':''}${rosso?'compra':'coperta'}${r.confermata?' ok':''}" id="smR${i}">
     <div class="sm-r-top">
@@ -9288,7 +9430,12 @@ function smOpzioni(r){return (r.opzioni||[]).filter(o=>o&&o.id!=null);}
 const SM_ETICHETTA={uguale:'',su:'più resistente',giu:'un grado in meno',altro:'protezione diversa'};
 function smAlternativeHtml(r,i,ro,scelto){
   const voci=smOpzioni(r);
-  if(voci.length<2)return '';   // una voce sola non è una scelta: è rumore
+  // Una voce sola non è una scelta **se è quella di distinta**: lì non c'è
+  // niente da decidere. Se invece l'unica scatola a scaffale è di un altro
+  // materiale, quella è la decisione più importante della riga, e nascondendola
+  // non si poteva nemmeno prenderla: succedeva sugli anelli DIN 988, dove la
+  // riga diceva «in casa 0» con 97 pezzi sullo scaffale.
+  if(!voci.length||(voci.length===1&&voci[0].livello==='uguale'))return '';
   return `<div class="sm-alt">
     <span class="sm-alt-lbl">Materiale <i>(distinta: ${esc(r.materiale_richiesto||'—')})</i></span>
     ${voci.map(a=>`<label class="sm-alt-v ${a.livello}${a.id===scelto?' on':''}"
@@ -9615,10 +9762,11 @@ async function magEnter(){
   }
   // chi era rimasto su «Riordino» (ora sospesa) torna al catalogo invece di
   // trovarsi una scheda senza pulsante per uscirne
-  magGoTab(['cat','req','pick'].includes(MAG.tab)?MAG.tab:'cat');
+  const t=(NAV.sez.mag||{}).tab||MAG.tab;
+  magGoTab(['cat','req','pick'].includes(t)?t:'cat');
 }
 function magGoTab(t){
-  MAG.tab=t;
+  MAG.tab=t;navPunto();
   renderMagTabs();
   if(t==='cat')magLoadCatalogo();
   else if(t==='req')magLoadRichieste();

@@ -64,6 +64,22 @@ Una per sezione, tutte già nel markup; il router accende quella giusta.
 **Router:** `go(vista, pid)` — accende `.view#v-<vista>` e la voce di menu
 `.ni[data-v=…]`. Per aprire un progetto: `go('pdet', id)`.
 
+**La navigazione ricorda dove eri** (`NAV`, `"LA NAVIGAZIONE RICORDA DOVE ERI"`).
+Regola di Elia: cambiare sezione non deve costare niente.
+
+- `*Enter()` gira **una volta sola** per sezione (`NAV.viste`): rientrando, la
+  vista non si ridisegna e quello che c'è nei campi resta lì. Se una sezione
+  deve tornare a rifarsi perché i dati sono davvero cambiati, chi li cambia
+  chiama `navScade('rdo', …)` — lo fa già `loadCommesse`.
+- Lo stato interno (quale RDO, quale scheda del Magazzino, quale commessa) e la
+  posizione di scorrimento stanno in `localStorage.rdo_nav`, e valgono 12 ore.
+  Muovendosi **dentro** una sezione si chiama `navPunto()`.
+- All'avvio `init()` fa `go(NAV.ultima)`, non `go('home')`.
+- Attenzione al ramo `pdet` di `go()`: esce prima della riga che accende la
+  vista, quindi la classe `.on` gliela deve dare qualcuno — normalmente
+  `openProgetto`, che però riazzera selezione, filtri e rami aperti e per
+  questo al rientro **non** si richiama.
+
 **Menu a discesa:** `NAV_GRUPPI` raccoglie sotto la voce **Commessa** le quattro
 schermate della stessa commessa (`proj`, `pdet`, `rdo`, `fav`, `gantt`).
 `navGrp(g)` apre e chiude, `navSync(v)` tiene aperto il gruppo che contiene la
