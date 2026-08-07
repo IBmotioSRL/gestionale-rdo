@@ -3068,6 +3068,10 @@ async function openProgetto(pid){
   document.getElementById('wpath').textContent=c?'📁 '+c.percorso_cartella:'';
   document.getElementById('tscroll').innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:var(--t3)">Caricamento…</div>';
   setView('albero');
+  // il controllo delle plastiche lo fa il server: ha bisogno dell'albero
+  // padre→figlio, perché il materiale di un lavorato sta sul grezzo sotto.
+  // Non si aspetta: arriva quando arriva e il pannello si ridisegna.
+  caricaControlloMateriali(S.projId);
   try{
     const [ra,rc]=await Promise.all([fetch(API+'/api/commesse/'+S.projId+'/albero'),fetch(API+'/api/commesse/'+S.projId+'/files')]);
     const a=ra.ok?await ra.json():null;
@@ -5198,54 +5202,46 @@ function controlliInvio(){
      una con «lo so», che resta scritto sul pezzo invece di essere ignorato a
      occhio ogni volta.
 
-     **Solo sui costruttivi.** Un commerciale di plastica non è un errore: una
-     valvola in PP, un tappo in PE e un soffietto in PVC sono fatti così, e
-     nella categoria PLASTICA non ci vanno perché quella vuol dire «pezzo che
-     ricaviamo noi da lastra o barra». Su questa commessa la regola, applicata
-     anche ai commerciali, chiedeva quattro deroghe il primo giorno per quattro
-     cose giuste: un avviso che ha sempre torto smette di essere letto, e poi
-     non lo si legge nemmeno quando ha ragione. */
-  const rigaDeroga=(p,perche)=>({
-    cod:p.numero_parte,
-    txt:`${p.denominazione||'—'} · ${perche}`,
-    go:`derogaMateriale(${p.id})`,fix:'Lo so, va bene'});
-  const costruttivi=all.filter(p=>!_comm(p)&&!p.deroga_materiale);
+     Il conto lo fa il server (`app/materiali.py`): serve l'albero padre→figlio,
+     perché un particolare lavorato il materiale sulla sua riga non ce l'ha —
+     ce l'ha il grezzo da cui esce. */
+  const mc=S.matChk||{};
+  const rigaMat=v=>({
+    cod:v.codice,
+    txt:`${v.denominazione||'—'} · ${v.categoria||'—'} · ${v.materiale}`
+        +(v.materiale_dai_figli?' (dal grezzo)':''),
+    go:`derogaMateriale(${v.parte_id})`,fix:'Lo so, va bene'});
   add('plin','guarda','in PLASTICA ma non è plastica',
-    'Pezzo costruttivo nella categoria delle plastiche con un materiale che plastica non è.',
-    costruttivi.filter(p=>catPlastica(p.categoria)
-                  &&(p.materiale||'').trim()&&!materialePlastico(p.materiale))
-       .map(p=>rigaDeroga(p,`categoria ${p.categoria} · materiale ${p.materiale}`)));
+    'Nella categoria delle plastiche con un materiale che plastica non è.',
+    (mc.in_plastica_non_plastici||[]).map(rigaMat));
   add('plout','guarda','di plastica ma fuori da PLASTICA',
-    'Pezzo costruttivo con materiale plastico in una categoria che non è quella delle plastiche.',
-    costruttivi.filter(p=>!catPlastica(p.categoria)&&materialePlastico(p.materiale))
-       .map(p=>rigaDeroga(p,`categoria ${p.categoria||'—'} · materiale ${p.materiale}`)));
+    'Materiale plastico in una categoria che non è quella delle plastiche.',
+    (mc.plastici_fuori||[]).map(rigaMat));
   return c;
 }
-/* Le plastiche, riconosciute dal materiale.
-   Le sigle si confrontano per parola intera, non per pezzo di testo: `PE`
-   dentro `PEEK` o `PET` darebbe ragione per il motivo sbagliato, e una regola
-   che indovina per caso prima o poi sbaglia per caso. I nomi per esteso ci
-   sono perché in distinta capita di trovarli scritti così. */
-const SIGLE_PLASTICHE=new Set(['PET','PETG','PE','HDPE','LDPE','UHMW','PP','PVC','PA','PA6','PA66',
-  'POM','PTFE','PEEK','ABS','PC','PMMA','PUR','PU','PS','EPDM','NBR','TPU','PVDF','PEHD']);
-const NOMI_PLASTICHE=['nylon','teflon','delrin','plexiglass','poliammide','polietilene',
-  'polipropilene','policarbonato','poliuretano','polistirene','ertalon','ertacetal','moplen','gomma'];
-function materialePlastico(mat){
-  const m=(mat||'').trim();if(!m)return false;
-  const basso=m.toLowerCase();
-  if(NOMI_PLASTICHE.some(n=>basso.includes(n)))return true;
-  return m.toUpperCase().split(/[^A-Z0-9]+/).some(t=>t&&SIGLE_PLASTICHE.has(t));
+/* Il controllo arriva dal server e si tiene da parte: rifarlo a ogni disegno
+   del pannello vorrebbe dire una chiamata per ogni tasto premuto. */
+async function caricaControlloMateriali(cid){
+  S.matChk=null;
+  try{
+    const r=await fetch(API+'/api/commesse/'+cid+'/controllo-materiali');
+    if(!r.ok)return;
+    if(S.projId!==cid)return;   // nel frattempo si è cambiato progetto
+    S.matChk=await r.json();
+    renderGlance();
+  }catch{}
 }
-function catPlastica(cat){return (cat||'').toUpperCase().includes('PLAST');}
 /* «Lo so, va bene»: la deroga resta sul pezzo, non nella testa di chi guarda. */
 async function derogaMateriale(pid){
   try{
     const r=await fetch(API+'/api/parti/'+pid,{method:'PATCH',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({deroga_materiale:true})});
     if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a salvare'));
-    const p=S.pmap[pid];if(p)p.deroga_materiale=true;
-    const c=commesse.find(x=>x.id===S.projId);
-    const lp=(c&&c._parti||[]).find(x=>x.id===pid);if(lp)lp.deroga_materiale=true;
+    const via=v=>v.parte_id!==pid;
+    if(S.matChk){
+      S.matChk.in_plastica_non_plastici=(S.matChk.in_plastica_non_plastici||[]).filter(via);
+      S.matChk.plastici_fuori=(S.matChk.plastici_fuori||[]).filter(via);
+    }
     renderGlance();
     toast('Segnalazione messa a tacere per questo pezzo','ok');
   }catch(e){toast(e.message||'Errore',true);}
