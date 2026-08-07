@@ -14,7 +14,7 @@ la **stringa fra virgolette**, che è il commento di sezione e non cambia.
 
 | | |
 |---|---|
-| Backend (FastAPI) | `C:\Users\IB motion\OneDrive - IB motion srl\IBmotion-Dati - Condivisione\SERVER - Gestionale RDO\app` — **non è in git** |
+| Backend (FastAPI) | `C:\Users\IB motion\OneDrive - IB motion srl\IBmotion-Dati - Condivisione\SERVER - Gestionale RDO\app` — **in git dal 7/8/2026**, repo suo, nessun remote |
 | Database, venv, log | `C:\Dev\GestionaleRDO\` (`gestionale_rdo.db`, `.venv`, `backend.log`) |
 | Test | `…\SERVER - Gestionale RDO\tests` — si lanciano dalla cartella del backend |
 | Il backend gira come | attività pianificata `GestionaleRDO-Backend`, porta 8123 |
@@ -116,7 +116,12 @@ In testata: `🚦 Cosa manca` · `✨ Auto-assegna` · `⚙️ Impostazioni`.
 - **Revisione di progetto sospesa**: `REV_ATTIVA=false` spegne solo l'ingresso
   in testata; modello, API, storico e diff sono tutti ancora lì.
 - `"vista albero raggruppata per CATEGORIA PROGETTO"` — modalità «Categorie mie»
-- `"FILTRI PER ATTRIBUTO"` — `fltBar`/`fltPassa`/`treeParti`, la barra sopra le righe
+- `"FILTRI PER ATTRIBUTO"` — `fltBar`/`fltPassa`/`treeParti`, la barra sopra le righe.
+  Vive **solo** in «Categorie mie». Nell'albero normale c'è invece `cercaBar()`:
+  la sola casella di ricerca, perché lì serve trovare un codice, non filtrare
+  per proprietà. Cercando, i rami senza risultati spariscono e quelli con
+  risultati si aprono da soli (`cercaAttiva`/`cercaFiltra`) — un codice dentro
+  una categoria chiusa altrimenti non si trova.
 - `"«Trattamenti termici e superficiali»"` — `trattTree()`, blocco trasversale in
   fondo all'albero: gli stessi pezzi compaiono anche nella loro categoria
 - `"SELEZIONE + FAB"` — `partClick` (Ctrl/Shift stile Windows), `ckGruppo`/`paintSel`

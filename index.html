@@ -3980,6 +3980,34 @@ function fltBar(){
     ${fltAttivi()?`<span class="flt-x" onclick="fltAzzera()">✕ togli i filtri</span>`:''}
     <span class="flt-n">${n===tot?`${tot} voci`:`${n} di ${tot}`}</span></div>`;
 }
+/* ── la ricerca nell'albero normale ──
+   Le tendine per attributo sono di «Categorie mie», dove si ragiona per
+   proprieta'. Qui serve un'altra cosa: trovare **un codice** fra centinaia di
+   righe, e trovarlo anche quando sta dentro un ramo chiuso. Per questo cercare
+   apre da solo i rami che contengono qualcosa. */
+function cercaBar(){
+  const q=(S.flt&&S.flt.q)||'';
+  const n=q?allParti().filter(p=>!p.escluso&&cercaPassa(p)).length:0;
+  return `<div class="flt-bar">
+    <input type="text" style="min-width:220px" placeholder="🔎 cerca un codice, una descrizione…"
+      value="${esc(q)}" oninput="fltSet('q',this.value)">
+    ${q?`<span class="flt-x" onclick="fltSet('q','')">✕ togli la ricerca</span>
+        <span class="flt-n">${n} ${plur(n,'voce trovata','voci trovate')}</span>`:''}
+  </div>`;
+}
+// lo stesso testo su cui cerca «Categorie mie», ma senza le tendine: qui
+// filtrare per attributo non c'entra
+function cercaAttiva(){return !!(((S.flt&&S.flt.q)||'').trim());}
+// cercando, i rami senza risultati spariscono e quelli con risultati si aprono:
+// un codice dentro una categoria chiusa, altrimenti, non si trova
+function cercaFiltra(arr){return cercaAttiva()?(arr||[]).filter(cercaPassa):(arr||[]);}
+function cercaPassa(p){
+  const q=((S.flt&&S.flt.q)||'').trim().toLowerCase();
+  if(!q)return true;
+  const testo=[p.numero_parte,p.denominazione,p.materiale,p.lav_meccanica,p.tipo,p.categoria,
+    (p.trattamenti||[]).join(' ')].join(' ').toLowerCase();
+  return q.split(/\s+/).every(x=>testo.includes(x));
+}
 function fltSet(k,v){
   S.flt=S.flt||{};S.flt[k]=v;
   if(k==='q'){                       // la ricerca non deve far perdere il fuoco
@@ -4040,11 +4068,12 @@ function renderTree(){
     document.getElementById('tscroll').innerHTML=bar+fltBar()+renderTreeCat();
     paintSel();return;
   }
-  let html=bar;
+  let html=bar+cercaBar();
   let prevComm=false;
   S.albero.categorie.forEach(cat=>{
-    const catOpen=S.openCat[cat.categoria]!==false;
     const tutti=catParti(cat);
+    if(cercaAttiva()&&!cercaFiltra(tutti).length)return;
+    const catOpen=cercaAttiva()||S.openCat[cat.categoria]!==false;
     const allP=partiVive(tutti);              // i sospesi non entrano nel conto
     const sospesi=tutti.length-allP.length;
     const done=allP.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
@@ -4067,7 +4096,7 @@ function renderTree(){
       // i pezzi vanno direttamente sotto la categoria
       if(!(lav.lav_meccanica||'').trim()){
         const byTipo={};
-        lav.parti.forEach(p=>{(byTipo[p.tipo||'']=byTipo[p.tipo||'']||[]).push(p);});
+        cercaFiltra(lav.parti).forEach(p=>{(byTipo[p.tipo||'']=byTipo[p.tipo||'']||[]).push(p);});
         Object.keys(byTipo).sort().forEach(tp=>{
           if(tp)html+=`<div class="tr-tipo" style="cursor:default"><span class="tr-arrow" style="visibility:hidden">▾</span><span class="tr-tipo-label">${esc(tp)}</span></div>`;
           byTipo[tp].forEach(p=>{html+=partRow(p);});
@@ -4075,7 +4104,8 @@ function renderTree(){
         return;
       }
       const lk=cat.categoria+'||'+lav.lav_meccanica;
-      const lavOpen=S.openLav[lk]!==false;
+      if(cercaAttiva()&&!cercaFiltra(lav.parti).length)return;
+      const lavOpen=cercaAttiva()||S.openLav[lk]!==false;
       const ld=lav.parti.filter(p=>p.fornitore_id&&p.stato!=='respinta').length;
       const col=lavColor(lav.lav_meccanica);
       html+=`<div class="tr-lav" onclick="toggleLav('${jsq(lk)}')">
@@ -4088,7 +4118,7 @@ function renderTree(){
       if(lav.fornitore_id===null&&lav.candidati&&lav.candidati.length){
         html+=`<div class="tr-cand"><b>${lav.candidati.length} fornitori</b> fanno questa lavorazione — scegli: ${lav.candidati.map(c=>`<button class="cand-btn" onclick="event.stopPropagation();assegnaCandidato('${jsq(cat.categoria)}','${jsq(lav.lav_meccanica)}',${c.id})">${esc(c.nome)}</button>`).join('')}</div>`;
       }
-      if(lavOpen)lav.parti.forEach(p=>{html+=partRow(p);});
+      if(lavOpen)cercaFiltra(lav.parti).forEach(p=>{html+=partRow(p);});
     });
   });
   html+=trattTree();
@@ -4137,7 +4167,8 @@ function commTree(cat){
   (cat.gruppi||[]).forEach(g=>{
     const dadistinta=g.fornitore_id===null; // fornitore scritto in distinta, non ancora tra i preferiti
     const gk=cat.categoria+'|'+(dadistinta?'n:'+g.fornitore_nome:g.fornitore_id);
-    const gOpen=S.openGrp[gk]===true; // chiusi di default (i blocchi possono essere grossi)
+    if(cercaAttiva()&&!cercaFiltra(g.parti).length)return;
+    const gOpen=cercaAttiva()||S.openGrp[gk]===true; // chiusi di default (i blocchi possono essere grossi)
     const dd=dadistinta
       ? `{t:'FORNNOME',cat:'${jsq(cat.categoria)}',nome:'${jsq(g.fornitore_nome)}'}`
       : `{t:'FORN',cat:'${jsq(cat.categoria)}',fid:${g.fornitore_id}}`;
@@ -4149,12 +4180,13 @@ function commTree(cat){
       ${dadistinta?'<span class="badge-blocco" title="Fornitore da distinta, non ancora tra i preferiti del progetto">da distinta</span>':''}
       <span class="tr-cnt" style="font-size:9px">${g.n_parti} pezzi</span>
       <span class="tr-assign-all" onclick="event.stopPropagation();showDD(event,${dd})">${dadistinta?'Assegna':'Cambia'}</span></div>`;
-    if(gOpen)g.parti.forEach(p=>{html+=partRow(p);});
+    if(gOpen)cercaFiltra(g.parti).forEach(p=>{html+=partRow(p);});
   });
   // pezzi SENZA fornitore: blocchi per TIPO (riga = nome tipo)
   (cat.tipi||[]).forEach(t=>{
     const tk=cat.categoria+'|'+t.tipo;
-    const tOpen=S.openTipo[tk]===true; // chiusi di default
+    if(cercaAttiva()&&!cercaFiltra(t.parti).length)return;
+    const tOpen=cercaAttiva()||S.openTipo[tk]===true; // chiusi di default
     html+=`<div class="tr-grp" onclick="toggleTipo('${jsq(tk)}')">
       ${ckGruppo(t.parti.map(p=>p.id),null,'Seleziona i pezzi di questo tipo')}
       <span class="tr-arrow">${tOpen?'▾':'▸'}</span>
@@ -4166,7 +4198,7 @@ function commTree(cat){
     if(t.candidati&&t.candidati.length){
       html+=`<div class="tr-cand"><b>${t.candidati.length} fornitori</b> coprono questo tipo — scegli: ${t.candidati.map(c=>`<button class="cand-btn" onclick="event.stopPropagation();assegnaTipoCandidato('${jsq(cat.categoria)}','${jsq(t.tipo)}',${c.id})">${esc(c.nome)}</button>`).join('')}</div>`;
     }
-    if(tOpen)t.parti.forEach(p=>{html+=partRow(p);});
+    if(tOpen)cercaFiltra(t.parti).forEach(p=>{html+=partRow(p);});
   });
   return html;
 }
@@ -4461,8 +4493,12 @@ async function savePropsDrawer(pid){
   try{
     const r=await fetch(API+'/api/parti/'+pid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proprieta:set})});
     if(!r.ok)throw 0;
-    toast('Proprietà salvate','ok');
-    await refreshDetail();loadNotifiche(false);openDraw(pid);
+    const out=await r.json();
+    toast(msgUnione(out)||'Proprietà salvate','ok');
+    await refreshDetail();loadNotifiche(false);
+    // se questa riga e' stata assorbita da un'altra, aprire la sua darebbe una
+    // scheda vuota: si apre quella che e' rimasta
+    openDraw(out.unione?out.unione.resta:pid);
   }catch{toast('Errore salvataggio proprietà',true);}
 }
 // ── indice proprietà del progetto: nomi proprietà + valori già esistenti, così
@@ -4532,8 +4568,11 @@ async function savePropsEditor(){
   const set={};
   if(single){
     body.querySelectorAll('input[data-k]').forEach(i=>{set[i.getAttribute('data-k')]=i.value;});
-    try{const r=await fetch(API+'/api/parti/'+PROPSEL[0],{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proprieta:set})});if(!r.ok)throw 0;}
+    let unione=null;
+    try{const r=await fetch(API+'/api/parti/'+PROPSEL[0],{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({proprieta:set})});
+      if(!r.ok)throw 0;unione=(await r.json()).unione;}
     catch{toast('Errore salvataggio',true);return;}
+    if(unione){mClose('mProps');toast(msgUnione({unione}),'ok');await refreshDetail();loadNotifiche(false);return;}
   }else{
     body.querySelectorAll('.bp-row').forEach(row=>{const ck=row.querySelector('input[type=checkbox]');const tx=row.querySelector('input[type=text]');if(ck&&ck.checked&&tx){set[tx.getAttribute('data-k')]=tx.value;}});
     if(!Object.keys(set).length){toast('Spunta almeno una proprietà da applicare');return;}
@@ -11460,6 +11499,14 @@ function fmtDate(s){
   return isNaN(d.getTime())?'':d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
 }
 // «1 assegnati» si legge male: il numero e la parola devono andare d'accordo
+/* Cambiando il materiale due righe possono essere diventate lo stesso
+   acquisto, e il server le unisce. La quantita' che cambia sotto gli occhi
+   senza una parola sarebbe la cosa piu' inquietante del gestionale. */
+function msgUnione(out){
+  const u=out&&out.unione;if(!u)return '';
+  const n=u.assorbite.length+1;
+  return `${n} righe di ${u.codice} erano lo stesso acquisto: adesso sono una sola, quantità ${u.quantita}`;
+}
 function plur(n,uno,tanti){return n===1?uno:tanti;}
 function statoLbl(s){return {da_inviare:'da inviare',in_carrello:'in carrello',inviata_da_confermare:'inviato',confermata:'confermato',respinta:'respinto'}[s]||s;}
 function fileTags(filesJson){let arr=[];try{arr=JSON.parse(filesJson)||[];}catch{}const exts=[...new Set(arr.map(p=>(p.split('.').pop()||'').toLowerCase()))].filter(Boolean);
