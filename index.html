@@ -2345,11 +2345,12 @@ textarea.fld{resize:vertical;min-height:60px}
   <div id="v-avvisi" class="view">
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div><div class="h1" style="font-size:15px">Avvisi</div><div class="vsub" id="avvisiSub">Notifiche e cose da fare</div></div></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost btn-sm" id="avvisiNotifBtn" onclick="abilitaNotifichePush()" title="Abilita le notifiche desktop">🔔 Notifiche desktop</button>
-        <button class="btn btn-ghost btn-sm" onclick="segnaTutteLette()">✓ Segna tutte lette</button>
-      </div>
+      <div><div class="h1" style="font-size:15px">Avvisi</div><div class="vsub" id="avvisiSub">Notifiche e cose da fare</div>
+      <!-- due cose diverse sotto la stessa campanella: quello che il gestionale
+           ha visto e va rimesso a posto in SolidWorks, e quello che dobbiamo
+           comprare noi per l'officina -->
+      <div class="cx-toggle" id="avvisiTabs" style="margin-top:4px"></div></div></div>
+      <div style="display:flex;gap:8px" id="avvisiAzioni"></div>
     </div></div>
     <div class="vscroll"><div id="avvisiBody" style="padding:14px"><div class="av-list" id="avvisiList"></div></div></div>
   </div>
@@ -2692,6 +2693,16 @@ textarea.fld{resize:vertical;min-height:60px}
      Era una scheda del pannello laterale; è l'unico posto dove si chiude un
      confronto scegliendo il vincitore, quindi è diventato un modale invece di
      sparire con la vecchia versione del pannello. -->
+<!-- Una nota interna d'acquisto: roba per l'officina, non di una commessa.
+     Non è una RDO — vedi app/routers/note_interne.py per il perché. -->
+<div class="mov" id="mNota" onclick="ovClose(event,'mNota')">
+  <div class="modal" style="max-width:820px">
+    <div class="mhd"><div class="mico2">🧰</div><div><div class="mtit" id="notaTit">Nota interna</div><div class="msub" id="notaSub"></div></div><button class="mx" onclick="mClose('mNota')">✕</button></div>
+    <div class="mbd" id="notaBody" style="max-height:64vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l" id="notaFtA" style="display:flex;gap:8px;align-items:center"></div><div class="mft-r"><button class="btn btn-ghost btn-sm" id="notaPdf">⬇ PDF</button><button class="btn btn-go" onclick="mClose('mNota')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <!-- Il registro dei materiali: la distinta non si tocca mai, quindi questo è
      l'unico posto dove resta scritto perché su quel telaio ci sono dei dadi A4
      dove il disegno diceva A2. -->
@@ -4474,13 +4485,30 @@ async function abilitaNotifichePush(){
 function avDate(s){if(!s)return'';try{return new Date(s+(/[zZ]|[+-]\d\d:\d\d$/.test(s)?'':'Z')).toLocaleString('it-IT');}catch{return s;}}
 // icona per tipo di avviso (il tipo arriva dal server)
 const AV_ICO={solidworks_sync:'🔧',revisioni_coesistenti:'⟳',_:'🔔'};
+/* ── AVVISI: due schede, perché sono due cose diverse ──
+   **Note SolidWorks** sono quello che il gestionale ha visto e che va rimesso
+   a posto nel CAD: le proprietà cambiate a mano, le revisioni che convivono.
+   **Note interne** sono roba da comprare per noi — i contenitori della
+   bulloneria, un attrezzo — che non appartiene a nessuna commessa e quindi non
+   è una RDO. Sotto la stessa campanella ci stavano insieme, e chi cercava una
+   cosa scorreva l'altra. */
+let AV_TAB='sw', AV_NOTE=[];
+function avGoTab(t){AV_TAB=t;renderAvvisi();}
 async function renderAvvisi(){
-  await loadNotifiche(false);
+  await Promise.all([loadNotifiche(false),avCaricaNote()]);
   const el=document.getElementById('avvisiList');if(!el)return;
   const ns=NOTIF.notifiche||[];
+  const daLeggere=AV_NOTE.filter(n=>!n.letta).length;
+  const tabs=document.getElementById('avvisiTabs');
+  if(tabs)tabs.innerHTML=[['sw','🔧','Note SolidWorks',NOTIF.non_lette||0],
+                          ['int','🧰','Note interne',daLeggere]]
+    .map(([k,ic,l,n])=>`<button class="${AV_TAB===k?'on':''}" onclick="avGoTab('${k}')">${ic} ${esc(l)}${n?` <b>${n}</b>`:''}</button>`).join('');
+  if(AV_TAB==='int')return renderNoteInterne(el);
+
   document.getElementById('avvisiSub').textContent=ns.length?`${NOTIF.non_lette} non lette · ${ns.length} totali`:'Nessun avviso';
-  const nb=document.getElementById('avvisiNotifBtn');
-  if(nb){if(!('Notification'in window))nb.style.display='none';else if(Notification.permission==='granted'){nb.textContent='🔔 Notifiche desktop attive';nb.disabled=true;}}
+  document.getElementById('avvisiAzioni').innerHTML=`
+    ${('Notification'in window)?`<button class="btn btn-ghost btn-sm" id="avvisiNotifBtn"${Notification.permission==='granted'?' disabled':''} onclick="abilitaNotifichePush()" title="Abilita le notifiche desktop">🔔 Notifiche desktop${Notification.permission==='granted'?' attive':''}</button>`:''}
+    <button class="btn btn-ghost btn-sm" onclick="segnaTutteLette()">✓ Segna tutte lette</button>`;
   if(!ns.length){el.innerHTML='<div class="av-empty">Nessun avviso. Quando modifichi le proprietà di un particolare comparirà qui il promemoria di allinearlo in SolidWorks.</div>';return;}
   el.innerHTML=ns.map(n=>{
     const goP=(n.commessa_id&&n.parte_id)?`<button class="btn-mini g" onclick="goToNotifica(${n.commessa_id},${n.parte_id})">↗ Vai al pezzo</button>`:'';
@@ -4489,6 +4517,149 @@ async function renderAvvisi(){
       <div class="av-bd"><div class="av-tit">${esc(n.titolo)}</div><div class="av-msg">${esc(n.messaggio)}</div><div class="av-meta">${n.commessa_codice?esc(n.commessa_codice)+' · ':''}${avDate(n.creato_at)}</div></div>
       <div class="av-act">${goP}${n.letta?'':`<button class="btn-mini" onclick="segnaLetta(${n.id})">✓ Letta</button>`}<button class="btn-mini g" onclick="eliminaNotifica(${n.id})">🗑</button></div></div>`;
   }).join('');
+}
+async function avCaricaNote(){
+  try{const r=await fetch(API+'/api/note-interne');AV_NOTE=r.ok?await r.json():[];}
+  catch{AV_NOTE=[];}
+}
+const AV_STATO={aperta:['si sta riempiendo','attesa'],ordinata:['ordinata','ok'],chiusa:['chiusa','ok']};
+function renderNoteInterne(el){
+  document.getElementById('avvisiSub').textContent=AV_NOTE.length
+    ?`${AV_NOTE.length} ${plur(AV_NOTE.length,'nota','note')} · ${AV_NOTE.filter(n=>n.stato==='aperta').length} da ordinare`
+    :'Nessuna nota interna';
+  document.getElementById('avvisiAzioni').innerHTML=
+    `<button class="btn btn-ghost btn-sm" onclick="nuovaNotaInterna()">✚ Nuova nota</button>`;
+  if(!AV_NOTE.length){
+    el.innerHTML=`<div class="av-empty">Nessuna nota interna.<br>
+      Quando nasce un articolo nuovo a magazzino, il contenitore da comprare compare qui da solo.</div>`;
+    return;}
+  el.innerHTML=AV_NOTE.map(n=>{
+    const [testo,cls]=AV_STATO[n.stato]||['',''];
+    return `<div class="av-card${n.letta?'':' unread'}">
+      <div class="av-ic">${n.tipo==='contenitori'?'📦':'🧰'}</div>
+      <div class="av-bd">
+        <div class="av-tit">${esc(n.titolo||'Nota interna')}
+          <span class="sm-gtag ${cls}">${esc(testo)}</span></div>
+        <div class="av-msg">${n.pezzi} ${plur(n.pezzi,'pezzo','pezzi')} su ${n.n_righe} ${plur(n.n_righe,'riga','righe')} · totale € ${(n.totale||0).toFixed(2)}
+          ${n.senza_prezzo?` · <b style="color:#C0151E">${n.senza_prezzo} senza prezzo</b>`:''}</div>
+        <div class="av-meta">${avDate(n.creato_at)}${n.chi?' · '+esc(n.chi):''}</div></div>
+      <div class="av-act">
+        <button class="btn-mini g" onclick="apriNotaInterna(${n.id})">↗ Apri</button>
+        ${n.n_righe?`<button class="btn-mini g" onclick="window.open(API+'/api/note-interne/${n.id}/pdf','_blank')">⬇ PDF</button>`:''}
+      </div></div>`;
+  }).join('');
+}
+/* ── la singola nota interna ──
+   Si modifica dove si legge: quantità e prezzo sono campi, non un'altra
+   schermata. Il prezzo è l'unica cosa che il gestionale non sa — il sito di
+   Leroy Merlin non si lascia leggere da un programma — e si scrive una volta
+   sola: le righe nuove nascono già con quello dell'ultima volta. */
+let NOTA=null;
+async function apriNotaInterna(nid){
+  mOpen('mNota');
+  document.getElementById('notaBody').innerHTML='<div class="fmuted" style="font-size:11px">Carico…</div>';
+  try{const r=await fetch(API+'/api/note-interne/'+nid);NOTA=r.ok?await r.json():null;}
+  catch{NOTA=null;}
+  if(!NOTA){document.getElementById('notaBody').innerHTML='<div class="av-empty">Non riesco ad aprire questa nota.</div>';return;}
+  // aprirla vuol dire averla vista
+  if(!NOTA.letta)fetch(API+'/api/note-interne/'+nid,{method:'PATCH',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({letta:true})}).catch(()=>{});
+  renderNota();
+}
+function renderNota(){
+  const n=NOTA;
+  document.getElementById('notaTit').textContent=n.titolo||'Nota interna';
+  const [testo]=AV_STATO[n.stato]||[''];
+  document.getElementById('notaSub').textContent=
+    `${testo} · ${n.pezzi} ${plur(n.pezzi,'pezzo','pezzi')} · totale € ${(n.totale||0).toFixed(2)}`;
+  const ro=n.stato!=='aperta';
+  document.getElementById('notaBody').innerHTML=`
+    ${n.senza_prezzo?`<div class="sm-banner attesa">⚠ <b>${n.senza_prezzo}</b> ${plur(n.senza_prezzo,'riga','righe')} senza prezzo: il PDF lo dice invece di far finta che siano gratis.</div>`:''}
+    <table class="mg-mov"><thead><tr>
+      <th style="width:56px"></th><th>Codice</th><th>Articolo</th><th style="width:70px;text-align:right">Q.tà</th>
+      <th style="width:95px;text-align:right">Prezzo</th><th style="width:80px;text-align:right">Importo</th><th style="width:34px"></th>
+    </tr></thead><tbody>
+    ${n.righe.map(r=>`<tr>
+      <td>${r.immagine
+        ? `<img src="${API}/api/note-interne/righe/${r.id}/immagine" alt="" style="width:48px;height:48px;object-fit:contain;border-radius:6px;background:var(--bg)">`
+        : (ro?'<span class="fmuted" style="font-size:9.5px">—</span>'
+             :`<button class="btn-mini g" title="Carica la foto del prodotto: finisce nel PDF" onclick="fotoRigaNota(${r.id})">📷</button>`)}</td>
+      <td>${esc(r.codice||'')}</td>
+      <td>${esc(r.descrizione||'')}
+        ${r.link?`<div><a href="${esc(r.link)}" target="_blank" rel="noopener" style="font-size:9.5px">apri la pagina del prodotto ↗</a></div>`:''}</td>
+      <td class="q">${ro?r.quantita:`<input type="number" min="0" value="${r.quantita}" style="width:56px;text-align:right"
+        onchange="salvaRigaNota(${r.id},'quantita',this.value)">`}</td>
+      <td class="q">${ro?'€ '+(r.prezzo||0).toFixed(2):`<input type="number" min="0" step="0.01" value="${r.prezzo||''}" placeholder="—" style="width:78px;text-align:right"
+        onchange="salvaRigaNota(${r.id},'prezzo',this.value)">`}</td>
+      <td class="q">${r.prezzo?'€ '+(r.totale||0).toFixed(2):'<span style="color:#C0151E">—</span>'}</td>
+      <td>${ro?'':`<button class="btn-mini g" title="Togli questa riga" onclick="eliminaRigaNota(${r.id})">🗑</button>`}</td>
+    </tr>`).join('')}
+    </tbody></table>`;
+  document.getElementById('notaFtA').innerHTML=ro
+    ?`<span class="fmuted" style="font-size:11px">Nota ${esc(testo)}: non si modifica più. Le scatole nuove vanno su una nota nuova.</span>`
+    :`<button class="btn btn-ghost btn-sm" onclick="aggiungiRigaNota()">✚ Riga a mano</button>
+      <button class="btn btn-ghost btn-sm" onclick="segnaNotaOrdinata()">📦 L'ho ordinata</button>`;
+  document.getElementById('notaPdf').style.display=n.righe.length?'':'none';
+  document.getElementById('notaPdf').onclick=()=>window.open(API+'/api/note-interne/'+n.id+'/pdf','_blank');
+}
+async function salvaRigaNota(rid,campo,valore){
+  const v=Math.max(0,parseFloat(String(valore).replace(',','.'))||0);
+  try{
+    const r=await fetch(API+'/api/note-interne/righe/'+rid,{method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({[campo]:campo==='quantita'?Math.round(v):v})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a salvare'));
+    await apriNotaInterna(NOTA.id);
+  }catch(e){toast(e.message||'Errore',true);}
+}
+/* La foto del prodotto si carica a mano: il sito da cui si comprano i
+   contenitori risponde 403 a qualsiasi programma. Si carica una volta per
+   codice e vale anche per le righe che nasceranno domani. */
+function fotoRigaNota(rid){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';
+  inp.onchange=async()=>{
+    if(!inp.files||!inp.files[0])return;
+    const fd=new FormData();fd.append('file',inp.files[0]);
+    try{
+      const r=await fetch(API+`/api/note-interne/righe/${rid}/immagine`,{method:'POST',body:fd});
+      if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a caricare l\'immagine'));
+      await apriNotaInterna(NOTA.id);toast('Foto caricata','ok');
+    }catch(e){toast(e.message||'Errore',true);}
+  };
+  inp.click();
+}
+async function eliminaRigaNota(rid){
+  if(!confirm('Tolgo questa riga dalla nota?'))return;
+  try{await fetch(API+'/api/note-interne/righe/'+rid,{method:'DELETE'});await apriNotaInterna(NOTA.id);}
+  catch(e){toast('Errore',true);}
+}
+async function aggiungiRigaNota(){
+  const descrizione=prompt('Che cosa serve?');if(!descrizione)return;
+  try{
+    const r=await fetch(API+'/api/note-interne/'+NOTA.id+'/righe',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({descrizione,quantita:1})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito ad aggiungere la riga'));
+    await apriNotaInterna(NOTA.id);
+  }catch(e){toast(e.message||'Errore',true);}
+}
+async function segnaNotaOrdinata(){
+  if(!confirm('L\'ordine è partito?\nQuesta nota si chiude, e le scatole nuove andranno su una nota nuova.'))return;
+  try{
+    const r=await fetch(API+'/api/note-interne/'+NOTA.id+'/ordinata',{method:'POST'});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a chiuderla'));
+    await apriNotaInterna(NOTA.id);renderAvvisi();toast('Nota ordinata','ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+async function nuovaNotaInterna(){
+  const titolo=prompt('Titolo della nota interna:','');if(titolo===null)return;
+  try{
+    const r=await fetch(API+'/api/note-interne',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({titolo})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non sono riuscito a crearla'));
+    const n=await r.json();await renderAvvisi();apriNotaInterna(n.id);
+  }catch(e){toast(e.message||'Errore',true);}
 }
 async function goToNotifica(cid,pid){go('pdet',cid);setTimeout(()=>{try{jumpPart(pid);openDraw(pid);}catch{}},450);}
 async function openStoricoRevisioni(cid,label){

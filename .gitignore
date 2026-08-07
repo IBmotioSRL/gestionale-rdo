@@ -6,4 +6,4 @@ lab.html
 .claude/
 
 # banco di prova generato: dati veri estratti dal database, non va online
-prova-magazzino.html
+prova-*.html

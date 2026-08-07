@@ -195,7 +195,14 @@ variabile: la distinta ne chiede uno, a scaffale ce n'è un altro.
 - `"RACCOLTA ORE"` → `"TIMBRATURE"`, `"INSERIMENTO ORE"`, `"CALENDARIO PRESENZE"`, `"REPORT"`, `"IMPOSTAZIONI"`
 - `"FORNITORI — lista friendly + scheda dettaglio"`, `"FORNITORE CRUD"`
 - `"RICERCA FILE (ex Calderone)"`, `"ANTEPRIMA AL PASSAGGIO DEL MOUSE"`
-- `"AVVISI / NOTIFICHE"` — `AV_ICO` mappa tipo → icona
+- `"AVVISI / NOTIFICHE"` — **due schede** (`AV_TAB`): *Note SolidWorks* sono le
+  notifiche del server (`AV_ICO` mappa tipo → icona), *Note interne* sono le
+  cose da comprare per l'officina, che non appartengono a nessuna commessa e
+  quindi non sono RDO. `renderNoteInterne` fa l'elenco, `apriNotaInterna` +
+  `renderNota` (modale `mNota`) la singola nota: quantità e prezzo si
+  modificano lì, la foto si carica con `fotoRigaNota` e il PDF esce da
+  `/api/note-interne/{id}/pdf`. I contenitori della bulloneria ci finiscono da
+  soli quando nasce un articolo di magazzino (`app/contenitori.py`).
 - `"CHIP INPUT"` — `chipInit/chipVals/chipAdd`, i tag delle schede
 - `"UTILS"` — in fondo
 
