@@ -1,4 +1,4 @@
-const CACHE = 'rdo-ibmotion-v115';
+const CACHE = 'rdo-ibmotion-v116';
 const PRECACHE = [
   '/gestionale-rdo/',
   '/gestionale-rdo/index.html',

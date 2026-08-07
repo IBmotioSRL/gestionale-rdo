@@ -171,6 +171,26 @@ uscendo la finestra resterebbe aperta dappertutto.
 
 **Altro**
 
+**Magazzino dentro la RDO** (`renderDdSmistamento`, scheda «Magazzino»)
+
+Una riga per codice di bulloneria, raggruppate per categoria. Il materiale è la
+variabile: la distinta ne chiede uno, a scaffale ce n'è un altro.
+
+- Le opzioni arrivano **già pronte dal server** (`_opzioni_materiale` in
+  `app/routers/rdo_distinte.py`): filtrate — le scatole vuote non si elencano,
+  tranne quella di distinta e quella già scelta — etichettate e ordinate.
+  `smOpzioni(r)` legge `r.opzioni` e basta: la regola sta in un posto solo.
+- Quattro livelli, non tre: `uguale` · `su` (più resistente) · `giu` (un grado
+  in meno) · **`altro`** (protezione diversa). Il quarto è il caso di un A4 dove
+  la distinta dice `Brun. - Cl. 8`: contro la ruggine resiste di più, sotto
+  carico un po' meno. Non è un grado in giù, e chiamarlo «meno resistente»
+  portava a scartarlo quando andava benissimo.
+- `smRegoleMenu` / `smApplicaRegola` — le quattro regole (`SM_REGOLE`), su tutta
+  la RDO dalla barra o su una categoria dal suo titolo. Le regole vere stanno in
+  `app/regole_materiale.py`, mai duplicate qui.
+- `smApriRegistro` (modale `mSost`) — chi ha cambiato quale materiale, quando e
+  quante. La distinta non si tocca mai, quindi è l'**unica** traccia.
+
 - `"MAGAZZINO"` → `"CATALOGO E GIACENZE"`, `"SCHEDA ARTICOLO"`, `"PRELIEVO (TABLET)"`, `"RIORDINO"`
 - `"RACCOLTA ORE"` → `"TIMBRATURE"`, `"INSERIMENTO ORE"`, `"CALENDARIO PRESENZE"`, `"REPORT"`, `"IMPOSTAZIONI"`
 - `"FORNITORI — lista friendly + scheda dettaglio"`, `"FORNITORE CRUD"`

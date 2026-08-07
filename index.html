@@ -269,6 +269,11 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #ctxmenu .mi:hover{background:rgba(245,168,35,.1);color:var(--go-d)}
 #ctxmenu .mi.danger:hover{background:rgba(255,59,48,.08);color:var(--red)}
 #ctxmenu .mi.dis{opacity:.4;pointer-events:none}
+/* voce di menu con la spiegazione sotto: `.mi` è flex, quindi la seconda riga
+   finirebbe accanto alla prima invece che sotto */
+#ctxmenu .mi.due-righe{display:block;line-height:1.35;max-width:330px;white-space:normal}
+#ctxmenu .mi-sub{font-size:10.5px;font-weight:500;color:var(--t3);margin-top:1px}
+#ctxmenu .mi.due-righe:hover .mi-sub{color:inherit;opacity:.75}
 #ctxmenu .sep{height:1px;background:var(--bd);margin:4px 6px}
 #ctxmenu .mh{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);padding:4px 10px 2px}
 
@@ -1233,7 +1238,20 @@ table.mg-req .btn{margin-left:4px}
 .sm-alt-v.giu{border-style:dashed;border-color:rgba(192,21,30,.40)}
 .sm-alt-v.giu i{color:#C0151E}
 .sm-alt-v.su i{color:#1E7A3C}
+/* né sopra né sotto: un A4 dove la distinta dice brunito cambia la protezione,
+   non il carico. Non è un grado in meno e non si colora come tale. */
+.sm-alt-v.altro{border-style:dashed;border-color:var(--bd2)}
+.sm-alt-v.altro i{color:#7a4f05}
 .sm-alt-v i{font-style:normal;font-size:9.5px;color:var(--t3)}
+/* l'esito dell'applicazione di una regola, sopra l'elenco */
+.sm-esito{border:1.4px solid var(--bd2);border-radius:9px;padding:9px 11px;margin-bottom:9px;
+  font-size:11.5px;line-height:1.55;background:var(--bg2)}
+.sm-esito b{font-variant-numeric:tabular-nums}
+.sm-esito .rosso{color:#C0151E}
+.sm-esito ul{margin:4px 0 0;padding-left:17px}
+.sm-esito .x{float:right;cursor:pointer;color:var(--t3);font-weight:800}
+/* la riga porta il segno quando il materiale non è quello di distinta */
+.sm-tag.sost{background:rgba(199,154,59,.22);color:#7a4f05}
 .sm-r-campi{display:flex;gap:8px;align-items:center;flex-shrink:0}
 .sm-r-campi label{display:flex;gap:4px;align-items:center;font-size:9px;font-weight:800;
   text-transform:uppercase;letter-spacing:.04em;color:var(--t3);cursor:help}
@@ -2674,6 +2692,17 @@ textarea.fld{resize:vertical;min-height:60px}
      Era una scheda del pannello laterale; è l'unico posto dove si chiude un
      confronto scegliendo il vincitore, quindi è diventato un modale invece di
      sparire con la vecchia versione del pannello. -->
+<!-- Il registro dei materiali: la distinta non si tocca mai, quindi questo è
+     l'unico posto dove resta scritto perché su quel telaio ci sono dei dadi A4
+     dove il disegno diceva A2. -->
+<div class="mov" id="mSost" onclick="ovClose(event,'mSost')">
+  <div class="modal" style="max-width:900px">
+    <div class="mhd"><div class="mico2">🕘</div><div><div class="mtit">Registro dei materiali</div><div class="msub">Ogni cambio rispetto alla distinta: chi, quando, quante</div></div><button class="mx" onclick="mClose('mSost')">✕</button></div>
+    <div class="mbd" id="sostBody" style="max-height:66vh;overflow:auto"></div>
+    <div class="mft"><div class="mft-l fmuted" style="font-size:11px">La distinta non cambia mai: questi sono cambi d&rsquo;acquisto, e in SolidWorks non risalgono.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mSost')">Chiudi</button></div></div>
+  </div>
+</div>
+
 <div class="mov" id="mCmpPrezzi" onclick="ovClose(event,'mCmpPrezzi')">
   <div class="modal" style="max-width:620px">
     <div class="mhd"><div class="mico2">🔀</div><div><div class="mtit">Confronto prezzi</div><div class="msub" id="cmpPrezziSub"></div></div><button class="mx" onclick="mClose('mCmpPrezzi')">✕</button></div>
@@ -8899,11 +8928,73 @@ function renderDdSmistamento(){
       <div class="rdo-metric"><b>${s.totale_avanzo}</b><span>Avanzo che rientra</span></div>
     </div>
     ${smBannerHtml(s,mancano,ro)}
+    ${smEsitoHtml()}
     <div class="sm-barra">
       <button class="btn btn-ghost btn-sm" onclick="smApriTutti(true)">⊞ Espandi tutto</button>
       <button class="btn btn-ghost btn-sm" onclick="smApriTutti(false)">⊟ Comprimi tutto</button>
+      <span style="flex:1"></span>
+      ${ro?'':`<button class="btn btn-ghost btn-sm" onclick="smRegoleMenu(event,null)"
+        title="Imposta il materiale di tutte le righe con una regola">⚗ Regole materiale…</button>
+      ${mancano?`<button class="btn btn-sm" onclick="smConfermaTutte()"
+        title="Segna come guardate tutte le righe che restano">✓ Conferma le ${mancano} rimaste</button>`:''}`}
+      <button class="btn btn-ghost btn-sm" onclick="smApriRegistro()"
+        title="Chi ha cambiato quale materiale, quando">🕘 Registro materiali</button>
     </div>
     ${gruppi.map((g,gi)=>smGruppoHtml(g,gi,ro)).join('')}`;
+}
+/* ── le quattro regole del materiale ──
+   Sessanta righe fanno sessanta volte la stessa domanda: qui si risponde una
+   volta sola. Il menu è quello di tutto il gestionale (`showCtx`), così la
+   scorciatoia col tasto destro e il pulsante aprono la stessa cosa.
+   `gi` è l'indice del gruppo, oppure null per tutta la RDO. */
+const SM_REGOLE=[
+  ['distinta','📐 Come a distinta','Rimette tutto sul materiale che chiede il progetto.'],
+  ['inox_su','⬆ INOX superiore','Dove la distinta dice A2 mette A4. Mai il contrario.'],
+  ['inox','⇅ INOX, anche in giù','Come sopra, ma accetta A4 → A2 pur di usare quello che c\'è.'],
+  ['giacenza','📦 I più disponibili','Quello di cui ce n\'è di più, mai sotto il grado di distinta.'],
+];
+function smRegoleMenu(e,gi){
+  const cat=gi==null?'':(SM_GRPKEYS[gi]||'');
+  const dove=cat?`«${cat.toLowerCase()}»`:'tutte le righe';
+  showCtx(e,`Materiale · ${dove}`,SM_REGOLE.map(([k,etichetta,spiega])=>
+    [`${etichetta}<div class="mi-sub">${esc(spiega)}</div>`,`smApplicaRegola('${k}','${jsq(cat)}')`,'due-righe']));
+}
+async function smApplicaRegola(regola,categoria){
+  try{
+    const rp=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/smistamento/regola`,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({regola,categoria:categoria||''})});
+    if(!rp.ok)throw new Error(await srvErrDetail(rp,'Non sono riuscito ad applicare la regola'));
+    const out=await rp.json();
+    DD.smist=out.smistamento;SM_ESITO=out;
+    renderDdSmistamento();
+    // la RDO cambia con lo smistamento (le quantità scendono a «quello che
+    // manca»): la scheda intorno va riletta, non solo l'elenco
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}`);
+    if(r.ok){DD.data=await r.json();renderDdEditor(DD.data);renderDdSmistamento();}
+    toast(out.cambiate.length?`${out.cambiate.length} righe cambiate`:'Niente da cambiare','ok');
+  }catch(e){toast(e.message||'Errore',true);}
+}
+/* Cosa ha fatto la regola, detto in chiaro. Le righe che non ha potuto
+   sistemare sono la parte importante: con «i più disponibili» sono quelle dove
+   l'unico materiale con scorta è inferiore alla distinta, e lì non si scende. */
+let SM_ESITO=null;
+function smEsitoNascondi(){SM_ESITO=null;renderDdSmistamento();}
+function smEsitoHtml(){
+  const x=SM_ESITO;if(!x)return '';
+  const n=x.cambiate.length,ng=(x.in_giu||[]).length;
+  const ns=(x.senza_candidato||[]).length,na=(x.senza_articolo||[]).length;
+  const elenco=(cod,limite=10)=>`<ul>${cod.slice(0,limite).map(c=>`<li>${esc(c)}</li>`).join('')}
+    ${cod.length>limite?`<li>…e altre ${cod.length-limite}</li>`:''}</ul>`;
+  return `<div class="sm-esito">
+    <span class="x" onclick="smEsitoNascondi()" title="Chiudi">✕</span>
+    <b>${esc(x.etichetta)}</b> · ${n} ${plur(n,'riga cambiata','righe cambiate')}.
+    ${ng?`<span class="rosso"><b>${ng}</b> ${plur(ng,'scende','scendono')} di grado</span> (${esc((x.in_giu||[]).join(', '))}).`:''}
+    ${ns?`<div style="margin-top:4px"><b>${ns}</b> ${plur(ns,'riga lasciata','righe lasciate')} com'${plur(ns,'era','erano')}: a scaffale c'è qualcosa, ma in un materiale che questa regola non accetta.
+      ${elenco(x.senza_candidato)}</div>`:''}
+    ${na?`<div style="margin-top:4px"><b>${na}</b> ${plur(na,'codice','codici')} a magazzino non ${plur(na,'esiste','esistono')} proprio: ${plur(na,'si compra','si comprano')} tutto dal fornitore, e la regola non c'entra.
+      ${elenco(x.senza_articolo)}</div>`:''}
+  </div>`;
 }
 /* ── le righe raggruppate per categoria ──
    Sessantasei righe tutte uguali non si leggono: si scorrono. Divise per
@@ -8923,7 +9014,8 @@ function smGruppi(righe){
   return [...g.values()].sort((a,b)=>a.nome.localeCompare(b.nome)).map(x=>{
     x.compra=x.righe.filter(v=>v.r.da_comprare>0).length;
     x.daConfermare=x.righe.filter(v=>!v.r.confermata).length;
-    x.alternative=x.righe.filter(v=>(v.r.sostituti||[]).length).length;
+    x.alternative=x.righe.filter(v=>smOpzioni(v.r).length>1).length;
+    x.sostituiti=x.righe.filter(v=>v.r.sostituito).length;
     return x;
   });
 }
@@ -8937,9 +9029,12 @@ function smGruppoHtml(g,gi,ro){
       <b>${esc(g.nome)}</b>
       <span class="n">${g.righe.length}</span>
       <span class="sm-sp"></span>
-      ${g.alternative?`<span class="sm-gtag alt">${g.alternative} con alternative</span>`:''}
+      ${g.sostituiti?`<span class="sm-gtag alt">${g.sostituiti} con materiale cambiato</span>`
+        :g.alternative?`<span class="sm-gtag alt">${g.alternative} con alternative</span>`:''}
       ${g.compra?`<span class="sm-gtag compra">${g.compra} da ordinare</span>`:`<span class="sm-gtag ok">tutto a magazzino</span>`}
       ${g.daConfermare?`<span class="sm-gtag attesa">${g.daConfermare} da confermare</span>`:'<span class="sm-gtag ok">✓ confermate</span>'}
+      <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();smRegoleMenu(event,${gi})"
+        title="Imposta il materiale di tutta la categoria con una regola">⚗ Materiale…</button>
     </div>
     ${aperto?`<div class="sm-elenco">${g.righe.map(({r,i})=>smRigaHtml(r,i,ro)).join('')}</div>`:''}
   </div>`;
@@ -8981,6 +9076,7 @@ function smRigaHtml(r,i,ro){
       <b class="sm-cod">${esc(r.codice)}</b>
       <span class="sm-den">${esc(r.denominazione||'')}</span>
       ${r.a_perdere?'<span class="sm-tag perdere">a perdere</span>':''}
+      ${r.sostituito?`<span class="sm-tag sost" title="La distinta chiede ${esc(r.materiale_richiesto||'—')}${r.regola?' · scelto dalla regola «'+esc(r.regola)+'»':''}">si prende ${esc(r.materiale_scelto||'')}</span>`:''}
       <span class="sm-r-testo">
         servono <b>${r.serve}</b> ·
         in casa <b>${r.disponibile}</b> ·
@@ -9009,31 +9105,35 @@ function smRigaHtml(r,i,ro){
    pezzo, e quello lo sa solo chi lo progetta. Ognuno è etichettato per quello
    che è (uguale / migliore / inferiore), così la scelta è consapevole invece
    che nascosta. */
-function smOpzioni(r){
-  return [
-    ...(r.articoli||[]).map(a=>[a,'uguale']),
-    ...(r.sostituti||[]).map(a=>[a,'su']),
-    ...(r.non_utilizzabili||[]).map(a=>[a,'giu']),
-  ].filter(([a])=>a&&a.id!=null);
-}
-const SM_ETICHETTA={uguale:'',su:'più resistente',giu:'meno resistente'};
+// Le opzioni arrivano già pronte dal server: filtrate (le scatole vuote non si
+// elencano), etichettate e ordinate. Vedi `_opzioni_materiale` lato server —
+// tenere due volte la stessa regola vuol dire vederle divergere.
+function smOpzioni(r){return (r.opzioni||[]).filter(o=>o&&o.id!=null);}
+/* Quattro etichette, non tre. La quarta è quella che prima mancava: un dado
+   A4-70 al posto di un `Brun. - Cl. 8` NON «resiste di meno» — contro la
+   ruggine resiste molto di più, sotto carico un po' meno. Non è un grado in
+   giù, è un'altra cosa, e chiamarlo «meno resistente» porta a scartarlo
+   quando magari andava benissimo. */
+const SM_ETICHETTA={uguale:'',su:'più resistente',giu:'un grado in meno',altro:'protezione diversa'};
 function smAlternativeHtml(r,i,ro,scelto){
   const voci=smOpzioni(r);
   if(voci.length<2)return '';   // una voce sola non è una scelta: è rumore
   return `<div class="sm-alt">
     <span class="sm-alt-lbl">Materiale <i>(distinta: ${esc(r.materiale_richiesto||'—')})</i></span>
-    ${voci.map(([a,liv])=>`<label class="sm-alt-v ${liv}${a.id===scelto?' on':''}"
+    ${voci.map(a=>`<label class="sm-alt-v ${a.livello}${a.id===scelto?' on':''}"
       title="${esc(a.nota||'')}">
       <input type="radio" name="smA${i}" ${a.id===scelto?'checked':''}${ro?' disabled':''}
         onchange="smScegli(${i},${a.id})">
-      <span>${esc(a.materiale)} <i>${a.disponibile} disp.${SM_ETICHETTA[liv]?' · '+SM_ETICHETTA[liv]:''}${a.a_perdere?' · a perdere':''}</i></span>
+      <span>${esc(a.materiale)} <i>${a.disponibile} disp.${SM_ETICHETTA[a.livello]?' · '+SM_ETICHETTA[a.livello]:''}${a.a_perdere?' · a perdere':''}</i></span>
     </label>`).join('')}
   </div>`;
 }
 // scegliendo un altro materiale la riga si ricalcola su QUELLA scatola
 function smScegli(i,articoloId){
   const r=DD.smist.righe[i];
-  const a=smOpzioni(r).map(([x])=>x).find(x=>x.id===articoloId);if(!a)return;
+  const a=smOpzioni(r).find(x=>x.id===articoloId);if(!a)return;
+  r.materiale_scelto=a.materiale;
+  r.sostituito=a.livello!=='uguale';
   r.articolo_id=articoloId;
   r.disponibile=a.disponibile;
   const inp=document.getElementById('smP'+i);
@@ -9071,6 +9171,51 @@ async function smConferma(i,valore){
     DD.smist.da_confermare=(DD.smist.righe||[]).filter(x=>!x.confermata).length;
     DD.data=out;renderDdEditor(out);
   }catch(e){r.confermata=!valore;renderDdSmistamento();toast(e.message||'Errore',true);}
+}
+/* «Le ho guardate tutte». Con sessanta righe, confermarle una per una dopo
+   averle già lette in blocco è solo attrito — ma resta un gesto esplicito, e
+   la RDO non si approva finché non lo si fa. */
+async function smConfermaTutte(){
+  const da=(DD.smist.righe||[]).filter(r=>!r.confermata);
+  if(!da.length)return;
+  if(!confirm(`Confermi ${da.length} ${plur(da.length,'riga','righe')}?\nDopo la RDO si può approvare.`))return;
+  da.forEach(r=>{r.confermata=true;});
+  try{
+    const out=await smSalva(da);
+    DD.smist.da_confermare=0;DD.data=out;renderDdEditor(out);renderDdSmistamento();
+    toast(`${da.length} ${plur(da.length,'riga confermata','righe confermate')}`,'ok');
+  }catch(e){da.forEach(r=>{r.confermata=false;});renderDdSmistamento();toast(e.message||'Errore',true);}
+}
+/* ── il registro dei materiali ──
+   La distinta non si tocca mai, quindi questo è l'unico posto dove resta
+   scritto perché su quel telaio ci sono dei dadi A4 dove il disegno diceva A2. */
+async function smApriRegistro(){
+  mOpen('mSost');
+  const el=document.getElementById('sostBody');
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico…</div>';
+  let righe=[];
+  try{const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/sostituzioni`);
+    righe=r.ok?await r.json():[];}
+  catch{righe=[];}
+  if(!righe.length){
+    el.innerHTML='<div class="empty" style="padding:26px">Nessun materiale cambiato: tutto come a distinta.</div>';
+    return;}
+  el.innerHTML=`<table class="mg-mov"><thead><tr>
+      <th>Quando</th><th>Codice</th><th>Da</th><th>A</th>
+      <th style="text-align:right">Prelievo</th><th style="text-align:right">Ordine</th>
+      <th>Come</th><th>Chi</th></tr></thead><tbody>
+    ${righe.map(s=>`<tr${s.in_giu?' style="background:rgba(192,21,30,.06)"':''}>
+      <td style="white-space:nowrap">${magFmtData(s.quando)}</td>
+      <td><b>${esc(s.codice)}</b></td>
+      <td>${esc(s.materiale_prima||'—')}</td>
+      <td><b>${esc(s.materiale_dopo||'—')}</b>
+        ${s.in_giu?'<span class="sm-tag" style="background:rgba(192,21,30,.12);color:#C0151E">un grado in meno</span>':''}
+        ${s.rientro?'<span class="sm-tag" style="background:rgba(30,122,60,.12);color:#1E7A3C">torna a distinta</span>':''}</td>
+      <td class="q">${s.da_prelevare}</td>
+      <td class="q">${s.da_comprare}</td>
+      <td>${esc(s.regola_etichetta||'')}</td>
+      <td>${esc(s.chi||'—')}</td></tr>`).join('')}
+  </tbody></table>`;
 }
 async function smSalva(righe){
   const body={righe:righe.map(r=>({
