@@ -221,6 +221,13 @@ variabile: la distinta ne chiede uno, a scaffale ce n'è un altro.
   vengono da `/api/magazzino/articoli/valori`, non dalle righe visibili.
   Aggiungendo un filtro nuovo va messo **lato server**: farlo qui filtrerebbe
   la pagina dentro la pagina.
+  **Etichette QR** (`"SELEZIONE MULTIPLA + ETICHETTE QR"`): il pulsante 🏷 su
+  ogni riga apre l'anteprima (`magApriQr`), la spunta nella prima colonna
+  alimenta `MAG.sel` — che **non si azzera cambiando pagina o ricerca** — e
+  `magStampaSelezionati` manda gli id in POST a `/api/magazzino/etichette.pdf`
+  (in query string non ci starebbero). Il QR lo disegna il server: dentro c'è il
+  **testo** dell'etichetta (normativa · materiale · dimensione), lo stesso che
+  `/articoli/cerca-qr` riconosce dal tablet — mai un id.
 - `"RACCOLTA ORE"` → `"TIMBRATURE"`, `"INSERIMENTO ORE"`, `"CALENDARIO PRESENZE"`, `"REPORT"`, `"IMPOSTAZIONI"`
 - `"FORNITORI — lista friendly + scheda dettaglio"`, `"FORNITORE CRUD"`
 - `"RICERCA FILE (ex Calderone)"`, `"ANTEPRIMA AL PASSAGGIO DEL MOUSE"`

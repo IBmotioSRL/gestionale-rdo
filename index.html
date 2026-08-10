@@ -10606,7 +10606,7 @@ let MAG={tab:'cat',categorieLoaded:false,categorie:[],articoli:null,articoliAll:
   pronte:null,pickActive:null,scan:null,
   // `sel` non si azzera cambiando pagina o ricerca: si spuntano le viti, si
   // cerca «rosetta», si spuntano anche quelle, e si stampa un foglio solo
-  sel:new Set(),qr:null,
+  sel:new Set(),selSalta:0,qr:null,
   notifiche:null};
 let MAG_SEARCH_T=null;
 // [campo, etichetta, numerica, larghezza predefinita in px]. La larghezza serve
@@ -10880,7 +10880,8 @@ function renderMagCatalogo(){
     </div>
     <div class="mg-tablewrap"><table class="mg-fixed">
       <thead><tr>
-        ${MAG_COLS.map(([f,l,n])=>magColTh(f,l,n)).join('')}<th style="width:52px"></th>
+        <th class="sel" title="Spunta tutte le righe che vedi"><input type="checkbox" id="magCkAll" onchange="magSelTutti(this.checked)"></th>
+        ${MAG_COLS.map(([f,l,n])=>magColTh(f,l,n)).join('')}<th style="width:76px"></th>
       </tr></thead>
       <tbody id="magRowsCat"></tbody>
     </table></div>`;
@@ -10892,9 +10893,10 @@ function renderMagCatalogo(){
 function magRenderRighe(rows){
   const tb=document.getElementById('magRowsCat');
   if(!tb)return;
-  rows=rows||magApplySort(magApplyColFiltri(magFiltraLocale(MAG.articoli||[])));
+  rows=rows||magRigheVisibili();
+  magSelBarra(rows);
   if(!rows.length){
-    tb.innerHTML='<tr><td colspan="13"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
+    tb.innerHTML='<tr><td colspan="14"><div class="empty" style="padding:30px">Nessun risultato</div></td></tr>';
     return;
   }
   const roCell=(a,field,ph)=>`<td class="ro" title="${esc((a[field]||'').toString())}">${esc((a[field]||'').toString())||`<span class="fmuted">${ph||'—'}</span>`}</td>`;
@@ -10904,6 +10906,7 @@ function magRenderRighe(rows){
       ${extra||''} onchange="magSalvaCella(${a.id},'${campo}',this)"
       onkeydown="if(event.key==='Enter')this.blur()"></td>`;
   const riga=a=>`<tr class="ac-${esc(a.classe_acciaio||'')}" onclick="magApriScheda(${a.id})">
+    <td class="sel" onclick="event.stopPropagation()"><input type="checkbox" ${MAG.sel.has(a.id)?'checked':''} onchange="magSelToggle(${a.id},this.checked)"></td>
     <td class="ro" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--t3);font-weight:700">${esc(a.codice||'')}</td>
     <td class="ro">${esc(a.categoria||'')||'<span class="fmuted">—</span>'}${a.a_perdere?'<span class="mg-perdere" title="Si usa finché dura: non viene mai chiesto di riordinarlo">a perdere</span>':''}</td>
     ${roCell(a,'normativa')}
@@ -10916,7 +10919,8 @@ function magRenderRighe(rows){
     <td class="num" style="font-weight:800;${a.da_riordinare?'color:var(--red)':''}">${a.disponibile}</td>
     ${numCell(a,'scorta_minima','placeholder="—"')}
     <td class="num">${a.in_arrivo?('+'+a.in_arrivo):'<span class="fmuted">—</span>'}</td>
-    <td class="act">${a.da_riordinare?'<span class="chip cr">⚠</span>':'<span class="chip cg">ok</span>'}</td>
+    <td class="act">${a.da_riordinare?'<span class="chip cr">⚠</span>':'<span class="chip cg">ok</span>'}
+      <button class="mg-qrbtn" title="Etichetta QR: anteprima e stampa" onclick="event.stopPropagation();magApriQr(${a.id})">${MAG_QR_ICO}</button></td>
   </tr>`;
 
   if(!MAG.raggr){tb.innerHTML=rows.map(riga).join('');return;}
@@ -10932,7 +10936,7 @@ function magRenderRighe(rows){
   tb.innerHTML=MAG._grpKeys.map((k,i)=>{
     const arr=g[k],chiuso=MAG.grpChiusi[k]===true;
     const pezzi=arr.reduce((s,x)=>s+(x.giacenza||0),0);
-    return `<tr class="mg-grp" onclick="magToggleGrp(${i})"><td colspan="13">
+    return `<tr class="mg-grp" onclick="magToggleGrp(${i})"><td colspan="14">
         ${chiuso?'▸':'▾'} ${esc(k)}
         <span class="mg-grp-n">${arr.length} articoli · ${pezzi} pz</span></td></tr>`
       + (chiuso?'':arr.map(riga).join(''));
@@ -10951,6 +10955,118 @@ function magGrpTutti(chiudi){
   magRenderRighe();
 }
 function magToggleRaggr(){MAG.raggr=!MAG.raggr;renderMagCatalogo();}
+
+/* ── SELEZIONE MULTIPLA + ETICHETTE QR ──
+   Nel QR non c'è un id ma il **testo** dell'etichetta (normativa · materiale ·
+   dimensione, `magSchedaQrTesto`): è quello che il tablet cerca con
+   /articoli/cerca-qr, ed è per questo che l'immagine la disegna il server e non
+   una libreria qui — anteprima e stampa non possono divergere. */
+const MAG_QR_ICO='<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm8-2h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 0h3v3h-3v-3z"/></svg>';
+const MAG_ETICH_PER_FOGLIO=24;   // foglio A4 70×37 mm, lo stesso del server
+
+function magRigheVisibili(){return magApplySort(magApplyColFiltri(magFiltraLocale(MAG.articoli||[])));}
+/* La barra arancione e la spunta «tutte». Il numero che mostra può essere più
+   grande di quello che si vede: la selezione non si azzera cambiando pagina, e
+   dirlo è l'unico modo di non far stampare cinquanta etichette per sbaglio. */
+function magSelBarra(rows){
+  rows=rows||magRigheVisibili();
+  const visibili=rows.filter(a=>MAG.sel.has(a.id)).length;
+  const ck=document.getElementById('magCkAll');
+  if(ck){
+    ck.checked=rows.length>0&&visibili===rows.length;
+    ck.indeterminate=visibili>0&&visibili<rows.length;
+  }
+  const bar=document.getElementById('magSelBar');
+  if(!bar)return;
+  const n=MAG.sel.size;
+  if(!n){bar.innerHTML='';return;}
+  const fuori=n-visibili;
+  bar.innerHTML=`<div class="mg-selbar">
+    <span>☑ ${n} ${n===1?'articolo selezionato':'articoli selezionati'}${fuori?` <span style="font-weight:400;color:var(--t2)">(${fuori} fuori da questa pagina)</span>`:''}</span>
+    <label style="font-weight:400;font-size:11px;color:var(--t2)" title="Su un foglio già iniziato, la prima casella ancora libera">parti dalla casella
+      <input class="mg-qrnum" style="width:54px" type="number" min="1" max="${MAG_ETICH_PER_FOGLIO}" value="${MAG.selSalta+1}"
+        onchange="magSetSalta(this)"></label>
+    <span class="sp"></span>
+    <button class="lk" onclick="magSelSvuota()">Deseleziona tutto</button>
+    <button class="btn btn-go" onclick="magStampaSelezionati()">🏷 Stampa etichette QR</button>
+  </div>`;
+}
+function magSetSalta(input){
+  MAG.selSalta=Math.min(MAG_ETICH_PER_FOGLIO-1,Math.max(0,(parseInt(input.value)||1)-1));
+  input.value=MAG.selSalta+1;
+}
+function magSelToggle(id,on){on?MAG.sel.add(id):MAG.sel.delete(id);magSelBarra();}
+function magSelTutti(on){
+  magRigheVisibili().forEach(a=>{on?MAG.sel.add(a.id):MAG.sel.delete(a.id);});
+  magRenderRighe();
+}
+function magSelSvuota(){MAG.sel.clear();magRenderRighe();}
+
+function magApriQr(id){
+  const a=(MAG.articoli||[]).find(x=>x.id===id)||magArticoloFull(id);
+  if(!a){toast('Articolo non trovato',true);return;}
+  MAG.qr={id:id,copie:1,salta:0};
+  mOpen('mMagQr');
+  magRenderQr(a);
+}
+function magRenderQr(a){
+  const el=document.getElementById('mMagQrBody');if(!el)return;
+  const testo=magSchedaQrTesto(a);
+  if(!testo){
+    // il QR è fatto di quei tre campi e di nient'altro: senza, resterebbe un
+    // quadrato che non identifica niente
+    el.innerHTML=`<div class="fmuted" style="font-size:12px;line-height:1.6">Questo articolo non ha né normativa,
+      né materiale, né dimensione: il QR dell'etichetta è fatto esattamente di quei tre campi, quindi non c'è
+      niente da codificare.<br>Apri la sua scheda e compilane almeno uno.</div>`;
+    return;
+  }
+  el.innerHTML=`<div class="mg-qrprev">
+    <img src="${API}/api/magazzino/articoli/${a.id}/qr.png?scala=10" alt="Etichetta QR ${esc(a.codice||'')}">
+    <div class="dt">
+      <div class="cod">${esc(a.codice||'')}</div>
+      <div class="den">${esc(a.denominazione||'')}</div>
+      <div class="mg-art-qr">Testo codificato nel QR: <b>${esc(testo)}</b><br>
+        È quello che il tablet legge dalla scatola: normativa · materiale · dimensione.</div>
+      <div style="display:flex;gap:14px;align-items:flex-end;margin-top:12px;flex-wrap:wrap">
+        <label style="font-size:11px;font-weight:700;color:var(--t2)">Copie<br>
+          <input class="mg-qrnum" type="number" min="1" max="480" value="${MAG.qr.copie}"
+            onchange="MAG.qr.copie=Math.max(1,parseInt(this.value)||1);this.value=MAG.qr.copie"></label>
+        <label style="font-size:11px;font-weight:700;color:var(--t2)">Parti dalla casella<br>
+          <input class="mg-qrnum" type="number" min="1" max="${MAG_ETICH_PER_FOGLIO}" value="${MAG.qr.salta+1}"
+            onchange="MAG.qr.salta=Math.min(${MAG_ETICH_PER_FOGLIO-1},Math.max(0,(parseInt(this.value)||1)-1));this.value=MAG.qr.salta+1"></label>
+        <div style="font-size:10.5px;color:var(--t3);flex:1;min-width:160px;line-height:1.5">
+          Foglio A4 da ${MAG_ETICH_PER_FOGLIO} etichette 70×37 mm. Su un foglio già iniziato, parti dalla prima casella libera.</div>
+      </div>
+    </div>
+  </div>`;
+}
+function magStampaEtichetta(){
+  if(!MAG.qr)return;
+  const p=new URLSearchParams({copie:MAG.qr.copie,salta:MAG.qr.salta});
+  window.open(`${API}/api/magazzino/articoli/${MAG.qr.id}/etichetta.pdf?`+p,'_blank');
+}
+async function magStampaSelezionati(){
+  const ids=[...MAG.sel];
+  if(!ids.length){toast('Nessun articolo selezionato',true);return;}
+  // la scheda si apre DENTRO il clic, come in ddExport: aprirla dopo l'attesa
+  // della POST vuol dire trovarla bloccata dal browser. Gli id vanno in POST
+  // perché qualche centinaio di articoli non ci sta nella lunghezza di un URL.
+  const w=window.open('','_blank');
+  try{
+    const r=await fetch(API+'/api/magazzino/etichette.pdf',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ids:ids,salta:MAG.selSalta})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Non riesco a generare le etichette'));
+    const url=URL.createObjectURL(await r.blob());
+    if(w&&!w.closed)w.location=url;else window.open(url,'_blank');
+    // revocarlo subito lascerebbe una scheda bianca: si libera da solo poi
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
+    toast(`${ids.length} ${ids.length===1?'etichetta pronta':'etichette pronte'}`,'ok');
+  }catch(e){
+    if(w&&!w.closed)w.close();
+    toast(e.message||'Errore',true);
+  }
+}
 // salva la singola cella e riallinea i numeri calcolati (disponibile, da riordinare)
 async function magSalvaCella(id,campo,input){
   const raw=(input.value||'').trim();
@@ -10992,6 +11108,17 @@ function magApriScheda(id,articolo){
 }
 function magSchedaQrTesto(d){
   return [d.normativa,d.materiale,d.dimensione].map(x=>(x||'').trim()).filter(x=>x).join(' - ');
+}
+/* L'etichetta la disegna il server da quello che ha lui: aprire l'anteprima con
+   modifiche non salvate mostrerebbe il QR di prima e farebbe stampare la
+   scatola sbagliata. Meglio fermarsi e dirlo. */
+function magSchedaQrApri(){
+  const s=MAG.art;if(!s||s.nuovo)return;
+  if(magSchedaQrTesto(s.dati)!==magSchedaQrTesto(s.calc)){
+    toast('Salva prima le modifiche: l\'etichetta si stampa da quello che c\'è sul server',true);
+    return;
+  }
+  magApriQr(s.id);
 }
 function renderMagScheda(){
   const s=MAG.art;if(!s)return;
@@ -11052,7 +11179,8 @@ function renderMagScheda(){
              da lavori passati. Si preleva come tutto il resto, ma non viene mai chiesto di riordinarlo:
              quando finisce è finita, e quello che manca si compra nuovo.</i></span></label></div>
       <div class="fg full"><label class="fl">Note</label><textarea class="fld" placeholder="Note (facoltative)" oninput="MAG.art.dati.note=this.value">${esc(d.note||'')}</textarea></div>
-      <div class="fg full"><div class="mg-art-qr">Testo dell'etichetta QR: <b id="magSchedaQr">${esc(magSchedaQrTesto(d))||'—'}</b><br>Normativa · materiale · dimensione: è il testo che il tablet legge dalla scatola. Sigle inox diverse (AISI 302, A2-70…) sono riconosciute come equivalenti.</div></div>
+      <div class="fg full"><div class="mg-art-qr">Testo dell'etichetta QR: <b id="magSchedaQr">${esc(magSchedaQrTesto(d))||'—'}</b><br>Normativa · materiale · dimensione: è il testo che il tablet legge dalla scatola. Sigle inox diverse (AISI 302, A2-70…) sono riconosciute come equivalenti.
+        ${s.nuovo?'':`<br><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="magSchedaQrApri()">🏷 Anteprima e stampa etichetta</button>`}</div></div>
     </div>`;
   }
   document.getElementById('mMagArtFt').innerHTML=s.nuovo
