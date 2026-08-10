@@ -7278,6 +7278,7 @@ function renderOreReport(){
             ORE.rep.gruppo_id,g=>g.nome)}</select></label>
     <label>Fase<select class="fld" onchange="oreRepSet('fase_id',this.value)">
       ${opz(a.fasi||[],ORE.rep.fase_id,f=>f.nome)}</select></label>
+    <button class="btn btn-ghost btn-sm" onclick="oreEsporta()" title="Scarica in Excel quello che stai guardando">⬇ Excel</button>
   </div>
 
   <div class="ore-kpi">
@@ -7307,6 +7308,16 @@ function renderOreReport(){
         :`<tr><td colspan="${admin?8:7}" class="fmuted">Nessuna registrazione nel periodo.</td></tr>`}
     </tbody></table></div>
   </div>`;
+}
+/* L'esportazione segue il periodo e la persona che si sta guardando: scaricare
+   una cosa diversa da quella che si ha davanti è il modo migliore di sbagliarsi. */
+function oreEsporta(){
+  const admin=ORE.me&&ORE.me.ruolo==='amministratore';
+  const q=new URLSearchParams({scope:admin&&!ORE.rep.utente_id?'team':'mie'});
+  if(ORE.rep.dal)q.set('da',ORE.rep.dal);
+  if(ORE.rep.al)q.set('a',ORE.rep.al);
+  if(admin&&ORE.rep.utente_id)q.set('utente_id',ORE.rep.utente_id);
+  window.open(API+'/api/ore/export.xlsx?'+q.toString(),'_blank');
 }
 function oreKpi(titolo,valore,spiega){
   return `<div class="card ore-kpi-card"${spiega?` title="${esc(spiega)}"`:''}>
