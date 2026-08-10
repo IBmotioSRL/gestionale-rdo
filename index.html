@@ -2138,6 +2138,48 @@ textarea.fld{resize:vertical;min-height:60px}
 /* la conferma a tutto schermo dell'auto-rimozione: deve fermare, non scivolare via */
 .ore-autorim .modal{max-width:520px;border-top:4px solid var(--red)}
 .ore-autorim-ico{width:42px;height:42px;border-radius:50%;background:rgba(255,59,48,.12);color:#C00;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800}
+/* ── Timesheet: il calendario e il giorno (ORE-03) ── */
+.ore-ts{display:grid;grid-template-columns:1.5fr 1fr;gap:10px;align-items:start}
+.ore-ts-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px}
+.ore-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ore-cal-dow{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);text-align:center;padding-bottom:3px}
+.ore-cal-cella{border:1px solid var(--bd);border-radius:7px;min-height:62px;padding:5px 6px;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:var(--surf)}
+.ore-cal-cella:hover{border-color:var(--go)}
+.ore-cal-cella.vuota{border:none;background:transparent;cursor:default}
+.ore-cal-cella.sel{border-color:var(--go-d);box-shadow:inset 0 0 0 1px var(--go-d);background:rgba(245,168,35,.07)}
+.ore-cal-cella.festa{background:rgba(88,86,214,.06)}
+.ore-cal-cella.non-lav{background:rgba(44,21,6,.035)}
+.ore-cal-num{font-size:11.5px;font-weight:700}
+.ore-cal-pt{display:flex;gap:3px}
+.ore-cal-ore{font-size:9.5px;color:var(--t2);margin-top:auto;font-variant-numeric:tabular-nums}
+.pt{width:6px;height:6px;border-radius:50%;display:inline-block}
+.pt.ore{background:#34C759}.pt.ass{background:#FF9500}
+.pt.rim{background:#007AFF}.pt.fes{background:#5856D6}
+.ore-legenda{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:10.5px;color:var(--t2)}
+.ore-legenda span{display:flex;align-items:center;gap:5px}
+.ore-riga-evento{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;border:1px solid var(--bd);border-radius:7px;margin-bottom:5px;font-size:11.5px}
+.ore-proposta{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px;border-left:3px solid #5856D6}
+.ore-proposta-az{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.ore-pp{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px}
+.ore-prima{background:rgba(44,21,6,.04);border-radius:var(--rs);padding:9px 11px;font-size:12px}
+.ore-form2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ore-form3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.ore-form2 label,.ore-form3 label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;color:var(--t2)}
+.ore-form2 label.full,.ore-form3 label.full{grid-column:1/-1}
+.ore-fullday{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding:8px 10px;border-radius:var(--rs);background:rgba(44,21,6,.04);font-size:11px}
+.ore-x{border:none;background:transparent;cursor:pointer;color:inherit;font-size:13px;line-height:1;padding:0 0 0 4px}
+/* ── Report ── */
+.ore-filtri{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end}
+.ore-filtri label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;color:var(--t2);min-width:130px}
+.ore-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.ore-kpi-card{padding:13px 15px}
+.ore-barre{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:10px}
+.ore-barra-riga{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:11px}
+.ore-barra-nome{width:36%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ore-barra-tr{flex:1;height:8px;border-radius:4px;background:rgba(44,21,6,.08);overflow:hidden}
+.ore-barra-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--go),var(--go-d))}
+.ore-barra-val{width:62px;text-align:right;font-variant-numeric:tabular-nums;color:var(--t2)}
+@media(max-width:1100px){.ore-ts{grid-template-columns:1fr}.ore-set{grid-template-columns:1fr}.ore-wl{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -2948,39 +2990,100 @@ textarea.fld{resize:vertical;min-height:60px}
   </div>
 </div>
 
-<!-- MODAL: Raccolta Ore — nuova/modifica registrazione -->
-<div class="mov" id="mOreVoce" onclick="ovClose(event,'mOreVoce')">
-  <div class="modal">
+<!-- MODAL: Timesheet — ferie e permessi (ORE-03).
+     Le regole (dentro l'orario, non oltre il massimo, a mezz'ore) le applica il
+     server: qui si mostra solo quanto vale, per non far scrivere alla cieca. -->
+<div class="mov" id="mOreAssenza" onclick="ovClose(event,'mOreAssenza')">
+  <div class="modal" style="max-width:560px">
     <div class="mhd">
-      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <div><div class="mtit" id="mOreVoceTit">Nuova registrazione</div></div>
-      <button class="mx" onclick="mClose('mOreVoce')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="mico2">🌴</div>
+      <div><div class="mtit">Ferie o permesso</div><div class="msub">Su un giorno solo o su un intervallo.</div></div>
+      <button class="mx" onclick="mClose('mOreAssenza')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="mbd">
-      <input type="hidden" id="oveId">
-      <div class="fg" id="oveTipoToggle"><label class="fl">Tipo</label>
-        <div class="cx-toggle">
-          <button type="button" id="oveTipoLavoroBtn" onclick="oreModalSetTipo('lavoro')">⏱ Lavoro</button>
-          <button type="button" id="oveTipoAssenzaBtn" onclick="oreModalSetTipo('assenza')">🌴 Assenza</button>
-        </div>
+      <div class="ore-form2">
+        <label>Tipo<select class="fld" id="oreAsTipo"></select></label>
+        <label>Ore lavorative calcolate<input class="fld" id="oreAsOre" readonly></label>
+        <label>Dal giorno<input class="fld" type="date" id="oreAsDal"></label>
+        <label>Al giorno<input class="fld" type="date" id="oreAsAl"></label>
+        <label>Dalle<input class="fld" type="time" step="1800" id="oreAsDalle" onchange="oreAggiornaOreAssenza()"></label>
+        <label>Alle<input class="fld" type="time" step="1800" id="oreAsAlle" onchange="oreAggiornaOreAssenza()"></label>
       </div>
-      <div class="fg"><label class="fl">Data</label><input type="date" class="fld" id="oveData"></div>
-      <div id="oveFieldsLavoro">
-        <div class="fg"><label class="fl">Commessa</label><select class="fld" id="oveCommessa" onchange="oreOnCommessaChange('ove')"></select></div>
-        <div class="fg" style="display:flex;gap:8px">
-          <div style="flex:1"><label class="fl">Gruppo</label><select class="fld" id="oveGruppo" onchange="oreOnGruppoChange('ove')"></select></div>
-          <div style="flex:1"><label class="fl">Fase</label><select class="fld" id="oveFase"></select></div>
-        </div>
+      <div class="ore-fullday">
+        <span class="fmuted">Su più giorni si applica lo stesso intervallo a ogni giorno utile: sabati, domeniche e festività si saltano.</span>
+        <button class="btn-mini g" id="oreAsGiorno" onclick="oreAssenzaTuttoIlGiorno()">Tutto il giorno</button>
       </div>
-      <div id="oveFieldsAssenza" style="display:none">
-        <div class="fg"><label class="fl">Tipo assenza</label><select class="fld" id="oveAssenzaTipo"></select></div>
-      </div>
-      <div class="fg"><label class="fl">Durata</label>
-        <div class="ore-durpick"><input class="fld" type="number" id="oveOreH" min="0" value="1"><span>h</span><select class="fld" id="oveOreM"></select><span>min</span></div>
-      </div>
-      <div class="fg"><label class="fl">Nota</label><input class="fld" id="oveNota" placeholder="Nota (facoltativa)"></div>
+      <div class="fg" style="margin-top:8px"><label class="fl">Motivo</label>
+        <textarea class="fld" id="oreAsNota" rows="2" placeholder="Facoltativo"></textarea></div>
     </div>
-    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreVoce')">Annulla</button><button class="btn btn-go" onclick="oreSalvaVoceModal()">💾 Salva</button></div></div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreAssenza')">Annulla</button><button class="btn btn-go" onclick="oreSalvaAssenza()">Inserisci richiesta</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL: Timesheet — rimborso chilometrico. Tariffa e veicolo sono in sola
+     lettura: li imposta l'amministratore e restano fotografati nel rimborso. -->
+<div class="mov" id="mOreRimborso" onclick="ovClose(event,'mOreRimborso')">
+  <div class="modal" style="max-width:640px">
+    <div class="mhd">
+      <div class="mico2">🚗</div>
+      <div><div class="mtit">Rimborso chilometrico</div><div class="msub">Categoria, tratta e collegamento al lavoro.</div></div>
+      <button class="mx" onclick="mClose('mOreRimborso')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd">
+      <div class="ore-form2">
+        <label>Categoria<select class="fld" id="oreRkCat"></select></label>
+        <label>Veicolo assegnato<input class="fld" id="oreRkVeicolo" readonly></label>
+        <label>Dal giorno<input class="fld" type="date" id="oreRkDal"></label>
+        <label>Al giorno<input class="fld" type="date" id="oreRkAl"></label>
+        <label>Tariffa<input class="fld" id="oreRkTariffa" readonly></label>
+        <label>Distanza km<input class="fld" type="number" min="1" step="1" id="oreRkKm" onchange="oreAggiornaTotaleRimborso()" oninput="oreAggiornaTotaleRimborso()"></label>
+        <label>Partenza<input class="fld" id="oreRkPartenza" placeholder="Chiari"></label>
+        <label>Destinazione<input class="fld" id="oreRkDest" placeholder="Cliente o cantiere"></label>
+      </div>
+      <label class="ore-check"><input type="checkbox" id="oreRkAr" onchange="oreAggiornaTotaleRimborso()"> Andata e ritorno</label>
+      <div class="ore-insp-sez">Collegamento al lavoro <span class="fmuted" style="font-weight:500">— facoltativo</span></div>
+      <div class="ore-form3">
+        <label>Commessa<select class="fld" id="oreRkCommessa" onchange="oreRkGruppi()"></select></label>
+        <label>Gruppo Commessa<select class="fld" id="oreRkGruppo" onchange="oreRkFasi()"></select></label>
+        <label>Fase<select class="fld" id="oreRkFase"></select></label>
+      </div>
+      <div class="fg" style="margin-top:8px"><label class="fl">Descrizione e note</label>
+        <textarea class="fld" id="oreRkNota" rows="2" placeholder="Motivo, attività svolta, note"></textarea></div>
+      <div class="fmuted" style="margin-top:8px;font-size:12px">Importo: <b id="oreRkTotale">€ 0,00</b> · verrà inviato in approvazione</div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreRimborso')">Annulla</button><button class="btn btn-go" onclick="oreSalvaRimborso()">Invia rimborso</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL: proponi una modifica (ORE-05). Riapre gli stessi campi con cui la
+     richiesta è stata scritta, non un campo di testo generico. -->
+<div class="mov" id="mOreProposta" onclick="ovClose(event,'mOreProposta')">
+  <div class="modal" style="max-width:560px">
+    <div class="mhd">
+      <div class="mico2">✎</div>
+      <div><div class="mtit">Proponi una modifica</div><div class="msub">Il dato non cambia finché non accetta chi l'ha scritto.</div></div>
+      <button class="mx" onclick="mClose('mOreProposta')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd">
+      <div class="ore-prima"><span class="fmuted">Prima</span><div id="orePropPrima"></div></div>
+      <div class="ore-form2" id="orePropCampi" style="margin-top:10px"></div>
+      <div class="fg" style="margin-top:8px"><label class="fl">Messaggio</label>
+        <textarea class="fld" id="orePropMsg" rows="2" placeholder="Perché la proponi (facoltativo)"></textarea></div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreProposta')">Annulla</button><button class="btn btn-go" onclick="oreInviaProposta()">Invia proposta</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL: lo storico di una richiesta (ORE-08). Si aggiunge e basta: una
+     decisione annullata resta, seguita dal suo annullamento. -->
+<div class="mov" id="mOreStorico" onclick="ovClose(event,'mOreStorico')">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd">
+      <div class="mico2">⟲</div>
+      <div><div class="mtit">Storico</div><div class="msub">Dal più recente. Niente si cancella e niente si riscrive.</div></div>
+      <button class="mx" onclick="mClose('mOreStorico')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd" id="oreStoricoBody"></div>
   </div>
 </div>
 
@@ -6351,10 +6454,7 @@ function oreGoTab(t){
   renderOreTabs();
   if(t==='timbro')oreLoadTimbrature();
   else if(t==='mie')oreLoadVoci();
-  else if(t==='spese')oreLoadSpese();
   else if(t==='report')oreLoadReport();
-  else if(t==='team')oreLoadTeam();
-  else if(t==='rimteam')oreLoadRimTeam();
   else if(t==='set')oreLoadSettings();
 }
 /* Tre sole tab operative (Note ORE-00). Le Impostazioni non sono una quarta tab:
@@ -6367,7 +6467,6 @@ function renderOreTabs(){
     <div class="cx-toggle" style="margin:0">${tabs.map(([k,ic,l])=>
       `<button class="${ORE.tab===k?'on':''}" onclick="oreGoTab('${k}')">${ic} ${esc(l)}</button>`).join('')}</div>
     <div class="ore-tabbar-dx">
-      ${admin?`<button class="btn btn-ghost btn-sm${['team','rimteam'].includes(ORE.tab)?' on':''}" onclick="oreGoTab('team')">👥 Ore del team</button>`:''}
       ${admin?`<button class="btn btn-ghost btn-sm${ORE.tab==='set'?' on':''}" onclick="oreGoTab('set')">⚙️ Impostazioni raccolta ore</button>`:''}
     </div></div>`;
 }
@@ -6403,16 +6502,6 @@ function oreOptsFasi(gid,sel){
 function oreOptsMinuti(sel){let h='';for(let m=0;m<60;m+=5)h+=`<option value="${m}" ${m===sel?'selected':''}>${pad(m)}</option>`;return h;}
 function oreVal(id){const el=document.getElementById(id);return el?el.value:'';}
 function oreCidVal(id){const v=oreVal(id);return v===''?null:parseInt(v);}
-function oreOnCommessaChange(p){
-  const cid=oreCidVal(p+'Commessa');
-  const gEl=document.getElementById(p+'Gruppo');if(!gEl)return;
-  gEl.innerHTML=oreOptsGruppi(cid,null);
-  const fEl=document.getElementById(p+'Fase');if(fEl)fEl.innerHTML=oreOptsFasi(gEl.value,null);
-}
-function oreOnGruppoChange(p){
-  const g=oreVal(p+'Gruppo');
-  const fEl=document.getElementById(p+'Fase');if(fEl)fEl.innerHTML=oreOptsFasi(g,null);
-}
 // helpers di formattazione (portati dal mockup approvato — puri, nessuna dipendenza dai dati finti)
 function pad(n){return String(n).padStart(2,'0');}
 function oreFmtDate(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
@@ -6839,548 +6928,402 @@ function oreBindResize(){
     });
   });
 }
-/* ── CALENDARIO PRESENZE: tabella / calendario delle proprie voci, con aggiungi/modifica/elimina ── */
+/* ══ TIMESHEET (ORE-03) ══════════════════════════════════════════════════════
+   Un calendario solo come punto d'ingresso per tutto quello che appartiene a
+   una data: presenza, ore, ferie, permessi e rimborsi. Si sceglie il giorno e
+   si lavora lì, invece di cercare la schermata giusta per ogni cosa. */
+
+const ORE_MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio',
+  'Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const ORE_STATI={in_attesa:['In attesa','#B36B00','rgba(255,149,0,.14)'],
+  modifica_proposta:['Modifica proposta','#5856D6','rgba(88,86,214,.12)'],
+  approvata:['Approvata','#1A7A2E','rgba(52,199,89,.14)'],
+  approvata_con_modifica:['Approvata con modifica','#1A7A2E','rgba(52,199,89,.14)'],
+  rifiutata:['Rifiutata','#C00','rgba(255,59,48,.12)']};
+function oreStatoChip(s){
+  const [testo,colore,sfondo]=ORE_STATI[s]||[s,'var(--t2)','rgba(44,21,6,.08)'];
+  return `<span class="chip" style="color:${colore};background:${sfondo}">${esc(testo)}</span>`;
+}
+
 async function oreLoadVoci(){
   const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico registrazioni…</div>';
-  const self=oreSelfId();
-  const url=API+'/api/ore/voci'+(self!=null?('?utente_id='+encodeURIComponent(self)):'');
-  try{const r=await fetch(url);ORE.voci=r.ok?await r.json():[];}catch{ORE.voci=[];}
-  renderOreVoci();
-}
-function renderOreVoci(){
-  const el=document.getElementById('oreBody');
-  const rows=ORE.voci||[];
-  let html=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <div class="cx-toggle" style="margin:4px 0">
-      <button class="${ORE.mieview==='tabella'?'on':''}" onclick="oreSetMieView('tabella')">📋 Tabella</button>
-      <button class="${ORE.mieview==='calendario'?'on':''}" onclick="oreSetMieView('calendario')">📅 Calendario</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button class="btn btn-go btn-sm" onclick="oreApriNuovaVoce()">+ Aggiungi voce</button>
-      ${oreExportBarHtml('mie')}
-    </div>
-  </div>`;
-  html+=ORE.mieview==='tabella'?oreTableHtml(rows):oreCalendarHtml(rows);
-  el.innerHTML=html;
-}
-function oreSetMieView(v){ORE.mieview=v;renderOreVoci();}
-function oreCommessaCellHtml(v){
-  if(v.tipo==='assenza')return `<span class="ore-pill" style="background:rgba(52,199,89,.14);color:#1A7A2E">🌴 ${esc(v.assenza_tipo_nome||'')}</span>`;
-  return v.commessa_id==null?'Attività interne':esc(v.commessa_nome||('Commessa #'+v.commessa_id));
-}
-function oreVUtenteId(v){return v.utente_id!=null?v.utente_id:v.utente_ore_id;}
-function oreVUtenteNome(v){return v.utente_nome||v.utente_email||('Utente #'+oreVUtenteId(v));}
-function oreTableHtml(rows,opts){
-  opts=opts||{};
-  const persona=!!opts.persona,ctx=opts.ctx||'mie';
-  rows=rows.slice().sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
-  const tot=rows.reduce((s,v)=>s+v.minuti,0);
-  return `<div class="ore-kpirow"><div class="ore-kpi"><div class="v">${fmtDur(tot)}</div><div class="l">Ore totali</div></div>
-    <div class="ore-kpi"><div class="v">${rows.length}</div><div class="l">Registrazioni</div></div></div>
-  <div class="ore-tablewrap"><table>
-    <thead><tr><th>Data</th>${persona?'<th>Persona</th>':''}<th>Commessa / assenza</th><th>Gruppo</th><th>Fase</th><th style="text-align:right">Durata</th><th>Modalità</th><th>Nota</th><th></th></tr></thead>
-    <tbody>${rows.map(v=>`<tr>
-      <td>${esc(v.data)}</td>${persona?'<td>'+esc(oreVUtenteNome(v))+'</td>':''}
-      <td>${oreCommessaCellHtml(v)}</td>
-      <td>${v.tipo==='assenza'?'—':esc(v.gruppo_nome||'—')}</td>
-      <td>${v.tipo==='assenza'?'—':(v.fase_codice?`<span class="ore-codechip">${esc(v.fase_codice)}</span>${esc(v.fase_nome||'')}`:'—')}</td>
-      <td class="num">${fmtDur(v.minuti)}</td>
-      <td><span class="ore-pill ${v.modalita==='timer'?'timer':'man'}">${v.modalita==='timer'?'⏱ timer':'📝 manuale'}</span></td>
-      <td style="color:var(--t3)">${esc(v.nota)||'—'}</td>
-      <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="oreApriModifica(${v.id},'${ctx}')" title="Modifica">✏️</button><button class="btn btn-ghost btn-sm" onclick="oreDelVoce(${v.id},'${ctx}')" title="Elimina">🗑</button></td>
-    </tr>`).join('')||`<tr><td colspan="${persona?9:8}" style="text-align:center;padding:30px;color:var(--t3)">Nessuna registrazione</td></tr>`}</tbody>
-  </table></div>`;
-}
-function oreCalendarHtml(rows){
-  const y=ORE.calMonth.getFullYear(),m=ORE.calMonth.getMonth();
-  const first=new Date(y,m,1),startDow=(first.getDay()+6)%7;
-  const daysInMonth=new Date(y,m+1,0).getDate();
-  const byDay={};rows.forEach(v=>{byDay[v.data]=(byDay[v.data]||0)+v.minuti;});
-  let cells='';
-  for(let i=0;i<startDow;i++)cells+='<div class="ore-calday empty"></div>';
-  for(let d=1;d<=daysInMonth;d++){
-    const dt=new Date(y,m,d),key=oreFmtDate(dt);
-    const tot=byDay[key]||0;
-    const isWeekend=dt.getDay()===0||dt.getDay()===6;
-    let cls='ore-calday';
-    if(tot>0){if(tot===480)cls+=' g';else if(tot<480)cls+=' y';else cls+=' r';}
-    if(isWeekend)cls+=' weekend';
-    if(ORE.calSel===key)cls+=' sel';
-    cells+=`<div class="${cls}" onclick="oreCalSelDay('${key}')"><div class="dnum">${d}</div>${tot?`<div class="dtot">${fmtDur(tot)}</div>`:''}</div>`;
-  }
-  const giorniSel=ORE.calSel?rows.filter(v=>v.data===ORE.calSel):[];
-  return `<div class="ore-tablewrap" style="padding:16px">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <button class="btn btn-sm" onclick="oreCalPrevMonth()">←</button>
-      <b>${esc(ORE.calMonth.toLocaleDateString('it-IT',{month:'long',year:'numeric'}))}</b>
-      <button class="btn btn-sm" onclick="oreCalNextMonth()">→</button>
-      <span style="margin-left:auto;font-size:11px;color:var(--t2)">🟩 =8h · 🟨 &lt;8h · 🟥 &gt;8h</span>
-    </div>
-    <div class="ore-calgrid">${['LUN','MAR','MER','GIO','VEN','SAB','DOM'].map(d=>`<div class="ore-calhd">${d}</div>`).join('')}${cells}</div>
-  </div>
-  ${ORE.calSel?`<div class="ore-tablewrap"><div style="padding:10px 14px;display:flex;align-items:center;gap:10px">
-    <div style="font-weight:800;font-size:12px;flex:1">${esc(ORE.calSel)}${giorniSel.length?'':' — nessuna registrazione'}</div>
-    <button class="btn btn-sm" onclick="oreApriNuovaVoce('${ORE.calSel}')">+ Aggiungi voce</button>
-  </div>${giorniSel.length?oreTableHtml(giorniSel):''}</div>`:''}`;
-}
-function oreCalSelDay(key){ORE.calSel=ORE.calSel===key?null:key;renderOreVoci();}
-function oreCalPrevMonth(){const y=ORE.calMonth.getFullYear(),m=ORE.calMonth.getMonth();ORE.calMonth=new Date(y,m-1,1);ORE.calSel=null;renderOreVoci();}
-function oreCalNextMonth(){const y=ORE.calMonth.getFullYear(),m=ORE.calMonth.getMonth();ORE.calMonth=new Date(y,m+1,1);ORE.calSel=null;renderOreVoci();}
-
-/* ── modale nuova/modifica voce ── */
-function oreModalSetTipo(t){
-  ORE._modalTipo=t;
-  document.getElementById('oveFieldsLavoro').style.display=t==='lavoro'?'':'none';
-  document.getElementById('oveFieldsAssenza').style.display=t==='assenza'?'':'none';
-  document.getElementById('oveTipoLavoroBtn').classList.toggle('on',t==='lavoro');
-  document.getElementById('oveTipoAssenzaBtn').classList.toggle('on',t==='assenza');
-}
-function oreApriNuovaVoce(data){
-  ORE.editId=null;
-  ORE._voceCtx='mie';
-  document.getElementById('mOreVoceTit').textContent='Nuova registrazione';
-  document.getElementById('oveTipoToggle').style.display='';
-  document.getElementById('oveId').value='';
-  document.getElementById('oveData').value=data||oreFmtDate(new Date());
-  document.getElementById('oveAssenzaTipo').innerHTML=(ORE.assenzeTipi||[]).map(a=>`<option value="${a.id}">${esc(a.codice)} — ${esc(a.nome)}</option>`).join('');
-  const disp=oreCommesseOptions();
-  const c0=disp.length?disp[0].id:null;
-  document.getElementById('oveCommessa').innerHTML=oreOptsCommesse(c0);
-  document.getElementById('oveGruppo').innerHTML=oreOptsGruppi(c0,null);
-  document.getElementById('oveFase').innerHTML=oreOptsFasi(oreVal('oveGruppo'),null);
-  document.getElementById('oveOreH').value=1;
-  document.getElementById('oveOreM').innerHTML=oreOptsMinuti(0);
-  document.getElementById('oveNota').value='';
-  oreModalSetTipo('lavoro');
-  mOpen('mOreVoce');
-}
-function oreApriModifica(id,ctx){
-  ctx=ctx||'mie';
-  const src=ctx==='team'?ORE.teamRows:ORE.voci;
-  const v=(src||[]).find(x=>x.id===id);
-  if(!v)return;
-  ORE.editId=id;
-  ORE._voceCtx=ctx;
-  document.getElementById('mOreVoceTit').textContent='Modifica registrazione — '+v.data;
-  document.getElementById('oveTipoToggle').style.display='none';
-  document.getElementById('oveId').value=v.id;
-  document.getElementById('oveData').value=v.data;
-  document.getElementById('oveAssenzaTipo').innerHTML=(ORE.assenzeTipi||[]).map(a=>`<option value="${a.id}" ${a.id===v.assenza_tipo_id?'selected':''}>${esc(a.codice)} — ${esc(a.nome)}</option>`).join('');
-  document.getElementById('oveCommessa').innerHTML=oreOptsCommesse(v.commessa_id);
-  document.getElementById('oveGruppo').innerHTML=oreOptsGruppi(v.commessa_id,v.gruppo_id);
-  document.getElementById('oveFase').innerHTML=oreOptsFasi(v.gruppo_id,v.fase_id);
-  const h=Math.floor(v.minuti/60),m=v.minuti%60;
-  document.getElementById('oveOreH').value=h;
-  document.getElementById('oveOreM').innerHTML=oreOptsMinuti(m);
-  document.getElementById('oveNota').value=v.nota||'';
-  oreModalSetTipo(v.tipo);
-  mOpen('mOreVoce');
-}
-async function oreSalvaVoceModal(){
-  const h=parseInt(oreVal('oveOreH'))||0,m=parseInt(oreVal('oveOreM'))||0;
-  const minuti=h*60+m;
-  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
-  const data=oreVal('oveData');
-  const nota=oreVal('oveNota');
-  const tipo=ORE._modalTipo;
-  const id=ORE.editId;
-  let body;
-  if(tipo==='assenza'){
-    const assenza_tipo_id=parseInt(oreVal('oveAssenzaTipo'));
-    body=id?{minuti,nota,assenza_tipo_id}:{tipo:'assenza',data,minuti,nota,modalita:'manuale',assenza_tipo_id};
-  }else{
-    const commessa_id=oreCidVal('oveCommessa');
-    const gruppo_id=parseInt(oreVal('oveGruppo')),fase_id=parseInt(oreVal('oveFase'));
-    if(!gruppo_id||!fase_id){toast('Seleziona gruppo e fase',true);return;}
-    body=id?{minuti,nota,commessa_id,gruppo_id,fase_id}:{tipo:'lavoro',data,minuti,nota,modalita:'manuale',commessa_id,gruppo_id,fase_id};
-  }
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico il mese…</div>';
+  const m=ORE.calMonth;
+  const mese=m.getFullYear()+'-'+pad(m.getMonth()+1);
   try{
-    const r=id
-      ?await fetch(API+'/api/ore/voci/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-      :await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){mClose('mOreVoce');toast(id?'Modifica salvata':'Registrazione aggiunta','ok');
-      if(ORE._voceCtx==='team')await oreLoadTeam();else await oreLoadVoci();
-    }else toast('Errore salvataggio',true);
+    const [rc,ro,ra,rk,ral,rp]=await Promise.all([
+      fetch(API+'/api/ore/calendario?mese='+mese),
+      fetch(API+'/api/ore/orario'),
+      fetch(API+'/api/ore/assenze-tipi'),
+      fetch(API+'/api/ore/rimborsi-categorie'),
+      fetch(API+'/api/ore/albero'),
+      fetch(API+'/api/ore/proposte')]);
+    ORE.cal=rc.ok?await rc.json():null;
+    ORE.orario=ro.ok?await ro.json():null;
+    ORE.assenzeTipi=ra.ok?await ra.json():[];
+    ORE.categorie=rk.ok?await rk.json():[];
+    ORE.alb=ral.ok?await ral.json():ORE.alb;
+    ORE.proposte=rp.ok?await rp.json():[];
+  }catch{el.innerHTML='<div class="fmuted">Non riesco a leggere il calendario.</div>';return;}
+  if(!ORE.calSel)ORE.calSel=oreFmtDate(new Date());
+  renderOreTimesheet();
+}
+function oreCalPrevMonth(){ORE.calMonth=new Date(ORE.calMonth.getFullYear(),ORE.calMonth.getMonth()-1,1);oreLoadVoci();}
+function oreCalNextMonth(){ORE.calMonth=new Date(ORE.calMonth.getFullYear(),ORE.calMonth.getMonth()+1,1);oreLoadVoci();}
+function oreCalSelDay(g){ORE.calSel=g;navPunto();renderOreTimesheet();}
+
+function renderOreTimesheet(){
+  const el=document.getElementById('oreBody');if(!el)return;
+  const m=ORE.calMonth;
+  el.innerHTML=`
+  ${oreProposteBannerHtml()}
+  <div class="ore-ts">
+    <div class="card">
+      <div class="ore-ts-head">
+        <button class="btn-mini g" onclick="oreCalPrevMonth()">‹</button>
+        <b>${ORE_MESI[m.getMonth()]} ${m.getFullYear()}</b>
+        <button class="btn-mini g" onclick="oreCalNextMonth()">›</button>
+        <span class="fmuted" style="font-size:10.5px;margin-left:auto">
+          ${esc((ORE.orario||{}).ora_inizio||'')}–${esc((ORE.orario||{}).ora_fine||'')} ·
+          massimo ${Math.round(((ORE.orario||{}).max_minuti_giorno||480)/60)} h</span>
+      </div>
+      ${oreCalendarioHtml()}
+      <div class="ore-legenda">
+        <span><i class="pt ore"></i> ore lavorate</span>
+        <span><i class="pt ass"></i> ferie o permesso</span>
+        <span><i class="pt rim"></i> rimborso</span>
+        <span><i class="pt fes"></i> festività</span>
+      </div>
+    </div>
+    <div class="card" id="oreGiornoBox">${oreGiornoHtml()}</div>
+  </div>`;
+}
+
+function oreCalendarioHtml(){
+  const m=ORE.calMonth,anno=m.getFullYear(),mese=m.getMonth();
+  const primo=new Date(anno,mese,1),ultimo=new Date(anno,mese+1,0);
+  const scarto=(primo.getDay()+6)%7;   // la settimana comincia di lunedì
+  const dati={};(((ORE.cal||{}).giorni)||[]).forEach(g=>dati[g.data]=g);
+  const feste=new Set(((ORE.cal||{}).festivita)||[]);
+  const lavorativi=new Set((((ORE.orario||{}).giorni_lavorativi)||'1,2,3,4,5').split(','));
+  let celle='';
+  for(let i=0;i<scarto;i++)celle+='<div class="ore-cal-cella vuota"></div>';
+  for(let d=1;d<=ultimo.getDate();d++){
+    const data=oreFmtDate(new Date(anno,mese,d));
+    const g=dati[data]||{},festa=feste.has(data);
+    const feriale=lavorativi.has(String(new Date(anno,mese,d).getDay()||7));
+    celle+=`<div class="ore-cal-cella${ORE.calSel===data?' sel':''}${festa?' festa':''}${feriale?'':' non-lav'}"
+      onclick="oreCalSelDay('${data}')" title="${festa?'Festività':''}">
+      <div class="ore-cal-num">${d}</div>
+      <div class="ore-cal-pt">
+        ${g.minuti_lavoro?`<i class="pt ore" title="${oreOreMin(g.minuti_lavoro)}"></i>`:''}
+        ${(g.assenze||[]).length?'<i class="pt ass"></i>':''}
+        ${(g.rimborsi||[]).length?'<i class="pt rim"></i>':''}
+        ${festa?'<i class="pt fes"></i>':''}
+      </div>
+      ${g.minuti_lavoro?`<div class="ore-cal-ore">${oreOreMin(g.minuti_lavoro)}</div>`:''}
+    </div>`;
+  }
+  return `<div class="ore-cal">
+    ${['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>`<div class="ore-cal-dow">${x}</div>`).join('')}
+    ${celle}</div>`;
+}
+
+/* ── il pannello del giorno ─────────────────────────────────────────────── */
+function oreGiornoHtml(){
+  const g=(((ORE.cal||{}).giorni)||[]).find(x=>x.data===ORE.calSel)||
+          {data:ORE.calSel,minuti_lavoro:0,assenze:[],rimborsi:[]};
+  const festa=(((ORE.cal||{}).festivita)||[]).includes(ORE.calSel);
+  return `
+  <div class="ore-sect-tit">${esc(oreDataLunga(ORE.calSel))}
+    ${festa?'<span class="chip" style="background:rgba(88,86,214,.12);color:#5856D6">festività</span>':''}</div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:10px">
+    ${g.minuti_lavoro?('Ore registrate: <b>'+oreOreMin(g.minuti_lavoro)+'</b>'):'Nessuna ora registrata.'}
+    ${g.timbrature?' · '+g.timbrature+' timbrature':''}</div>
+
+  <div class="ore-insp-sez">Ferie e permessi
+    <button class="btn-mini" onclick="oreApriAssenza()">+ Aggiungi</button></div>
+  ${(g.assenze||[]).length?g.assenze.map(a=>`<div class="ore-riga-evento">
+      <div><b>${esc(a.tipo)}</b> <span class="fmuted">${esc(a.dalle||'')}${a.alle?'–'+esc(a.alle):''} · ${oreOreMin(a.minuti)}</span>
+        ${a.nota?`<div class="fmuted" style="font-size:10.5px">${esc(a.nota)}</div>`:''}</div>
+      <div>${oreStatoChip(a.stato)}
+        <button class="btn-mini g" onclick="oreStoricoDi('voce',${a.id})" title="Storico">⟲</button></div>
+    </div>`).join(''):'<div class="fmuted" style="font-size:11px">Niente in questo giorno.</div>'}
+
+  <div class="ore-insp-sez">Rimborsi chilometrici
+    <button class="btn-mini" onclick="oreApriRimborso()">+ Aggiungi</button></div>
+  ${(g.rimborsi||[]).length?g.rimborsi.map(r=>`<div class="ore-riga-evento">
+      <div><b>${r.km} km</b> <span class="fmuted">€ ${Number(r.totale).toFixed(2)}</span></div>
+      <div>${oreStatoChip(r.stato)}
+        <button class="btn-mini g" onclick="oreStoricoDi('rimborso',${r.id})" title="Storico">⟲</button></div>
+    </div>`).join(''):'<div class="fmuted" style="font-size:11px">Nessun rimborso.</div>'}`;
+}
+function oreDataLunga(iso){
+  const [a,m,g]=(iso||'').split('-');
+  return g+' '+(ORE_MESI[+m-1]||'').toLowerCase()+' '+a;
+}
+
+/* ── le proposte di modifica che aspettano me ───────────────────────────── */
+function oreProposteBannerHtml(){
+  const aperte=(ORE.proposte||[]).filter(p=>p.stato==='aperta');
+  if(!aperte.length)return '';
+  return aperte.map(p=>`<div class="ore-proposta card">
+    <div>
+      <b>${esc(p.autore)} propone una modifica</b>
+      <div class="fmuted" style="font-size:11px;margin:3px 0 6px">${esc(p.messaggio||'Senza messaggio')}</div>
+      <div class="ore-pp">
+        <div><span class="fmuted">Prima</span><br>${esc(oreRiassunto(p.prima))}</div>
+        <div><span class="fmuted">Dopo</span><br><b>${esc(oreRiassunto(p.dopo))}</b></div>
+      </div>
+    </div>
+    <div class="ore-proposta-az">
+      <button class="btn btn-go btn-sm" onclick="oreRispondiProposta(${p.id},'accetta')">Accetta</button>
+      <button class="btn btn-ghost btn-sm" onclick="oreRispondiProposta(${p.id},'rifiuta')">Rifiuta</button>
+    </div></div>`).join('');
+}
+function oreRiassunto(o){
+  return Object.entries(o||{}).map(([k,v])=>k+': '+v).join(' · ')||'—';
+}
+async function oreRispondiProposta(id,scelta){
+  try{
+    const r=await fetch(API+'/api/ore/proposte/'+id+'/rispondi',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({scelta})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore',true);return;}
+    toast(scelta==='accetta'?'Modifica accettata':'Modifica rifiutata','ok');
+    await oreLoadVoci();
   }catch{toast('Errore di rete',true);}
 }
-async function oreDelVoce(id,ctx){
-  if(!confirm('Eliminare questa registrazione?'))return;
+async function oreStoricoDi(entita,id){
   try{
-    const r=await fetch(API+'/api/ore/voci/'+id,{method:'DELETE'});
-    if(r.ok||r.status===204){toast('Eliminata','ok');if(ctx==='team')await oreLoadTeam();else await oreLoadVoci();}else toast('Errore eliminazione',true);
+    const r=await fetch(API+'/api/ore/storico/'+entita+'/'+id);
+    const eventi=r.ok?await r.json():[];
+    document.getElementById('oreStoricoBody').innerHTML=eventi.length
+      ? eventi.map(e=>`<div class="ore-riga-evento">
+          <div><b>${esc(e.azione)}</b>${e.campo?' · '+esc(e.campo):''}
+            <div class="fmuted" style="font-size:10.5px">
+              ${e.prima?'da '+esc(e.prima)+' ':''}${e.dopo?'a '+esc(e.dopo):''}
+              ${e.messaggio?'· '+esc(e.messaggio):''}</div></div>
+          <div class="fmuted" style="font-size:10.5px;text-align:right">${esc(e.autore)}<br>
+            ${esc((e.quando||'').replace('T',' ').slice(0,16))}</div></div>`).join('')
+      : '<div class="fmuted">Nessun evento.</div>';
+    mOpen('mOreStorico');
   }catch{toast('Errore di rete',true);}
 }
 
-/* ── EXPORT .xlsx (server-side, endpoint reale — niente xlsx generato client-side) ── */
-function oreExpDefault(){const now=new Date();const da=new Date(now.getTime()-30*86400000);return {da:oreFmtDate(da),a:oreFmtDate(now)};}
-function oreExpState(scope){if(!ORE.exp)ORE.exp={};if(!ORE.exp[scope])ORE.exp[scope]=oreExpDefault();return ORE.exp[scope];}
-function oreExportBarHtml(scope){
-  const e=oreExpState(scope);
-  return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    <input class="fld" type="date" value="${e.da}" style="width:130px" onchange="oreExpState('${scope}').da=this.value">
-    <span style="font-size:11px;color:var(--t2)">→</span>
-    <input class="fld" type="date" value="${e.a}" style="width:130px" onchange="oreExpState('${scope}').a=this.value">
-    <button class="btn btn-go btn-sm" onclick="oreDoExport('${scope}')">⬇️ Esporta</button>
-  </div>`;
+/* ── inserire un'assenza ────────────────────────────────────────────────── */
+function oreApriAssenza(){
+  const o=ORE.orario||{};
+  document.getElementById('oreAsDal').value=ORE.calSel;
+  document.getElementById('oreAsAl').value=ORE.calSel;
+  document.getElementById('oreAsDalle').value=o.ora_inizio||'08:00';
+  document.getElementById('oreAsAlle').value=o.ora_fine||'17:00';
+  document.getElementById('oreAsNota').value='';
+  document.getElementById('oreAsTipo').innerHTML=(ORE.assenzeTipi||[]).map(t=>
+    `<option value="${t.id}">${esc(t.nome)}</option>`).join('')
+    ||'<option value="">Nessun tipo configurato</option>';
+  document.getElementById('oreAsGiorno').textContent=
+    `Tutto il giorno · ${Math.round((o.giornata_minuti||480)/60)} h`;
+  oreAggiornaOreAssenza();
+  mOpen('mOreAssenza');
 }
-function oreDoExport(scope){
-  const e=oreExpState(scope);
-  let url=API+'/api/ore/export.xlsx?scope='+encodeURIComponent(scope)+'&da='+encodeURIComponent(e.da)+'&a='+encodeURIComponent(e.a);
-  if(scope==='team'&&ORE.team.utente)url+='&utente_id='+encodeURIComponent(ORE.team.utente);
-  if(scope==='rimborsi-team'&&ORE.rimTeam.utente)url+='&utente_id='+encodeURIComponent(ORE.rimTeam.utente);
-  window.open(url,'_blank');
+function oreAssenzaTuttoIlGiorno(){
+  const o=ORE.orario||{};
+  document.getElementById('oreAsDalle').value=o.giornata_dalle||o.ora_inizio||'08:00';
+  document.getElementById('oreAsAlle').value=o.giornata_alle||o.ora_fine||'17:00';
+  oreAggiornaOreAssenza();
+}
+/* Il conto lo rifà anche il server: qui serve solo a far vedere subito quanto
+   vale, senza aspettare il salvataggio. */
+function oreAggiornaOreAssenza(){
+  const o=ORE.orario||{};
+  const a=oreMinuti(document.getElementById('oreAsDalle').value);
+  const b=oreMinuti(document.getElementById('oreAsAlle').value);
+  let m=Math.max(0,b-a);
+  const p1=oreMinuti(o.pausa_inizio),p2=oreMinuti(o.pausa_fine);
+  if(p2>p1)m-=Math.max(0,Math.min(b,p2)-Math.max(a,p1));
+  document.getElementById('oreAsOre').value=m?oreOreMin(m):'—';
+}
+function oreMinuti(hhmm){const [h,m]=(hhmm||'0:0').split(':');return (+h||0)*60+(+m||0);}
+async function oreSalvaAssenza(){
+  const val=id=>(document.getElementById(id)||{}).value||'';
+  const corpo={dal:val('oreAsDal'),al:val('oreAsAl'),dalle:val('oreAsDalle'),
+    alle:val('oreAsAlle'),assenza_tipo_id:Number(val('oreAsTipo'))||null,nota:val('oreAsNota')};
+  if(!corpo.assenza_tipo_id){toast('Scegli il tipo',true);return;}
+  try{
+    const r=await fetch(API+'/api/ore/assenze',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    const j=await r.json();
+    toast(j.giorni.length>1?`Richiesta inserita su ${j.giorni.length} giorni`:'Richiesta inserita','ok');
+    mClose('mOreAssenza');await oreLoadVoci();
+  }catch{toast('Errore di rete',true);}
 }
 
-/* ── RIMBORSO SPESE: nuova richiesta km + storico personale ── */
-function oreOptsCommesseRimborso(sel){
-  const list=oreCommesseAssegnabili();
-  let h='<option value="">— nessuna commessa / generico —</option>';
-  h+=list.map(c=>`<option value="${c.id}" ${String(sel)===String(c.id)?'selected':''}>${esc((c.codice?c.codice+' — ':'')+c.nome)}</option>`).join('');
-  return h;
+/* ── inserire un rimborso ───────────────────────────────────────────────── */
+function oreApriRimborso(){
+  const o=ORE.orario||{};
+  document.getElementById('oreRkDal').value=ORE.calSel;
+  document.getElementById('oreRkAl').value=ORE.calSel;
+  document.getElementById('oreRkVeicolo').value=o.veicolo||'— nessuno assegnato —';
+  document.getElementById('oreRkTariffa').value=(o.tariffa_km!=null?o.tariffa_km:'—')+' €/km';
+  document.getElementById('oreRkCat').innerHTML=(ORE.categorie||[]).filter(c=>c.attiva)
+    .map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')
+    ||'<option value="">Nessuna categoria configurata</option>';
+  ['oreRkKm','oreRkPartenza','oreRkDest','oreRkNota'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value=id==='oreRkKm'?'25':'';});
+  oreRkCommesse();
+  oreAggiornaTotaleRimborso();
+  mOpen('mOreRimborso');
 }
-async function oreLoadSpese(){
-  const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico rimborsi…</div>';
-  if(!ORE.oreConfig){try{const rc=await fetch(API+'/api/ore/config');ORE.oreConfig=rc.ok?await rc.json():{tariffa_km:0};}catch{ORE.oreConfig={tariffa_km:0};}}
-  try{const r=await fetch(API+'/api/ore/rimborsi');ORE.spese=r.ok?await r.json():[];}catch{ORE.spese=[];}
-  renderOreSpese();
+/* Il collegamento al lavoro è facoltativo, ma se c'è deve rispettare la
+   gerarchia: la commessa filtra i gruppi, il gruppo filtra le fasi. */
+function oreRkCommesse(){
+  const a=ORE.alb||{};
+  document.getElementById('oreRkCommessa').innerHTML='<option value="">— nessuna —</option>'+
+    (a.commesse||[]).map(c=>`<option value="${c.id}">${esc(c.codice+' · '+c.nome)}</option>`).join('');
+  oreRkGruppi();
 }
-function renderOreSpese(){
-  const el=document.getElementById('oreBody');
-  const tariffa=(ORE.oreConfig&&ORE.oreConfig.tariffa_km)||0;
-  el.innerHTML=`<div class="card ore-timercard" style="max-width:640px">
-    <div style="font-weight:800;font-size:12.5px;margin-bottom:10px">🚗 Nuova richiesta di rimborso chilometrico</div>
-    <div class="ore-pickrow">
-      <input class="fld" type="date" id="sData" value="${oreFmtDate(new Date())}" style="flex:1">
-      <select class="fld" id="sCommessa" style="flex:1">${oreOptsCommesseRimborso('')}</select>
-    </div>
-    <div class="ore-pickrow">
-      <input class="fld" id="sPartenza" placeholder="Partenza (es. Sede IB Motion)" style="flex:1">
-      <input class="fld" id="sDestinazione" placeholder="Destinazione (es. Cliente — Verona)" style="flex:1">
-    </div>
-    <div class="ore-pickrow" style="align-items:center">
-      <input class="fld" type="number" id="sKm" min="0" step="0.1" placeholder="Km (tratta singola)" style="flex:1" oninput="oreAggiornaPreviewRimborso()">
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--t2);white-space:nowrap"><input type="checkbox" id="sAR" onchange="oreAggiornaPreviewRimborso()"> andata e ritorno</label>
-    </div>
-    <div style="text-align:right;font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px" id="sPreview">${tariffa?`Tariffa attuale: € ${tariffa.toFixed(2)}/km`:'Tariffa km non ancora configurata'}</div>
-    <input class="fld" id="sNota" placeholder="Motivo (facoltativo)">
-    <div style="margin-top:12px"><button class="btn btn-go" onclick="oreSalvaRimborso()">+ Invia richiesta</button></div>
-  </div>
-  <div style="margin-top:16px">${oreExportBarHtml('rimborsi-mie')}</div>
-  ${oreRimborsoTableHtml(ORE.spese||[],true)}`;
+function oreRkGruppi(){
+  const a=ORE.alb||{},cid=Number(document.getElementById('oreRkCommessa').value)||null;
+  document.getElementById('oreRkGruppo').innerHTML='<option value="">— nessuno —</option>'+
+    (a.gruppi||[]).filter(g=>g.commessa_id===cid)
+      .map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join('');
+  oreRkFasi();
 }
-function oreAggiornaPreviewRimborso(){
-  const km=parseFloat(oreVal('sKm'))||0;
-  const arEl=document.getElementById('sAR');
-  const ar=arEl&&arEl.checked;
-  const tariffa=(ORE.oreConfig&&ORE.oreConfig.tariffa_km)||0;
-  const kmTot=ar?km*2:km;
-  const el=document.getElementById('sPreview');
-  if(!el)return;
-  el.textContent=tariffa?`${kmTot.toFixed(1)} km → stima: € ${(kmTot*tariffa).toFixed(2)} (il totale definitivo è calcolato dal server al salvataggio)`:'Tariffa km non ancora configurata';
+function oreRkFasi(){
+  const a=ORE.alb||{};
+  const cid=Number(document.getElementById('oreRkCommessa').value)||null;
+  const gid=Number(document.getElementById('oreRkGruppo').value)||null;
+  let ids=[];
+  if(gid)ids=(a.fasi_gruppo||[]).filter(x=>x.gruppo_id===gid).map(x=>x.fase_id);
+  else if(cid)ids=(a.fasi_commessa||[]).filter(x=>x.commessa_id===cid).map(x=>x.fase_id);
+  const visti={};
+  document.getElementById('oreRkFase').innerHTML='<option value="">— nessuna —</option>'+
+    ids.filter(i=>!visti[i]&&(visti[i]=1)).map(i=>{
+      const f=(a.fasi||[]).find(x=>x.id===i);
+      return f?`<option value="${f.id}">${esc(f.nome)}</option>`:'';}).join('');
+}
+function oreAggiornaTotaleRimborso(){
+  const o=ORE.orario||{};
+  const km=parseFloat((document.getElementById('oreRkKm')||{}).value)||0;
+  const ar=(document.getElementById('oreRkAr')||{}).checked;
+  const tot=km*(ar?2:1)*(o.tariffa_km!=null?o.tariffa_km:0);
+  document.getElementById('oreRkTotale').textContent='€ '+tot.toFixed(2);
 }
 async function oreSalvaRimborso(){
-  const km=parseFloat(oreVal('sKm'))||0;
-  const arEl=document.getElementById('sAR');
-  const ar=!!(arEl&&arEl.checked);
-  const partenza=oreVal('sPartenza').trim();
-  const destinazione=oreVal('sDestinazione').trim();
-  if(km<=0||!partenza||!destinazione){toast('Inserisci almeno partenza, destinazione e i km percorsi',true);return;}
-  const body={data:oreVal('sData'),commessa_id:oreCidVal('sCommessa'),partenza,destinazione,andata_ritorno:ar,km,nota:oreVal('sNota')};
+  const val=id=>(document.getElementById(id)||{}).value||'';
+  const corpo={dal:val('oreRkDal'),al:val('oreRkAl'),categoria_id:Number(val('oreRkCat'))||null,
+    km:parseFloat(val('oreRkKm'))||0,
+    andata_ritorno:(document.getElementById('oreRkAr')||{}).checked,
+    partenza:val('oreRkPartenza'),destinazione:val('oreRkDest'),
+    commessa_id:Number(val('oreRkCommessa'))||null,gruppo_id:Number(val('oreRkGruppo'))||null,
+    fase_id:Number(val('oreRkFase'))||null,nota:val('oreRkNota')};
+  if(!corpo.categoria_id){toast('Scegli una categoria',true);return;}
   try{
-    const r=await fetch(API+'/api/ore/rimborsi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){toast('Richiesta inviata','ok');await oreLoadSpese();}else toast('Errore salvataggio',true);
-  }catch{toast('Errore di rete',true);}
-}
-function oreRimborsoTableHtml(rows,mine){
-  rows=rows.slice().sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
-  const totEuro=rows.reduce((s,r)=>s+(r.totale||0),0),totKm=rows.reduce((s,r)=>s+(r.km_tot||0),0);
-  return `<div class="ore-kpirow" style="margin-top:16px">
-    <div class="ore-kpi"><div class="v">${totKm.toFixed(1)} km</div><div class="l">Km totali</div></div>
-    <div class="ore-kpi"><div class="v">€ ${totEuro.toFixed(2)}</div><div class="l">Totale da rimborsare</div></div>
-    <div class="ore-kpi"><div class="v">${rows.length}</div><div class="l">Richieste</div></div></div>
-  <div class="ore-tablewrap"><table>
-    <thead><tr><th>Data</th>${mine?'':'<th>Persona</th>'}<th>Commessa</th><th>Percorso</th><th style="text-align:right">Km</th><th style="text-align:right">Tariffa</th><th style="text-align:right">Totale</th><th>Nota</th><th></th></tr></thead>
-    <tbody>${rows.map(r=>`<tr>
-      <td>${esc(r.data)}</td>${mine?'':'<td>'+esc(r.utente_nome||r.utente_email||('Utente #'+r.utente_ore_id))+'</td>'}
-      <td>${r.commessa_nome?esc(r.commessa_nome):'<span style="color:var(--t3)">—</span>'}</td>
-      <td>${esc(r.partenza)} → ${esc(r.destinazione)}${r.andata_ritorno?' <span class="ore-pill man">A/R</span>':''}</td>
-      <td class="num">${(r.km_tot||0).toFixed(1)}</td>
-      <td class="num">€ ${(r.tariffa||0).toFixed(2)}</td>
-      <td class="num">€ ${(r.totale||0).toFixed(2)}</td>
-      <td style="color:var(--t3)">${esc(r.nota)||'—'}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="oreDelRimborso(${r.id})" title="Elimina">🗑</button></td>
-    </tr>`).join('')||`<tr><td colspan="${mine?8:9}" style="text-align:center;padding:30px;color:var(--t3)">Nessuna richiesta</td></tr>`}</tbody>
-  </table></div>`;
-}
-async function oreDelRimborso(id){
-  if(!confirm('Eliminare questa richiesta di rimborso?'))return;
-  try{
-    const r=await fetch(API+'/api/ore/rimborsi/'+id,{method:'DELETE'});
-    if(r.ok||r.status===204){toast('Eliminata','ok');if(ORE.tab==='rimteam')await oreLoadRimTeam();else await oreLoadSpese();}
-    else toast('Errore eliminazione',true);
+    const r=await fetch(API+'/api/ore/rimborsi-km',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    const j=await r.json();
+    toast(j.giorni.length>1?`Rimborsi inviati su ${j.giorni.length} giorni`:'Rimborso inviato','ok');
+    mClose('mOreRimborso');await oreLoadVoci();
   }catch{toast('Errore di rete',true);}
 }
 
-/* ── RIMBORSI DEL TEAM (solo amministratore) — stesso pattern di "Ore del team" ── */
-async function oreLoadRimTeam(){
-  const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico rimborsi del team…</div>';
-  try{const r=await fetch(API+'/api/ore/rimborsi/team');ORE.rimTeamRows=r.ok?await r.json():[];}catch{ORE.rimTeamRows=[];}
-  renderOreRimTeam();
-}
-function oreRimTeamPersone(){
-  const m={};(ORE.rimTeamRows||[]).forEach(r=>{if(r.utente_ore_id!=null)m[r.utente_ore_id]=r.utente_nome||r.utente_email||('Utente #'+r.utente_ore_id);});
-  return Object.entries(m).sort((a,b)=>a[1].localeCompare(b[1]));
-}
-function oreRimTeamFilteredRows(){
-  let rows=(ORE.rimTeamRows||[]).slice();
-  if(ORE.rimTeam.giorni!==9999){const soglia=new Date(Date.now()-ORE.rimTeam.giorni*86400000);rows=rows.filter(r=>new Date(r.data)>=soglia);}
-  if(ORE.rimTeam.utente)rows=rows.filter(r=>String(r.utente_ore_id)===String(ORE.rimTeam.utente));
-  return rows;
-}
-function renderOreRimTeam(){
-  const el=document.getElementById('oreBody');
-  const persone=oreRimTeamPersone();
-  let html=`<div class="ore-toolbar">
-    <select onchange="ORE.rimTeam.utente=this.value;renderOreRimTeam()"><option value="">Tutte le persone</option>${persone.map(([id,nome])=>`<option value="${id}" ${String(ORE.rimTeam.utente)===String(id)?'selected':''}>${esc(nome)}</option>`).join('')}</select>
-    <select onchange="ORE.rimTeam.giorni=parseInt(this.value);renderOreRimTeam()">
-      <option value="7" ${ORE.rimTeam.giorni===7?'selected':''}>Ultimi 7 giorni</option>
-      <option value="30" ${ORE.rimTeam.giorni===30?'selected':''}>Ultimi 30 giorni</option>
-      <option value="9999" ${ORE.rimTeam.giorni===9999?'selected':''}>Da sempre</option>
-    </select>
-    <div style="margin-left:auto">${oreExportBarHtml('rimborsi-team')}</div>
-  </div>`;
-  html+=oreRimborsoTableHtml(oreRimTeamFilteredRows(),false);
-  el.innerHTML=html;
-}
 
-/* ── primitive grafici (portate dal mockup approvato — barre/torta/andamento, nessuna libreria esterna) ── */
-const ORE_PALETTE=['var(--series-1)','var(--series-2)','var(--series-3)','var(--series-4)','var(--series-5)'];
-function oreGroupSumMin(rows,keyFn){const m={};rows.forEach(r=>{const k=keyFn(r);m[k]=(m[k]||0)+r.minuti;});return Object.entries(m).sort((a,b)=>b[1]-a[1]);}
-function oreVLabelCommessa(v){return v.commessa_id==null?'Attività interne':(v.commessa_nome||('Commessa #'+v.commessa_id));}
-function oreVLabelAssenza(v){return v.assenza_tipo_nome||('Assenza #'+v.assenza_tipo_id);}
-function oreShowTip(evt,html){const tip=document.getElementById('oreViztip');if(!tip)return;tip.innerHTML=html;tip.style.left=evt.clientX+'px';tip.style.top=evt.clientY+'px';tip.classList.add('show');}
-function oreHideTip(){const tip=document.getElementById('oreViztip');if(tip)tip.classList.remove('show');}
-function oreHbarChart(el,data,colorFn,legendItems){
-  if(!el)return;
-  const max=Math.max(...data.map(d=>d[1]),1);
-  let html=legendItems?`<div class="ore-legend">${legendItems.map(([l,c])=>`<span class="lk"><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('')}</div>`:'';
-  html+=data.map(([label,val],i)=>{
-    const pct=Math.round((val/max)*100);
-    return `<div class="ore-hbar-row">
-      <div class="lbl" title="${esc(label)}">${esc(label)}</div>
-      <div class="ore-hbar-track" onmousemove="oreShowTip(event,'<b>${esc(label)}</b><br>${fmtDur(val)}')" onmouseleave="oreHideTip()"><div class="ore-hbar-fill" style="width:${pct}%;background:${colorFn(label,i)}"></div></div>
-      <div class="val">${fmtDur(val)}</div>
-    </div>`;
-  }).join('')||'<div style="color:var(--t3);padding:10px 0">Nessun dato nel periodo</div>';
-  el.innerHTML=html;
-}
-function oreFoldOther(data){
-  if(data.length<=3)return data;
-  const top=data.slice(0,3);
-  const restSum=data.slice(3).reduce((s,d)=>s+d[1],0);
-  return [...top,['Altro',restSum]];
-}
-function orePolarToCartesian(cx,cy,r,angleDeg){const a=(angleDeg-90)*Math.PI/180;return {x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};}
-function oreArcPath(cx,cy,r,startAngle,endAngle){
-  const start=orePolarToCartesian(cx,cy,r,endAngle),end=orePolarToCartesian(cx,cy,r,startAngle);
-  const large=endAngle-startAngle<=180?'0':'1';
-  return `M ${cx} ${cy} L ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${large} 0 ${end.x.toFixed(2)} ${end.y.toFixed(2)} Z`;
-}
-function orePieChart(el,dataFull,colorFn,legendItems){
-  if(!el)return;
-  const data=oreFoldOther(dataFull);
-  const total=data.reduce((s,d)=>s+d[1],0)||1;
-  let angle=0,paths='';
-  data.forEach(([label,val],i)=>{
-    const slice=val/total*360;
-    const color=label==='Altro'?'var(--t3)':colorFn(label,i);
-    paths+=`<path d="${oreArcPath(80,80,74,angle,angle+slice)}" fill="${color}" stroke="var(--surf)" stroke-width="2"
-      onmousemove="oreShowTip(event,'<b>${esc(label)}</b><br>${fmtDur(val)} (${Math.round(val/total*100)}%)')" onmouseleave="oreHideTip()"></path>`;
-    angle+=slice;
-  });
-  const legend=legendItems||data.map(([l],i)=>[l,l==='Altro'?'var(--t3)':colorFn(l,i)]);
-  el.innerHTML=`<div class="ore-pie-wrap">
-    <svg width="160" height="160" viewBox="0 0 160 160">${paths}</svg>
-    <div class="ore-legend" style="flex-direction:column;gap:8px">${legend.map(([l,c])=>`<span class="lk"><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('')}</div>
-  </div>`;
-}
-function oreDrawTrend(rows,elId){
-  const el=document.getElementById(elId);if(!el)return;
-  const byDay={};rows.forEach(r=>{byDay[r.data]=(byDay[r.data]||0)+r.minuti;});
-  const days=Object.keys(byDay).sort().slice(-21);
-  if(!days.length){el.innerHTML='<div style="color:var(--t3)">Nessun dato</div>';return;}
-  const max=Math.max(...days.map(d=>byDay[d]),1);
-  const w=680,h=140,pad=8;
-  const stepX=(w-2*pad)/Math.max(1,days.length-1);
-  const pts=days.map((d,i)=>{const x=pad+i*stepX,y=h-pad-((byDay[d]/max)*(h-2*pad));return [x,y,d,byDay[d]];});
-  const path=pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-  const areaPath=path+` L${pts[pts.length-1][0].toFixed(1)},${h-pad} L${pts[0][0].toFixed(1)},${h-pad} Z`;
-  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:100%">
-    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="var(--t3)" stroke-width="1"/>
-    <path d="${areaPath}" fill="var(--series-1)" opacity="0.12"/>
-    <path d="${path}" fill="none" stroke="var(--series-1)" stroke-width="2"/>
-    ${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="var(--series-1)"
-      onmousemove="oreShowTip(event,'<b>${esc(p[2])}</b><br>${fmtDur(p[3])}')" onmouseleave="oreHideTip()" style="cursor:pointer"/>`).join('')}
-  </svg>`;
-}
+/* ══ REPORT (ORE-06) ═════════════════════════════════════════════════════════
+   Si legge qui: l'esportazione è un passaggio in più, non quello obbligatorio. */
 
-/* ── REPORT (personale) ── */
-function oreVociQueryDa(giorni){if(giorni===9999)return null;return oreFmtDate(new Date(Date.now()-giorni*86400000));}
-function oreChartCardShellRep(key,title,sub){
-  const cv=ORE.rep.cv[key];
-  return `<div class="ore-chartcard">
-    <div class="ore-chartcard-hd"><div><h3>${esc(title)}</h3><div class="ore-cs">${esc(sub)}</div></div>
-      <div class="cx-toggle" style="margin-bottom:0">
-        <button class="${cv==='bar'?'on':''}" onclick="ORE.rep.cv['${key}']='bar';oreDrawReportMie()">📊 Barre</button>
-        <button class="${cv==='pie'?'on':''}" onclick="ORE.rep.cv['${key}']='pie';oreDrawReportMie()">🥧 Torta</button>
-      </div></div>
-    <div id="ch_${key}"></div>
-  </div>`;
-}
 async function oreLoadReport(){
   const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico report…</div>';
-  const da=oreVociQueryDa(ORE.rep.giorni);
-  const qs=[];if(da)qs.push('da='+encodeURIComponent(da));
-  const self=oreSelfId();if(self!=null)qs.push('utente_id='+encodeURIComponent(self));
-  const url=API+'/api/ore/voci'+(qs.length?('?'+qs.join('&')):'');
-  try{const r=await fetch(url);ORE.repRows=r.ok?await r.json():[];}catch{ORE.repRows=[];}
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico il report…</div>';
+  if(!ORE.rep.dal){
+    const oggi=new Date();
+    ORE.rep.dal=oreFmtDate(new Date(oggi.getFullYear(),oggi.getMonth(),1));
+    ORE.rep.al=oreFmtDate(oggi);
+  }
+  try{
+    if(!ORE.alb){const ra=await fetch(API+'/api/ore/albero');ORE.alb=ra.ok?await ra.json():null;}
+    if(ORE.me&&ORE.me.ruolo==='amministratore'&&!(ORE.set.utenti||[]).length){
+      const ru=await fetch(API+'/api/ore/utenti');ORE.set.utenti=ru.ok?await ru.json():[];}
+    const q=new URLSearchParams();
+    ['dal','al'].forEach(k=>{if(ORE.rep[k])q.set(k,ORE.rep[k]);});
+    ['utente_id','cliente_id','commessa_id','gruppo_id','fase_id'].forEach(k=>{
+      if(ORE.rep[k])q.set(k,ORE.rep[k]);});
+    const r=await fetch(API+'/api/ore/report?'+q.toString());
+    ORE.repDati=r.ok?await r.json():null;
+  }catch{el.innerHTML='<div class="fmuted">Non riesco a leggere il report.</div>';return;}
   renderOreReport();
 }
+function oreRepSet(k,v){ORE.rep[k]=v||null;if(k==='commessa_id')ORE.rep.gruppo_id=null;oreLoadReport();}
+
 function renderOreReport(){
-  const el=document.getElementById('oreBody');
-  const rows=ORE.repRows||[];
-  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
-  el.innerHTML=`<div class="ore-toolbar">
-    <select onchange="ORE.rep.giorni=parseInt(this.value);oreLoadReport()">
-      <option value="7" ${ORE.rep.giorni===7?'selected':''}>Ultimi 7 giorni</option>
-      <option value="30" ${ORE.rep.giorni===30?'selected':''}>Ultimi 30 giorni</option>
-      <option value="9999" ${ORE.rep.giorni===9999?'selected':''}>Da sempre</option>
-    </select>
+  const el=document.getElementById('oreBody');if(!el)return;
+  const d=ORE.repDati||{righe:[],minuti_totali:0,minuti_straordinari:0,persone:0,giorni:0};
+  const a=ORE.alb||{};
+  const admin=ORE.me&&ORE.me.ruolo==='amministratore';
+  const opz=(arr,sel,eti)=>'<option value="">— tutti —</option>'+arr.map(x=>
+    `<option value="${x.id}"${String(sel)===String(x.id)?' selected':''}>${esc(eti(x))}</option>`).join('');
+  el.innerHTML=`
+  <div class="card ore-filtri">
+    <label>Dal<input class="fld" type="date" value="${esc(ORE.rep.dal||'')}" onchange="oreRepSet('dal',this.value)"></label>
+    <label>Al<input class="fld" type="date" value="${esc(ORE.rep.al||'')}" onchange="oreRepSet('al',this.value)"></label>
+    ${admin?`<label>Dipendente<select class="fld" onchange="oreRepSet('utente_id',this.value)">
+      ${opz(ORE.set.utenti||[],ORE.rep.utente_id,u=>u.nome||u.email)}</select></label>`:''}
+    <label>Cliente<select class="fld" onchange="oreRepSet('cliente_id',this.value)">
+      ${opz(a.clienti||[],ORE.rep.cliente_id,c=>c.nome)}</select></label>
+    <label>Commessa<select class="fld" onchange="oreRepSet('commessa_id',this.value)">
+      ${opz(a.commesse||[],ORE.rep.commessa_id,c=>c.codice+' · '+c.nome)}</select></label>
+    <label>Gruppo<select class="fld" onchange="oreRepSet('gruppo_id',this.value)">
+      ${opz((a.gruppi||[]).filter(g=>!ORE.rep.commessa_id||g.commessa_id===Number(ORE.rep.commessa_id)),
+            ORE.rep.gruppo_id,g=>g.nome)}</select></label>
+    <label>Fase<select class="fld" onchange="oreRepSet('fase_id',this.value)">
+      ${opz(a.fasi||[],ORE.rep.fase_id,f=>f.nome)}</select></label>
   </div>
-  <div class="ore-kpirow">
-    <div class="ore-kpi"><div class="v">${fmtDur(lavoro.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore lavorate</div></div>
-    <div class="ore-kpi"><div class="v">${fmtDur(assenze.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore di assenza</div></div>
-  </div>
-  ${oreChartCardShellRep('commessa','Ore per commessa','Le tue ore nel periodo selezionato, per commessa')}
-  ${oreChartCardShellRep('gruppo','Ore per gruppo','Come distribuisci il tuo tempo tra i gruppi di lavorazione')}
-  ${oreChartCardShellRep('assenze','Assenze per tipo','Le tue ferie, permessi, malattia e le altre voci, nel periodo selezionato')}
-  <div class="ore-chartcard"><h3>Andamento ore/giorno</h3><div class="ore-cs">Le tue ore lavorate registrate per giorno, ultimi giorni del periodo</div><div class="ore-linewrap" id="chTrend"></div></div>`;
-  requestAnimationFrame(oreDrawReportMie);
-}
-function oreDrawReportMie(){
-  const rows=ORE.repRows||[];
-  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
-  const byCommessa=oreGroupSumMin(lavoro,oreVLabelCommessa);
-  const byGruppo=oreGroupSumMin(lavoro,v=>v.gruppo_nome||'—');
-  const byAssenza=oreGroupSumMin(assenze,oreVLabelAssenza);
-  const gruppiUnici=[...new Set(lavoro.map(v=>v.gruppo_nome||'—'))];
-  const grpColors={};gruppiUnici.forEach((g,i)=>grpColors[g]=ORE_PALETTE[i%ORE_PALETTE.length]);
-  const assUnici=[...new Set(assenze.map(oreVLabelAssenza))];
-  const assColors={};assUnici.forEach((a,i)=>assColors[a]=ORE_PALETTE[i%ORE_PALETTE.length]);
-  const elC=document.getElementById('ch_commessa');
-  if(elC){if(ORE.rep.cv.commessa==='bar')oreHbarChart(elC,byCommessa,()=>'var(--series-1)',null);else orePieChart(elC,byCommessa,(l,i)=>ORE_PALETTE[i%ORE_PALETTE.length],null);}
-  const elG=document.getElementById('ch_gruppo');
-  if(elG){if(ORE.rep.cv.gruppo==='bar')oreHbarChart(elG,byGruppo,(l)=>grpColors[l],gruppiUnici.map(g=>[g,grpColors[g]]));else orePieChart(elG,byGruppo,(l)=>grpColors[l]||'var(--t3)',null);}
-  const elA=document.getElementById('ch_assenze');
-  if(elA){if(!byAssenza.length)elA.innerHTML='<div style="color:var(--t3);padding:10px 0">Nessuna assenza nel periodo</div>';
-    else if(ORE.rep.cv.assenze==='bar')oreHbarChart(elA,byAssenza,(l)=>assColors[l],assUnici.map(a=>[a,assColors[a]]));
-    else orePieChart(elA,byAssenza,(l)=>assColors[l]||'var(--t3)',null);}
-  oreDrawTrend(lavoro,'chTrend');
-}
 
-/* ── ORE DEL TEAM (solo amministratore) ── */
-function oreChartCardShellTeam(key,title,sub){
-  const cv=ORE.team.cv[key];
-  return `<div class="ore-chartcard">
-    <div class="ore-chartcard-hd"><div><h3>${esc(title)}</h3><div class="ore-cs">${esc(sub)}</div></div>
-      <div class="cx-toggle" style="margin-bottom:0">
-        <button class="${cv==='bar'?'on':''}" onclick="ORE.team.cv['${key}']='bar';oreDrawReportTeam()">📊 Barre</button>
-        <button class="${cv==='pie'?'on':''}" onclick="ORE.team.cv['${key}']='pie';oreDrawReportTeam()">🥧 Torta</button>
-      </div></div>
-    <div id="cht_${key}"></div>
+  <div class="ore-kpi">
+    ${oreKpi('Ore registrate',oreOreMin(d.minuti_totali))}
+    ${oreKpi('Straordinari',oreOreMin(d.minuti_straordinari),
+      'fuori orario o oltre il massimo, senza contare due volte lo stesso minuto')}
+    ${oreKpi('Persone',d.persone)}
+    ${oreKpi('Giorni',d.giorni)}
+  </div>
+
+  <div class="ore-barre">
+    ${oreBarreCard('Per commessa',d.per_commessa)}
+    ${oreBarreCard('Per fase',d.per_fase)}
+    ${admin?oreBarreCard('Per persona',d.per_persona):''}
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <div class="ore-sect-tit">Dettaglio <span class="fmuted" style="font-weight:500">— ${d.righe.length} registrazioni</span></div>
+    <div style="overflow-x:auto">
+    <table class="ore-tbl"><thead><tr><th>Data</th>${admin?'<th>Utente</th>':''}
+      <th>Cliente</th><th>Commessa</th><th>Gruppo</th><th>Fase</th><th style="width:80px">Ore</th><th>Descrizione</th></tr></thead><tbody>
+      ${d.righe.length?d.righe.map(r=>`<tr>
+        <td>${esc(r.data)}</td>${admin?`<td>${esc(r.utente)}</td>`:''}
+        <td>${esc(r.cliente)}</td><td>${esc(r.commessa)}</td>
+        <td>${esc(r.gruppo)}</td><td>${esc(r.fase)}</td>
+        <td>${oreOreMin(r.minuti)}</td><td class="fmuted">${esc(r.nota||'')}</td></tr>`).join('')
+        :`<tr><td colspan="${admin?8:7}" class="fmuted">Nessuna registrazione nel periodo.</td></tr>`}
+    </tbody></table></div>
   </div>`;
 }
-async function oreLoadTeam(){
-  const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico ore del team…</div>';
-  const da=oreVociQueryDa(ORE.team.giorni);
-  const url=API+'/api/ore/voci'+(da?('?da='+encodeURIComponent(da)):'');
-  try{const r=await fetch(url);ORE.teamRows=r.ok?await r.json():[];}catch{ORE.teamRows=[];}
-  renderOreTeam();
+function oreKpi(titolo,valore,spiega){
+  return `<div class="card ore-kpi-card"${spiega?` title="${esc(spiega)}"`:''}>
+    <div class="fmuted" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">${esc(titolo)}</div>
+    <div style="font-size:22px;font-weight:800;margin-top:3px">${esc(String(valore))}</div></div>`;
 }
-function oreTeamPersone(){
-  const m={};(ORE.teamRows||[]).forEach(v=>{const id=oreVUtenteId(v);if(id!=null)m[id]=oreVUtenteNome(v);});
-  return Object.entries(m).sort((a,b)=>a[1].localeCompare(b[1]));
+function oreBarreCard(titolo,righe){
+  righe=(righe||[]).slice(0,8);
+  const max=Math.max(1,...righe.map(r=>r.minuti));
+  return `<div class="card">
+    <div class="ore-sect-tit">${esc(titolo)}</div>
+    ${righe.length?righe.map(r=>`<div class="ore-barra-riga">
+      <div class="ore-barra-nome" title="${esc(r.nome)}">${esc(r.nome)}</div>
+      <div class="ore-barra-tr"><div class="ore-barra-fill" style="width:${Math.round(r.minuti/max*100)}%"></div></div>
+      <div class="ore-barra-val">${oreOreMin(r.minuti)}</div></div>`).join('')
+      :'<div class="fmuted" style="font-size:11px">Niente da mostrare.</div>'}</div>`;
 }
-function oreTeamFilteredRows(){
-  let rows=(ORE.teamRows||[]).slice();
-  if(ORE.team.utente)rows=rows.filter(v=>String(oreVUtenteId(v))===String(ORE.team.utente));
-  return rows;
-}
-function renderOreTeam(){
-  const el=document.getElementById('oreBody');
-  const rows=oreTeamFilteredRows();
-  const persone=oreTeamPersone();
-  let html=`<div class="ore-toolbar">
-    <select onchange="ORE.team.utente=this.value;renderOreTeam()"><option value="">Tutte le persone</option>${persone.map(([id,nome])=>`<option value="${id}" ${String(ORE.team.utente)===String(id)?'selected':''}>${esc(nome)}</option>`).join('')}</select>
-    <select onchange="ORE.team.giorni=parseInt(this.value);oreLoadTeam()">
-      <option value="7" ${ORE.team.giorni===7?'selected':''}>Ultimi 7 giorni</option>
-      <option value="30" ${ORE.team.giorni===30?'selected':''}>Ultimi 30 giorni</option>
-      <option value="9999" ${ORE.team.giorni===9999?'selected':''}>Da sempre</option>
-    </select>
-    <div style="margin-left:auto">${oreExportBarHtml('team')}</div>
-  </div>`;
-  html+=oreTableHtml(rows,{persona:true,ctx:'team'});
-  html+=oreStatisticheGlobaliHtml(ORE.teamRows);
-  el.innerHTML=html;
-  requestAnimationFrame(oreDrawReportTeam);
-}
-function oreStatisticheGlobaliHtml(rows){
-  rows=rows||[];
-  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
-  return `<h3 style="margin:22px 0 10px;font-size:14px;font-weight:800">📊 Statistiche globali (tutti gli utenti)</h3>
-  <div class="ore-kpirow">
-    <div class="ore-kpi"><div class="v">${fmtDur(lavoro.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore lavorate (tutti)</div></div>
-    <div class="ore-kpi"><div class="v">${fmtDur(assenze.reduce((s,v)=>s+v.minuti,0))}</div><div class="l">Ore di assenza (tutti)</div></div>
-  </div>
-  ${oreChartCardShellTeam('persona','Ore per persona','Totale ore LAVORATE nel periodo, per persona (le assenze non sono incluse qui)')}
-  ${oreChartCardShellTeam('commessa','Ore per commessa','Totale ore nel periodo selezionato, per commessa (tutti gli utenti)')}
-  ${oreChartCardShellTeam('gruppo','Ore per gruppo','Come si distribuisce il tempo tra i gruppi di lavorazione (tutti gli utenti)')}
-  ${oreChartCardShellTeam('assenze','Assenze per tipo','Ferie, permessi, malattia e le altre voci, nel periodo selezionato (tutti gli utenti)')}
-  <div class="ore-chartcard"><h3>Andamento ore/giorno</h3><div class="ore-cs">Totale ore LAVORATE registrate per giorno, ultimi giorni del periodo (tutti gli utenti)</div><div class="ore-linewrap" id="chTrend_team"></div></div>`;
-}
-function oreDrawReportTeam(){
-  const rows=ORE.teamRows||[];
-  const lavoro=rows.filter(v=>v.tipo!=='assenza'),assenze=rows.filter(v=>v.tipo==='assenza');
-  const byPersona=oreGroupSumMin(lavoro,oreVUtenteNome);
-  const byCommessa=oreGroupSumMin(lavoro,oreVLabelCommessa);
-  const byGruppo=oreGroupSumMin(lavoro,v=>v.gruppo_nome||'—');
-  const byAssenza=oreGroupSumMin(assenze,oreVLabelAssenza);
-  const personeUniche=[...new Set(lavoro.map(oreVUtenteNome))];
-  const personaColors={};personeUniche.forEach((p,i)=>personaColors[p]=ORE_PALETTE[i%ORE_PALETTE.length]);
-  const gruppiUnici=[...new Set(lavoro.map(v=>v.gruppo_nome||'—'))];
-  const grpColors={};gruppiUnici.forEach((g,i)=>grpColors[g]=ORE_PALETTE[i%ORE_PALETTE.length]);
-  const assUnici=[...new Set(assenze.map(oreVLabelAssenza))];
-  const assColors={};assUnici.forEach((a,i)=>assColors[a]=ORE_PALETTE[i%ORE_PALETTE.length]);
-
-  const elP=document.getElementById('cht_persona');
-  if(elP){if(ORE.team.cv.persona==='bar')oreHbarChart(elP,byPersona,(l)=>personaColors[l],personeUniche.map(p=>[p,personaColors[p]]));
-    else orePieChart(elP,byPersona,(l)=>personaColors[l],personeUniche.map(p=>[p,personaColors[p]]));}
-  const elC=document.getElementById('cht_commessa');
-  if(elC){if(ORE.team.cv.commessa==='bar')oreHbarChart(elC,byCommessa,()=>'var(--series-1)',null);else orePieChart(elC,byCommessa,(l,i)=>ORE_PALETTE[i%ORE_PALETTE.length],null);}
-  const elG=document.getElementById('cht_gruppo');
-  if(elG){if(ORE.team.cv.gruppo==='bar')oreHbarChart(elG,byGruppo,(l)=>grpColors[l],gruppiUnici.map(g=>[g,grpColors[g]]));else orePieChart(elG,byGruppo,(l)=>grpColors[l]||'var(--t3)',null);}
-  const elA=document.getElementById('cht_assenze');
-  if(elA){if(!byAssenza.length)elA.innerHTML='<div style="color:var(--t3);padding:10px 0">Nessuna assenza nel periodo</div>';
-    else if(ORE.team.cv.assenze==='bar')oreHbarChart(elA,byAssenza,(l)=>assColors[l],assUnici.map(a=>[a,assColors[a]]));
-    else orePieChart(elA,byAssenza,(l)=>assColors[l]||'var(--t3)',null);}
-  oreDrawTrend(lavoro,'chTrend_team');
-}
-
 /* ══ IMPOSTAZIONI RACCOLTA ORE (ORE-07) ══════════════════════════════════════
    Non è una quarta scheda: è lo spazio dove si costruisce il Worklog che poi le
    Timbrature mostrano. Cinque aree, e la prima che serve è il Configuratore. */
@@ -7402,6 +7345,12 @@ async function oreLoadSettings(){
     ORE.set.catalogo=rfc.ok?await rfc.json():[];
     ORE.assenzeTipi=ra.ok?await ra.json():[];
     ORE.oreConfig=rcfg.ok?await rcfg.json():ORE.oreConfig;
+    const [rfe,rcat,rric]=await Promise.all([
+      fetch(API+'/api/ore/festivita'),fetch(API+'/api/ore/rimborsi-categorie'),
+      fetch(API+'/api/ore/richieste')]);
+    ORE.set.festivita=rfe.ok?await rfe.json():[];
+    ORE.categorie=rcat.ok?await rcat.json():[];
+    ORE.set.richieste=rric.ok?await rric.json():[];
   }catch{el.innerHTML='<div class="fmuted">Non riesco a leggere le impostazioni.</div>';return;}
   if(!ORE.set.pane)ORE.set.pane='worklog';
   if(ORE.set.clienteSel==null&&ORE.set.clienti.length)ORE.set.clienteSel=ORE.set.clienti[0].id;
@@ -7410,7 +7359,7 @@ async function oreLoadSettings(){
 
 const ORE_PANE=[['worklog','🗂','Configuratore Worklog'],['fasi','🏷','Fasi lavorative'],
   ['utenti','👤','Utenti e amministratori'],['orari','🕗','Orari e timer'],
-  ['tariffe','🚗','Tariffe e rimborsi']];
+  ['tariffe','🚗','Tariffe e rimborsi'],['richieste','✅','Richieste da approvare']];
 
 function renderOreSettings(){
   const el=document.getElementById('oreBody');if(!el)return;
@@ -7423,7 +7372,8 @@ function renderOreSettings(){
       p==='worklog'?oreSetWorklogHtml():
       p==='fasi'?oreSetFasiHtml():
       p==='utenti'?oreSetUtentiHtml():
-      p==='orari'?oreSetOrariHtml():oreSetTariffeHtml()}</div>
+      p==='orari'?oreSetOrariHtml():
+      p==='richieste'?oreSetRichiesteHtml():oreSetTariffeHtml()}</div>
   </div>`;
 }
 function oreSetPane(k){ORE.set.pane=k;navPunto();renderOreSettings();}
@@ -7882,7 +7832,8 @@ function oreSetOrariHtml(){
         <div class="ore-chipf${attivi.includes(n)?' on':''}" data-id="${n}" onclick="this.classList.toggle('on')">${l}</div>`).join('')}</div>
       <div class="fmuted" style="font-size:10.5px;margin-top:4px">Ferie e permessi su più giorni saltano i giorni spenti e le festività.</div></div>
     <button class="btn btn-go btn-sm" onclick="oreSalvaOrari()">Salva</button>
-  </div>`;
+  </div>
+  ${oreSetFestivitaHtml()}`;
 }
 async function oreSalvaOrari(){
   const v=k=>{const el=document.getElementById('oreCfg_'+k);return el?el.value:'';};
@@ -7901,20 +7852,219 @@ async function oreSalvaOrari(){
   }catch{toast('Errore di rete',true);}
 }
 
-/* ── tariffe e rimborsi ────────────────────────────────────────────────── */
+/* ── il calendario delle festività, dentro «Orari e timer» ─────────────── */
+function oreSetFestivitaHtml(){
+  const f=ORE.set.festivita||[];
+  const anno=new Date().getFullYear();
+  return `<div class="ore-insp-sez">Festività
+    <button class="btn-mini g" onclick="oreFestivitaItaliane(${anno})">Genera ${anno}</button>
+    <button class="btn-mini g" onclick="oreFestivitaItaliane(${anno + 1})">Genera ${anno + 1}</button></div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:8px">
+    Ferie e permessi su più giorni le saltano sempre, anche quando cadono di mercoledì.
+    Il patrono non è fra quelle generate: cambia da comune a comune, aggiungilo a mano.</div>
+  <div style="display:flex;gap:6px;max-width:460px;margin-bottom:8px">
+    <input class="fld" type="date" id="oreFesData">
+    <input class="fld" id="oreFesNome" placeholder="Nome della ricorrenza">
+    <button class="btn btn-go btn-sm" onclick="oreAddFestivita()">Aggiungi</button></div>
+  ${f.length?`<div class="ore-chipgrid">${f.map(x=>`
+    <span class="ore-chipf" title="${esc(x.nome||'')}">${esc(x.data)}${x.nome?' · '+esc(x.nome):''}
+      <button class="ore-x" onclick="oreDelFestivita(${x.id})">×</button></span>`).join('')}</div>`
+    :'<div class="fmuted" style="font-size:11px">Nessuna festività in calendario.</div>'}`;
+}
+async function oreFestivitaItaliane(anno){
+  try{
+    const r=await fetch(API+'/api/ore/festivita/italiane',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({anno})});
+    if(!r.ok){toast('Errore',true);return;}
+    const j=await r.json();
+    toast(j.create?`Aggiunte ${j.create} festività del ${anno}`:'C\'erano già tutte','ok');
+    await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreAddFestivita(){
+  const data=(document.getElementById('oreFesData')||{}).value||'';
+  const nome=(document.getElementById('oreFesNome')||{}).value||'';
+  if(!data){toast('Scegli la data',true);return;}
+  try{
+    const r=await fetch(API+'/api/ore/festivita',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({data,nome})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore',true);return;}
+    toast('Festività aggiunta','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelFestivita(id){
+  try{
+    const r=await fetch(API+'/api/ore/festivita/'+id,{method:'DELETE'});
+    if(r.ok){toast('Festività tolta','ok');await oreLoadSettings();}
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── tariffe, veicoli e categorie di rimborso ──────────────────────────── */
 function oreSetTariffeHtml(){
-  const c=ORE.oreConfig||{};
-  return `<div class="ore-insp-tit">Tariffe e rimborsi</div>
+  const c=ORE.oreConfig||{},cat=ORE.categorie||[];
+  return `<div class="ore-insp-tit">Tariffe, veicoli e categorie</div>
   <div class="fmuted" style="font-size:11px;margin-bottom:10px">
     Il €/km e l'auto si impostano per dipendente: nel Timesheet restano in sola lettura
-    e finiscono come fotografia dentro il rimborso.</div>
-  <div class="fg" style="max-width:260px"><label class="fl">Tariffa €/km di ripiego</label>
+    e finiscono come fotografia dentro il rimborso, così se cambiano l'anno prossimo
+    quelli di quest'anno continuano a dire il vero.</div>
+  <div class="fg" style="max-width:280px"><label class="fl">Tariffa €/km di ripiego</label>
     <input class="fld" id="oreTariffaKm" type="number" step="0.01" min="0" value="${c.tariffa_km==null?0.35:c.tariffa_km}">
-    <div class="fmuted" style="font-size:10.5px;margin-top:4px">Vale per chi non ha una tariffa sua.</div></div>
+    <div class="fmuted" style="font-size:10.5px;margin-top:4px">Vale per chi non ne ha una sua.</div></div>
   <button class="btn btn-go btn-sm" onclick="oreSaveTariffaKm()">Salva</button>
-  <div class="fmuted" style="font-size:11px;margin-top:14px">
-    Tariffa e veicolo per singolo dipendente, e il catalogo delle categorie di rimborso,
-    arrivano insieme al Timesheet.</div>`;
+
+  <div class="ore-insp-sez">Per dipendente</div>
+  <table class="ore-tbl"><thead><tr><th>Utente</th><th style="width:110px">€/km</th>
+    <th>Marca</th><th>Modello</th><th style="width:80px">Anno</th><th style="width:90px"></th></tr></thead><tbody>
+    ${(ORE.set.utenti||[]).map(u=>{
+      const v=(u.veicolo||'').split(' ');
+      const anno=v.length&&/^\d{4}$/.test(v[v.length-1])?v.pop():'';
+      const marca=v.shift()||'',modello=v.join(' ');
+      return `<tr data-u="${u.id}">
+        <td>${esc(u.nome||u.email)}</td>
+        <td><input class="fld" type="number" step="0.01" min="0" data-k="tariffa" value="${u.tariffa_km==null?'':u.tariffa_km}" placeholder="—"></td>
+        <td><input class="fld" data-k="marca" value="${esc(marca)}"></td>
+        <td><input class="fld" data-k="modello" value="${esc(modello)}"></td>
+        <td><input class="fld" data-k="anno" value="${esc(anno)}" maxlength="4"></td>
+        <td><button class="btn-mini" onclick="oreSalvaRimborsoUtente(${u.id})">Salva</button></td></tr>`;
+    }).join('')}
+  </tbody></table>
+
+  <div class="ore-insp-sez">Categorie di rimborso
+    <span class="fmuted" style="font-weight:500">— compaiono nel Timesheet</span></div>
+  <div style="display:flex;gap:6px;max-width:400px;margin-bottom:8px">
+    <input class="fld" id="oreCatNome" placeholder="Nuova categoria (es. Trasferta)">
+    <button class="btn btn-go btn-sm" onclick="oreAddCategoria()">Aggiungi</button></div>
+  ${cat.length?`<table class="ore-tbl"><thead><tr><th>Nome</th><th style="width:110px">Stato</th><th style="width:170px"></th></tr></thead><tbody>
+    ${cat.map(x=>`<tr${x.attiva?'':' style="opacity:.55"'}>
+      <td>${esc(x.nome)}</td>
+      <td>${x.attiva?'<span class="chip" style="background:rgba(52,199,89,.14);color:#1A7A2E">attiva</span>'
+                    :'<span class="chip" style="background:rgba(44,21,6,.08);color:var(--t2)">disattivata</span>'}</td>
+      <td><button class="btn-mini g" onclick="oreToggleCategoria(${x.id},${x.attiva?'false':'true'})">${x.attiva?'Disattiva':'Riattiva'}</button>
+        ${x.usata?'':`<button class="btn-mini g" onclick="oreDelCategoria(${x.id})">Elimina</button>`}</td></tr>`).join('')}
+    </tbody></table>`:'<div class="fmuted" style="font-size:11px">Nessuna categoria: senza, il rimborso non si può inserire.</div>'}`;
+}
+async function oreSalvaRimborsoUtente(uid){
+  const tr=document.querySelector(`tr[data-u="${uid}"]`);if(!tr)return;
+  const v=k=>(tr.querySelector(`[data-k="${k}"]`)||{}).value||'';
+  try{
+    const r=await fetch(API+'/api/ore/utenti/'+uid+'/rimborso',{method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tariffa_km:v('tariffa')===''?null:Number(v('tariffa')),
+        veicolo_marca:v('marca'),veicolo_modello:v('modello'),veicolo_anno:v('anno')})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    toast('Salvato','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreAddCategoria(){
+  const nome=((document.getElementById('oreCatNome')||{}).value||'').trim();
+  if(!nome){toast('Serve il nome',true);return;}
+  try{
+    const r=await fetch(API+'/api/ore/rimborsi-categorie',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore',true);return;}
+    toast('Categoria creata','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreToggleCategoria(id,attiva){
+  try{
+    const r=await fetch(API+'/api/ore/rimborsi-categorie/'+id,{method:'PUT',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({attiva})});
+    if(r.ok){toast(attiva?'Riattivata':'Disattivata','ok');await oreLoadSettings();}
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelCategoria(id){
+  if(!confirm('Eliminare questa categoria? Si può solo perché non è mai stata usata.'))return;
+  try{
+    const r=await fetch(API+'/api/ore/rimborsi-categorie/'+id,{method:'DELETE'});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non si può eliminare',true);return;}
+    toast('Categoria eliminata','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── le richieste da approvare (ORE-05) ────────────────────────────────── */
+function oreSetRichiesteHtml(){
+  const r=ORE.set.richieste||[];
+  const flt=ORE.set.fltRichieste||'in_attesa';
+  const visibili=flt==='tutte'?r:r.filter(x=>x.stato===flt);
+  const conta=s=>r.filter(x=>x.stato===s).length;
+  return `<div class="ore-insp-tit">Richieste da approvare</div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:10px">
+    Ferie, permessi e rimborsi nello stesso elenco. «Proponi modifica» non cambia il dato:
+    manda a chi l'ha scritto un prima e un dopo, e decide lui.</div>
+  <div class="cx-toggle" style="margin:0 0 10px">
+    ${[['in_attesa','In attesa'],['modifica_proposta','Modifica proposta'],
+       ['approvata','Approvate'],['rifiutata','Rifiutate'],['tutte','Tutte']].map(([k,l])=>
+      `<button class="${flt===k?'on':''}" onclick="oreFltRichieste('${k}')">${esc(l)}${
+        k==='tutte'?'':' ('+conta(k)+')'}</button>`).join('')}
+  </div>
+  <table class="ore-tbl"><thead><tr><th style="width:90px">Data</th><th>Utente</th>
+    <th>Richiesta</th><th>Dettaglio</th><th style="width:150px">Stato</th><th style="width:230px"></th></tr></thead><tbody>
+  ${visibili.length?visibili.map(x=>`<tr>
+    <td>${esc(x.data)}</td><td>${esc(x.utente)}</td>
+    <td><b>${esc(x.descrizione)}</b>${x.nota?`<div class="fmuted" style="font-size:10.5px">${esc(x.nota)}</div>`:''}</td>
+    <td class="fmuted">${esc(x.dettaglio)}${x.importo!=null?' · € '+Number(x.importo).toFixed(2):''}</td>
+    <td>${oreStatoChip(x.stato)}</td>
+    <td>
+      ${['approvata','approvata_con_modifica','rifiutata'].includes(x.stato)
+        ? `<button class="btn-mini g" onclick="oreDecidi('${x.entita}',${x.id},'annulla')">Annulla scelta</button>`
+        : `<button class="btn-mini" onclick="oreDecidi('${x.entita}',${x.id},'approva')">Approva</button>
+           <button class="btn-mini g" onclick="oreDecidi('${x.entita}',${x.id},'rifiuta')">Rifiuta</button>
+           <button class="btn-mini g" onclick="oreApriProposta('${x.entita}',${x.id})">Proponi</button>`}
+      <button class="btn-mini g" onclick="oreStoricoDi('${x.entita}',${x.id})" title="Storico">⟲</button>
+    </td></tr>`).join('')
+    :'<tr><td colspan="6" class="fmuted">Niente in questo stato.</td></tr>'}
+  </tbody></table>`;
+}
+function oreFltRichieste(k){ORE.set.fltRichieste=k;renderOreSettings();}
+async function oreDecidi(entita,id,azione){
+  try{
+    const r=await fetch(API+`/api/ore/richieste/${entita}/${id}/decidi`,{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({azione})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore',true);return;}
+    toast({approva:'Approvata',rifiuta:'Rifiutata',annulla:'Scelta annullata'}[azione],'ok');
+    await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+/* «Proponi modifica» riapre gli stessi campi con cui la richiesta è stata
+   scritta: un campo di testo generico costringerebbe a riscrivere a parole
+   quello che il modulo sa già dire (Note ORE-05). */
+function oreApriProposta(entita,id){
+  const x=(ORE.set.richieste||[]).find(r=>r.entita===entita&&r.id===id);
+  if(!x)return;
+  ORE.set._proposta={entita,id};
+  document.getElementById('orePropPrima').textContent=
+    `${x.data} · ${x.descrizione} · ${x.dettaglio}`;
+  document.getElementById('orePropCampi').innerHTML=entita==='voce'
+    ? `<label>Giorno<input class="fld" type="date" id="orePropData" value="${esc(x.data)}"></label>
+       <label>Dalle<input class="fld" type="time" step="1800" id="orePropDalle" value="${esc((x.dettaglio.split('–')[0]||'').trim())}"></label>
+       <label>Alle<input class="fld" type="time" step="1800" id="orePropAlle" value="${esc((x.dettaglio.split('–')[1]||'').trim())}"></label>`
+    : `<label>Giorno<input class="fld" type="date" id="orePropData" value="${esc(x.data)}"></label>
+       <label>Distanza km<input class="fld" type="number" min="1" id="orePropKm"></label>
+       <label class="full">Descrizione<input class="fld" id="orePropNota" value="${esc(x.nota||'')}"></label>`;
+  document.getElementById('orePropMsg').value='';
+  mOpen('mOreProposta');
+}
+async function oreInviaProposta(){
+  const p=ORE.set._proposta;if(!p)return;
+  const v=id=>(document.getElementById(id)||{}).value||'';
+  const dopo={};
+  if(v('orePropData'))dopo.data=v('orePropData');
+  if(p.entita==='voce'){
+    if(v('orePropDalle'))dopo.dalle=v('orePropDalle');
+    if(v('orePropAlle'))dopo.alle=v('orePropAlle');
+    if(dopo.dalle&&dopo.alle)dopo.minuti=Math.max(0,oreMinuti(dopo.alle)-oreMinuti(dopo.dalle));
+  }else{
+    if(v('orePropKm'))dopo.km=Number(v('orePropKm'));
+    if(v('orePropNota'))dopo.nota=v('orePropNota');
+  }
+  if(!Object.keys(dopo).length){toast('Non hai cambiato niente',true);return;}
+  try{
+    const r=await fetch(API+`/api/ore/richieste/${p.entita}/${p.id}/proponi`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({dopo,messaggio:v('orePropMsg')})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore',true);return;}
+    toast('Proposta inviata','ok');mClose('mOreProposta');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
 }
 async function oreSaveTariffaKm(){
   const inp=document.getElementById('oreTariffaKm');const val=parseFloat(inp&&inp.value);
