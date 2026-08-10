@@ -476,6 +476,14 @@ table.dd-tab td.rev input,table.dd-tab td.qta input{text-align:center}
 .rowt.com{background:rgba(245,168,35,.14);color:var(--go-d)}
 .rowt.par{background:rgba(88,86,214,.12);color:#4b49b8}
 .rowt.ass{background:rgba(0,122,255,.1);color:#1769c4}
+/* il pallino della nota di riga: vuoto = nessuna nota, pieno = c'è e si legge
+   nella riga sotto. Piccolo apposta — deve stare in una tabella stretta senza
+   rubare la scena al codice dell'articolo. */
+.notapin{cursor:pointer;font-size:11px;line-height:1;color:var(--bd);padding:0 2px;user-select:none;transition:color .12s,transform .12s}
+.notapin:hover{color:var(--go-d);transform:scale(1.25)}
+.notapin.on{color:#B25A00}
+tr.dd-notar td{background:#FFF6EC!important;color:#7A3E00;font-size:10.5px;font-style:italic;padding:3px 8px 5px!important;border-bottom:1px solid var(--bd)}
+tr.dd-notar .ni{font-style:normal;margin-right:5px;opacity:.7}
 .dd-fld{width:100%;border:1px solid var(--bd);border-radius:8px;padding:7px 9px;font:inherit;font-size:12px;outline:none}
 .dd-fld:focus{border-color:var(--go-d)}
 textarea.dd-fld{resize:vertical;line-height:1.45;min-height:120px}
@@ -2814,6 +2822,22 @@ textarea.fld{resize:vertical;min-height:60px}
     <div class="mhd"><div class="mico2">🕘</div><div><div class="mtit">Registro dei materiali</div><div class="msub">Ogni cambio rispetto alla distinta: chi, quando, quante</div></div><button class="mx" onclick="mClose('mSost')">✕</button></div>
     <div class="mbd" id="sostBody" style="max-height:66vh;overflow:auto"></div>
     <div class="mft"><div class="mft-l fmuted" style="font-size:11px">La distinta non cambia mai: questi sono cambi d&rsquo;acquisto, e in SolidWorks non risalgono.</div><div class="mft-r"><button class="btn btn-go" onclick="mClose('mSost')">Chiudi</button></div></div>
+  </div>
+</div>
+
+<!-- La nota su un singolo articolo della distinta RDO. Serve a dire quello che il
+     codice da solo non dice: gli inserti filettati non sono normati, e se non si
+     ha quella marca lì bisogna poter scrivere che va bene un equivalente. Esce
+     accanto all'articolo nel PDF, nell'Excel e nella mail. -->
+<div class="mov" id="mRigaNota" onclick="ovClose(event,'mRigaNota')">
+  <div class="modal" style="max-width:520px">
+    <div class="mhd"><div class="mico2">✎</div><div><div class="mtit">Nota sull&rsquo;articolo</div><div class="msub" id="rnSub"></div></div><button class="mx" onclick="mClose('mRigaNota')">✕</button></div>
+    <div class="mbd">
+      <textarea class="dd-fld" id="rnTxt" style="min-height:96px" placeholder="Es. «o equivalente di marca differente»"></textarea>
+      <div id="rnPreset" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      <div class="fmuted" style="font-size:11px;margin-top:10px">Compare accanto a questo articolo nel <b>PDF</b>, nell&rsquo;<b>Excel</b> e nella <b>mail</b> della RDO. Svuotarla la toglie.</div>
+    </div>
+    <div class="mft"><div class="mft-l"><button class="btn btn-ghost btn-sm" id="rnDel" onclick="ddNotaSalva('')">Togli nota</button></div><div class="mft-r"><button class="btn btn-ghost btn-sm" onclick="mClose('mRigaNota')">Annulla</button><button class="btn btn-go" id="rnOk" onclick="ddNotaSalva()">Salva nota</button></div></div>
   </div>
 </div>
 
@@ -9443,7 +9467,14 @@ function renderDdEditor(d){
     const cmpMark=(r.parte_id&&confSet.has(r.parte_id))?'<span class="cmptag" title="Pezzo in confronto tra più fornitori">🔀</span> ':'';
     const pdf=r.parte_id?pdfByPid[r.parte_id]:null;
     const prev=pdf?` data-prevpdf="${esc(pdf)}" data-prevcap="${esc(r.codice||'')}"`:'';
-    return `<tr${prev}>${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+    /* Il pallino della nota. La tabella è in sola lettura, ma questa non è una
+       modifica di distinta: è quello che si dice al fornitore su quell'articolo
+       («o equivalente di marca differente»), e non sta scritto da nessun'altra
+       parte. Pieno = c'è una nota, e si legge nella riga sotto. */
+    const nota=ddNotaTesto(r);
+    const pin=`<span class="notapin${nota?' on':''}" title="${nota?'Nota: '+esc(nota):(bloccata?'Nessuna nota':'Aggiungi una nota per questo articolo')}" onclick="ddNota(${r.parte_id||0},'${jsq(r.codice||'')}')">●</span>`;
+    return `<tr${prev}>${tds}<td>${cmpMark}<span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span>${pin}</td></tr>`
+      +ddNotaRow(r,cols.length+1);
   }).join('');
   const confN=d.pezzi_in_confronto||0;
   const st=d.stato, canSend=st==='approvata';
@@ -9545,7 +9576,7 @@ function renderDdEditor(d){
             <summary>📋 Distinta — ${esc(d.tipo_distinta)} <span class="cnt">${d.righe.length} ${d.righe.length===1?'riga':'righe'}</span></summary>
             <div class="dd-collbody">
               <table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>
-              <div class="ddx-hint">È quello che parte al fornitore, com'è in distinta. Per togliere o aggiungere un pezzo si passa dal <b>progetto</b>: lì la modifica resta scritta, e poi «Aggiorna contenuto» la porta qui.</div>
+              <div class="ddx-hint">È quello che parte al fornitore, com'è in distinta. Per togliere o aggiungere un pezzo si passa dal <b>progetto</b>: lì la modifica resta scritta, e poi «Aggiorna contenuto» la porta qui.<br>Il <span class="notapin on">●</span> di fianco a un articolo è la sua <b>nota</b> — «o equivalente di marca differente» e simili: compare accanto all'articolo nel PDF, nell'Excel e nella mail.</div>
             </div>
           </details>
         </div>
@@ -9901,6 +9932,47 @@ async function ddScelta(key,val){
   DD.data.opzioni=DD.data.opzioni||{};DD.data.opzioni[key]=val;
   try{await ddPersist();}catch{}
   renderDdEditor(DD.data);
+}
+/* ── nota per singolo articolo della distinta ──
+   Non passa da ddPersist: la tabella della distinta è in sola lettura per
+   scelta (un pezzo si toglie dal progetto, non da qui), e rimandare indietro
+   tutte le righe per cambiare una nota riaprirebbe quella porta. Endpoint suo,
+   che tocca solo quella riga. */
+let RN=null;   // {parte_id, codice} dell'articolo aperto nel modale
+const RN_PRESET=['o equivalente di marca differente',
+                 'o equivalente, previa nostra approvazione',
+                 'marca obbligata, nessun equivalente'];
+function ddNota(pid,cod){
+  const d=DD.data;if(!d)return;
+  const r=(d.righe||[]).find(x=>(pid&&x.parte_id===pid)||(!pid&&String(x.codice||'')===cod));
+  if(!r){toast('Articolo non trovato nella distinta',true);return;}
+  RN={parte_id:r.parte_id||null,codice:r.codice||''};
+  const bloccata=!!d.bloccata;
+  document.getElementById('rnSub').textContent=(r.codice||'')+(r.descrizione?' — '+r.descrizione:'');
+  const txt=document.getElementById('rnTxt');
+  txt.value=ddNotaTesto(r);txt.readOnly=bloccata;
+  document.getElementById('rnPreset').innerHTML=bloccata?'':RN_PRESET.map(p=>
+    `<button class="btn btn-ghost btn-sm" onclick="ddNotaPreset('${jsq(p)}')">${esc(p)}</button>`).join('');
+  document.getElementById('rnDel').style.display=(bloccata||!ddNotaTesto(r))?'none':'';
+  document.getElementById('rnOk').style.display=bloccata?'none':'';
+  mOpen('mRigaNota');
+  if(!bloccata)setTimeout(()=>txt.focus(),50);
+}
+function ddNotaPreset(t){const e=document.getElementById('rnTxt');e.value=t;e.focus();}
+async function ddNotaSalva(forza){
+  if(!RN)return;
+  const el=document.getElementById('rnTxt');
+  const nota=(forza!==undefined?forza:(el?el.value:'')).trim();
+  try{
+    const r=await fetch(API+`/api/commesse/${DD.cid}/rdo/${DD.fid}/riga-nota`,{method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({parte_id:RN.parte_id,codice:RN.codice,nota})});
+    if(!r.ok)throw new Error(await srvErrDetail(r,'Errore salvataggio nota'));
+    DD.data=await r.json();
+    mClose('mRigaNota');
+    await loadDdList();renderDdEditor(DD.data);
+    toast(nota?'Nota salvata':'Nota tolta','ok');
+  }catch(e){toast(e.message||'Errore salvataggio nota',true);}
 }
 function ddAutosave(){ddPersist().catch(()=>{});}
 async function ddAggiorna(){
