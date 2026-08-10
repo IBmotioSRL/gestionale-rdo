@@ -1039,6 +1039,26 @@ details.dd-coll>.dd-collbody{padding:4px 12px 12px}
 .mg-th:hover{color:var(--go)}
 .mg-sort-ic{font-size:8px;opacity:.45;flex-shrink:0}
 .mg-sort-ic.on{opacity:1;color:var(--go)}
+/* ── selezione multipla + etichette QR ──
+   La spunta sta nella prima colonna e la barra arancione compare solo quando
+   c'è qualcosa di selezionato: la selezione **sopravvive al cambio pagina** e
+   alla ricerca, quindi va detto ad alta voce quante righe stai portando dietro. */
+.mg-tablewrap th.sel,.mg-tablewrap td.sel{width:34px;text-align:center;padding:0}
+.mg-tablewrap th.sel input,.mg-tablewrap td.sel input{width:14px;height:14px;margin:0;accent-color:var(--go);cursor:pointer;vertical-align:middle}
+.mg-qrbtn{border:0;background:transparent;color:var(--t3);cursor:pointer;padding:4px 6px;border-radius:6px;line-height:0}
+.mg-qrbtn:hover{color:var(--go);background:rgba(245,168,35,.14)}
+.mg-selbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 10px;padding:7px 12px;
+  background:rgba(245,168,35,.1);border:1.4px solid var(--go);border-radius:var(--rs);font-size:12px;font-weight:700;color:var(--t1)}
+.mg-selbar .sp{flex:1}
+.mg-selbar .lk{background:none;border:0;font:inherit;font-size:11.5px;font-weight:700;color:var(--t2);text-decoration:underline;cursor:pointer;padding:0}
+.mg-selbar .lk:hover{color:var(--go-d)}
+/* anteprima del QR: pixelated perché un QR ingrandito e sfocato non si legge */
+.mg-qrprev{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.mg-qrprev img{width:210px;height:210px;background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:6px;image-rendering:pixelated}
+.mg-qrprev .dt{flex:1;min-width:230px}
+.mg-qrprev .dt .cod{font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:800;letter-spacing:.06em}
+.mg-qrprev .dt .den{font-size:13px;font-weight:700;margin:2px 0 8px}
+.mg-qrnum{width:70px;padding:6px 8px;border:1.4px solid var(--bd2);border-radius:6px;font:inherit;font-size:12px}
 
 /* ── Righe del catalogo: zebra + il colore dell'acciaio ──
    Verde = inox 304/302, bianco = 316 (il migliore: si distingue perché
@@ -2079,6 +2099,37 @@ textarea.fld{resize:vertical;min-height:60px}
 .ore-scelta:hover{border-color:var(--go)}
 .ore-scelta.on{border-color:var(--go-d);background:rgba(245,168,35,.10)}
 .ore-scelta.off{opacity:.6;cursor:default}
+/* ── Impostazioni raccolta ore: Configuratore Worklog (ORE-07) ── */
+.ore-set{display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start}
+.ore-set-nav{display:flex;flex-direction:column;gap:3px;background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);padding:7px;box-shadow:var(--sh)}
+.ore-set-nav button{text-align:left;border:none;background:transparent;padding:9px 11px;border-radius:var(--rs);font:inherit;font-size:12px;font-weight:600;color:var(--t2);cursor:pointer}
+.ore-set-nav button:hover{background:rgba(44,21,6,.05);color:var(--t1)}
+.ore-set-nav button.on{background:rgba(245,168,35,.13);color:var(--go-d)}
+.ore-set-pane{background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;box-shadow:var(--sh);min-width:0}
+.ore-wl{display:grid;grid-template-columns:1fr 1.4fr 1.6fr;gap:10px;align-items:start}
+.ore-wl-col{border:1px solid var(--bd);border-radius:var(--rs);background:var(--surf);display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.ore-wl-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;border-bottom:1px solid var(--bd);background:rgba(44,21,6,.025);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--t2)}
+.ore-wl-body{padding:7px;overflow-y:auto;max-height:520px}
+.ore-wl-riga{display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:6px;cursor:pointer;min-width:0}
+.ore-wl-riga:hover{background:rgba(44,21,6,.045)}
+.ore-wl-riga.sel{background:rgba(245,168,35,.13);box-shadow:inset 0 0 0 1px rgba(245,168,35,.3)}
+.ore-wl-nodo{margin-bottom:7px}
+.ore-wl-sotto{margin-left:14px;padding-left:8px;border-left:1px solid var(--bd2)}
+.ore-wl-dirette{font-size:10.5px;color:var(--t2);padding:3px 8px}
+.ore-insp-tit{font-weight:800;font-size:13.5px;margin-bottom:3px}
+.ore-insp-sez{display:flex;align-items:center;gap:8px;font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);margin:14px 0 7px;padding-top:9px;border-top:1px solid var(--bd)}
+.ore-insp-azioni{display:flex;gap:7px;margin-top:14px;padding-top:11px;border-top:1px solid var(--bd)}
+.ore-riga-mini{display:flex;gap:5px;align-items:center;margin-bottom:5px}
+.ore-riga-mini .fld{font-size:11.5px;padding:5px 8px}
+.ore-chipgrid{display:flex;flex-wrap:wrap;gap:5px}
+.ore-chipf{border:1px solid var(--bd2);border-radius:14px;padding:4px 11px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--t2);background:var(--surf);user-select:none}
+.ore-chipf:hover{border-color:var(--go)}
+.ore-chipf.on{border-color:var(--go-d);background:rgba(245,168,35,.14);color:var(--go-d)}
+.ore-chipf.arch{opacity:.55;font-style:italic}
+.ore-check{display:flex;align-items:center;gap:7px;font-size:12px;margin-top:5px;cursor:pointer}
+/* la conferma a tutto schermo dell'auto-rimozione: deve fermare, non scivolare via */
+.ore-autorim .modal{max-width:520px;border-top:4px solid var(--red)}
+.ore-autorim-ico{width:42px;height:42px;border-radius:50%;background:rgba(255,59,48,.12);color:#C00;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800}
 </style>
 </head>
 <body>
@@ -2819,6 +2870,25 @@ textarea.fld{resize:vertical;min-height:60px}
 
 <!-- «Fornitori del progetto» non è più un modale: sta in Impostazioni progetto → Fornitori progetto -->
 
+<!-- MODAL: Raccolta Ore — togliersi da soli il ruolo di amministratore (ORE-07).
+     Vale solo per sé stessi: cambiare il ruolo di un altro usa la tendina e basta. -->
+<div class="mov ore-autorim" id="mOreAutoRim" onclick="ovClose(event,'mOreAutoRim')">
+  <div class="modal">
+    <div class="mhd">
+      <div class="ore-autorim-ico">!</div>
+      <div><div class="mtit">Stai togliendo a te stesso il ruolo di amministratore</div>
+        <div class="msub">Perderesti subito utenti, Worklog, orari, tariffe e approvazioni.</div></div>
+    </div>
+    <div class="mbd">
+      <div id="oreAutoRimStato" style="font-size:12.5px;line-height:1.55"></div>
+    </div>
+    <div class="mft"><div class="mft-r">
+      <button class="btn btn-ghost" onclick="mClose('mOreAutoRim')">Mantieni il mio ruolo</button>
+      <button class="btn btn-danger" id="oreAutoRimOk" onclick="oreConfermaAutoRimozione()">Conferma rimozione</button>
+    </div></div>
+  </div>
+</div>
+
 <!-- MODAL: Raccolta Ore — timbratura di entrata (ORE-01).
      Aprirlo non timbra: se si chiude senza una fase valida, l'ingresso non viene registrato. -->
 <div class="mov" id="mOreEntrata" onclick="ovClose(event,'mOreEntrata')">
@@ -2913,6 +2983,25 @@ textarea.fld{resize:vertical;min-height:60px}
     </div>
     <div class="mbd" id="mScanQrBody" style="flex:1;min-height:0;overflow:auto"></div>
     <div class="mft" id="mScanQrFt"></div>
+  </div>
+</div>
+
+<!-- MODAL: Magazzino — anteprima dell'etichetta QR di un articolo e stampa in PDF.
+     L'immagine arriva dal server (`/articoli/{id}/qr.png`): il QR che si vede qui
+     è disegnato dallo stesso codice che stampa il PDF, così l'anteprima non può
+     mostrare una cosa e la stampa produrne un'altra. -->
+<div class="mov" id="mMagQr" onclick="ovClose(event,'mMagQr')">
+  <div class="modal" style="max-width:620px">
+    <div class="mhd">
+      <div class="mico2">🏷</div>
+      <div><div class="mtit">Etichetta QR</div><div class="msub">Anteprima e stampa dell'etichetta da incollare sulla scatola</div></div>
+      <button class="mx" onclick="mClose('mMagQr')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd" id="mMagQrBody"></div>
+    <div class="mft"><div class="mft-r">
+      <button class="btn btn-ghost" onclick="mClose('mMagQr')">Chiudi</button>
+      <button class="btn btn-go" onclick="magStampaEtichetta()">🖨 Stampa PDF</button>
+    </div></div>
   </div>
 </div>
 
@@ -7268,241 +7357,549 @@ function oreDrawReportTeam(){
   oreDrawTrend(lavoro,'chTrend_team');
 }
 
-/* ── IMPOSTAZIONI (solo amministratore): utenti/ruoli/commesse, team, cataloghi fasi/assenze, commesse&gruppi, tariffa km ── */
+/* ══ IMPOSTAZIONI RACCOLTA ORE (ORE-07) ══════════════════════════════════════
+   Non è una quarta scheda: è lo spazio dove si costruisce il Worklog che poi le
+   Timbrature mostrano. Cinque aree, e la prima che serve è il Configuratore. */
+
 async function oreLoadSettings(){
   const el=document.getElementById('oreBody');
   el.innerHTML='<div class="fmuted" style="font-size:11px">Carico impostazioni…</div>';
   try{
-    const [ru,rt,rf,rg,ra,rc]=await Promise.all([
+    const [ru,rt,rc,rcw,rg,rfc,ra,rcfg]=await Promise.all([
       fetch(API+'/api/ore/utenti'),fetch(API+'/api/ore/team'),
-      fetch(API+'/api/ore/fasi'),fetch(API+'/api/ore/gruppi'),
-      fetch(API+'/api/ore/assenze-tipi'),fetch(API+'/api/ore/config')
-    ]);
+      fetch(API+'/api/ore/clienti'),fetch(API+'/api/ore/commesse-worklog'),
+      fetch(API+'/api/ore/gruppi'),fetch(API+'/api/ore/fasi-catalogo'),
+      fetch(API+'/api/ore/assenze-tipi'),fetch(API+'/api/ore/config')]);
     ORE.set.utenti=ru.ok?await ru.json():[];
     ORE.set.team=rt.ok?await rt.json():[];
-    ORE.fasi=rf.ok?await rf.json():[];
+    ORE.set.clienti=rc.ok?await rc.json():[];
+    ORE.set.commesseWl=rcw.ok?await rcw.json():[];
     ORE.gruppi=rg.ok?await rg.json():[];
+    ORE.set.catalogo=rfc.ok?await rfc.json():[];
     ORE.assenzeTipi=ra.ok?await ra.json():[];
-    ORE.oreConfig=rc.ok?await rc.json():{tariffa_km:0};
-  }catch{ORE.set.utenti=ORE.set.utenti||[];ORE.set.team=ORE.set.team||[];}
+    ORE.oreConfig=rcfg.ok?await rcfg.json():ORE.oreConfig;
+  }catch{el.innerHTML='<div class="fmuted">Non riesco a leggere le impostazioni.</div>';return;}
+  if(!ORE.set.pane)ORE.set.pane='worklog';
+  if(ORE.set.clienteSel==null&&ORE.set.clienti.length)ORE.set.clienteSel=ORE.set.clienti[0].id;
   renderOreSettings();
 }
+
+const ORE_PANE=[['worklog','🗂','Configuratore Worklog'],['fasi','🏷','Fasi lavorative'],
+  ['utenti','👤','Utenti e amministratori'],['orari','🕗','Orari e timer'],
+  ['tariffe','🚗','Tariffe e rimborsi']];
+
 function renderOreSettings(){
-  const el=document.getElementById('oreBody');
-  el.innerHTML=`
-    <div class="ore-note">👤 <b>Utenti:</b> l'elenco arriva da chi ha già aperto almeno una volta "Raccolta ore" con il proprio accesso Microsoft — non è possibile pre-aggiungere una persona che non ha ancora effettuato il primo accesso.</div>
-    ${oreSetUtentiHtml()}
-    ${oreSetTeamHtml()}
-    ${oreSetFasiHtml()}
-    ${oreSetAssenzeHtml()}
-    ${oreSetCommesseHtml()}
-    ${oreSetTariffaHtml()}
-  `;
-}
-
-/* -- 1. utenti, ruoli, commesse assegnate -- */
-function oreSetUtentiHtml(){
-  const utenti=ORE.set.utenti||[];
-  return `<div class="ore-setsec"><h3>👤 Utenti, ruoli e commesse assegnate</h3>
-    <div class="ore-cs">In base all'assegnazione, un utente può inserire ore solo sulle commesse a cui è assegnato (l'amministratore le vede/gestisce tutte).</div>
-    ${utenti.length?utenti.map(u=>`<div class="ore-setrow">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="flex:1"><b>${esc(u.nome||u.email)}</b><div style="color:var(--t3);font-size:11px">${esc(u.email)}</div></div>
-        <select onchange="oreSetRuolo(${u.id},this.value)">
-          <option value="utente" ${u.ruolo==='utente'?'selected':''}>Utente</option>
-          <option value="amministratore" ${u.ruolo==='amministratore'?'selected':''}>Amministratore</option>
-        </select>
-      </div>
-      <div class="ore-chipsel">${commesse.map(c=>`<label><input type="checkbox" ${(u.commesse_ids||[]).includes(c.id)?'checked':''} onchange="oreToggleCommessaUtente(${u.id},${c.id},this.checked)">${esc((c.codice?c.codice+' — ':'')+c.nome)}</label>`).join('')||'<span class="fmuted" style="font-size:11px">Nessuna commessa disponibile.</span>'}</div>
-    </div>`).join(''):'<div class="fmuted" style="font-size:11.5px;padding:8px 0">Nessun utente ha ancora effettuato il primo accesso.</div>'}
+  const el=document.getElementById('oreBody');if(!el)return;
+  const p=ORE.set.pane;
+  el.innerHTML=`<div class="ore-set">
+    <div class="ore-set-nav">
+      ${ORE_PANE.map(([k,ic,l])=>`<button class="${p===k?'on':''}" onclick="oreSetPane('${k}')">${ic} ${esc(l)}</button>`).join('')}
+    </div>
+    <div class="ore-set-pane" id="oreSetPane">${
+      p==='worklog'?oreSetWorklogHtml():
+      p==='fasi'?oreSetFasiHtml():
+      p==='utenti'?oreSetUtentiHtml():
+      p==='orari'?oreSetOrariHtml():oreSetTariffeHtml()}</div>
   </div>`;
 }
-async function oreSetRuolo(id,ruolo){
-  const u=(ORE.set.utenti||[]).find(x=>x.id===id);const prev=u?u.ruolo:null;
-  if(u)u.ruolo=ruolo;
-  try{const r=await fetch(API+'/api/ore/utenti/'+id+'/ruolo',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ruolo})});
-    if(r.ok)toast('Ruolo aggiornato','ok');else{if(u)u.ruolo=prev;toast('Errore aggiornamento ruolo',true);renderOreSettings();}
-  }catch{if(u)u.ruolo=prev;toast('Errore di rete',true);renderOreSettings();}
-}
-async function oreToggleCommessaUtente(uid,cid,checked){
-  const u=(ORE.set.utenti||[]).find(x=>x.id===uid);if(!u)return;
-  u.commesse_ids=u.commesse_ids||[];
-  const prev=u.commesse_ids.slice();
-  if(checked){if(!u.commesse_ids.includes(cid))u.commesse_ids.push(cid);}
-  else u.commesse_ids=u.commesse_ids.filter(x=>x!==cid);
-  try{const r=await fetch(API+'/api/ore/utenti/'+uid+'/commesse',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:u.commesse_ids})});
-    if(!r.ok){u.commesse_ids=prev;toast('Errore aggiornamento commesse',true);renderOreSettings();}
-  }catch{u.commesse_ids=prev;toast('Errore di rete',true);renderOreSettings();}
-}
+function oreSetPane(k){ORE.set.pane=k;navPunto();renderOreSettings();}
 
-/* -- 2. team -- */
-function oreSetTeamHtml(){
-  const teams=ORE.set.team||[],utenti=ORE.set.utenti||[];
-  return `<div class="ore-setsec"><h3>🧑‍🤝‍🧑 Team</h3>
-    <div class="ore-cs">Raggruppamenti liberi di utenti, usati come filtro in "Ore del team" — non legati a reparti fissi.</div>
-    ${teams.map(t=>`<div class="ore-setrow">
-      <div style="display:flex;align-items:center;gap:8px">
-        <input value="${esc(t.nome)}" onchange="oreRenameTeam(${t.id},this.value)" style="font-weight:800;border:1px solid transparent;border-radius:6px;padding:4px 6px;flex:1;font:inherit" onfocus="this.style.borderColor='var(--bd2)'" onblur="this.style.borderColor='transparent'">
-        <button class="btn btn-danger btn-sm" onclick="oreDelTeam(${t.id})">🗑 Elimina</button>
-      </div>
-      <div class="ore-chipsel">${utenti.map(u=>`<label><input type="checkbox" ${(t.membri_ids||[]).includes(u.id)?'checked':''} onchange="oreToggleMembro(${t.id},${u.id},this.checked)">${esc(u.nome||u.email)}</label>`).join('')||'<span class="fmuted" style="font-size:11px">Nessun utente disponibile.</span>'}</div>
-    </div>`).join('')}
-    <div class="ore-addf"><input id="oreNewTeamNome" placeholder="Nome nuovo team (es. Officina)"><button class="btn btn-go btn-sm" onclick="oreNuovoTeam()">+ Nuovo team</button></div>
-  </div>`;
-}
-async function oreRenameTeam(id,nome){
-  nome=(nome||'').trim();if(!nome)return;
-  try{const r=await fetch(API+'/api/ore/team/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
-    if(r.ok){const t=(ORE.set.team||[]).find(x=>x.id===id);if(t)t.nome=nome;toast('Team rinominato','ok');}else toast('Errore rinomina team',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreDelTeam(id){
-  if(!confirm('Eliminare questo team? (gli utenti non vengono toccati, solo il raggruppamento)'))return;
-  try{const r=await fetch(API+'/api/ore/team/'+id,{method:'DELETE'});
-    if(r.ok||r.status===204){ORE.set.team=(ORE.set.team||[]).filter(t=>t.id!==id);toast('Team eliminato','ok');renderOreSettings();}else toast('Errore eliminazione team',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreNuovoTeam(){
-  const inp=document.getElementById('oreNewTeamNome');const nome=(inp&&inp.value||'').trim();
-  if(!nome){toast('Inserisci un nome',true);return;}
-  try{const r=await fetch(API+'/api/ore/team',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
-    if(r.ok){const t=await r.json();ORE.set.team=ORE.set.team||[];ORE.set.team.push(t);toast('Team creato','ok');renderOreSettings();}else toast('Errore creazione team',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreToggleMembro(teamId,utenteId,checked){
-  const t=(ORE.set.team||[]).find(x=>x.id===teamId);if(!t)return;
-  t.membri_ids=t.membri_ids||[];
-  const prev=t.membri_ids.slice();
-  if(checked){if(!t.membri_ids.includes(utenteId))t.membri_ids.push(utenteId);}else t.membri_ids=t.membri_ids.filter(x=>x!==utenteId);
-  try{
-    const r=checked
-      ?await fetch(API+'/api/ore/team/'+teamId+'/membri',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({utente_ore_id:utenteId})})
-      :await fetch(API+'/api/ore/team/'+teamId+'/membri/'+utenteId,{method:'DELETE'});
-    if(!r.ok&&r.status!==204){t.membri_ids=prev;toast('Errore aggiornamento membri',true);renderOreSettings();}
-  }catch{t.membri_ids=prev;toast('Errore di rete',true);renderOreSettings();}
-}
+/* ── Configuratore Worklog: Worklog · struttura · Inspector ─────────────── */
 
-/* -- 3/4. cataloghi fasi e tipi assenza (stesso pattern, codice auto lato server) -- */
-function oreSetCatalogHtml(title,sub,items,addId,addFn,delFn){
-  return `<div class="ore-setsec"><h3>${title}</h3>
-    <div class="ore-cs">${sub}</div>
-    <div class="ore-taglist">${items.map(x=>`<span class="chip-x"><span class="ore-codechip">${esc(x.codice)}</span>${esc(x.nome)}<button onclick="${delFn}(${x.id})">×</button></span>`).join('')||'<span class="fmuted" style="font-size:11px">Nessuna voce.</span>'}</div>
-    <div class="ore-addf"><input id="${addId}" placeholder="Nuova voce"><button class="btn btn-go btn-sm" onclick="${addFn}()">+ aggiungi (codice auto)</button></div>
-  </div>`;
-}
-function oreSetFasiHtml(){
-  return oreSetCatalogHtml('🔧 Fasi di lavoro (catalogo globale)',`Elenco globale, indipendente dalle commesse: ogni fase ha un codice auto-assegnato (usato negli export Excel/report). Si scelgono dentro ai Gruppi di ogni commessa qui sotto.`,ORE.fasi||[],'oreNewFaseGlobale','oreAddFaseGlobale','oreDelFaseGlobale');
-}
-async function oreAddFaseGlobale(){
-  const inp=document.getElementById('oreNewFaseGlobale');const nome=(inp&&inp.value||'').trim();if(!nome)return;
-  try{const r=await fetch(API+'/api/ore/fasi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
-    if(r.ok){const f=await r.json();ORE.fasi=ORE.fasi||[];ORE.fasi.push(f);toast('Fase aggiunta','ok');renderOreSettings();}else toast('Errore aggiunta fase',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreDelFaseGlobale(id){
-  if(!confirm('Eliminare questa fase dal catalogo? Resterà nei gruppi che la usano già solo come riferimento storico.'))return;
-  try{const r=await fetch(API+'/api/ore/fasi/'+id,{method:'DELETE'});
-    if(r.ok||r.status===204){ORE.fasi=(ORE.fasi||[]).filter(f=>f.id!==id);toast('Fase eliminata','ok');renderOreSettings();}else toast('Errore eliminazione fase',true);
-  }catch{toast('Errore di rete',true);}
-}
-function oreSetAssenzeHtml(){
-  return oreSetCatalogHtml('🌴 Tipi di assenza',`Ferie, permessi e le classiche voci da busta paga — stesso principio delle Fasi: codice auto-assegnato per l'export, elenco personalizzabile.`,ORE.assenzeTipi||[],'oreNewAssenzaTipo','oreAddAssenzaTipo','oreDelAssenzaTipo');
-}
-async function oreAddAssenzaTipo(){
-  const inp=document.getElementById('oreNewAssenzaTipo');const nome=(inp&&inp.value||'').trim();if(!nome)return;
-  try{const r=await fetch(API+'/api/ore/assenze-tipi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
-    if(r.ok){const a=await r.json();ORE.assenzeTipi=ORE.assenzeTipi||[];ORE.assenzeTipi.push(a);toast('Voce aggiunta','ok');renderOreSettings();}else toast('Errore aggiunta voce',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreDelAssenzaTipo(id){
-  if(!confirm('Eliminare questa voce dal catalogo?'))return;
-  try{const r=await fetch(API+'/api/ore/assenze-tipi/'+id,{method:'DELETE'});
-    if(r.ok||r.status===204){ORE.assenzeTipi=(ORE.assenzeTipi||[]).filter(a=>a.id!==id);toast('Voce eliminata','ok');renderOreSettings();}else toast('Errore eliminazione',true);
-  }catch{toast('Errore di rete',true);}
-}
-
-/* -- 5. commesse e gruppi (client-filtering di ORE.gruppi per commessa_id, stesso pattern di oreGruppiByCommessa usato in Inserimento ore) -- */
-function oreSetCommesseHtml(){
-  const sel=ORE.set.commessaSel;
-  return `<div class="ore-setsec"><h3>📁 Commesse e gruppi</h3>
-    <div class="ore-cs">Le commesse "da progetto" arrivano da Gestione Progetto. Clicca una voce per gestirne i gruppi e le fasi assegnate.</div>
-    ${sel===undefined?oreSetCommesseListHtml():oreSetCommessaDetailHtml(sel)}
-  </div>`;
-}
-function oreSetCommesseListHtml(){
-  let html=commesse.map(c=>`<div class="ore-commrow" onclick="oreSetCommessaSel(${c.id})">
-      <div class="nm">${esc((c.codice?c.codice+' — ':'')+c.nome)}</div>
-      <span class="ore-pill man">${oreGruppiByCommessa(c.id).length} gruppi</span>
-    </div>`).join('');
-  html+=`<div class="ore-commrow" onclick="oreSetCommessaSel('ATT')">
-      <div class="nm">Attività interne</div>
-      <span class="ore-pill man">${oreGruppiByCommessa(null).length} gruppi</span>
-    </div>`;
-  return html;
-}
-function oreSetCommessaSel(v){ORE.set.commessaSel=v==='ATT'?'ATT':Number(v);renderOreSettings();}
-function oreSetCommessaBack(){ORE.set.commessaSel=undefined;renderOreSettings();}
-function oreSetCommessaDetailHtml(sel){
-  const cid=sel==='ATT'?null:sel;
-  const c=sel==='ATT'?null:commesse.find(x=>x.id===sel);
-  const titolo=sel==='ATT'?'Attività interne':(c?((c.codice?c.codice+' — ':'')+c.nome):'Commessa');
-  const gruppi=oreGruppiByCommessa(cid);
-  return `<button class="btn btn-ghost btn-sm" onclick="oreSetCommessaBack()">← tutte le commesse</button>
-    <h3 style="margin:12px 0">${esc(titolo)}</h3>
-    ${gruppi.map(g=>`<div class="ore-grpbox">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <b>${esc(g.nome)}</b>
-        <button class="btn btn-danger btn-sm" onclick="oreDelGruppo(${g.id})">🗑 elimina gruppo</button>
-      </div>
-      <div class="ore-taglist">${(g.fasi||[]).map(f=>`<span class="chip-x"><span class="ore-codechip">${esc(f.codice)}</span>${esc(f.nome)}<button onclick="oreRimuoviFaseDaGruppo(${g.id},${f.id})">×</button></span>`).join('')||'<span class="fmuted" style="font-size:11px">Nessuna fase assegnata.</span>'}</div>
-      <div class="ore-addf">
-        <select id="oreAddFase_${g.id}" style="flex:1">${(ORE.fasi||[]).filter(f=>!(g.fasi||[]).some(x=>x.id===f.id)).map(f=>`<option value="${f.id}">${esc(f.codice)} — ${esc(f.nome)}</option>`).join('')||'<option value="">(tutte le fasi già assegnate)</option>'}</select>
-        <button class="btn btn-go btn-sm" onclick="oreAggiungiFaseAGruppo(${g.id})">+ assegna fase</button>
-      </div>
-    </div>`).join('')||'<div class="fmuted" style="font-size:11.5px;padding:8px 0">Nessun gruppo ancora.</div>'}
-    <div class="ore-addf"><input id="oreNewGruppoNome" placeholder="Nuovo gruppo (es. VERNICIATURA)"><button class="btn btn-go btn-sm" onclick="oreAddGruppo(${cid==null?'null':cid})">+ nuovo gruppo</button></div>`;
-}
-async function oreAddGruppo(cid){
-  const inp=document.getElementById('oreNewGruppoNome');const nome=(inp&&inp.value||'').trim();if(!nome)return;
-  try{const r=await fetch(API+'/api/ore/gruppi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,commessa_id:cid})});
-    if(r.ok){const g=await r.json();ORE.gruppi=ORE.gruppi||[];ORE.gruppi.push(g);toast('Gruppo creato','ok');renderOreSettings();}else toast('Errore creazione gruppo',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreDelGruppo(id){
-  if(!confirm('Eliminare questo gruppo?'))return;
-  try{const r=await fetch(API+'/api/ore/gruppi/'+id,{method:'DELETE'});
-    if(r.ok||r.status===204){ORE.gruppi=(ORE.gruppi||[]).filter(g=>g.id!==id);toast('Gruppo eliminato','ok');renderOreSettings();}else toast('Errore eliminazione gruppo',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreAggiungiFaseAGruppo(gid){
-  const sel=document.getElementById('oreAddFase_'+gid);const faseId=sel?parseInt(sel.value):NaN;if(!faseId)return;
-  try{const r=await fetch(API+'/api/ore/gruppi/'+gid+'/fasi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fase_id:faseId})});
-    if(r.ok){const g=(ORE.gruppi||[]).find(x=>x.id===gid);const f=(ORE.fasi||[]).find(x=>x.id===faseId);if(g&&f){g.fasi=g.fasi||[];g.fasi.push(f);}toast('Fase assegnata','ok');renderOreSettings();}else toast('Errore assegnazione fase',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreRimuoviFaseDaGruppo(gid,faseId){
-  try{const r=await fetch(API+'/api/ore/gruppi/'+gid+'/fasi/'+faseId,{method:'DELETE'});
-    if(r.ok||r.status===204){const g=(ORE.gruppi||[]).find(x=>x.id===gid);if(g)g.fasi=(g.fasi||[]).filter(f=>f.id!==faseId);toast('Fase rimossa','ok');renderOreSettings();}else toast('Errore rimozione fase',true);
-  }catch{toast('Errore di rete',true);}
-}
-
-/* -- 6. tariffa km (nuovo rispetto al mockup: qui centralizzata, non più editabile per singola richiesta) -- */
-function oreSetTariffaHtml(){
-  const v=(ORE.oreConfig&&ORE.oreConfig.tariffa_km!=null)?ORE.oreConfig.tariffa_km:0;
-  return `<div class="ore-setsec"><h3>💶 Tariffa rimborso chilometrico</h3>
-    <div class="ore-cs">Valore unico usato per calcolare tutti i rimborsi km, sia nuovi che futuri.</div>
-    <div style="display:flex;align-items:center;gap:8px"><input id="oreTariffaKm" type="number" step="0.01" min="0" value="${v}" style="width:110px;border:1.4px solid var(--bd2);border-radius:9px;padding:7px 10px;font:inherit;font-size:12.5px"> €/km
-      <button class="btn btn-go btn-sm" onclick="oreSaveTariffaKm()">Salva</button>
+function oreSetWorklogHtml(){
+  const cl=ORE.set.clienti||[];
+  return `<div class="ore-wl">
+    <div class="ore-wl-col">
+      <div class="ore-wl-head"><span>Worklog</span>
+        <button class="btn-mini" onclick="oreNuovoCliente()" title="Nuovo cliente">+</button></div>
+      <div class="ore-wl-body">${cl.length?cl.map(c=>`
+        <div class="ore-wl-riga${ORE.set.clienteSel===c.id?' sel':''}" onclick="oreSetCliente(${c.id})">
+          <span class="ore-riga-nome">${esc(c.nome)}</span>
+          ${c.di_sistema?'<span class="chip" style="background:rgba(88,86,214,.12);color:#5856D6">sistema</span>':''}
+          <span class="fmuted" style="font-size:10px">${c.commesse}</span>
+        </div>`).join(''):'<div class="fmuted" style="padding:10px;font-size:11px">Nessun cliente</div>'}</div>
+    </div>
+    <div class="ore-wl-col grande">
+      <div class="ore-wl-head"><span>Struttura</span>${oreSetAzioniStrutturaHtml()}</div>
+      <div class="ore-wl-body">${oreSetStrutturaHtml()}</div>
+    </div>
+    <div class="ore-wl-col grande">
+      <div class="ore-wl-head"><span>Dettaglio</span></div>
+      <div class="ore-wl-body" id="oreWlInsp">${oreSetInspectorHtml()}</div>
     </div>
   </div>`;
 }
-async function oreSaveTariffaKm(){
-  const inp=document.getElementById('oreTariffaKm');const val=parseFloat(inp&&inp.value);if(isNaN(val)||val<0){toast('Valore non valido',true);return;}
-  try{const r=await fetch(API+'/api/ore/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({tariffa_km:val})});
-    if(r.ok){ORE.oreConfig=await r.json();toast('Tariffa aggiornata','ok');}else toast('Errore salvataggio tariffa',true);
+function oreClienteCorrente(){return (ORE.set.clienti||[]).find(c=>c.id===ORE.set.clienteSel)||null;}
+function oreCommesseDelCliente(){return (ORE.set.commesseWl||[]).filter(c=>c.cliente_id===ORE.set.clienteSel);}
+function oreSetCliente(id){ORE.set.clienteSel=id;ORE.set.nodo={tipo:'cliente',id};renderOreSettings();}
+function oreSetNodo(tipo,id){ORE.set.nodo={tipo,id};renderOreSettings();}
+
+function oreSetAzioniStrutturaHtml(){
+  const c=oreClienteCorrente();if(!c)return '';
+  return c.di_sistema
+    ? `<button class="btn-mini" onclick="oreNuovaCommessaInterna()">+ Commessa interna</button>`
+    : `<span class="fmuted" style="font-size:10px">le commesse nascono dai Progetti</span>`;
+}
+function oreSetStrutturaHtml(){
+  const c=oreClienteCorrente();
+  if(!c)return '<div class="fmuted" style="padding:10px;font-size:11px">Scegli un Worklog.</div>';
+  const comm=oreCommesseDelCliente();
+  if(!comm.length)return '<div class="fmuted" style="padding:10px;font-size:11px">Nessuna commessa in questo Worklog.</div>';
+  const n=ORE.set.nodo||{};
+  return comm.map(cm=>{
+    const gruppi=(ORE.gruppi||[]).filter(g=>g.commessa_id===cm.id);
+    return `<div class="ore-wl-nodo">
+      <div class="ore-wl-riga${n.tipo==='commessa'&&n.id===cm.id?' sel':''}" onclick="oreSetNodo('commessa',${cm.id})">
+        <span class="ore-riga-nome"><b>${esc(cm.codice)}</b> · ${esc(cm.nome)}</span>
+        ${cm.protetta?'<span class="chip" style="background:rgba(88,86,214,.12);color:#5856D6">protetta</span>':''}
+        ${cm.interna?'<span class="chip" style="background:rgba(0,122,255,.10);color:#0059B3">interna</span>':''}
+        ${cm.stato!=='aperta'?`<span class="chip" style="background:rgba(255,149,0,.14);color:#B36B00">${esc(cm.stato)}</span>`:''}
+      </div>
+      <div class="ore-wl-sotto">
+        ${(cm.fasi_dirette||[]).length?`<div class="ore-wl-dirette">↳ ${cm.fasi_dirette.length} fasi dirette</div>`:''}
+        ${gruppi.map(g=>`<div class="ore-wl-riga${n.tipo==='gruppo'&&n.id===g.id?' sel':''}" onclick="event.stopPropagation();oreSetNodo('gruppo',${g.id})">
+            <span class="ore-riga-nome">▸ ${esc(g.nome)}</span>
+            <span class="fmuted" style="font-size:10px">${(g.fasi||[]).length} fasi</span></div>`).join('')}
+        <button class="btn-mini g" onclick="event.stopPropagation();oreNuovoGruppo(${cm.id})">+ Gruppo Commessa</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function oreSetInspectorHtml(){
+  const n=ORE.set.nodo;
+  if(!n)return '<div class="fmuted" style="padding:10px;font-size:11px">Scegli qualcosa a sinistra.</div>';
+  if(n.tipo==='cliente')return oreInspClienteHtml();
+  if(n.tipo==='commessa')return oreInspCommessaHtml();
+  if(n.tipo==='gruppo')return oreInspGruppoHtml();
+  return '';
+}
+
+function oreInspClienteHtml(){
+  const c=(ORE.set.clienti||[]).find(x=>x.id===ORE.set.nodo.id);
+  if(!c)return '';
+  const campo=(id,lab,val,tipo)=>`<div class="fg"><label class="fl">${esc(lab)}</label>
+    <input class="fld" id="oreCli_${id}" value="${esc(val||'')}" ${tipo?'type="'+tipo+'"':''} ${c.di_sistema&&id==='nome'?'disabled':''}></div>`;
+  return `<div class="ore-insp">
+    <div class="ore-insp-tit">${esc(c.nome)}${c.di_sistema?' <span class="fmuted" style="font-weight:500">— Worklog di sistema</span>':''}</div>
+    ${c.di_sistema?'<div class="fmuted" style="font-size:11px;margin-bottom:8px">Si vede senza assegnazioni, e non si può rinominare né eliminare.</div>':''}
+    ${campo('nome','Ragione sociale',c.nome)}
+    <div style="display:flex;gap:8px">${campo('piva','Partita IVA',c.piva)}${campo('codice_fiscale','Codice fiscale',c.codice_fiscale)}</div>
+    <div style="display:flex;gap:8px">${campo('telefono','Telefono',c.telefono)}${campo('email','Email',c.email)}</div>
+    ${campo('sito','Sito',c.sito)}
+    <div class="fg"><label class="fl">Descrizione</label><textarea class="fld" id="oreCli_descrizione" rows="2">${esc(c.descrizione||'')}</textarea></div>
+
+    <div class="ore-insp-sez">Sedi <button class="btn-mini g" onclick="oreAddSede()">+ Sede</button></div>
+    <div id="oreCliSedi">${oreSediHtml(c.sedi||[])}</div>
+
+    <div class="ore-insp-sez">Referenti <button class="btn-mini g" onclick="oreAddReferente()">+ Referente</button></div>
+    <div id="oreCliRef">${oreReferentiHtml(c.referenti||[])}</div>
+
+    <div class="ore-insp-azioni">
+      <button class="btn btn-go btn-sm" onclick="oreSalvaCliente(${c.id})">Salva</button>
+      ${c.di_sistema?'':`<button class="btn btn-danger btn-sm" onclick="oreEliminaCliente(${c.id})">Elimina</button>`}
+    </div></div>`;
+}
+function oreSediHtml(sedi){
+  return (sedi||[]).map((s,i)=>`<div class="ore-riga-mini" data-i="${i}">
+    <select class="fld" data-k="tipo"><option value="legale"${s.tipo==='legale'?' selected':''}>Legale</option>
+      <option value="operativa"${s.tipo!=='legale'?' selected':''}>Operativa</option></select>
+    <input class="fld" data-k="indirizzo" placeholder="Indirizzo" value="${esc(s.indirizzo||'')}">
+    <input class="fld" data-k="citta" placeholder="Città" value="${esc(s.citta||'')}">
+    <button class="btn-mini g" onclick="oreDelRigaMini(this)">×</button></div>`).join('')
+    ||'<div class="fmuted" style="font-size:11px">Nessuna sede.</div>';
+}
+function oreReferentiHtml(ref){
+  return (ref||[]).map((r,i)=>`<div class="ore-riga-mini" data-i="${i}">
+    <input class="fld" data-k="nome" placeholder="Nome" value="${esc(r.nome||'')}">
+    <input class="fld" data-k="ruolo" placeholder="Ruolo" value="${esc(r.ruolo||'')}">
+    <input class="fld" data-k="telefono" placeholder="Telefono" value="${esc(r.telefono||'')}">
+    <input class="fld" data-k="email" placeholder="Email" value="${esc(r.email||'')}">
+    <button class="btn-mini g" onclick="oreDelRigaMini(this)">×</button></div>`).join('')
+    ||'<div class="fmuted" style="font-size:11px">Nessun referente.</div>';
+}
+function oreAddSede(){
+  const box=document.getElementById('oreCliSedi');
+  const c=(ORE.set.clienti||[]).find(x=>x.id===ORE.set.nodo.id)||{};
+  const attuali=oreLeggiRighe('oreCliSedi',['tipo','indirizzo','citta']);
+  box.innerHTML=oreSediHtml(attuali.concat([{tipo:'operativa'}]));
+}
+function oreAddReferente(){
+  const box=document.getElementById('oreCliRef');
+  const attuali=oreLeggiRighe('oreCliRef',['nome','ruolo','telefono','email']);
+  box.innerHTML=oreReferentiHtml(attuali.concat([{}]));
+}
+function oreDelRigaMini(btn){const r=btn.closest('.ore-riga-mini');if(r)r.remove();}
+function oreLeggiRighe(idBox,chiavi){
+  const fuori=[];
+  document.querySelectorAll('#'+idBox+' .ore-riga-mini').forEach(r=>{
+    const o={};chiavi.forEach(k=>{const el=r.querySelector('[data-k="'+k+'"]');o[k]=el?el.value.trim():'';});
+    if(Object.values(o).some(v=>v))fuori.push(o);
+  });
+  return fuori;
+}
+async function oreNuovoCliente(){
+  const nome=prompt('Ragione sociale del nuovo cliente:');
+  if(!nome||!nome.trim())return;
+  try{
+    const r=await fetch(API+'/api/ore/clienti',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome:nome.trim()})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non riesco a creare il cliente',true);return;}
+    const c=await r.json();
+    toast('Cliente creato','ok');
+    await oreLoadSettings();
+    oreSetCliente(c.id);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreSalvaCliente(id){
+  const val=k=>{const el=document.getElementById('oreCli_'+k);return el?el.value.trim():'';};
+  const dati={nome:val('nome'),piva:val('piva'),codice_fiscale:val('codice_fiscale'),
+    telefono:val('telefono'),email:val('email'),sito:val('sito'),descrizione:val('descrizione'),
+    sedi:oreLeggiRighe('oreCliSedi',['tipo','indirizzo','citta']),
+    referenti:oreLeggiRighe('oreCliRef',['nome','ruolo','telefono','email'])};
+  try{
+    const r=await fetch(API+'/api/ore/clienti/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(dati)});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    toast('Cliente salvato','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreEliminaCliente(id){
+  if(!confirm('Eliminare questo cliente? Si può solo se non ha commesse.'))return;
+  try{
+    const r=await fetch(API+'/api/ore/clienti/'+id,{method:'DELETE'});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non si può eliminare',true);return;}
+    toast('Cliente eliminato','ok');ORE.set.clienteSel=null;ORE.set.nodo=null;await oreLoadSettings();
   }catch{toast('Errore di rete',true);}
 }
 
+/* ── la commessa dentro il Worklog ─────────────────────────────────────── */
+function oreInspCommessaHtml(){
+  const c=(ORE.set.commesseWl||[]).find(x=>x.id===ORE.set.nodo.id);
+  if(!c)return '';
+  const fasi=(ORE.set.catalogo||[]).filter(f=>!f.archiviata||(c.fasi_dirette||[]).includes(f.id));
+  return `<div class="ore-insp">
+    <div class="ore-insp-tit">${esc(c.codice)} · ${esc(c.nome)}</div>
+    <div class="fmuted" style="font-size:10.5px;margin-bottom:8px">ID tecnico ${c.id} — non cambia mai, nemmeno se cambiano codice e nome.</div>
+    <div style="display:flex;gap:8px">
+      <div class="fg" style="flex:0 0 130px"><label class="fl">Codice</label>
+        <input class="fld" id="oreCm_codice" value="${esc(c.codice)}" ${c.protetta?'disabled':''}></div>
+      <div class="fg" style="flex:1"><label class="fl">Nome</label>
+        <input class="fld" id="oreCm_nome" value="${esc(c.nome)}" ${c.protetta?'disabled':''}></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="fg" style="flex:1"><label class="fl">Stato</label>
+        <select class="fld" id="oreCm_stato" ${c.protetta?'disabled':''}>
+          ${['aperta','sospesa','chiusa'].map(s=>`<option value="${s}"${c.stato===s?' selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}
+        </select></div>
+      <div class="fg" style="flex:1"><label class="fl">Stima ore</label>
+        <input class="fld" id="oreCm_stima" type="number" min="0" step="1" value="${c.stima_ore==null?'':c.stima_ore}"
+          ${c.stima_da_gruppi?'disabled':''}></div>
+    </div>
+    <label class="ore-check"><input type="checkbox" id="oreCm_daGruppi" ${c.stima_da_gruppi?'checked':''}
+      onchange="document.getElementById('oreCm_stima').disabled=this.checked">
+      La stima è la somma dei Gruppi Commessa</label>
+    ${c.protetta?'<div class="fmuted" style="font-size:11px;margin-top:6px">La commessa interna primaria resta sempre aperta e non si rinomina.</div>':''}
+
+    <div class="ore-insp-sez">Fasi dirette <span class="fmuted" style="font-weight:500">— senza passare da un gruppo</span></div>
+    <div class="ore-chipgrid" id="oreCmFasi">${fasi.map(f=>`
+      <div class="ore-chipf${(c.fasi_dirette||[]).includes(f.id)?' on':''}${f.archiviata?' arch':''}"
+           data-id="${f.id}" onclick="this.classList.toggle('on')">${esc(f.nome)}${f.archiviata?' (archiviata)':''}</div>`).join('')}</div>
+
+    <div class="ore-insp-azioni">
+      <button class="btn btn-go btn-sm" onclick="oreSalvaCommessa(${c.id})">Salva</button>
+    </div></div>`;
+}
+async function oreSalvaCommessa(id){
+  const c=(ORE.set.commesseWl||[]).find(x=>x.id===id)||{};
+  const val=k=>{const el=document.getElementById('oreCm_'+k);return el?el.value.trim():'';};
+  const daGruppi=document.getElementById('oreCm_daGruppi').checked;
+  const dati={stima_da_gruppi:daGruppi,
+    stima_ore:daGruppi?null:(val('stima')===''?null:Number(val('stima')))};
+  if(!c.protetta){dati.codice=val('codice');dati.nome=val('nome');dati.stato=val('stato');}
+  const fasi=[...document.querySelectorAll('#oreCmFasi .ore-chipf.on')].map(x=>+x.dataset.id);
+  try{
+    const r=await fetch(API+'/api/ore/commesse/'+id+'/worklog',{method:'PUT',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(dati)});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    const rf=await fetch(API+'/api/ore/commesse/'+id+'/fasi',{method:'PUT',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:fasi})});
+    if(!rf.ok){toast(await srvErrDetail(rf)||'Fasi non salvate',true);return;}
+    toast('Commessa salvata','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreNuovaCommessaInterna(){
+  const codice=prompt('Codice della commessa interna (es. INT-FORM):');
+  if(!codice||!codice.trim())return;
+  const nome=prompt('Nome della commessa interna:');
+  if(!nome||!nome.trim())return;
+  try{
+    const r=await fetch(API+'/api/ore/commesse-interne',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({codice:codice.trim(),nome:nome.trim()})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non riesco a creare la commessa',true);return;}
+    const c=await r.json();
+    toast('Commessa interna creata','ok');
+    await oreLoadSettings();
+    oreSetNodo('commessa',c.id);
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── il Gruppo Commessa ────────────────────────────────────────────────── */
+function oreInspGruppoHtml(){
+  const g=(ORE.gruppi||[]).find(x=>x.id===ORE.set.nodo.id);
+  if(!g)return '';
+  const cm=(ORE.set.commesseWl||[]).find(c=>c.id===g.commessa_id)||{};
+  const sue=(g.fasi||[]).map(f=>f.id);
+  const fasi=(ORE.set.catalogo||[]).filter(f=>!f.archiviata||sue.includes(f.id));
+  return `<div class="ore-insp">
+    <div class="ore-insp-tit">${esc(g.nome)}</div>
+    <div class="fmuted" style="font-size:10.5px;margin-bottom:8px">
+      Gruppo Commessa di ${esc(cm.codice||'')} · ${esc(cm.nome||'')} — è il gruppo delle Ore, non il Gruppo Custom della distinta.</div>
+    <div style="display:flex;gap:8px">
+      <div class="fg" style="flex:1"><label class="fl">Nome</label><input class="fld" id="oreGr_nome" value="${esc(g.nome)}"></div>
+      <div class="fg" style="flex:0 0 120px"><label class="fl">Stima ore</label>
+        <input class="fld" id="oreGr_stima" type="number" min="0" step="1" value="${g.stima_ore==null?'':g.stima_ore}"></div>
+    </div>
+    <div class="ore-insp-sez">Fasi del gruppo</div>
+    <div class="ore-chipgrid" id="oreGrFasi">${fasi.map(f=>`
+      <div class="ore-chipf${sue.includes(f.id)?' on':''}${f.archiviata?' arch':''}"
+           data-id="${f.id}" onclick="this.classList.toggle('on')">${esc(f.nome)}${f.archiviata?' (archiviata)':''}</div>`).join('')}</div>
+    <div class="ore-insp-azioni">
+      <button class="btn btn-go btn-sm" onclick="oreSalvaGruppo(${g.id})">Salva</button>
+      <button class="btn btn-danger btn-sm" onclick="oreDelGruppo(${g.id})">Elimina</button>
+    </div></div>`;
+}
+async function oreNuovoGruppo(cid){
+  const nome=prompt('Nome del Gruppo Commessa:');
+  if(!nome||!nome.trim())return;
+  try{
+    const r=await fetch(API+'/api/ore/gruppi',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome:nome.trim(),commessa_id:cid})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non riesco a creare il gruppo',true);return;}
+    const g=await r.json();
+    toast('Gruppo creato','ok');await oreLoadSettings();oreSetNodo('gruppo',g.id);
+  }catch{toast('Errore di rete',true);}
+}
+async function oreSalvaGruppo(id){
+  const nome=(document.getElementById('oreGr_nome')||{}).value||'';
+  const stima=(document.getElementById('oreGr_stima')||{}).value||'';
+  const fasi=[...document.querySelectorAll('#oreGrFasi .ore-chipf.on')].map(x=>+x.dataset.id);
+  try{
+    const r=await fetch(API+'/api/ore/gruppi/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome:nome.trim(),stima_ore:stima===''?null:Number(stima)})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    const rf=await fetch(API+'/api/ore/gruppi/'+id+'/fasi',{method:'PUT',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:fasi})});
+    if(!rf.ok){toast(await srvErrDetail(rf)||'Fasi non salvate',true);return;}
+    toast('Gruppo salvato','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelGruppo(id){
+  if(!confirm('Eliminare questo Gruppo Commessa? Le ore già registrate restano.'))return;
+  try{
+    const r=await fetch(API+'/api/ore/gruppi/'+id,{method:'DELETE'});
+    if(!r.ok){toast('Errore eliminazione',true);return;}
+    toast('Gruppo eliminato','ok');ORE.set.nodo=null;await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── il catalogo delle fasi ────────────────────────────────────────────── */
+function oreSetFasiHtml(){
+  const f=ORE.set.catalogo||[];
+  return `<div class="ore-insp-tit">Fasi lavorative</div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:10px">
+    Catalogo unico: la stessa fase vale su una commessa interna e su una cliente, con lo stesso ID.
+    Quella già usata non si elimina — si archivia, e i legami e le ore restano dove sono.</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;max-width:460px">
+    <input class="fld" id="oreNuovaFase" placeholder="Nome della fase (es. Modellazione 3D)">
+    <button class="btn btn-go btn-sm" onclick="oreAddFaseCatalogo()">Crea</button></div>
+  <table class="ore-tbl"><thead><tr><th style="width:60px">ID</th><th>Nome</th><th style="width:130px">Ambito</th>
+    <th style="width:90px">Assegnata a</th><th style="width:200px"></th></tr></thead><tbody>
+    ${f.length?f.map(x=>`<tr${x.archiviata?' style="opacity:.55"':''}>
+      <td class="fmuted">${esc(x.codice)}</td>
+      <td>${esc(x.nome)}
+        ${x.di_sistema?'<span class="chip" style="background:rgba(88,86,214,.12);color:#5856D6">sistema</span>':''}
+        ${x.archiviata?'<span class="chip" style="background:rgba(122,96,80,.12);color:var(--t2)">archiviata</span>':''}</td>
+      <td class="fmuted">${esc(x.ambito)}</td>
+      <td class="fmuted">${x.assegnazioni} contesti</td>
+      <td>${x.di_sistema?'<span class="fmuted" style="font-size:10.5px">protetta</span>':`
+        <button class="btn-mini g" onclick="oreRinominaFase(${x.id},'${jsq(x.nome)}')">Rinomina</button>
+        <button class="btn-mini g" onclick="oreArchiviaFase(${x.id},${x.archiviata?'false':'true'})">${x.archiviata?'Ripristina':'Archivia'}</button>
+        ${x.eliminabile?`<button class="btn-mini g" onclick="oreDelFaseGlobale(${x.id})">Elimina</button>`:''}`}</td>
+    </tr>`).join(''):'<tr><td colspan="5" class="fmuted">Nessuna fase. Creane una qui sopra.</td></tr>'}
+  </tbody></table>`;
+}
+async function oreAddFaseCatalogo(){
+  const el=document.getElementById('oreNuovaFase');
+  const nome=(el&&el.value||'').trim();
+  if(!nome){toast('Serve il nome',true);return;}
+  try{
+    const r=await fetch(API+'/api/ore/fasi-catalogo',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non riesco a creare la fase',true);return;}
+    toast('Fase creata','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreRinominaFase(id,attuale){
+  const nome=prompt('Nuovo nome della fase:',attuale);
+  if(!nome||!nome.trim()||nome.trim()===attuale)return;
+  await oreScriviFase(id,{nome:nome.trim()},'Fase rinominata');
+}
+async function oreArchiviaFase(id,val){await oreScriviFase(id,{archiviata:val},val?'Fase archiviata':'Fase ripristinata');}
+async function oreScriviFase(id,dati,msg){
+  try{
+    const r=await fetch(API+'/api/ore/fasi-catalogo/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(dati)});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    toast(msg,'ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+async function oreDelFaseGlobale(id){
+  if(!confirm('Eliminare questa fase? Si può solo perché non è mai stata usata.'))return;
+  try{
+    const r=await fetch(API+'/api/ore/fasi/'+id,{method:'DELETE'});
+    if(!r.ok){toast('Errore eliminazione',true);return;}
+    toast('Fase eliminata','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── utenti, ruoli e assegnazioni ──────────────────────────────────────── */
+function oreSetUtentiHtml(){
+  const u=ORE.set.utenti||[];
+  return `<div class="ore-insp-tit">Utenti e amministratori</div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:10px">
+    Le assegnazioni stanno a tre altezze e ognuna vale per il ramo che ha sotto.
+    «Interno» non si assegna: lo vedono tutti.</div>
+  <table class="ore-tbl"><thead><tr><th>Utente</th><th style="width:150px">Ruolo</th><th>Worklog assegnati</th></tr></thead><tbody>
+  ${u.map(x=>`<tr>
+    <td><b>${esc(x.nome||x.email)}</b><div class="fmuted" style="font-size:10px">${esc(x.email)}</div></td>
+    <td><select class="fld" onchange="oreSetRuolo(${x.id},this.value)">
+      <option value="utente"${x.ruolo==='utente'?' selected':''}>Utente</option>
+      <option value="amministratore"${x.ruolo==='amministratore'?' selected':''}>Amministratore</option></select></td>
+    <td>${oreAssegnazioniHtml(x)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+function oreAssegnazioniHtml(u){
+  const cl=(ORE.set.clienti||[]).filter(c=>!c.di_sistema);
+  return `<div class="ore-chipgrid" id="oreAsg_${u.id}">
+    ${cl.map(c=>`<div class="ore-chipf${(u.clienti_ids||[]).includes(c.id)?' on':''}"
+      data-tipo="cliente" data-id="${c.id}" onclick="this.classList.toggle('on')">🏢 ${esc(c.nome)}</div>`).join('')}
+    ${(ORE.set.commesseWl||[]).filter(c=>!c.interna).map(c=>`<div class="ore-chipf${(u.commesse_ids||[]).includes(c.id)?' on':''}"
+      data-tipo="commessa" data-id="${c.id}" onclick="this.classList.toggle('on')">${esc(c.codice)}</div>`).join('')}
+    </div><button class="btn-mini" style="margin-top:5px" onclick="oreSalvaAssegnazioni(${u.id})">Salva assegnazioni</button>`;
+}
+async function oreSalvaAssegnazioni(uid){
+  const box=document.getElementById('oreAsg_'+uid);
+  const presi=t=>[...box.querySelectorAll('.ore-chipf.on[data-tipo="'+t+'"]')].map(x=>+x.dataset.id);
+  try{
+    const r=await fetch(API+'/api/ore/utenti/'+uid+'/assegnazioni',{method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({clienti:presi('cliente'),commesse:presi('commessa'),gruppi:[]})});
+    if(!r.ok){toast('Errore salvataggio',true);return;}
+    toast('Assegnazioni salvate','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+/* L'auto-rimozione del ruolo passa da una conferma a tutto schermo che dice
+   quanti amministratori resteranno: «ne resteranno due» è un'informazione,
+   «sei sicuro?» non lo è (ORE-07). */
+async function oreSetRuolo(id,ruolo){
+  const io=oreSelfId();
+  if(id===io&&ruolo!=='amministratore'){
+    let dati={rimasti:0,bloccato:true};
+    try{const r=await fetch(API+'/api/ore/utenti/'+id+'/amministratori-dopo');if(r.ok)dati=await r.json();}catch{}
+    document.getElementById('oreAutoRimStato').innerHTML=dati.bloccato
+      ? '<b>Non resterebbe nessun amministratore.</b> Nomina prima qualcun altro.'
+      : `Dopo la conferma resteranno <b>${dati.rimasti}</b> amministratori, e tu non sarai più fra loro.`;
+    document.getElementById('oreAutoRimOk').disabled=!!dati.bloccato;
+    ORE.set._autoRim=id;
+    mOpen('mOreAutoRim');
+    renderOreSettings();   // rimette la tendina com'era finché non si conferma
+    return;
+  }
+  await oreScriviRuolo(id,ruolo);
+}
+async function oreConfermaAutoRimozione(){
+  mClose('mOreAutoRim');
+  await oreScriviRuolo(ORE.set._autoRim,'utente');
+  ORE.me=null;await oreEnter();
+}
+async function oreScriviRuolo(id,ruolo){
+  try{
+    const r=await fetch(API+'/api/ore/utenti/'+id+'/ruolo',{method:'PUT',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({ruolo})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore cambio ruolo',true);renderOreSettings();return;}
+    toast('Ruolo aggiornato','ok');await oreLoadSettings();
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── orari e timer ─────────────────────────────────────────────────────── */
+function oreSetOrariHtml(){
+  const c=ORE.oreConfig||{};
+  const giorni=[['1','Lun'],['2','Mar'],['3','Mer'],['4','Gio'],['5','Ven'],['6','Sab'],['7','Dom']];
+  const attivi=(c.giorni_lavorativi||'1,2,3,4,5').split(',');
+  const ora=(id,lab,val)=>`<div class="fg" style="flex:1"><label class="fl">${lab}</label>
+    <input class="fld" id="oreCfg_${id}" type="time" step="1800" value="${esc(val||'')}"></div>`;
+  return `<div class="ore-insp-tit">Orari di lavoro e timer</div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:10px">
+    L'orario aziendale serve a tre cose: dire cos'è «tutto il giorno» per ferie e permessi,
+    validare le assenze, e stabilire cos'è straordinario.</div>
+  <div style="max-width:520px">
+    <div style="display:flex;gap:8px">${ora('ora_inizio','Inizio giornata',c.ora_inizio)}${ora('ora_fine','Fine giornata',c.ora_fine)}</div>
+    <div style="display:flex;gap:8px">${ora('pausa_inizio','Pausa da',c.pausa_inizio)}${ora('pausa_fine','Pausa a',c.pausa_fine)}</div>
+    <div style="display:flex;gap:8px">
+      <div class="fg" style="flex:1"><label class="fl">Massimo lavorativo (minuti)</label>
+        <input class="fld" id="oreCfg_max_minuti_giorno" type="number" min="0" step="30" value="${c.max_minuti_giorno||480}"></div>
+      <div class="fg" style="flex:1"><label class="fl">Ritardo del cambio fase (secondi)</label>
+        <input class="fld" id="oreCfg_ritardo" type="number" min="0" max="30" value="${c.ritardo_cambio_fase_s==null?3:c.ritardo_cambio_fase_s}"></div>
+    </div>
+    <div class="fg"><label class="fl">Giorni lavorativi</label>
+      <div class="ore-chipgrid" id="oreCfgGiorni">${giorni.map(([n,l])=>`
+        <div class="ore-chipf${attivi.includes(n)?' on':''}" data-id="${n}" onclick="this.classList.toggle('on')">${l}</div>`).join('')}</div>
+      <div class="fmuted" style="font-size:10.5px;margin-top:4px">Ferie e permessi su più giorni saltano i giorni spenti e le festività.</div></div>
+    <button class="btn btn-go btn-sm" onclick="oreSalvaOrari()">Salva</button>
+  </div>`;
+}
+async function oreSalvaOrari(){
+  const v=k=>{const el=document.getElementById('oreCfg_'+k);return el?el.value:'';};
+  const giorni=[...document.querySelectorAll('#oreCfgGiorni .ore-chipf.on')].map(x=>x.dataset.id);
+  if(!giorni.length){toast('Serve almeno un giorno lavorativo',true);return;}
+  const dati={ora_inizio:v('ora_inizio').slice(0,5),ora_fine:v('ora_fine').slice(0,5),
+    pausa_inizio:v('pausa_inizio').slice(0,5),pausa_fine:v('pausa_fine').slice(0,5),
+    max_minuti_giorno:Number(v('max_minuti_giorno')||480),
+    ritardo_cambio_fase_s:Number(v('ritardo')||3),
+    giorni_lavorativi:giorni.sort().join(',')};
+  try{
+    const r=await fetch(API+'/api/ore/config',{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(dati)});
+    if(!r.ok){toast(await srvErrDetail(r)||'Errore salvataggio',true);return;}
+    ORE.oreConfig=await r.json();toast('Orari salvati','ok');
+  }catch{toast('Errore di rete',true);}
+}
+
+/* ── tariffe e rimborsi ────────────────────────────────────────────────── */
+function oreSetTariffeHtml(){
+  const c=ORE.oreConfig||{};
+  return `<div class="ore-insp-tit">Tariffe e rimborsi</div>
+  <div class="fmuted" style="font-size:11px;margin-bottom:10px">
+    Il €/km e l'auto si impostano per dipendente: nel Timesheet restano in sola lettura
+    e finiscono come fotografia dentro il rimborso.</div>
+  <div class="fg" style="max-width:260px"><label class="fl">Tariffa €/km di ripiego</label>
+    <input class="fld" id="oreTariffaKm" type="number" step="0.01" min="0" value="${c.tariffa_km==null?0.35:c.tariffa_km}">
+    <div class="fmuted" style="font-size:10.5px;margin-top:4px">Vale per chi non ha una tariffa sua.</div></div>
+  <button class="btn btn-go btn-sm" onclick="oreSaveTariffaKm()">Salva</button>
+  <div class="fmuted" style="font-size:11px;margin-top:14px">
+    Tariffa e veicolo per singolo dipendente, e il catalogo delle categorie di rimborso,
+    arrivano insieme al Timesheet.</div>`;
+}
+async function oreSaveTariffaKm(){
+  const inp=document.getElementById('oreTariffaKm');const val=parseFloat(inp&&inp.value);
+  if(isNaN(val)||val<0){toast('Valore non valido',true);return;}
+  try{const r=await fetch(API+'/api/ore/config',{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tariffa_km:val})});
+    if(r.ok){ORE.oreConfig=await r.json();toast('Tariffa aggiornata','ok');}else toast('Errore salvataggio',true);
+  }catch{toast('Errore di rete',true);}
+}
 /* ══ GESTIONE CATEGORIE (cross-ambito Progetto ↔ Costi + sync) ══ */
 let CATMGR={cid:null,data:null,onClose:null};
 function openCatManage(cid,onClose){
@@ -8976,12 +9373,25 @@ async function thDelete(id){
   }catch{toast('Errore',true);}
 }
 function ddCols(d){return thColsFor(d.tipo_distinta,d.righe);}
+/* Le stesse colonne che escono in PDF ed Excel (_cols_for in app/routers/rdo_distinte.py).
+   La NOTA per articolo non è una colonna qui dentro: il pannello è stretto e una
+   frase intera lo spaccherebbe — sta sotto la riga, col suo pallino. */
 function thColsFor(tipoDistinta,righe){
-  if(tipoDistinta==='commerciale')return [['qta','Q.tà'],['codice','Codice produttore'],['descrizione','Descrizione'],['fornitore','Fornitore']];
+  // il materiale c'è sempre nei commerciali, anche vuoto: la stessa vite in A2 e
+  // in A4 è lo stesso codice con due prezzi e due tempi di consegna diversi
+  if(tipoDistinta==='commerciale')return [['qta','Q.tà'],['codice','Codice produttore'],['descrizione','Descrizione'],['materiale','Materiale'],['fornitore','Fornitore']];
   const c=[['qta','Q.tà'],['codice','Codice interno'],['revisione','Rev.'],['descrizione','Descrizione'],['peso','Peso kg']];
   if((righe||[]).some(r=>String(r.tratt_term||'').trim()))c.push(['tratt_term','Tratt. term.']);
   if((righe||[]).some(r=>String(r.tratt_sup||'').trim()))c.push(['tratt_sup','Tratt. superf.']);
   return c;
+}
+function ddNotaTesto(r){return String((r&&r.nota)||'').trim();}
+/* La riga della nota: sotto l'articolo, a tutta larghezza. Comparirà anche nel
+   PDF, nell'Excel e nella mail — vedi _note_lines lato server. */
+function ddNotaRow(r,ncol){
+  const n=ddNotaTesto(r);
+  if(!n)return '';
+  return `<tr class="dd-notar"><td colspan="${ncol}"><span class="ni">✎</span>${esc(n)}</td></tr>`;
 }
 function thRigheTable(righe,tipoDistinta){
   const cols=thColsFor(tipoDistinta,righe);
@@ -8992,7 +9402,8 @@ function thRigheTable(righe,tipoDistinta){
       const cls=k==='codice'?'cod':(k==='revisione'?'rev':(k==='qta'?'qta':''));
       return `<td class="${cls}">${esc(r[k]||'')}</td>`;
     }).join('');
-    return `<tr>${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`;
+    return `<tr>${tds}<td><span class="rowt ${r.tipo}">${(r.tipo||'').toUpperCase()}</span></td></tr>`
+      +ddNotaRow(r,cols.length+1);
   }).join('');
   return `<table class="dd-tab"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>`;
 }
@@ -10121,6 +10532,9 @@ let MAG={tab:'cat',categorieLoaded:false,categorie:[],articoli:null,articoliAll:
   inCasa:true,limite:400,offset:0,tot:0,totCat:0,colValori:{},
   richieste:null,newReq:null,
   pronte:null,pickActive:null,scan:null,
+  // `sel` non si azzera cambiando pagina o ricerca: si spuntano le viti, si
+  // cerca «rosetta», si spuntano anche quelle, e si stampa un foglio solo
+  sel:new Set(),qr:null,
   notifiche:null};
 let MAG_SEARCH_T=null;
 // [campo, etichetta, numerica, larghezza predefinita in px]. La larghezza serve
@@ -10385,6 +10799,7 @@ function renderMagCatalogo(){
       <button class="btn btn-go" onclick="magNuovoArticolo()">+ Nuovo articolo</button>
     </div>
     ${magPagineHtml()}
+    <div id="magSelBar"></div>
     <div class="mg-leg">
       <b><i style="background:#34C759"></i> inox 304 / 302</b>
       <b><i style="background:#fff"></i> inox 316</b>
