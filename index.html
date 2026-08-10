@@ -2027,6 +2027,58 @@ textarea.fld{resize:vertical;min-height:60px}
 }
 .hb{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border:none;background:transparent;cursor:pointer;color:var(--t2);border-radius:var(--rx);margin-right:4px}
 .hb:hover{background:rgba(44,21,6,.05)}.hb svg{width:20px;height:20px}
+/* ══ RACCOLTA ORE — Timbrature (mockup ORE-00/ORE-01) ══ */
+.ore-tabbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 14px}
+.ore-tabbar-dx{display:flex;gap:6px}
+.ore-barra{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ore-crono{font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.05}
+.ore-crono.sm{font-size:22px;margin-top:4px}
+.ore-btn-in{background:linear-gradient(135deg,#3ecf6a,#2ba553);color:#fff;box-shadow:0 2px 9px rgba(52,199,89,.28);font-size:13px;padding:11px 22px}
+.ore-btn-out{background:linear-gradient(135deg,#ef6f6f,#d24a4a);color:#fff;box-shadow:0 2px 9px rgba(255,59,48,.26);font-size:13px;padding:11px 22px}
+.ore-corrente{border-left:3px solid var(--bd2)}
+.ore-corrente.attivo{border-left-color:var(--go);background:linear-gradient(90deg,rgba(245,168,35,.06),transparent 40%)}
+.ore-sect-tit{font-weight:800;font-size:12.5px;margin-bottom:2px}
+/* le quattro colonne: la Fase è più larga perché è il dato operativo principale */
+.ore-cols{display:grid;grid-template-columns:1fr 6px 1.2fr 6px 1fr 6px 1.6fr;align-items:stretch}
+.ore-col{border:1px solid var(--bd);border-radius:var(--rs);background:var(--surf);display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.ore-col-head{padding:8px 9px;border-bottom:1px solid var(--bd);background:rgba(44,21,6,.025)}
+.ore-col-tit{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--t2);margin-bottom:6px}
+.ore-sort{border:1px solid var(--bd2);background:var(--surf);border-radius:5px;font-size:9px;font-weight:800;padding:2px 6px;cursor:pointer;color:var(--t2)}
+.ore-sort:hover{border-color:var(--go);color:var(--go-d)}
+.ore-cerca{width:100%;border:1px solid var(--bd2);border-radius:6px;padding:5px 8px;font-family:inherit;font-size:11.5px;outline:none;background:var(--surf);color:var(--t1)}
+.ore-cerca:focus{border-color:var(--go);box-shadow:0 0 0 2px rgba(245,168,35,.16)}
+.ore-col-list{overflow-y:auto;max-height:330px;padding:5px}
+.ore-riga{padding:7px 8px;border-radius:6px;cursor:pointer;transition:background .1s;min-width:0}
+.ore-riga:hover{background:rgba(44,21,6,.045)}
+.ore-riga.sel{background:rgba(245,168,35,.13);box-shadow:inset 0 0 0 1px rgba(245,168,35,.3)}
+.ore-riga.attiva{background:rgba(52,199,89,.12);box-shadow:inset 0 0 0 1px rgba(52,199,89,.35)}
+.ore-riga.sospesa{opacity:.55}
+.ore-riga-top{display:flex;align-items:center;gap:5px;min-width:0}
+.ore-riga-nome{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ore-play{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--go-d);background:rgba(245,168,35,.14);color:var(--go-d);font-size:10px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.ore-play:hover{background:var(--go-d);color:#fff}
+.ore-play.attesa{border-color:#D48A0F;background:var(--go);color:var(--br);animation:orePulse 1s infinite}
+.ore-play.attiva{border-color:#2ba553;background:#34C759;color:#fff}
+@keyframes orePulse{50%{transform:scale(1.12)}}
+@media (prefers-reduced-motion:reduce){.ore-play.attesa{animation:none}}
+.ore-stima{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:9.5px}
+.ore-stima-tr{flex:1;height:4px;border-radius:3px;background:rgba(44,21,6,.10);overflow:hidden}
+.ore-stima-fill{height:100%;border-radius:3px}
+.ore-stima-fill.v{background:#34C759}.ore-stima-fill.g{background:#E5C13C}
+.ore-stima-fill.a{background:#FF9500}.ore-stima-fill.r{background:#FF3B30}
+.ore-rz{cursor:col-resize;background:transparent;position:relative}
+.ore-rz::after{content:'';position:absolute;left:2px;top:8px;bottom:8px;width:2px;border-radius:2px;background:var(--bd2)}
+.ore-rz:hover::after{background:var(--go)}
+.ore-cd{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;padding:8px 12px;border-radius:var(--rs);background:rgba(245,168,35,.14);border:1px solid rgba(245,168,35,.35);font-size:12px}
+.ore-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.ore-tbl th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--t2);font-weight:800;padding:7px 8px;border-bottom:1px solid var(--bd)}
+.ore-tbl td{padding:6px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.ore-tbl .ore-descr{font-size:11.5px;padding:5px 8px}
+.ore-nota{font-size:11.5px;min-height:44px;resize:vertical}
+.ore-scelta{border:1.5px solid var(--bd2);border-radius:var(--rs);padding:11px 13px;cursor:pointer;transition:all .12s}
+.ore-scelta:hover{border-color:var(--go)}
+.ore-scelta.on{border-color:var(--go-d);background:rgba(245,168,35,.10)}
+.ore-scelta.off{opacity:.6;cursor:default}
 </style>
 </head>
 <body>
@@ -2312,7 +2364,7 @@ textarea.fld{resize:vertical;min-height:60px}
   <div id="v-ore" class="view">
     <div class="vtop"><div class="vtop-row">
       <div style="display:flex;align-items:center"><button class="hb" onclick="toggleSb()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div><div class="h1" style="font-size:15px">Raccolta Ore</div><div class="vsub" id="oreSub">Timbrature, inserimento ore e calendario presenze</div></div></div>
+      <div><div class="h1" style="font-size:15px">Raccolta Ore</div><div class="vsub" id="oreSub">Timbrature, Timesheet e Report</div></div></div>
     </div></div>
     <div class="vscroll">
       <div class="cx-toggle" id="oreTabs" style="margin-top:4px"></div>
@@ -2766,6 +2818,41 @@ textarea.fld{resize:vertical;min-height:60px}
 </div>
 
 <!-- «Fornitori del progetto» non è più un modale: sta in Impostazioni progetto → Fornitori progetto -->
+
+<!-- MODAL: Raccolta Ore — timbratura di entrata (ORE-01).
+     Aprirlo non timbra: se si chiude senza una fase valida, l'ingresso non viene registrato. -->
+<div class="mov" id="mOreEntrata" onclick="ovClose(event,'mOreEntrata')">
+  <div class="modal" style="max-width:560px">
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div><div class="mtit">Timbratura entrata</div><div class="msub">Scegli come iniziare la giornata.</div></div>
+      <button class="mx" onclick="mClose('mOreEntrata')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd">
+      <div style="display:grid;gap:9px">
+        <div id="oreEntrataUltimo"></div>
+        <div class="ore-scelta" id="oreScNuovo" onclick="oreScegliEntrata('nuovo')">
+          <b>Scegli un altro worklog</b>
+          <div class="fmuted" style="font-size:11px;margin-top:3px">Cliente, Commessa, Gruppo Commessa facoltativo e Fase. La timbratura parte quando premi PLAY.</div>
+        </div>
+      </div>
+    </div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreEntrata')">Annulla</button><button class="btn ore-btn-in" onclick="oreConfermaEntrata()">Timbra entrata</button></div></div>
+  </div>
+</div>
+
+<!-- MODAL: Raccolta Ore — riepilogo di uscita. Annullare non tocca i timer. -->
+<div class="mov" id="mOreUscita" onclick="ovClose(event,'mOreUscita')">
+  <div class="modal" style="max-width:820px">
+    <div class="mhd">
+      <div class="mico2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      <div><div class="mtit">Riepilogo uscita</div><div class="msub">I worklog uguali sono raggruppati. Le descrizioni sono facoltative.</div></div>
+      <button class="mx" onclick="mClose('mOreUscita')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mbd"><div id="oreUscitaBody"></div></div>
+    <div class="mft"><div class="mft-r"><button class="btn btn-ghost" onclick="mClose('mOreUscita')">Annulla</button><button class="btn ore-btn-out" onclick="oreConfermaUscita()">Conferma uscita</button></div></div>
+  </div>
+</div>
 
 <!-- MODAL: Raccolta Ore — nuova/modifica registrazione -->
 <div class="mov" id="mOreVoce" onclick="ovClose(event,'mOreVoce')">
@@ -6108,7 +6195,7 @@ async function cxReload(){
 }
 function cxOfferte(pid){openOfferte(pid,()=>cxReload());}
 
-/* ══════════ RACCOLTA ORE — shell con sotto-tab (Timbrature / Inserimento ore / Calendario presenze) ══════════ */
+/* ══════════ RACCOLTA ORE — Timbrature / Timesheet / Report (mockup ORE-00) ══════════ */
 let ORE={tab:'timbro',me:null,fasi:[],gruppi:[],assenzeTipi:[],timbro:null,timer:null,regmode:'lavoro',pending:null,
   voci:[],mieview:'tabella',calMonth:new Date(),calSel:null,editId:null,_modalTipo:'lavoro',_voceCtx:'mie',
   spese:[],oreConfig:null,
@@ -6116,7 +6203,15 @@ let ORE={tab:'timbro',me:null,fasi:[],gruppi:[],assenzeTipi:[],timbro:null,timer
   team:{utente:'',giorni:30,cv:{persona:'bar',commessa:'bar',gruppo:'bar',assenze:'bar'}},teamRows:[],
   rimTeam:{utente:'',giorni:30},rimTeamRows:[],
   set:{utenti:[],team:[],commessaSel:undefined},
-  exp:{}};
+  exp:{},
+  // ── il selettore a quattro colonne (ORE-01) ──
+  alb:null,                                    // l'albero Cliente → Commessa → Gruppo → Fase
+  sel:{cliente:null,commessa:null,gruppo:null,fase:null},
+  filtri:{cliente:'',commessa:'',gruppo:'',fase:''},
+  ord:{cliente:1,commessa:1,gruppo:1,fase:1},
+  giornata:null,recenti:[],
+  cd:null,                                     // conto alla rovescia in corso
+  attesaEntrata:false};                        // «Entrata» premuto, si aspetta la fase
 let ORE_CLOCK_INT=null;
 
 async function oreEnter(){
@@ -6125,20 +6220,23 @@ async function oreEnter(){
   oreGoTab((NAV.sez.ore||{}).tab||ORE.tab||'timbro');
 }
 async function oreLoadCatalogs(){
-  if((ORE.fasi||[]).length&&(ORE.gruppi||[]).length&&(ORE.assenzeTipi||[]).length)return;
+  if((ORE.fasi||[]).length&&(ORE.assenzeTipi||[]).length&&ORE.oreConfig)return;
   try{
-    const [rf,rg,ra]=await Promise.all([fetch(API+'/api/ore/fasi'),fetch(API+'/api/ore/gruppi'),fetch(API+'/api/ore/assenze-tipi')]);
+    const [rf,rg,ra,rc]=await Promise.all([
+      fetch(API+'/api/ore/fasi'),fetch(API+'/api/ore/gruppi'),
+      fetch(API+'/api/ore/assenze-tipi'),fetch(API+'/api/ore/config')]);
     ORE.fasi=rf.ok?await rf.json():[];
     ORE.gruppi=rg.ok?await rg.json():[];
     ORE.assenzeTipi=ra.ok?await ra.json():[];
+    ORE.oreConfig=rc.ok?await rc.json():null;
   }catch{}
 }
 function oreGoTab(t){
   navPunto();
   ORE.tab=t;
+  oreAnnullaCambio();
   renderOreTabs();
-  if(t==='timbro')oreLoadTimbro();
-  else if(t==='timer')oreLoadTimer();
+  if(t==='timbro')oreLoadTimbrature();
   else if(t==='mie')oreLoadVoci();
   else if(t==='spese')oreLoadSpese();
   else if(t==='report')oreLoadReport();
@@ -6146,11 +6244,19 @@ function oreGoTab(t){
   else if(t==='rimteam')oreLoadRimTeam();
   else if(t==='set')oreLoadSettings();
 }
+/* Tre sole tab operative (Note ORE-00). Le Impostazioni non sono una quarta tab:
+   stanno in un comando a parte, a destra delle tre. */
 function renderOreTabs(){
   const el=document.getElementById('oreTabs');if(!el)return;
-  const tabs=[['timbro','🕘','Timbrature'],['timer','⏱','Inserimento ore'],['mie','📆','Calendario presenze'],['spese','🚗','Rimborso spese'],['report','📊','Report']];
-  if(ORE.me&&ORE.me.ruolo==='amministratore')tabs.push(['team','👥','Ore del team'],['rimteam','🧾','Rimborsi del team'],['set','⚙️','Impostazioni']);
-  el.innerHTML=tabs.map(([k,ic,l])=>`<button class="${ORE.tab===k?'on':''}" onclick="oreGoTab('${k}')">${ic} ${esc(l)}</button>`).join('');
+  const tabs=[['timbro','🕘','Timbrature'],['mie','📆','Timesheet'],['report','📊','Report']];
+  const admin=ORE.me&&ORE.me.ruolo==='amministratore';
+  el.innerHTML=`<div class="ore-tabbar">
+    <div class="cx-toggle" style="margin:0">${tabs.map(([k,ic,l])=>
+      `<button class="${ORE.tab===k?'on':''}" onclick="oreGoTab('${k}')">${ic} ${esc(l)}</button>`).join('')}</div>
+    <div class="ore-tabbar-dx">
+      ${admin?`<button class="btn btn-ghost btn-sm${['team','rimteam'].includes(ORE.tab)?' on':''}" onclick="oreGoTab('team')">👥 Ore del team</button>`:''}
+      ${admin?`<button class="btn btn-ghost btn-sm${ORE.tab==='set'?' on':''}" onclick="oreGoTab('set')">⚙️ Impostazioni raccolta ore</button>`:''}
+    </div></div>`;
 }
 function oreSelfId(){return ORE.me&&(ORE.me.id!=null?ORE.me.id:ORE.me.utente_id);}
 
@@ -6200,194 +6306,426 @@ function oreFmtDate(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.
 function fmtDur(min){min=Math.round(min);const h=Math.floor(min/60),m=min%60;return m===0?`${h}h`:`${h}h ${pad(m)}m`;}
 function roundTo5(min){return Math.max(5,Math.round(min/5)*5);}
 
-/* ── TIMBRATURE ── */
-async function oreLoadTimbro(){
+/* ══ TIMBRATURE (ORE-01) ══════════════════════════════════════════════════════
+   Una barra che dice sempre a che punto è la giornata, quattro colonne che
+   restano aperte, e un PLAY che è l'unico comando che cambia attività.
+   La selezione si può esplorare senza toccare il timer: si guarda dove si
+   vuole, il cronometro di prima continua a correre finché non si preme PLAY. */
+
+async function oreLoadTimbrature(){
   const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico timbrature…</div>';
-  try{const r=await fetch(API+'/api/ore/timbrature/oggi');ORE.timbro=r.ok?await r.json():{stato:'fuori',oggi:[]};}
-  catch{ORE.timbro={stato:'fuori',oggi:[]};}
-  renderOreTimbro();
+  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico…</div>';
+  try{
+    const [ra,rg,rr]=await Promise.all([
+      fetch(API+'/api/ore/albero'),fetch(API+'/api/ore/giornata'),
+      fetch(API+'/api/ore/usati-di-recente')]);
+    ORE.alb=ra.ok?await ra.json():null;
+    ORE.giornata=rg.ok?await rg.json():null;
+    ORE.recenti=rr.ok?await rr.json():[];
+  }catch{el.innerHTML='<div class="fmuted">Non riesco a leggere le ore.</div>';return;}
+  if(ORE.giornata){ORE.timer=ORE.giornata.timer||null;}
+  oreSelIniziale();
+  renderOreTimbrature();
+  oreStartClock();
 }
-function renderOreTimbro(){
-  const el=document.getElementById('oreBody');
-  const t=ORE.timbro||{stato:'fuori',oggi:[]};
-  const dentro=t.stato==='dentro';
-  el.innerHTML=`<div class="card ore-timercard" style="text-align:center;padding:26px">
-    <div style="font-weight:800;font-size:13px;margin-bottom:8px">🕘 Timbratura giornaliera</div>
-    <div style="font-size:12px;color:var(--t2);margin-bottom:16px">${dentro?'Sei timbrato in entrata':'Non sei ancora timbrato oggi'}</div>
-    <button class="btn ${dentro?'btn-danger':'btn-go'}" style="padding:14px 26px;font-size:15px;border-radius:14px" onclick="oreToggleTimbro()">${dentro?'🔴 Timbra uscita':'🟢 Timbra entrata'}</button>
-    ${(t.oggi||[]).length?`<div style="margin-top:18px;display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--t2)">${t.oggi.map(x=>`<div>${x.tipo==='entrata'?'🟢 Entrata':'🔴 Uscita'} · ${esc(x.ora)}</div>`).join('')}</div>`:''}
+
+/* Si riparte da dov'era il timer; se non c'è, dall'ultimo worklog usato. */
+function oreSelIniziale(){
+  const t=ORE.timer||((ORE.recenti||[])[0]);
+  if(!t)return;
+  const c=oreCommessaDi(t.commessa_id);
+  ORE.sel={cliente:c?c.cliente_id:null,commessa:t.commessa_id||null,
+           gruppo:t.gruppo_id||null,fase:t.fase_id||null};
+}
+function oreCommessaDi(id){return ((ORE.alb||{}).commesse||[]).find(c=>c.id===id)||null;}
+function oreGruppoDi(id){return ((ORE.alb||{}).gruppi||[]).find(g=>g.id===id)||null;}
+function oreFaseDi(id){return ((ORE.alb||{}).fasi||[]).find(f=>f.id===id)||null;}
+function oreClienteDi(id){return ((ORE.alb||{}).clienti||[]).find(c=>c.id===id)||null;}
+function orePresente(){return !!(ORE.giornata&&ORE.giornata.presente);}
+
+/* Il percorso completo, che è quello che toglie ogni ambiguità quando due
+   commesse di Worklog diversi si chiamano uguale (Note ORE-01). */
+function orePercorso(s){
+  const cl=oreClienteDi(s.cliente),c=oreCommessaDi(s.commessa),
+        g=oreGruppoDi(s.gruppo),f=oreFaseDi(s.fase);
+  return [cl&&cl.nome,c&&(c.codice+' · '+c.nome),g&&g.nome,f&&f.nome].filter(Boolean).join(' › ');
+}
+function oreDurata(ms){
+  const s=Math.max(0,Math.floor(ms/1000));
+  return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>pad(x)).join(':');
+}
+function oreOreMin(min){min=Math.round(min);return Math.floor(min/60)+'h '+pad(min%60)+'m';}
+
+function renderOreTimbrature(){
+  const el=document.getElementById('oreBody');if(!el)return;
+  const g=ORE.giornata||{segmenti:[],minuti_totali:0,timbrature:[]};
+  const presente=orePresente();
+  const entrata=(g.timbrature||[]).filter(t=>t.tipo==='entrata').slice(-1)[0];
+  el.innerHTML=`
+  <div class="ore-barra card">
+    <div>
+      <div class="ore-crono" id="oreCronoPresenza">00:00:00</div>
+      <div class="fmuted" style="font-size:11px" id="oreStatoPresenza">${presente
+        ? 'Presenza aperta dalle '+esc(entrata?entrata.ora:'—')
+        : 'Nessuna timbratura attiva'}</div>
+    </div>
+    <button class="btn ${presente?'ore-btn-out':'ore-btn-in'}" onclick="${presente?'oreApriUscita()':'oreApriEntrata()'}">
+      ${presente?'Timbra uscita':'Timbra entrata'}</button>
+  </div>
+
+  <div class="card ore-corrente ${ORE.timer?'attivo':''}" style="margin-top:10px">
+    <div class="fmuted" style="font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase">Worklog corrente</div>
+    <div style="font-weight:700;font-size:13px;margin-top:3px" id="oreWorklogCorrente">${
+      ORE.timer?esc(orePercorso(ORE.timer)):'Nessun worklog attivo'}</div>
+    <div class="ore-crono sm" id="oreCronoAttivita">00:00:00</div>
+    <div class="fmuted" style="font-size:11px">Oggi in totale: <b>${oreOreMin(g.minuti_totali||0)}</b></div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <div class="ore-sect-tit">Cambia worklog</div>
+    <div class="fmuted" style="font-size:11px;margin-bottom:8px">
+      Seleziona la gerarchia e premi <b>PLAY</b> sulla fase. Il Gruppo Commessa è facoltativo.</div>
+    <div id="oreCols">${oreColonneHtml()}</div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <div class="ore-sect-tit">Worklog di oggi <span class="fmuted" style="font-weight:500">— ${(g.segmenti||[]).length} intervalli</span></div>
+    <div id="oreTimeline">${oreTimelineHtml()}</div>
+  </div>`;
+  oreBindResize();
+}
+
+/* ── le quattro colonne ─────────────────────────────────────────────────────
+   Ognuna ha la sua ricerca e il suo ordinamento; l'intera riga è cliccabile,
+   non solo il testo. La colonna Fase è più larga perché la fase è il dato
+   operativo principale. */
+function oreColonneHtml(){
+  if(!ORE.alb)return '<div class="fmuted">Nessun worklog assegnato.</div>';
+  const col=(k,tit,extra)=>`
+    <div class="ore-col" data-col="${k}">
+      <div class="ore-col-head">
+        <div class="ore-col-tit">${esc(tit)}
+          <button class="ore-sort" onclick="oreOrdina('${k}')" title="Ordina">${ORE.ord[k]>0?'A–Z':'Z–A'}</button></div>
+        <input class="ore-cerca" id="oreCerca_${k}" placeholder="Cerca…" value="${esc(ORE.filtri[k])}"
+               oninput="oreFiltra('${k}',this.value)">
+        ${extra||''}
+      </div>
+      <div class="ore-col-list" id="oreList_${k}">${oreListaHtml(k)}</div>
+    </div>`;
+  const scope=ORE.sel.commessa
+    ? (ORE.sel.gruppo?'Fasi del gruppo selezionato':'Fasi dirette della commessa e dei suoi gruppi')
+    : 'Scegli prima una commessa';
+  return `<div class="ore-cols" id="oreColsGrid">
+    ${col('cliente','Cliente')}<div class="ore-rz" data-i="0"></div>
+    ${col('commessa','Commessa')}<div class="ore-rz" data-i="1"></div>
+    ${col('gruppo','Gruppo Commessa')}<div class="ore-rz" data-i="2"></div>
+    ${col('fase','Fase','<div class="fmuted" style="font-size:10px;margin-top:4px">'+esc(scope)+'</div>')}
   </div>`;
 }
-async function oreToggleTimbro(){
-  try{const r=await fetch(API+'/api/ore/timbrature/toggle',{method:'POST'});
-    if(r.ok){ORE.timbro=await r.json();renderOreTimbro();}else toast('Errore timbratura',true);
+
+function oreRighe(k){
+  const a=ORE.alb||{},s=ORE.sel;
+  let righe=[];
+  if(k==='cliente')righe=(a.clienti||[]).map(c=>({id:c.id,nome:c.nome,sistema:c.di_sistema}));
+  else if(k==='commessa')righe=(a.commesse||[]).filter(c=>!s.cliente||c.cliente_id===s.cliente)
+    .map(c=>({id:c.id,nome:c.codice+' · '+c.nome,stato:c.stato,interna:c.interna,
+              stima:c.stima_ore,minuti:c.minuti}));
+  else if(k==='gruppo')righe=(a.gruppi||[]).filter(g=>!s.commessa||g.commessa_id===s.commessa)
+    .map(g=>({id:g.id,nome:g.nome,stima:g.stima_ore,minuti:g.minuti}));
+  else if(k==='fase'){
+    // La commessa mostra insieme le sue fasi dirette e quelle dei suoi gruppi;
+    // scelto un gruppo, restano solo le fasi di quel ramo (Note ORE-01, punto 8).
+    if(!s.commessa)return [];
+    let ids;
+    if(s.gruppo)ids=(a.fasi_gruppo||[]).filter(x=>x.gruppo_id===s.gruppo).map(x=>x.fase_id);
+    else{
+      const gruppiSuoi=(a.gruppi||[]).filter(g=>g.commessa_id===s.commessa).map(g=>g.id);
+      ids=[].concat(
+        (a.fasi_commessa||[]).filter(x=>x.commessa_id===s.commessa).map(x=>x.fase_id),
+        (a.fasi_gruppo||[]).filter(x=>gruppiSuoi.includes(x.gruppo_id)).map(x=>x.fase_id));
+    }
+    const visti={};
+    righe=ids.filter(id=>!visti[id]&&(visti[id]=1)).map(id=>oreFaseDi(id)).filter(Boolean)
+      // una fase archiviata non si sceglie più, ma resta nello storico
+      .filter(f=>!f.archiviata||f.id===((ORE.timer||{}).fase_id))
+      .map(f=>({id:f.id,nome:f.nome,codice:f.codice,sistema:f.di_sistema}));
+  }
+  const q=(ORE.filtri[k]||'').toLowerCase().trim();
+  if(q)righe=righe.filter(r=>r.nome.toLowerCase().includes(q));
+  return righe.sort((x,y)=>ORE.ord[k]*x.nome.localeCompare(y.nome,'it'));
+}
+
+function oreListaHtml(k){
+  const righe=oreRighe(k);
+  if(!righe.length)return '<div class="fmuted" style="padding:10px;font-size:11px">'+
+    (k==='fase'&&!ORE.sel.commessa?'Scegli prima una commessa':'Nessun elemento')+'</div>';
+  return righe.map(r=>{
+    const sel=ORE.sel[k]===r.id;
+    const attiva=k==='fase'&&ORE.timer&&ORE.timer.fase_id===r.id&&
+                 ORE.timer.commessa_id===ORE.sel.commessa&&(ORE.timer.gruppo_id||null)===(ORE.sel.gruppo||null);
+    const sospesa=k==='commessa'&&r.stato&&r.stato!=='aperta';
+    return `<div class="ore-riga${sel?' sel':''}${attiva?' attiva':''}${sospesa?' sospesa':''}"
+      onclick="oreScegli('${k}',${r.id})">
+      <div class="ore-riga-top">
+        <span class="ore-riga-nome">${esc(r.nome)}</span>
+        ${r.sistema?'<span class="chip" style="background:rgba(88,86,214,.12);color:#5856D6">sistema</span>':''}
+        ${sospesa?`<span class="chip" style="background:rgba(255,149,0,.14);color:#B36B00">${esc(r.stato)}</span>`:''}
+        ${r.interna?'<span class="chip" style="background:rgba(0,122,255,.10);color:#0059B3">interna</span>':''}
+        ${k==='fase'?oreBottonePlay(r.id,attiva):''}
+      </div>
+      ${oreBarraStima(r)}
+    </div>`;
+  }).join('');
+}
+function oreBottonePlay(faseId,attiva){
+  if(attiva)return '<button class="ore-play attiva" title="In corso" onclick="event.stopPropagation()">■</button>';
+  const inAttesa=ORE.cd&&ORE.cd.fase===faseId;
+  return `<button class="ore-play${inAttesa?' attesa':''}" title="Avvia su questa fase"
+    onclick="event.stopPropagation();oreChiediCambio(${faseId})">${inAttesa?ORE.cd.restanti:'▶'}</button>`;
+}
+/* consuntivo/stima su commesse e Gruppi Commessa configurati (Note ORE-01, 13) */
+function oreBarraStima(r){
+  if(!r.stima||!r.minuti)return '';
+  const p=Math.round(r.minuti/60/r.stima*100);
+  const cls=p<50?'v':p<80?'g':p<=100?'a':'r';
+  return `<div class="ore-stima"><div class="ore-stima-tr"><div class="ore-stima-fill ${cls}" style="width:${Math.min(p,100)}%"></div></div>
+    <span class="fmuted">${Math.round(r.minuti/60)}h / ${r.stima}h · ${p}%</span></div>`;
+}
+
+function oreScegli(k,id){
+  if(ORE.sel[k]===id&&k!=='fase'){/* riclic = deseleziona i livelli facoltativi */
+    if(k==='gruppo'){ORE.sel.gruppo=null;ORE.sel.fase=null;oreRidisegna(['gruppo','fase']);return;}
+  }
+  ORE.sel[k]=id;
+  if(k==='cliente'){ORE.sel.commessa=ORE.sel.gruppo=ORE.sel.fase=null;oreRidisegna(['cliente','commessa','gruppo','fase']);}
+  else if(k==='commessa'){ORE.sel.gruppo=ORE.sel.fase=null;oreRidisegna(['commessa','gruppo','fase']);}
+  else if(k==='gruppo'){ORE.sel.fase=null;oreRidisegna(['gruppo','fase']);}
+  else oreRidisegna(['fase']);
+}
+function oreFiltra(k,v){ORE.filtri[k]=v;oreRidisegna([k]);}
+function oreOrdina(k){ORE.ord[k]=-ORE.ord[k];oreRidisegna([k]);
+  const b=document.querySelector(`.ore-col[data-col="${k}"] .ore-sort`);if(b)b.textContent=ORE.ord[k]>0?'A–Z':'Z–A';}
+/* Si ridisegnano solo le liste, non le testate: altrimenti il campo di ricerca
+   perderebbe il fuoco a ogni lettera digitata. */
+function oreRidisegna(chiavi){
+  (chiavi||['cliente','commessa','gruppo','fase']).forEach(k=>{
+    const el=document.getElementById('oreList_'+k);if(el)el.innerHTML=oreListaHtml(k);});
+  const s=document.querySelector('.ore-col[data-col="fase"] .ore-col-head .fmuted');
+  if(s)s.textContent=ORE.sel.commessa
+    ?(ORE.sel.gruppo?'Fasi del gruppo selezionato':'Fasi dirette della commessa e dei suoi gruppi')
+    :'Scegli prima una commessa';
+}
+
+/* ── il PLAY, il conto alla rovescia e il cambio atomico ────────────────────
+   Il conto alla rovescia corre qui nel browser: se si annulla prima che scada,
+   il server non ne sa niente — nessun evento, nessun intervallo, nessuna
+   traccia. Solo allo scadere parte la chiamata, e lì il vecchio intervallo si
+   chiude e il nuovo si apre nello stesso istante (Note ORE-01). */
+function oreChiediCambio(faseId){
+  if(!ORE.sel.commessa){toast('Scegli prima una commessa',true);return;}
+  ORE.sel.fase=faseId;
+  if(!orePresente()&&!ORE.attesaEntrata){toast('Devi prima timbrare l\'entrata',true);return;}
+  // La prima fase dopo «Entrata» non aspetta: timbratura e timer partono insieme.
+  if(ORE.attesaEntrata){oreEseguiEntrata();return;}
+  const secondi=(ORE.oreConfig&&ORE.oreConfig.ritardo_cambio_fase_s)||3;
+  oreAnnullaCambio();
+  ORE.cd={fase:faseId,restanti:secondi,sel:Object.assign({},ORE.sel)};
+  ORE.cd.int=setInterval(()=>{
+    ORE.cd.restanti--;
+    if(ORE.cd.restanti<=0){const s=ORE.cd.sel;oreAnnullaCambio();oreCambiaAttivita(s);}
+    else{oreRidisegna(['fase']);oreBannerCambio();}
+  },1000);
+  oreRidisegna(['fase']);
+  oreBannerCambio();
+}
+function oreBannerCambio(){
+  let el=document.getElementById('oreCdBanner');
+  if(!ORE.cd){if(el)el.remove();return;}
+  if(!el){
+    el=document.createElement('div');el.id='oreCdBanner';el.className='ore-cd';
+    document.getElementById('oreCols').prepend(el);
+  }
+  el.innerHTML=`<span>Passo a <b>${esc(orePercorso(ORE.cd.sel))}</b> fra ${ORE.cd.restanti}s</span>
+    <button class="btn btn-ghost btn-sm" onclick="oreAnnullaCambio(true)">Annulla</button>`;
+}
+function oreAnnullaCambio(avvisa){
+  if(ORE.cd&&ORE.cd.int)clearInterval(ORE.cd.int);
+  ORE.cd=null;
+  const el=document.getElementById('oreCdBanner');if(el)el.remove();
+  if(avvisa){toast('Cambio annullato — il worklog di prima continua','ok');oreRidisegna(['fase']);}
+}
+async function oreCambiaAttivita(sel){
+  try{
+    const r=await fetch(API+'/api/ore/timer/cambia',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({commessa_id:sel.commessa,gruppo_id:sel.gruppo,fase_id:sel.fase})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Non riesco a cambiare attività',true);return;}
+    const j=await r.json();
+    toast(j.chiusa?'Cambiato — registrati '+j.chiusa.minuti+' min':'Attività avviata','ok');
+  }catch{toast('Errore di rete',true);return;}
+  await oreLoadTimbrature();
+}
+
+/* ── entrata ────────────────────────────────────────────────────────────────
+   Premere «Entrata» apre la scelta ma non timbra ancora: se si chiude senza una
+   fase valida, l'ingresso non viene registrato (Note ORE-01). */
+function oreApriEntrata(){
+  const ultimo=(ORE.recenti||[])[0];
+  document.getElementById('oreEntrataUltimo').innerHTML=ultimo
+    ? `<div class="ore-scelta on" id="oreScUltimo" onclick="oreScegliEntrata('ultimo')">
+         <b>Riprendi ultimo worklog</b><div class="fmuted" style="font-size:11px;margin-top:3px">${esc(ultimo.percorso)}</div></div>`
+    : `<div class="ore-scelta off"><b>Nessun worklog recente</b>
+         <div class="fmuted" style="font-size:11px;margin-top:3px">È la prima volta: scegline uno.</div></div>`;
+  ORE.entrataModo=ultimo?'ultimo':'nuovo';
+  document.getElementById('oreScNuovo').className='ore-scelta'+(ultimo?'':' on');
+  mOpen('mOreEntrata');
+}
+function oreScegliEntrata(m){
+  ORE.entrataModo=m;
+  const u=document.getElementById('oreScUltimo'),n=document.getElementById('oreScNuovo');
+  if(u)u.className='ore-scelta'+(m==='ultimo'?' on':'');
+  if(n)n.className='ore-scelta'+(m==='nuovo'?' on':'');
+}
+async function oreConfermaEntrata(){
+  mClose('mOreEntrata');
+  if(ORE.entrataModo==='ultimo'){
+    const u=(ORE.recenti||[])[0];
+    if(!u){toast('Nessun worklog da riprendere',true);return;}
+    ORE.sel={cliente:u.cliente_id,commessa:u.commessa_id,gruppo:u.gruppo_id,fase:u.fase_id};
+    await oreEseguiEntrata();
+  }else{
+    // niente timbratura finché non si preme PLAY su una fase
+    ORE.attesaEntrata=true;
+    toast('Scegli la fase e premi PLAY: la timbratura parte lì','ok');
+    renderOreTimbrature();
+  }
+}
+async function oreEseguiEntrata(){
+  if(!ORE.sel.commessa||!ORE.sel.fase){toast('Servono commessa e fase',true);return;}
+  try{
+    // stesso istante: prima la presenza, poi il timer che la riempie
+    const rt=await fetch(API+'/api/ore/timbrature/toggle',{method:'POST'});
+    if(!rt.ok){toast('Non riesco a timbrare',true);return;}
+    const r=await fetch(API+'/api/ore/timer/cambia',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({commessa_id:ORE.sel.commessa,gruppo_id:ORE.sel.gruppo,fase_id:ORE.sel.fase})});
+    if(!r.ok){toast(await srvErrDetail(r)||'Timbrato, ma il worklog non è partito',true);}
+    else toast('Entrata registrata','ok');
+  }catch{toast('Errore di rete',true);}
+  ORE.attesaEntrata=false;
+  await oreLoadTimbrature();
+}
+
+/* ── uscita ─────────────────────────────────────────────────────────────────
+   L'uscita mostra prima il riepilogo: solo «Conferma uscita» chiude davvero.
+   Annullare non tocca i timer, che continuano regolarmente. */
+function oreApriUscita(){
+  const g=ORE.giornata||{segmenti:[]};
+  const gruppi={};
+  (g.segmenti||[]).filter(s=>s.tipo==='lavoro').forEach(s=>{
+    const k=[s.cliente_nome,s.commessa_nome,s.gruppo_nome,s.fase_nome].filter(Boolean).join(' › ');
+    (gruppi[k]=gruppi[k]||{k,n:0,min:0,ids:[]});
+    gruppi[k].n++;gruppi[k].min+=s.minuti;gruppi[k].ids.push(s.id);
+  });
+  const righe=Object.values(gruppi);
+  document.getElementById('oreUscitaBody').innerHTML=righe.length
+    ? `<table class="ore-tbl"><thead><tr><th>Worklog</th><th>Intervalli</th><th>Totale</th><th>Descrizione (facoltativa)</th></tr></thead><tbody>
+       ${righe.map((r,i)=>`<tr><td>${esc(r.k)}</td><td>${r.n}</td><td>${oreOreMin(r.min)}</td>
+         <td><textarea class="fld ore-nota" id="oreUscNota_${i}" data-ids="${r.ids.join(',')}" rows="2" placeholder="Facoltativa"></textarea></td></tr>`).join('')}
+       </tbody></table>`
+    : '<div class="fmuted">Nessun worklog registrato oggi.</div>';
+  mOpen('mOreUscita');
+}
+async function oreConfermaUscita(){
+  try{
+    // le descrizioni scritte nel riepilogo, prima di chiudere
+    const note=[...document.querySelectorAll('#oreUscitaBody .ore-nota')];
+    for(const t of note){
+      const v=(t.value||'').trim();if(!v)continue;
+      for(const id of t.dataset.ids.split(',').filter(Boolean))
+        await fetch(API+'/api/ore/voci/'+id+'/descrizione',{method:'PATCH',
+          headers:{'Content-Type':'application/json'},body:JSON.stringify({nota:v})});
+    }
+    if(ORE.timer)await fetch(API+'/api/ore/timer/chiudi',{method:'POST'});
+    const r=await fetch(API+'/api/ore/timbrature/toggle',{method:'POST'});
+    if(!r.ok){toast('Non riesco a timbrare l\'uscita',true);return;}
+    toast('Uscita registrata','ok');
+  }catch{toast('Errore di rete',true);return;}
+  mClose('mOreUscita');
+  await oreLoadTimbrature();
+}
+
+/* ── la linea temporale della giornata ─────────────────────────────────────
+   Le descrizioni si scrivono qui, quando si vuole: una registrazione non
+   aspetta la sua descrizione per essere valida (Note ORE-02). */
+function oreTimelineHtml(){
+  const g=ORE.giornata||{segmenti:[]};
+  const righe=(g.segmenti||[]).filter(s=>s.tipo==='lavoro');
+  if(!righe.length)return '<div class="fmuted" style="font-size:11px">Ancora niente oggi.</div>';
+  return `<table class="ore-tbl"><thead><tr><th style="width:60px">Da</th><th style="width:60px">A</th>
+    <th>Attività</th><th style="width:90px">Durata</th><th style="width:34%">Descrizione</th></tr></thead><tbody>
+    ${righe.map(s=>`<tr>
+      <td>${esc(s.ora_inizio||'—')}</td><td>${esc(s.ora_fine||'—')}</td>
+      <td>${esc([s.cliente_nome,s.commessa_nome,s.gruppo_nome,s.fase_nome].filter(Boolean).join(' › '))}</td>
+      <td>${oreOreMin(s.minuti)}</td>
+      <td><input class="fld ore-descr" value="${esc(s.nota||'')}" placeholder="—"
+           onchange="oreSalvaDescrizione(${s.id},this.value)"></td></tr>`).join('')}
+    </tbody></table>`;
+}
+async function oreSalvaDescrizione(id,nota){
+  try{
+    const r=await fetch(API+'/api/ore/voci/'+id+'/descrizione',{method:'PATCH',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({nota:nota||''})});
+    if(r.ok){toast('Descrizione salvata','ok');const s=(ORE.giornata.segmenti||[]).find(x=>x.id===id);if(s)s.nota=nota;}
+    else toast('Errore salvataggio',true);
   }catch{toast('Errore di rete',true);}
 }
 
-/* ── INSERIMENTO ORE: timer con cascata commessa→gruppo→fase, revisione post-stop, manuale, assenza ── */
-async function oreLoadTimer(){
-  const el=document.getElementById('oreBody');
-  el.innerHTML='<div class="fmuted" style="font-size:11px">Carico timer…</div>';
-  try{const r=await fetch(API+'/api/ore/timer');const d=r.ok?await r.json():{timer:null};ORE.timer=d.timer||null;}
-  catch{ORE.timer=null;}
-  ORE.pending=null;
-  renderOreTimer();
-}
-function oreSetRegMode(m){ORE.regmode=m;renderOreTimer();}
-function oreRunningLabel(){
-  if(!ORE.timer)return '';
-  const cid=ORE.timer.commessa_id;
-  const c=cid==null?{codice:'',nome:'Attività interne'}:(commesse.find(x=>x.id===cid)||{codice:'',nome:'Commessa #'+cid});
-  const g=(ORE.gruppi||[]).find(x=>x.id===ORE.timer.gruppo_id);
-  const fobj=g&&(g.fasi||[]).find(f=>f.id===ORE.timer.fase_id);
-  return `in corso su <b>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</b> · ${esc(g?g.nome:'')} · ${esc(fobj?fobj.codice+' — '+fobj.nome:'')}`;
-}
-function oreElapsedStr(){
-  if(!ORE.timer)return '00:00:00';
-  const started=new Date(ORE.timer.iniziato_at).getTime();
-  const s=Math.max(0,Math.floor((Date.now()-started)/1000));
-  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
-  return pad(h)+':'+pad(m)+':'+pad(sec);
-}
+/* ── i due cronometri ───────────────────────────────────────────────────────
+   La presenza e il worklog sono timer distinti: la presenza continua fino
+   all'uscita, il tempo operativo è attribuito alla fase (Note ORE-01). */
 function oreStartClock(){
   oreStopClock();
-  ORE_CLOCK_INT=setInterval(()=>{const el=document.getElementById('oreClockDisplay');if(el)el.textContent=oreElapsedStr();else oreStopClock();},1000);
+  ORE_CLOCK_INT=setInterval(oreTickClock,1000);
+  oreTickClock();
 }
 function oreStopClock(){if(ORE_CLOCK_INT){clearInterval(ORE_CLOCK_INT);ORE_CLOCK_INT=null;}}
-function renderOreTimer(){
-  const el=document.getElementById('oreBody');
-  if(ORE.pending)return renderOrePending();
-  oreStopClock();
-  let html=`<div class="cx-toggle" style="margin:4px auto 14px;display:flex;justify-content:center;width:fit-content">
-    <button class="${ORE.regmode==='lavoro'?'on':''}" onclick="oreSetRegMode('lavoro')">⏱ Lavoro</button>
-    <button class="${ORE.regmode==='assenza'?'on':''}" onclick="oreSetRegMode('assenza')">🌴 Assenza (ferie, permessi, malattia…)</button>
-  </div>`;
-  if(ORE.regmode==='assenza'){el.innerHTML=html+oreAssenzaFormHtml();return;}
-  const disp=oreCommesseOptions();
-  if(!disp.length){el.innerHTML=html+`<div class="fmuted" style="margin-top:12px;text-align:center">Non sei ancora assegnato a nessuna commessa — chiedi a un amministratore di assegnartene una.</div>`;return;}
-  const running=!!ORE.timer;
-  const c0=running?ORE.timer.commessa_id:disp[0].id;
-  const g0=running?ORE.timer.gruppo_id:(oreGruppiByCommessa(disp[0].id)[0]||{}).id;
-  const f0=running?ORE.timer.fase_id:(((ORE.gruppi||[]).find(x=>x.id===g0)||{}).fasi||[])[0];
-  const f0id=running?f0:(f0&&f0.id);
-  html+=`<div class="card ore-timercard">
-    <div class="ore-pickrow"><select class="fld" id="tCommessa" ${running?'disabled':''} onchange="oreOnCommessaChange('t')">${oreOptsCommesse(c0)}</select></div>
-    <div class="ore-pickrow">
-      <select class="fld" id="tGruppo" ${running?'disabled':''} onchange="oreOnGruppoChange('t')">${oreOptsGruppi(c0,g0)}</select>
-      <select class="fld" id="tFase" ${running?'disabled':''}>${oreOptsFasi(g0,f0id)}</select>
-    </div>
-    <div class="ore-clock${running?' running':''}" id="oreClockDisplay">${running?oreElapsedStr():'00:00:00'}</div>
-    <div class="ore-timerlabel">${running?oreRunningLabel():'seleziona commessa/gruppo/fase e avvia (risoluzione 5 minuti)'}</div>
-    <div class="ore-timeractions">${running?`<button class="btn btn-danger" style="padding:14px 26px;font-size:15px;border-radius:14px" onclick="oreStopTimer()">⏹ Ferma</button>`:`<button class="btn btn-go" style="padding:14px 26px;font-size:15px;border-radius:14px" onclick="oreStartTimer()">▶ Avvia timer</button>`}</div>
-  </div>
-  <div class="card ore-timercard" style="margin-top:16px">
-    <div style="font-weight:800;font-size:12.5px;margin-bottom:10px">📝 Oppure inserisci ore a consuntivo</div>
-    <div class="ore-pickrow"><select class="fld" id="mCommessa" onchange="oreOnCommessaChange('m')">${oreOptsCommesse(disp[0].id)}</select></div>
-    <div class="ore-pickrow">
-      <select class="fld" id="mGruppo" onchange="oreOnGruppoChange('m')">${oreOptsGruppi(disp[0].id,(oreGruppiByCommessa(disp[0].id)[0]||{}).id)}</select>
-      <select class="fld" id="mFase">${oreOptsFasi((oreGruppiByCommessa(disp[0].id)[0]||{}).id,null)}</select>
-    </div>
-    <div class="ore-pickrow">
-      <input class="fld" type="date" id="mData" value="${oreFmtDate(new Date())}" style="flex:1">
-      <div class="ore-durpick"><input class="fld" type="number" id="mOreH" min="0" value="1"><span>h</span><select class="fld" id="mOreM">${oreOptsMinuti(0)}</select><span>min</span></div>
-    </div>
-    <input class="fld" id="mNota" placeholder="Nota (facoltativa)" style="margin-top:4px">
-    <div style="margin-top:12px"><button class="btn btn-go" onclick="oreSalvaManuale()">+ Registra ore</button></div>
-  </div>`;
-  el.innerHTML=html;
-  if(running)oreStartClock();
+function oreTickClock(){
+  const p=document.getElementById('oreCronoPresenza');
+  if(!p){oreStopClock();return;}
+  const g=ORE.giornata||{};
+  const entrata=(g.timbrature||[]).filter(t=>t.tipo==='entrata').slice(-1)[0];
+  p.textContent=(orePresente()&&entrata)?oreDurata(Date.now()-oreOggiAlle(entrata.ora)):'00:00:00';
+  const a=document.getElementById('oreCronoAttivita');
+  if(a)a.textContent=ORE.timer?oreDurata(Date.now()-new Date(ORE.timer.iniziato_at+'Z').getTime()):'00:00:00';
 }
-function oreAssenzaFormHtml(){
-  const tipi=ORE.assenzeTipi||[];
-  return `<div class="card ore-timercard">
-    <div style="font-weight:800;font-size:12.5px;margin-bottom:10px">🌴 Registra un'assenza (niente timer: solo a consuntivo)</div>
-    <div class="ore-pickrow"><select class="fld" id="aTipo">${tipi.map(a=>`<option value="${a.id}">${esc(a.codice)} — ${esc(a.nome)}</option>`).join('')}</select></div>
-    <div class="ore-pickrow">
-      <input class="fld" type="date" id="aData" value="${oreFmtDate(new Date())}" style="flex:1">
-      <div class="ore-durpick"><input class="fld" type="number" id="aOreH" min="0" value="8"><span>h</span><select class="fld" id="aOreM">${oreOptsMinuti(0)}</select><span>min</span></div>
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('aOreH').value=8;document.getElementById('aOreM').value=0">giornata intera (8h)</button>
-    </div>
-    <input class="fld" id="aNota" placeholder="Nota (facoltativa)" style="margin-top:4px">
-    <div style="margin-top:12px"><button class="btn btn-go" onclick="oreSalvaAssenza()">+ Registra assenza</button></div>
-  </div>`;
-}
-async function oreStartTimer(){
-  const commessa_id=oreCidVal('tCommessa');
-  const gruppo_id=parseInt(oreVal('tGruppo')),fase_id=parseInt(oreVal('tFase'));
-  if(!gruppo_id||!fase_id){toast('Seleziona gruppo e fase',true);return;}
-  try{
-    const r=await fetch(API+'/api/ore/timer/avvia',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({commessa_id,gruppo_id,fase_id})});
-    if(r.ok){const d=await r.json();ORE.timer=d.timer||null;renderOreTimer();}else toast('Errore avvio timer',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreStopTimer(){
-  try{
-    const r=await fetch(API+'/api/ore/timer/ferma',{method:'POST'});
-    if(r.ok){const d=await r.json();ORE.timer=null;ORE.pending={commessa_id:d.commessa_id,gruppo_id:d.gruppo_id,fase_id:d.fase_id,minuti:d.minuti,nota:''};renderOreTimer();}
-    else toast('Errore arresto timer',true);
-  }catch{toast('Errore di rete',true);}
-}
-function renderOrePending(){
-  const el=document.getElementById('oreBody');
-  const p=ORE.pending;
-  const h=Math.floor(p.minuti/60),m=p.minuti%60;
-  const cid=p.commessa_id;
-  const c=cid==null?{codice:'',nome:'Attività interne'}:(commesse.find(x=>x.id===cid)||{codice:'',nome:'Commessa #'+cid});
-  const g=(ORE.gruppi||[]).find(x=>x.id===p.gruppo_id);
-  const fobj=g&&(g.fasi||[]).find(f=>f.id===p.fase_id);
-  el.innerHTML=`<div class="card ore-timercard">
-    <div style="font-weight:800;font-size:13px;margin-bottom:4px">⏹ Timer fermato — controlla e salva</div>
-    <div style="color:var(--t2);font-size:12px;margin-bottom:16px"><b>${esc(c.codice?c.codice+' — '+c.nome:c.nome)}</b> · ${esc(g?g.nome:'')} · ${esc(fobj?fobj.codice+' — '+fobj.nome:'')}</div>
-    <div style="font-size:11.5px;font-weight:700;color:var(--t2);margin-bottom:4px">Durata (aggiustabile — risoluzione 5 minuti)</div>
-    <div class="ore-durpick" style="margin-bottom:14px"><input class="fld" type="number" id="pOreH" min="0" value="${h}"><span>h</span><select class="fld" id="pOreM">${oreOptsMinuti(m)}</select><span>min</span></div>
-    <input class="fld" id="pNota" placeholder="Nota — cosa hai fatto" value="${esc(p.nota||'')}">
-    <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="btn btn-ghost" onclick="oreAnnullaPending()">✖ Annulla (non salvare)</button>
-      <button class="btn btn-go" style="margin-left:auto" onclick="oreConfermaPending()">💾 Salva nel calendario</button>
-    </div>
-  </div>`;
-}
-async function oreConfermaPending(){
-  const h=parseInt(oreVal('pOreH'))||0,m=parseInt(oreVal('pOreM'))||0;
-  const minuti=h*60+m;
-  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
-  const p=ORE.pending;
-  const body={tipo:'lavoro',data:oreFmtDate(new Date()),minuti,nota:oreVal('pNota'),modalita:'timer',commessa_id:p.commessa_id,gruppo_id:p.gruppo_id,fase_id:p.fase_id};
-  try{
-    const r=await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){ORE.pending=null;toast('Registrazione salvata','ok');renderOreTimer();}else toast('Errore salvataggio',true);
-  }catch{toast('Errore di rete',true);}
-}
-function oreAnnullaPending(){
-  if(!confirm('Il tempo registrato dal timer andrà perso, confermi?'))return;
-  ORE.pending=null;renderOreTimer();
-}
-async function oreSalvaManuale(){
-  const h=parseInt(oreVal('mOreH'))||0,m=parseInt(oreVal('mOreM'))||0;
-  const minuti=h*60+m;
-  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
-  const commessa_id=oreCidVal('mCommessa');
-  const gruppo_id=parseInt(oreVal('mGruppo')),fase_id=parseInt(oreVal('mFase'));
-  if(!gruppo_id||!fase_id){toast('Seleziona gruppo e fase',true);return;}
-  const body={tipo:'lavoro',data:oreVal('mData'),minuti,nota:oreVal('mNota'),modalita:'manuale',commessa_id,gruppo_id,fase_id};
-  try{
-    const r=await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){toast('Ore registrate','ok');renderOreTimer();}else toast('Errore salvataggio',true);
-  }catch{toast('Errore di rete',true);}
-}
-async function oreSalvaAssenza(){
-  const h=parseInt(oreVal('aOreH'))||0,m=parseInt(oreVal('aOreM'))||0;
-  const minuti=h*60+m;
-  if(minuti<=0){toast('Inserisci una durata valida',true);return;}
-  const assenza_tipo_id=parseInt(oreVal('aTipo'));
-  const body={tipo:'assenza',data:oreVal('aData'),minuti,nota:oreVal('aNota'),modalita:'manuale',assenza_tipo_id};
-  try{
-    const r=await fetch(API+'/api/ore/voci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){toast('Assenza registrata','ok');renderOreTimer();}else toast('Errore salvataggio',true);
-  }catch{toast('Errore di rete',true);}
+function oreOggiAlle(hhmm){
+  const [h,m]=(hhmm||'00:00').split(':').map(Number);
+  const d=new Date();d.setHours(h,m,0,0);return d.getTime();
 }
 
+/* ── colonne ridimensionabili ──────────────────────────────────────────────
+   I testi lunghi si troncano, non generano scorrimento orizzontale. */
+function oreBindResize(){
+  const grid=document.getElementById('oreColsGrid');if(!grid)return;
+  const salvate=JSON.parse(localStorage.getItem('rdo_ore_cols')||'null');
+  if(salvate)grid.style.gridTemplateColumns=salvate;
+  grid.querySelectorAll('.ore-rz').forEach(h=>{
+    h.addEventListener('mousedown',e=>{
+      e.preventDefault();
+      const i=+h.dataset.i;
+      const cols=getComputedStyle(grid).gridTemplateColumns.split(' ').map(parseFloat);
+      const x0=e.clientX,a0=cols[i*2],b0=cols[i*2+2];
+      const muovi=ev=>{
+        const d=ev.clientX-x0;
+        const a=Math.max(120,a0+d),b=Math.max(120,b0-d);
+        cols[i*2]=a;cols[i*2+2]=b;
+        grid.style.gridTemplateColumns=cols.map((c,j)=>j%2?'6px':c+'px').join(' ');
+      };
+      const stop=()=>{document.removeEventListener('mousemove',muovi);document.removeEventListener('mouseup',stop);
+        localStorage.setItem('rdo_ore_cols',grid.style.gridTemplateColumns);};
+      document.addEventListener('mousemove',muovi);document.addEventListener('mouseup',stop);
+    });
+  });
+}
 /* ── CALENDARIO PRESENZE: tabella / calendario delle proprie voci, con aggiungi/modifica/elimina ── */
 async function oreLoadVoci(){
   const el=document.getElementById('oreBody');
